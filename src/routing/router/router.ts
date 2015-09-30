@@ -833,6 +833,7 @@
                         // route has not been matched
                         this._previousUrl = childUrl;
                         this._previousQuery = queryString;
+                        this.currentRouteInfo = routeInfo;
 
                         if (isFunction(this._unknownHandler)) {
                             let unknownRouteConfig: IUnknownRouteInfo = {

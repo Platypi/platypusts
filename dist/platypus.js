@@ -3625,14 +3625,11 @@ var plat;
                     return;
                 }
                 this.__currentUrl = null;
-                var url = this.url(), $config = Browser.config;
-                if (this.__lastUrl === url ||
-                    ($config.routingType === $config.STATE &&
-                        url.indexOf(this.__lastUrl + '#') > -1)) {
+                var utils = this.urlUtils(), $config = Browser.config, url = this._trimSlashes(utils.href);
+                if (this.__lastUrl === url) {
                     return;
                 }
-                var utils = this.urlUtils();
-                this.__lastUrl = this._trimSlashes(utils.href);
+                this.__lastUrl = url;
                 var $manager = this._EventManager;
                 postpone(function () {
                     $manager.dispatch(__urlChanged, _this, $manager.DIRECT, [utils]);
@@ -11696,16 +11693,17 @@ var plat;
                     var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
                     this._nextInjector = this._nextView = undefined;
                     if (this._animate) {
-                        var animator = this._animator, dom = this.dom, isNavigatingBack = this._navigator.isBackNavigation(), view = this.controls[0];
-                        if (isObject(view)) {
-                            var oldElement = view.element;
-                            if (isNavigatingBack) {
-                                dom.addClass(oldElement, __NavigatingBack);
-                            }
-                            animator.leave(oldElement, __Leave).then(function () {
-                                Control.dispose(view);
-                            });
-                        }
+                        var animator = this._animator, dom = this.dom, isNavigatingBack = this._navigator.isBackNavigation();
+                        // view = this.controls[0]; 
+                        // if (isObject(view)) { 
+                        //     let oldElement = view.element; 
+                        //     if (isNavigatingBack) { 
+                        //         dom.addClass(oldElement, __NavigatingBack); 
+                        //     } 
+                        //     animator.leave(oldElement, __Leave).then((): void => { 
+                        //        Control.dispose(view); 
+                        //     }); 
+                        // } 
                         if (isNavigatingBack) {
                             dom.addClass(node, __NavigatingBack);
                             animator.enter(node, __Enter, this.element).then(function () {
@@ -11717,7 +11715,6 @@ var plat;
                         }
                     }
                     else {
-                        Control.dispose(this.controls[0]);
                         this.element.insertBefore(node, null);
                     }
                     var viewportManager = this._managerCache.read(this.uid), manager = this._ElementManagerFactory.getInstance();
@@ -11738,8 +11735,8 @@ var plat;
                  */
                 Viewport.prototype.navigateFrom = function () {
                     var _this = this;
-                    var view = this.controls[0], promise;
-                    if (isObject(view) && isFunction(view.navigatingFrom)) {
+                    var view = this.controls[0], promise, viewExists = isObject(view);
+                    if (viewExists && isFunction(view.navigatingFrom)) {
                         promise = this._Promise.resolve(view.navigatingFrom());
                     }
                     else {
@@ -11755,6 +11752,18 @@ var plat;
                             return;
                         }
                         _this._log.debug(error);
+                    }).then(function () {
+                        if (!_this._animate || !viewExists) {
+                            Control.dispose(view);
+                            return;
+                        }
+                        var animator = _this._animator, dom = _this.dom, isNavigatingBack = _this._navigator.isBackNavigation(), oldElement = view.element;
+                        if (isNavigatingBack) {
+                            dom.addClass(oldElement, __NavigatingBack);
+                        }
+                        animator.leave(oldElement, __Leave).then(function () {
+                            Control.dispose(view);
+                        });
                     });
                 };
                 /**
@@ -16505,6 +16514,7 @@ var plat;
                             // route has not been matched 
                             this._previousUrl = childUrl;
                             this._previousQuery = queryString;
+                            this.currentRouteInfo = routeInfo;
                             if (isFunction(this._unknownHandler)) {
                                 var unknownRouteConfig = {
                                     segment: url,

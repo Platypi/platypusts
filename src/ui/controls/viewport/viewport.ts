@@ -377,32 +377,18 @@ module plat.ui.controls {
 
             if (this._animate) {
                 let animator = this._animator,
-                    dom = this.dom,
-                    isNavigatingBack = this._navigator.isBackNavigation(),
-                    view = this.controls[0];
+                    dom = this.dom;
 
-                if (isObject(view)) {
-                    let oldElement = view.element;
-                    if (isNavigatingBack) {
-                        dom.addClass(oldElement, __NavigatingBack);
-                    }
-
-                    animator.leave(oldElement, __Leave).then((): void => {
-                       Control.dispose(view);
-                    });
-                }
-
-                if (isNavigatingBack) {
+                if (this._navigator.isBackNavigation()) {
                     dom.addClass(node, __NavigatingBack);
-                    animator.enter(node, __Enter, this.element).then((): void => {
+                    animator.enter(node, __Enter, element).then((): void => {
                         dom.removeClass(node, __NavigatingBack);
                     });
                 } else {
-                    animator.enter(node, __Enter, this.element);
+                    animator.enter(node, __Enter, element);
                 }
             } else {
-                Control.dispose(this.controls[0]);
-                this.element.insertBefore(node, null);
+                element.insertBefore(node, null);
             }
 
             let viewportManager = this._managerCache.read(this.uid),
@@ -439,9 +425,10 @@ module plat.ui.controls {
          */
         navigateFrom(): async.IThenable<void> {
             let view = this.controls[0],
-                promise: async.IThenable<void>;
+                promise: async.IThenable<void>,
+                viewExists = isObject(view);
 
-            if (isObject(view) && isFunction(view.navigatingFrom)) {
+            if (viewExists && isFunction(view.navigatingFrom)) {
                 promise = this._Promise.resolve(view.navigatingFrom());
             } else {
                 promise = this._Promise.resolve();
@@ -459,6 +446,21 @@ module plat.ui.controls {
                 }
 
                 this._log.debug(error);
+            }).then(() => {
+                if (!(this._animate && viewExists)) {
+                    Control.dispose(view);
+                    return;
+                }
+
+                let oldElement = view.element;
+
+                if (this._navigator.isBackNavigation()) {
+                    this.dom.addClass(oldElement, __NavigatingBack);
+                }
+
+                this._animator.leave(oldElement, __Leave).then((): void => {
+                    Control.dispose(view);
+                });
             });
         }
 
