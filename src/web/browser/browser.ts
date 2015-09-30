@@ -476,18 +476,15 @@ module plat.web {
             }
 
             this.__currentUrl = null;
-            let url = this.url(),
-                $config = Browser.config;
+            let utils = this.urlUtils(),
+                $config = Browser.config,
+                url = this._trimSlashes(utils.href);
 
-            if (this.__lastUrl === url ||
-                ($config.routingType === $config.STATE &&
-                    url.indexOf(this.__lastUrl + '#') > -1)) {
+            if (this.__lastUrl === url) {
                 return;
             }
 
-            let utils = this.urlUtils();
-
-            this.__lastUrl = this._trimSlashes(utils.href);
+            this.__lastUrl = url;
 
             let $manager = this._EventManager;
             postpone(() => {

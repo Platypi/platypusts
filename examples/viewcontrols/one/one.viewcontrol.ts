@@ -14,7 +14,6 @@ module app.viewcontrols {
             super();
             console.log('constructing 1');
             router.configure([
-                { pattern: '', view: Two },
                 { pattern: '/three', view: Three },
                 { pattern: '/four', view: Four }
             ]);
