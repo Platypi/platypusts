@@ -777,6 +777,10 @@
          * the navigation.
          */
         navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.IThenable<void> {
+            if(poll === false) {
+                poll = !isObject(this.currentRouteInfo);
+            }
+
             if (!isObject(query)) {
                 query = {};
             }

@@ -16464,6 +16464,9 @@ var plat;
              */
             Router.prototype.navigate = function (url, query, force, poll) {
                 var _this = this;
+                if (poll === false) {
+                    poll = !isObject(this.currentRouteInfo);
+                }
                 if (!isObject(query)) {
                     query = {};
                 }
