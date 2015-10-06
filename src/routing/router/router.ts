@@ -1477,7 +1477,7 @@
         }
     }
 
-    plat.register.injectable(__Router, Router, null, __INSTANCE);
+    register.injectable(__Router, Router, null, __INSTANCE);
 
     /**
      * The injectable function for {@link plat.routing.IRouterStatic|IRouterStatic}
@@ -1486,7 +1486,7 @@
         return Router;
     }
 
-    plat.register.injectable(__RouterStatic, IRouterStatic);
+    register.injectable(__RouterStatic, IRouterStatic);
 
     /**
      * @name IRouterStatic

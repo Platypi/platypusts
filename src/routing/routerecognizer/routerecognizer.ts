@@ -501,7 +501,7 @@
         }
     }
 
-    plat.register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
+    register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
 
     /**
      * @name IRecognizeResult

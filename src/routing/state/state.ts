@@ -445,8 +445,8 @@
         return State;
     }
 
-    plat.register.injectable(__StateStatic, IStateStatic, null, __STATIC);
-    plat.register.injectable(__StateInstance, State, null, __INSTANCE);
+    register.injectable(__StateStatic, IStateStatic, null, __STATIC);
+    register.injectable(__StateInstance, State, null, __INSTANCE);
 
     /**
      * @name IDelegateParameterNames

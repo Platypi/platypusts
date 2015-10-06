@@ -247,9 +247,9 @@
         return BaseSegment;
     }
 
-    plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
+    register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
 
-    plat.register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
+    register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
 
     /**
      * @name StaticSegment
@@ -323,7 +323,7 @@
         }
     }
 
-    plat.register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
+    register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
 
     /**
      * @name VariableSegment
@@ -368,7 +368,7 @@
         }
     }
 
-    plat.register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
+    register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
 
     /**
      * @name SplatSegment
@@ -423,7 +423,7 @@
         };
     }
 
-    plat.register.injectable(__SplatSegmentInstance, SplatSegment, null, __INSTANCE);
+    register.injectable(__SplatSegmentInstance, SplatSegment, null, __INSTANCE);
 
     /**
      * @name DynamicSegment
@@ -478,7 +478,7 @@
         };
     }
 
-    plat.register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
+    register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
 
     /**
      * @name ICharacterSpecification
