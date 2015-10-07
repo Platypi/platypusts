@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.16.0 (https://platypi.io)
+ * PlatypusTS v0.16.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -11648,11 +11648,19 @@ var plat;
                  */
                 Viewport.prototype.canNavigateTo = function (routeInfo) {
                     var _this = this;
-                    var response = true, injector = this._Injector.getDependency(routeInfo.delegate.view), view = injector.inject(), parameters = routeInfo.parameters;
+                    var getRouter = this._Router.currentRouter, currentRouter = getRouter(), response = true, injector = this._Injector.getDependency(routeInfo.delegate.view), view = injector.inject(), parameters = routeInfo.parameters, nextRouter = getRouter();
                     if (!isObject(view)) {
                         return this._Promise.resolve(null);
                     }
-                    view.navigator = this._navigator;
+                    if (currentRouter !== nextRouter) {
+                        nextRouter.initialize(this._router);
+                        var navigator_1 = acquire(__NavigatorInstance);
+                        view.navigator = navigator_1;
+                        navigator_1.initialize(nextRouter);
+                    }
+                    else {
+                        view.navigator = this._navigator;
+                    }
                     if (isFunction(view.canNavigateTo)) {
                         response = view.canNavigateTo(parameters, routeInfo.query);
                     }
@@ -16346,11 +16354,15 @@ var plat;
              * @param {plat.routing.Router} child The child router to remove.
              */
             Router.prototype.removeChild = function (child) {
-                var children = this.children, index = this.children.indexOf(child);
+                var children = this.children, index = children.indexOf(child);
                 if (index < 0) {
                     return;
                 }
                 children.splice(index, 1);
+                var current = Router.currentRouter();
+                if (current === child) {
+                    Router.currentRouter(this);
+                }
             };
             /**
              * Registers a Viewport (or similar object) with the
@@ -16574,14 +16586,14 @@ var plat;
                 if (name === __NOOP_INJECTOR) {
                     name = alias;
                 }
-                var router = this, recognizer = router._recognizer, prefix = '';
-                while (!isNull(router) && !recognizer.exists(name)) {
+                var router = this, prefix = '';
+                while (!(isNull(router) || router._recognizer.exists(name))) {
                     router = router.parent;
                 }
                 if (isNull(router)) {
                     throw new Error('Route for ' + name + ' does not exist.');
                 }
-                var path = recognizer.generate(name, parameters), previous;
+                var path = router._recognizer.generate(name, parameters), previous;
                 while (!isNull(router = router.parent)) {
                     previous = router._previousSegment;
                     previous = (!isNull(previous) && previous !== '/') ? previous : '';
