@@ -777,7 +777,7 @@
          * the navigation.
          */
         navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.IThenable<void> {
-            if(poll === false) {
+            if (poll === false) {
                 poll = !isObject(this.currentRouteInfo);
             }
 
@@ -804,13 +804,14 @@
                 return resolve();
             }
 
-            let result: IRouteResult = this._recognizer.recognize(url),
+            let recognizer = this._recognizer,
+                result: IRouteResult = recognizer.recognize(url),
                 routeInfo: IRouteInfo,
                 emptyResult = isEmpty(result),
                 pattern: string,
                 segment: string;
 
-            if(!emptyResult) {
+            if (!emptyResult) {
                 routeInfo = result[0];
                 routeInfo.query = query;
             }
@@ -821,7 +822,7 @@
                 let childUrl = url;
 
                 if(sameRoute) {
-                    segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                    segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
                     childUrl = childUrl.replace(segment, '');
                 }
 
@@ -829,7 +830,7 @@
 
                 if (isEmpty(result)) {
                     if(!emptyResult) {
-                        result = this._recognizer.recognize(url);
+                        result = recognizer.recognize(url);
                         routeInfo = result[0];
                         routeInfo.query = query;
                         pattern = routeInfo.delegate.pattern;
@@ -864,9 +865,9 @@
                     routeInfo = result[0];
                     routeInfo.query = query;
                     pattern = routeInfo.delegate.pattern;
-                    pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
+                    pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
 
-                    if (!emptyResult || this._previousPattern === pattern) {
+                    if (!emptyResult || this._isSameRoute(routeInfo)) {
                         // the pattern for this router is the same as the last pattern so
                         // only navigate child routers.
                         this.navigating = true;
@@ -885,7 +886,7 @@
                 pattern = routeInfo.delegate.pattern;
             }
 
-            segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+            segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
 
             let previousSegment = this._previousSegment;
 
@@ -963,9 +964,10 @@
             }
 
             let router = this,
+                recognizer = router._recognizer,
                 prefix = '';
 
-            while (!isNull(router) && !router._recognizer.exists(name)) {
+            while (!isNull(router) && !recognizer.exists(name)) {
                 router = router.parent;
             }
 
@@ -973,7 +975,7 @@
                 throw new Error('Route for ' + name + ' does not exist.');
             }
 
-            let path = router._recognizer.generate(name, parameters),
+            let path = recognizer.generate(name, parameters),
                 previous: string;
 
             while (!isNull(router = router.parent)) {
@@ -1191,10 +1193,9 @@
                 return mapAsync((port: ISupportRouteNavigation): async.IThenable<void> => {
                     return port.navigateTo(info);
                 }, this._ports);
-            })
-                .then((): async.IThenable<void> => {
-                    return this._navigateChildren(info, false);
-                });
+            }).then((): async.IThenable<void> => {
+                return this._navigateChildren(info, false);
+            });
         }
 
         /**
@@ -1241,7 +1242,7 @@
         protected _canNavigate(info: IRouteInfo, poll: boolean = true): async.IThenable<boolean> {
             let sameRoute = this._isSameRoute(this._nextRouteInfo);
 
-            if(!poll) {
+            if (!poll) {
                 return this._resolve(true);
             }
 
@@ -1409,11 +1410,13 @@
          * @returns {boolean} Whether or not it is the same route.
          */
         protected _isSameRoute(info: IRouteInfo): boolean {
-            let currentRouteInfo = _clone(this.currentRouteInfo);
+            let currentRouteInfo = _clone(this.currentRouteInfo, true);
+            info = _clone(info, true);
 
             this._sanitizeRouteInfo(currentRouteInfo);
+            this._sanitizeRouteInfo(info);
 
-            if (!isObject(currentRouteInfo) || !isObject(info)) {
+            if (!(isObject(currentRouteInfo) && isObject(info))) {
                 return false;
             }
 
@@ -1445,9 +1448,12 @@
          * @returns {void}
          */
         protected _sanitizeRouteInfo(info: IRouteInfo): void {
-            if(isObject(info)) {
-                if(info.parameters.hasOwnProperty('childRoute')) {
-                    info.delegate.pattern = info.delegate.pattern.substr(0, info.delegate.pattern.length - __CHILD_ROUTE_LENGTH);
+            if (isObject(info)) {
+                if (info.parameters.hasOwnProperty('childRoute')) {
+                    let delegate = info.delegate,
+                        pattern = delegate.pattern;
+
+                    delegate.pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
                     deleteProperty(info.parameters, 'childRoute');
                 }
             }
