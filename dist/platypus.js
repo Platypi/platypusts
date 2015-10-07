@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.15.6 (https://platypi.io)
+ * PlatypusTS v0.16.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -11648,19 +11648,11 @@ var plat;
                  */
                 Viewport.prototype.canNavigateTo = function (routeInfo) {
                     var _this = this;
-                    var getRouter = this._Router.currentRouter, currentRouter = getRouter(), response = true, injector = this._Injector.getDependency(routeInfo.delegate.view), view = injector.inject(), parameters = routeInfo.parameters, nextRouter = getRouter();
+                    var response = true, injector = this._Injector.getDependency(routeInfo.delegate.view), view = injector.inject(), parameters = routeInfo.parameters;
                     if (!isObject(view)) {
                         return this._Promise.resolve(null);
                     }
-                    if (currentRouter !== nextRouter) {
-                        nextRouter.initialize(this._router);
-                        var navigator_1 = acquire(__NavigatorInstance);
-                        view.navigator = navigator_1;
-                        navigator_1.initialize(nextRouter);
-                    }
-                    else {
-                        view.navigator = this._navigator;
-                    }
+                    view.navigator = this._navigator;
                     if (isFunction(view.canNavigateTo)) {
                         response = view.canNavigateTo(parameters, routeInfo.query);
                     }
@@ -15706,8 +15698,8 @@ var plat;
             return BaseSegment;
         }
         routing.IBaseSegmentFactory = IBaseSegmentFactory;
-        plat.register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
-        plat.register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
+        register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
+        register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
         /**
          * Stores information about a static segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
@@ -15745,7 +15737,7 @@ var plat;
             return StaticSegment;
         })(BaseSegment);
         routing.StaticSegment = StaticSegment;
-        plat.register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
+        register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
         /**
          * Stores information about a variable segment (either dynamic or splat), publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
@@ -15771,7 +15763,7 @@ var plat;
             return VariableSegment;
         })(BaseSegment);
         routing.VariableSegment = VariableSegment;
-        plat.register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
+        register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
         /**
          * Stores information about a splat segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
@@ -15799,7 +15791,7 @@ var plat;
             return SplatSegment;
         })(VariableSegment);
         routing.SplatSegment = SplatSegment;
-        plat.register.injectable(__SplatSegmentInstance, SplatSegment, null, __INSTANCE);
+        register.injectable(__SplatSegmentInstance, SplatSegment, null, __INSTANCE);
         /**
          * Stores information about a dynamic segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
@@ -15827,7 +15819,7 @@ var plat;
             return DynamicSegment;
         })(VariableSegment);
         routing.DynamicSegment = DynamicSegment;
-        plat.register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
+        register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
         /**
          * Route segment matching is done using a state machine. Each state contains
          * a specification indicating valid and invalid characters. Each State has a
@@ -16013,8 +16005,8 @@ var plat;
             return State;
         }
         routing.IStateStatic = IStateStatic;
-        plat.register.injectable(__StateStatic, IStateStatic, null, __STATIC);
-        plat.register.injectable(__StateInstance, State, null, __INSTANCE);
+        register.injectable(__StateStatic, IStateStatic, null, __STATIC);
+        register.injectable(__StateInstance, State, null, __INSTANCE);
         /**
          * Assists in compiling and linking route strings. You can register route strings using
          * a defined scheme, and it will compile the routes. When you want to match a route, it will
@@ -16262,7 +16254,7 @@ var plat;
             return RouteRecognizer;
         })();
         routing.RouteRecognizer = RouteRecognizer;
-        plat.register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
+        register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
         ;
         var __CHILD_ROUTE = '/*childRoute', __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
         /**
@@ -16483,7 +16475,7 @@ var plat;
                     }
                     return resolve();
                 }
-                var result = this._recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
+                var recognizer = this._recognizer, result = recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
                 if (!emptyResult) {
                     routeInfo = result[0];
                     routeInfo.query = query;
@@ -16492,13 +16484,13 @@ var plat;
                 if (emptyResult || sameRoute) {
                     var childUrl = url;
                     if (sameRoute) {
-                        segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                        segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
                         childUrl = childUrl.replace(segment, '');
                     }
                     result = this._childRecognizer.recognize(childUrl);
                     if (isEmpty(result)) {
                         if (!emptyResult) {
-                            result = this._recognizer.recognize(url);
+                            result = recognizer.recognize(url);
                             routeInfo = result[0];
                             routeInfo.query = query;
                             pattern = routeInfo.delegate.pattern;
@@ -16531,8 +16523,8 @@ var plat;
                         routeInfo = result[0];
                         routeInfo.query = query;
                         pattern = routeInfo.delegate.pattern;
-                        pattern = pattern.substr(0, pattern.length - __CHILD_ROUTE_LENGTH);
-                        if (!emptyResult || this._previousPattern === pattern) {
+                        pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
+                        if (!emptyResult || this._isSameRoute(routeInfo)) {
                             // the pattern for this router is the same as the last pattern so 
                             // only navigate child routers. 
                             this.navigating = true;
@@ -16551,7 +16543,7 @@ var plat;
                 else {
                     pattern = routeInfo.delegate.pattern;
                 }
-                segment = this._recognizer.generate(routeInfo.delegate.view, routeInfo.parameters);
+                segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
                 var previousSegment = this._previousSegment;
                 this._previousSegment = segment;
                 this.navigating = true;
@@ -16582,14 +16574,14 @@ var plat;
                 if (name === __NOOP_INJECTOR) {
                     name = alias;
                 }
-                var router = this, prefix = '';
-                while (!isNull(router) && !router._recognizer.exists(name)) {
+                var router = this, recognizer = router._recognizer, prefix = '';
+                while (!isNull(router) && !recognizer.exists(name)) {
                     router = router.parent;
                 }
                 if (isNull(router)) {
                     throw new Error('Route for ' + name + ' does not exist.');
                 }
-                var path = router._recognizer.generate(name, parameters), previous;
+                var path = recognizer.generate(name, parameters), previous;
                 while (!isNull(router = router.parent)) {
                     previous = router._previousSegment;
                     previous = (!isNull(previous) && previous !== '/') ? previous : '';
@@ -16721,8 +16713,7 @@ var plat;
                     return mapAsync(function (port) {
                         return port.navigateTo(info);
                     }, _this._ports);
-                })
-                    .then(function () {
+                }).then(function () {
                     return _this._navigateChildren(info, false);
                 });
             };
@@ -16858,9 +16849,11 @@ var plat;
              * @param {plat.routing.IRouteInfo} info The route information.
              */
             Router.prototype._isSameRoute = function (info) {
-                var currentRouteInfo = _clone(this.currentRouteInfo);
+                var currentRouteInfo = _clone(this.currentRouteInfo, true);
+                info = _clone(info, true);
                 this._sanitizeRouteInfo(currentRouteInfo);
-                if (!isObject(currentRouteInfo) || !isObject(info)) {
+                this._sanitizeRouteInfo(info);
+                if (!(isObject(currentRouteInfo) && isObject(info))) {
                     return false;
                 }
                 var currentDelegate = currentRouteInfo.delegate, delegate = info.delegate, currentParameters = serializeQuery(currentRouteInfo.parameters), parameters = serializeQuery(info.parameters), currentQuery = serializeQuery(currentRouteInfo.query), query = serializeQuery(info.query);
@@ -16877,7 +16870,8 @@ var plat;
             Router.prototype._sanitizeRouteInfo = function (info) {
                 if (isObject(info)) {
                     if (info.parameters.hasOwnProperty('childRoute')) {
-                        info.delegate.pattern = info.delegate.pattern.substr(0, info.delegate.pattern.length - __CHILD_ROUTE_LENGTH);
+                        var delegate = info.delegate, pattern = delegate.pattern;
+                        delegate.pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
                         deleteProperty(info.parameters, 'childRoute');
                     }
                 }
@@ -16908,14 +16902,14 @@ var plat;
             return Router;
         })();
         routing.Router = Router;
-        plat.register.injectable(__Router, Router, null, __INSTANCE);
+        register.injectable(__Router, Router, null, __INSTANCE);
         /**
          */
         function IRouterStatic() {
             return Router;
         }
         routing.IRouterStatic = IRouterStatic;
-        plat.register.injectable(__RouterStatic, IRouterStatic);
+        register.injectable(__RouterStatic, IRouterStatic);
     })(routing = plat_1.routing || (plat_1.routing = {}));
     /**
      * Holds all classes and interfaces related to attribute control components in platypus.
