@@ -291,16 +291,26 @@ module plat.ui.controls {
          * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
          */
         canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
-            let response: any = true,
+            let getRouter = this._Router.currentRouter,
+                currentRouter = getRouter(),
+                response: any = true,
                 injector: dependency.Injector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
                 view = injector.inject(),
-                parameters = routeInfo.parameters;
+                parameters = routeInfo.parameters,
+                nextRouter = getRouter();
 
             if (!isObject(view)) {
                 return this._Promise.resolve(null);
             }
 
-            view.navigator = this._navigator;
+            if (currentRouter !== nextRouter) {
+                nextRouter.initialize(this._router);
+                let navigator: routing.Navigator = acquire(__NavigatorInstance);
+                view.navigator = navigator;
+                navigator.initialize(nextRouter);
+            } else {
+                view.navigator = this._navigator;
+            }
 
             if (isFunction(view.canNavigateTo)) {
                 response = view.canNavigateTo(parameters, routeInfo.query);

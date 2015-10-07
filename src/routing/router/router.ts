@@ -453,13 +453,18 @@
          */
         removeChild(child: Router): void {
             let children = this.children,
-                index = this.children.indexOf(child);
+                index = children.indexOf(child);
 
             if (index < 0) {
                 return;
             }
 
             children.splice(index, 1);
+            let current = Router.currentRouter();
+
+            if (current === child) {
+                Router.currentRouter(this);
+            }
         }
 
         /**
@@ -964,10 +969,9 @@
             }
 
             let router = this,
-                recognizer = router._recognizer,
                 prefix = '';
 
-            while (!isNull(router) && !recognizer.exists(name)) {
+            while (!(isNull(router) || router._recognizer.exists(name))) {
                 router = router.parent;
             }
 
@@ -975,7 +979,7 @@
                 throw new Error('Route for ' + name + ' does not exist.');
             }
 
-            let path = recognizer.generate(name, parameters),
+            let path = router._recognizer.generate(name, parameters),
                 previous: string;
 
             while (!isNull(router = router.parent)) {
