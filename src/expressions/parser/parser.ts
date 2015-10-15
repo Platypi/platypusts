@@ -134,7 +134,7 @@ module plat.expressions {
          * @description
          * The constant that needs to be prepended to every dyanmic eval function.
          */
-        private __fnEvalConstant: string = 'var initialContext,__RESOURCE_PREFIX=' + __RESOURCE_PREFIX + ';return ';
+        private __fnEvalConstant: string = 'var initialContext,__RESOURCE_PREFIX="' + __RESOURCE_PREFIX + '";return ';
 
         /**
          * @name parse
