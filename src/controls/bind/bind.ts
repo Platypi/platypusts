@@ -180,6 +180,19 @@ module plat.controls {
         protected _property: string;
 
         /**
+         * @name _propertyType
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         *
+         * @type {string}
+         *
+         * @description
+         * The initial type of the bound property if defined.
+         */
+        protected _propertyType: string;
+
+        /**
          * @name _supportsTwoWayBinding
          * @memberof plat.controls.Bind
          * @kind property
@@ -273,7 +286,7 @@ module plat.controls {
             let identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression');
+                this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression.');
                 this._contextExpression = null;
                 return;
             }
@@ -402,10 +415,11 @@ module plat.controls {
          * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
          * specified child changes.
          * @param {string} identifier? The identifier of the child property of the bound item.
+         * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
          *
-         * @returns {void}
+         * @returns {plat.IRemoveListener} A function for removing the listener.
          */
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
         /**
          * @name observeProperty
          * @memberof plat.controls.Bind
@@ -422,16 +436,21 @@ module plat.controls {
          * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
          * specified child changes.
          * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
+         * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
          *
-         * @returns {plat.IRemoveListener} A listener for removing the function.
+         * @returns {plat.IRemoveListener} A function for removing the listener.
          */
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
+        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: any, autocast?: boolean): IRemoveListener {
+            return this._observeProperty(listener, identifier, autocast);
+        }
+
         /**
-         * @name observeProperty
+         * @name observeArrayChange
          * @memberof plat.observable.IImplementTwoWayBinding
          * @kind function
          * @access public
-         * @variation 2
+         * @variation 0
          *
          * @description
          * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
@@ -446,14 +465,13 @@ module plat.controls {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void,
-            identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
         /**
-         * @name observeProperty
+         * @name observeArrayChange
          * @memberof plat.observable.IImplementTwoWayBinding
          * @kind function
          * @access public
-         * @variation 3
+         * @variation 1
          *
          * @description
          * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
@@ -468,65 +486,9 @@ module plat.controls {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void,
-            index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
-        observeProperty(listener: any, identifier?: any, arrayMutationsOnly?: boolean): IRemoveListener {
-            let parsedIdentifier: string;
-            if (isEmpty(identifier)) {
-                parsedIdentifier = this._expression.expression;
-            } else if (isNumber(identifier)) {
-                parsedIdentifier = this._expression.expression + '.' + identifier;
-            } else {
-                let _parser = this._parser,
-                    identifierExpression = _parser.parse(identifier),
-                    identifiers = identifierExpression.identifiers;
-
-                if (identifiers.length !== 1) {
-                    this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
-                        'implementing ISupportTwoWayBinding and working with ' + this.type);
-                    return;
-                }
-
-                let expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
-
-                parsedIdentifier = expression.identifiers[0];
-
-                let split = parsedIdentifier.split('.');
-                split.pop();
-
-                let contextExpression = split.join('.'),
-                    context = this.evaluateExpression(contextExpression);
-
-                if (!isObject(context)) {
-                    if (isNull(context)) {
-                        context = this._ContextManager.createContext(this.parent, contextExpression);
-                    } else {
-                        this._log.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
-                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
-                        return;
-                    }
-                }
-            }
-
-            listener = listener.bind(this.templateControl);
-
-            let removeListener: IRemoveListener;
-            if (arrayMutationsOnly === true) {
-                removeListener = this.observeArray((changes: Array<observable.IArrayChanges<any>>): void => {
-                    listener(changes, identifier);
-                }, parsedIdentifier);
-            } else {
-                removeListener = this.observe((newValue: any, oldValue: any): void => {
-                    if (this.__isSelf || newValue === oldValue) {
-                        return;
-                    }
-
-                    listener(newValue, oldValue, identifier);
-                }, parsedIdentifier);
-            }
-
-            listener(this.evaluateExpression(parsedIdentifier), undefined, identifier, true);
-            return removeListener;
+        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
+        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: any) => void, identifier?: any): IRemoveListener {
+            return this._observeProperty(listener, identifier, false, true);
         }
 
         /**
@@ -858,7 +820,7 @@ module plat.controls {
             }
 
             if (isEmpty(newValue)) {
-                newValue = 0;
+                newValue = newValue === '' ? '0' : 0;
 
                 if (firstTime === true) {
                     if (isEmpty((<HTMLInputElement>this.element).value)) {
@@ -923,6 +885,17 @@ module plat.controls {
          */
         protected _setValue(newValue: any): void {
             let element = <HTMLInputElement>this.element;
+
+            if (!isString(newValue)) {
+                if (isNumber(newValue)) {
+                    this._propertyType = 'number';
+                    newValue = newValue.toString();
+                } else if (isBoolean(newValue)) {
+                    this._propertyType = 'boolean';
+                    newValue = newValue.toString();
+                }
+            }
+
             if (element.value === newValue) {
                 return;
             }
@@ -950,11 +923,12 @@ module plat.controls {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
+                newValue = !!newValue;
                 if (firstTime === true) {
+                    (<HTMLInputElement>this.element).checked = newValue;
                     this._propertyChanged();
                     return;
                 }
-                newValue = !!newValue;
             }
 
             (<HTMLInputElement>this.element).checked = newValue;
@@ -974,12 +948,22 @@ module plat.controls {
          * @returns {void}
          */
         protected _setRadio(newValue: any): void {
-            let element = (<HTMLInputElement>this.element);
+            let element = <HTMLInputElement>this.element;
             if (this.__isSelf) {
                 return;
-            } else if (isNull(newValue) && element.checked) {
-                this._propertyChanged();
+            } else if (isNull(newValue)) {
+                if (element.checked) {
+                    this._propertyChanged();
+                }
                 return;
+            } else if (!isString(newValue)) {
+                if (isNumber(newValue)) {
+                    this._propertyType = 'number';
+                    newValue = newValue.toString();
+                } else if (isBoolean(newValue)) {
+                    this._propertyType = 'boolean';
+                    newValue = newValue.toString();
+                }
             }
 
             element.checked = (element.value === newValue);
@@ -1008,6 +992,7 @@ module plat.controls {
 
             let element = <HTMLSelectElement>this.element,
                 value = element.value;
+
             if (isNull(newValue)) {
                 if (firstTime === true || !this._document.body.contains(element)) {
                     this._propertyChanged();
@@ -1016,22 +1001,20 @@ module plat.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                let message: string;
                 if (isNumber(newValue)) {
+                    this._propertyType = 'number';
                     newValue = newValue.toString();
-                    message = 'Trying to bind a value of type number to a <select> element. ' +
-                        'The value will implicitly be converted to type string.';
+                } else if (isBoolean(newValue)) {
+                    this._propertyType = 'boolean';
+                    newValue = newValue.toString();
                 } else {
-                    message = 'Trying to bind a value that is not a string to a <select> element. ' +
-                        'The element\'s selected index will be set to -1.';
+                    this._log.info('Trying to bind an invalid value to a <select> element using a ' + this.type + '.');
                 }
-
-                this._log.info(message);
-            } else if (value === newValue) {
-                return;
             }
 
-            if (!this._document.body.contains(element)) {
+            if (value === newValue) {
+                return;
+            } else if (!this._document.body.contains(element)) {
                 element.value = newValue;
                 if (element.value !== newValue) {
                     element.value = value;
@@ -1092,14 +1075,33 @@ module plat.controls {
             }
 
             let value: any,
-                numberValue: number;
+                numberValue: number,
+                index: number,
+                highestIndex = Infinity;
 
             while (length-- > 0) {
                 option = options[length];
                 value = option.value;
-                numberValue = Number(value);
 
-                if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                if (newValue.indexOf(value) !== -1) {
+                    option.selected = true;
+                    continue;
+                }
+
+                numberValue = Number(value);
+                if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                    if (index < highestIndex) {
+                        this._propertyType = 'number';
+                        highestIndex = index;
+                    }
+                    option.selected = true;
+                    continue;
+                } else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
+                    value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                    if (index < highestIndex) {
+                        this._propertyType = 'boolean';
+                        highestIndex = index;
+                    }
                     option.selected = true;
                     continue;
                 }
@@ -1240,7 +1242,9 @@ module plat.controls {
          * @description
          * Handles creating context with an identifier.
          *
-         * @returns {any}
+         * @param {string} identifier The identifier to base the created context off of.
+         *
+         * @returns {any} The created context.
          */
         protected _createContext(identifier: string): any {
             let split = identifier.split('.'),
@@ -1255,6 +1259,88 @@ module plat.controls {
             }
 
             return this._ContextManager.createContext(parent, identifier);
+        }
+
+        /**
+         * @name _castProperty
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Handles casting the bound property back to its initial type if necessary.
+         *
+         * @param {any} value The value to cast.
+         * @param {any} type? The optional type to cast the value to.
+         *
+         * @returns {any} The bound property casted to the proper type.
+         */
+        protected _castProperty(value: any, type?: any): any {
+            let castValue: any;
+
+            type = type || this._propertyType;
+
+            if (isNull(type)) {
+                return value;
+            } else if (isObject(value)) {
+                if (isArray(value)) {
+                    let length = value.length;
+
+                    castValue = [];
+
+                    for (let i = 0; i < length; ++i) {
+                        castValue.push(this._castProperty(value[i], type));
+                    }
+                } else if (isDate(value) || isFile(value) || isPromise(value) || isWindow(value) || isNode(value)) {
+                    castValue = value;
+                } else {
+                    let keys = Object.keys(value),
+                        key: string;
+
+                    castValue = {};
+
+                    while (keys.length > 0) {
+                        key = keys.pop();
+                        castValue[key] = value[key];
+                    }
+                }
+            } else {
+                switch (type) {
+                    case 'string':
+                        if (isString(value)) {
+                            castValue = value;
+                        } else if (isFunction(value.toString)) {
+                            castValue = value.toString();
+                        } else {
+                            castValue = Object.prototype.toString.call(value);
+                        }
+                        break;
+                    case 'number':
+                        castValue = isEmpty(value) ? undefined : Number(value);
+                        break;
+                    case 'boolean':
+                        switch (value) {
+                            case 'true':
+                                castValue = true;
+                                break;
+                            case 'false':
+                            case '0':
+                            case 'null':
+                            case 'undefined':
+                                castValue = false;
+                                break;
+                            default:
+                                castValue = !!value;
+                                break;
+                        }
+                        break;
+                    default:
+                        castValue = value;
+                        break;
+                }
+            }
+
+            return castValue;
         }
 
         /**
@@ -1274,12 +1360,16 @@ module plat.controls {
                 return;
             }
 
-            let context = this.evaluateExpression(this._contextExpression),
-                property = this._property;
+            let context = this.evaluateExpression(this._contextExpression);
 
-            let newValue = this._getter();
+            if (!isObject(context)) {
+                return;
+            }
 
-            if (isNull(context) || context[property] === newValue) {
+            let property = this._property,
+                newValue = this._castProperty(this._getter());
+
+            if (context[property] === newValue) {
                 return;
             }
 
@@ -1382,6 +1472,118 @@ module plat.controls {
             }
 
             return false;
+        }
+
+        /**
+         * @name _observeProperty
+         * @memberof plat.observable.IImplementTwoWayBinding
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe either the
+         * bound property specified by the identifier (as well as potential child properties if being bound to an object) or
+         * Array mutations.
+         *
+         * @param {Function} listener The listener function.
+         * @param {any} identifier? The index off of the bound object to listen to for changes if the bound object is an Array.
+         * If undefined or empty the listener will listen for changes to the bound Array itself.
+         * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
+         * @param {boolean} arrayMutations? Whether or not this is for Array mutation changes.
+         *
+         * @returns {plat.IRemoveListener} A function to stop listening for changes.
+         */
+        protected _observeProperty(listener: Function, identifier?: any, autocast?: boolean, arrayMutations?: boolean): IRemoveListener {
+            let parsedIdentifier: string;
+            if (isEmpty(identifier)) {
+                parsedIdentifier = this._expression.expression;
+            } else if (isNumber(identifier)) {
+                parsedIdentifier = this._expression.expression + '.' + identifier;
+            } else {
+                let _parser = this._parser,
+                    identifierExpression = _parser.parse(identifier),
+                    identifiers = identifierExpression.identifiers;
+
+                if (identifiers.length !== 1) {
+                    this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
+                        'implementing observable.ISupportTwoWayBinding and working with ' + this.type);
+                    return;
+                }
+
+                let expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
+
+                parsedIdentifier = expression.identifiers[0];
+
+                let split = parsedIdentifier.split('.');
+                split.pop();
+
+                let contextExpression = split.join('.'),
+                    context = this.evaluateExpression(contextExpression);
+
+                if (!isObject(context)) {
+                    if (isNull(context)) {
+                        context = this._ContextManager.createContext(this.parent, contextExpression);
+                    } else {
+                        this._log.warn('A control implementing observable.ISupportTwoWayBinding is trying to index into a primitive type ' +
+                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
+                        return;
+                    }
+                }
+            }
+
+            listener = listener.bind(this.templateControl);
+            autocast = autocast === true;
+
+            let removeListener: IRemoveListener;
+            if (arrayMutations === true) {
+                removeListener = this.observeArray((changes: Array<observable.IArrayChanges<any>>): void => {
+                    listener(changes, identifier);
+                }, parsedIdentifier);
+            } else {
+                removeListener = this.observe((newValue: any, oldValue: any): void => {
+                    if (this.__isSelf || newValue === oldValue) {
+                        return;
+                    } else if (autocast) {
+                        this._propertyType = this._getPropertyType(newValue);
+                    }
+
+                    listener(newValue, oldValue, identifier);
+                }, parsedIdentifier);
+
+                let value = this.evaluateExpression(parsedIdentifier);
+                if (autocast) {
+                    this._propertyType = this._getPropertyType(value);
+                }
+
+                listener(value, undefined, identifier, true);
+            }
+
+            return removeListener;
+        }
+
+        /**
+         * @name _getPropertyType
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Gets the property type of the passed in argument.
+         *
+         * @param {any} value The value to grab the property type from.
+         *
+         * @returns {any} The property type.
+         */
+        protected _getPropertyType(value: any): any {
+            if (isObject(value)) {
+                return value;
+            } else if (isString(value)) {
+                return 'string';
+            } else if (isNumber(value)) {
+                return 'number';
+            } else if (isBoolean(value)) {
+                return 'boolean';
+            }
         }
     }
 

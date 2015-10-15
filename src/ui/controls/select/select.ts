@@ -191,6 +191,19 @@ module plat.ui.controls {
         protected _binder: observable.IImplementTwoWayBinding;
 
         /**
+         * @name _propertyType
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access protected
+         *
+         * @type {string}
+         *
+         * @description
+         * The initial type of the bound property if defined.
+         */
+        protected _propertyType: string;
+
+        /**
          * @name __listenerSet
          * @memberof plat.ui.controls.Select
          * @kind property
@@ -314,7 +327,6 @@ module plat.ui.controls {
                 }
                 return;
             } else if (!isArray(newValue)) {
-                this._log.debug(this.type + ' context set to something other than an Array.');
                 return;
             }
 
@@ -354,7 +366,6 @@ module plat.ui.controls {
 
             let context = this.context;
             if (!isArray(context)) {
-                this._log.debug(this.type + ' context set to something other than an Array.');
                 return;
             }
 
@@ -401,25 +412,23 @@ module plat.ui.controls {
          * @returns {void}
          */
         observeProperties(binder: observable.IImplementTwoWayBinding): void {
-            let element = <HTMLSelectElement>this.element,
-                setter: observable.IBoundPropertyChangedListener<any>;
+            let element = <HTMLSelectElement>this.element;
 
             this._binder = binder;
 
             if (element.multiple) {
-                setter = this._setSelectedIndices;
                 if (isNull(binder.evaluate())) {
                     this.inputChanged([]);
                 }
 
-                binder.observeProperty((): void => {
-                    setter(binder.evaluate(), null, null);
-                }, null, true);
+                binder.observeProperty(this._setSelectedIndices);
+                binder.observeArrayChange((): void => {
+                    this._setSelectedIndices(binder.evaluate(), null, null);
+                });
             } else {
-                setter = this._setSelectedIndex;
+                binder.observeProperty(this._setSelectedIndex);
             }
 
-            binder.observeProperty(setter);
             this.addEventListener(element, 'change', this._observeChange, false);
         }
 
@@ -442,6 +451,7 @@ module plat.ui.controls {
         protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void {
             let element = <HTMLSelectElement>this.element,
                 value = element.value;
+
             if (isNull(newValue)) {
                 if (firstTime === true || !this._document.body.contains(element)) {
                     this.itemsLoaded.then((): void => {
@@ -454,18 +464,24 @@ module plat.ui.controls {
                 element.selectedIndex = -1;
                 return;
             } else if (!isString(newValue)) {
-                let message: string;
                 if (isNumber(newValue)) {
+                    this._propertyType = 'number';
                     newValue = newValue.toString();
-                    message = 'Trying to bind a value of type number to a ' + this.type + '\'s element. ' +
-                    'The value will implicitly be converted to type string.';
+                } else if (isBoolean(newValue)) {
+                    this._propertyType = 'boolean';
+                    newValue = newValue.toString();
                 } else {
-                    message = 'Trying to bind a value that is not a string to a ' + this.type + '\'s element. ' +
-                    'The element\'s selected index will be set to -1.';
-                }
+                    if (isFunction(newValue.toString)) {
+                        newValue = newValue.toString();
+                    } else {
+                        newValue = Object.prototype.toString.call(newValue);
+                    }
 
-                this._log.info(message);
-            } else if (value === newValue) {
+                    this._log.info('Trying to bind the invalid value "' + newValue + '" to a ' + this.type + '.');
+                }
+            }
+
+            if (value === newValue) {
                 return;
             }
 
@@ -474,7 +490,7 @@ module plat.ui.controls {
                     element.value = newValue;
                     if (element.value !== newValue) {
                         element.value = value;
-                        this.inputChanged(element.value);
+                        this.inputChanged(this._castValue(element.value));
                     }
                     return;
                 }
@@ -505,13 +521,13 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void {
-            let element = <HTMLSelectElement>this.element,
-                options = element.options,
-                length = isNull(options) ? 0 : options.length,
-                option: HTMLOptionElement,
-                nullValue = isNull(newValue);
-
             this.itemsLoaded.then((): void => {
+                let element = <HTMLSelectElement>this.element,
+                    options = element.options,
+                    length = isNull(options) ? 0 : options.length,
+                    option: HTMLOptionElement,
+                    nullValue = isNull(newValue);
+                    
                 if (nullValue || !isArray(newValue)) {
                     if (firstTime === true && isNull(this._binder.evaluate())) {
                         this.inputChanged(this._getSelectedValues());
@@ -530,14 +546,33 @@ module plat.ui.controls {
                 }
 
                 let value: any,
-                    numberValue: number;
+                    numberValue: number,
+                    index: number,
+                    highestIndex = Infinity;
 
                 while (length-- > 0) {
                     option = options[length];
                     value = option.value;
-                    numberValue = Number(value);
 
-                    if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                    if (newValue.indexOf(value) !== -1) {
+                        option.selected = true;
+                        continue;
+                    }
+
+                    numberValue = Number(value);
+                    if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                        if (index < highestIndex) {
+                            this._propertyType = 'number';
+                            highestIndex = index;
+                        }
+                        option.selected = true;
+                        continue;
+                    } else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
+                        value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                        if (index < highestIndex) {
+                            this._propertyType = 'boolean';
+                            highestIndex = index;
+                        }
                         option.selected = true;
                         continue;
                     }
@@ -560,7 +595,7 @@ module plat.ui.controls {
          */
         protected _observeChange(): void {
             let element = <HTMLSelectElement>this.element;
-            this.inputChanged(element.multiple ? this._getSelectedValues() : element.value);
+            this.inputChanged(element.multiple ? this._getSelectedValues() : this._castValue(element.value));
         }
 
         /**
@@ -583,11 +618,57 @@ module plat.ui.controls {
             for (let i = 0; i < length; ++i) {
                 option = options[i];
                 if (option.selected) {
-                    selectedValues.push(option.value);
+                    selectedValues.push(this._castValue(option.value));
                 }
             }
 
             return selectedValues;
+        }
+
+        /**
+         * @name _castValue
+         * @memberof plat.ui.controls.Select
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Casts a value to the determined initial property type.
+         *
+         * @returns {Array<string>} The selected values.
+         */
+        protected _castValue(value: any): any {
+            let type = this._propertyType;
+            if (isNull(type)) {
+                return value;
+            }
+
+            let castValue: any;
+            switch (type) {
+                case 'number':
+                    castValue = isEmpty(value) ? undefined : Number(value);
+                    break;
+                case 'boolean':
+                    switch (value) {
+                        case 'true':
+                            castValue = true;
+                            break;
+                        case 'false':
+                        case '0':
+                        case 'null':
+                        case 'undefined':
+                            castValue = false;
+                            break;
+                        default:
+                            castValue = !!value;
+                            break;
+                    }
+                    break;
+                default:
+                    castValue = value;
+                    break;
+            }
+
+            return castValue;
         }
 
         /**

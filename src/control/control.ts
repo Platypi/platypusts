@@ -781,7 +781,11 @@ module plat {
         observe(listener: (value: any, oldValue: any, identifier: any) => void, identifier?: any): IRemoveListener {
             let control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
                 root = Control.getRootControl(control);
+
             if (isNull(control)) {
+                return noop;
+            } else if (isNull(control.absoluteContextPath)) {
+                this._log.warn('Should not call plat.Control.observe prior to the control being loaded');
                 return noop;
             }
 
@@ -790,15 +794,25 @@ module plat {
                 absoluteIdentifier = control.absoluteContextPath;
             } else if (isString(identifier)) {
                 let identifierExpression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(identifier),
-                    expression = identifierExpression.identifiers[0],
-                    split: Array<string> = expression.split('.'),
-                    start = split.shift().slice(1),
-                    join = split.length > 0 ? ('.' + split.join('.')) : '';
+                    identifiers = identifierExpression.identifiers;
 
-                if (start === __ROOT_CONTEXT_RESOURCE) {
-                    absoluteIdentifier = __CONTEXT + join;
-                } else if (start === __CONTEXT_RESOURCE) {
-                    absoluteIdentifier = control.absoluteContextPath + join;
+                if (identifiers.length > 1) {
+                    this._log.warn('Only a single identifier can be observed when calling the function plat.Control.observe');
+                }
+
+                let expression = identifierExpression.identifiers[0];
+                if (expression[0] === __RESOURCE_PREFIX) {
+                    let split: Array<string> = expression.split('.'),
+                        start = split.shift().slice(1),
+                        join = split.length > 0 ? ('.' + split.join('.')) : '';
+
+                    if (start === __ROOT_CONTEXT_RESOURCE) {
+                        absoluteIdentifier = __CONTEXT + join;
+                    } else if (start === __CONTEXT_RESOURCE) {
+                        absoluteIdentifier = control.absoluteContextPath + join;
+                    } else {
+                        absoluteIdentifier = control.absoluteContextPath + '.' + expression;
+                    }
                 } else {
                     absoluteIdentifier = control.absoluteContextPath + '.' + expression;
                 }
@@ -1015,7 +1029,7 @@ module plat {
                 split = identifier.split('.');
                 topIdentifier = split[0];
 
-                if (identifier[0] === '@') {
+                if (identifier[0] === __RESOURCE_PREFIX) {
                     alias = topIdentifier.slice(1);
 
                     if (alias === __CONTEXT_RESOURCE) {
@@ -1588,10 +1602,11 @@ module plat {
              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
              * the listener will listen for changes to the bound item itself.
+             * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
             /**
              * @name observeProperty
              * @memberof plat.observable.IImplementTwoWayBinding
@@ -1608,56 +1623,52 @@ module plat {
              * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
              * If undefined or empty the listener will listen for changes to the bound Array itself.
+             * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
+
             /**
-             * @name observeProperty
+             * @name observeArrayChange
              * @memberof plat.observable.IImplementTwoWayBinding
              * @kind function
              * @access public
-             * @variation 2
+             * @variation 0
              *
              * @description
-             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
-             * bound property itself as well as potential child properties if being bound to an object.
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe array mutations of the
+             * bound property.
              *
-             * @typeparam {any} T The type of items in the Array if listening for Array mutations.
+             * @typeparam {any} T The type of items in the Array.
              *
              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
              * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
              * the listener will listen for changes to the bound item itself.
-             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
-             * listener of this type.
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void,
-                identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            observeArrayChange<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
             /**
-             * @name observeProperty
+             * @name observeArrayChange
              * @memberof plat.observable.IImplementTwoWayBinding
              * @kind function
              * @access public
-             * @variation 3
+             * @variation 1
              *
              * @description
-             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe both the
-             * bound property itself as well as potential child properties if being bound to an object.
+             * A function that allows a {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe array mutations of the
+             * bound property.
              *
-             * @typeparam {any} T The type of items in the Array if listening for Array mutations.
+             * @typeparam {any} T The type of items in the Array.
              *
              * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
              * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
              * If undefined or empty the listener will listen for changes to the bound Array itself.
-             * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
-             * listener of this type.
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void,
-                index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            observeArrayChange<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
 
             /**
              * @name evaluate

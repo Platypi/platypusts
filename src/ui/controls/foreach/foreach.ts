@@ -303,7 +303,6 @@ module plat.ui.controls {
             if (isArray(newValue)) {
                 this._setListener();
             } else {
-                this._log.debug(this.type + ' context set to something other than an Array.');
                 newValue = [];
             }
 
@@ -337,9 +336,6 @@ module plat.ui.controls {
             this._setAliases();
 
             if (!isArray(context)) {
-                if (!isNull(context)) {
-                    this._log.debug(this.type + ' context set to something other than an Array.');
-                }
                 return;
             }
 

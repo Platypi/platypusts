@@ -459,7 +459,7 @@ module plat.processing {
                 absoluteIdentifier = '',
                 isDefined = false;
 
-            if (identifier[0] === '@') {
+            if (identifier[0] === __RESOURCE_PREFIX) {
                 // we found an alias
                 let resourceObj: { resource: ui.IResource; control: ui.TemplateControl; },
                     resources: IObject<{ resource: ui.IResource; control: ui.TemplateControl; }> = {},
