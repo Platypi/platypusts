@@ -123,6 +123,18 @@ module plat.expressions {
          * An object whose keys represent a list of all unique aliases found in the JavaScript expression string.
          */
         private __aliases: IObject<boolean> = {};
+        /**
+         * @name __fnEvalConstant
+         * @memberof plat.expressions.Parser
+         * @kind property
+         * @access private
+         *
+         * @type {string}
+         *
+         * @description
+         * The constant that needs to be prepended to every dyanmic eval function.
+         */
+        private __fnEvalConstant: string = 'var initialContext,__RESOURCE_PREFIX=' + __RESOURCE_PREFIX + ';return ';
 
         /**
          * @name parse
@@ -283,8 +295,7 @@ module plat.expressions {
             this._makeIdentifiersUnique();
             let parsedExpression: IParsedExpression = {
                 evaluate: <any>new Function(__CONTEXT, __ALIASES,
-                    'var initialContext;' +
-                    'return ' + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
+                    this.__fnEvalConstant + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
                 expression: expression,
                 identifiers: this.__identifiers.slice(0),
                 aliases: Object.keys(this.__aliases)
