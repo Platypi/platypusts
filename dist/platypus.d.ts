@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.16.1 (https://platypi.io)
+  * PlatypusTS v0.17.0 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -1426,6 +1426,10 @@ declare module plat {
               * An object whose keys represent a list of all unique aliases found in the JavaScript expression string.
               */
             private __aliases;
+            /**
+              * The constant that needs to be prepended to every dyanmic eval function.
+              */
+            private __fnEvalConstant;
             /**
               * Parses a JavaScript expression string.
               * @param {string} expression The JavaScript expression string to parse.
@@ -3432,36 +3436,34 @@ declare module plat {
               * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
               * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
               * the listener will listen for changes to the bound item itself.
+              * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
               */
-            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
             /**
               * A function that allows a ISupportTwoWayBinding to observe both the
               * bound property itself as well as potential child properties if being bound to an object.
               * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener function.
               * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
               * If undefined or empty the listener will listen for changes to the bound Array itself.
+              * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
               */
-            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
             /**
-              * A function that allows a ISupportTwoWayBinding to observe both the
-              * bound property itself as well as potential child properties if being bound to an object.
+              * A function that allows a ISupportTwoWayBinding to observe array mutations of the
+              * bound property.
               * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: string) => void} listener The listener function.
               * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
               * the listener will listen for changes to the bound item itself.
-              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
-              * listener of this type.
               */
-            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void, identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            observeArrayChange<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
             /**
-              * A function that allows a ISupportTwoWayBinding to observe both the
-              * bound property itself as well as potential child properties if being bound to an object.
+              * A function that allows a ISupportTwoWayBinding to observe array mutations of the
+              * bound property.
               * @param {(changes: Array<plat.observable.IArrayChanges<T>>, identifier: number) => void} listener The listener function.
               * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
               * If undefined or empty the listener will listen for changes to the bound Array itself.
-              * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes. Should be set to true with a
-              * listener of this type.
               */
-            observeProperty<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void, index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            observeArrayChange<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
             /**
               * Gets the current value of the bound property.
               */
@@ -8613,6 +8615,10 @@ declare module plat {
                   */
                 protected _binder: observable.IImplementTwoWayBinding;
                 /**
+                  * The initial type of the bound property if defined.
+                  */
+                protected _propertyType: string;
+                /**
                   * Whether or not the Array listener has been set.
                   */
                 private __listenerSet;
@@ -8680,6 +8686,10 @@ declare module plat {
                   * Getter for select-multiple.
                   */
                 protected _getSelectedValues(): Array<string>;
+                /**
+                  * Casts a value to the determined initial property type.
+                  */
+                protected _castValue(value: any): any;
                 /**
                   * Sets a listener for the changes to the array.
                   */
@@ -11858,6 +11868,10 @@ declare module plat {
               */
             protected _property: string;
             /**
+              * The initial type of the bound property if defined.
+              */
+            protected _propertyType: string;
+            /**
               * Whether or not Bind is being used in conjunction
               * with a TemplateControl that implements the
               * interface ISupportTwoWayBinding.
@@ -11902,16 +11916,18 @@ declare module plat {
               * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
               * specified child changes.
               * @param {string} identifier? The identifier of the child property of the bound item.
+              * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
               */
-            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string): IRemoveListener;
+            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
             /**
               * The function that allows a control implementing ISupportTwoWayBinding to observe
               * changes to the bound property and/or its child properties.
               * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
               * specified child changes.
               * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
+              * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
               */
-            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number): IRemoveListener;
+            observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
             /**
               * A function that allows a ISupportTwoWayBinding to observe both the
               * bound property itself as well as potential child properties if being bound to an object.
@@ -11920,7 +11936,7 @@ declare module plat {
               * the listener will listen for changes to the bound item itself.
               * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
               */
-            observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string, arrayMutationsOnly?: boolean): IRemoveListener;
+            observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
             /**
               * A function that allows a ISupportTwoWayBinding to observe both the
               * bound property itself as well as potential child properties if being bound to an object.
@@ -11929,7 +11945,7 @@ declare module plat {
               * If undefined or empty the listener will listen for changes to the bound Array itself.
               * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
               */
-            observeProperty<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, index?: number, arrayMutationsOnly?: boolean): IRemoveListener;
+            observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
             /**
               * Adds a text event as the event listener.
               * Used for textarea and input[type="text"].
@@ -12046,8 +12062,15 @@ declare module plat {
             protected _watchExpression(): void;
             /**
               * Handles creating context with an identifier.
+              * @param {string} identifier The identifier to base the created context off of.
               */
             protected _createContext(identifier: string): any;
+            /**
+              * Handles casting the bound property back to its initial type if necessary.
+              * @param {any} value The value to cast.
+              * @param {any} type? The optional type to cast the value to.
+              */
+            protected _castProperty(value: any, type?: any): any;
             /**
               * Sets the context property being bound to when the
               * element's property is changed.
@@ -12066,6 +12089,22 @@ declare module plat {
               * ISupportTwoWayBinding and initializes all listeners accordingly.
               */
             protected _observingBindableProperty(): boolean;
+            /**
+              * A function that allows a ISupportTwoWayBinding to observe either the
+              * bound property specified by the identifier (as well as potential child properties if being bound to an object) or
+              * Array mutations.
+              * @param {Function} listener The listener function.
+              * @param {any} identifier? The index off of the bound object to listen to for changes if the bound object is an Array.
+              * If undefined or empty the listener will listen for changes to the bound Array itself.
+              * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
+              * @param {boolean} arrayMutations? Whether or not this is for Array mutation changes.
+              */
+            protected _observeProperty(listener: Function, identifier?: any, autocast?: boolean, arrayMutations?: boolean): IRemoveListener;
+            /**
+              * Gets the property type of the passed in argument.
+              * @param {any} value The value to grab the property type from.
+              */
+            protected _getPropertyType(value: any): any;
         }
         /**
           * A file interface for browsers that do not support the

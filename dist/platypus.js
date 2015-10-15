@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.16.1 (https://platypi.io)
+ * PlatypusTS v0.17.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -60,7 +60,7 @@ var plat;
     __BASE_SEGMENT_TYPE = 'base', __VARIABLE_SEGMENT_TYPE = 'variable', __STATIC_SEGMENT_TYPE = 'static', __SPLAT_SEGMENT_TYPE = 'splat', __DYNAMIC_SEGMENT_TYPE = 'dynamic', 
     /**
      */
-    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __CONTEXT_RESOURCE = __CONTEXT;
+    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __RESOURCE_PREFIX = '@', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __CONTEXT_RESOURCE = __CONTEXT;
     /* tslint:disable:no-unused-variable */
     var ___Promise, ___compat, __camelCaseRegex, __capitalCaseRegex, __nativeIsArray = !!Array.isArray;
     var __uids = {}, __objToString = Object.prototype.toString, __toStringClass = '[object ', __errorClass = __toStringClass + 'Error]', __fileClass = __toStringClass + 'File]', __arrayClass = __toStringClass + 'Array]', __boolClass = __toStringClass + 'Boolean]', __dateClass = __toStringClass + 'Date]', __funcClass = __toStringClass + 'Function]', __numberClass = __toStringClass + 'Number]', __objectClass = __toStringClass + 'Object]', __regexpClass = __toStringClass + 'RegExp]', __stringClass = __toStringClass + 'String]', __promiseClass = __toStringClass + 'Promise]', __objectTypes = {
@@ -2927,6 +2927,10 @@ var plat;
                  * An object whose keys represent a list of all unique aliases found in the JavaScript expression string.
                  */
                 this.__aliases = {};
+                /**
+                 * The constant that needs to be prepended to every dyanmic eval function.
+                 */
+                this.__fnEvalConstant = 'var initialContext,__RESOURCE_PREFIX="' + __RESOURCE_PREFIX + '";return ';
             }
             /**
              * Parses a JavaScript expression string.
@@ -3040,8 +3044,7 @@ var plat;
                 // make the identifiers array unqiue entries only 
                 this._makeIdentifiersUnique();
                 var parsedExpression = {
-                    evaluate: new Function(__CONTEXT, __ALIASES, 'var initialContext;' +
-                        'return ' + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
+                    evaluate: new Function(__CONTEXT, __ALIASES, this.__fnEvalConstant + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
                     expression: expression,
                     identifiers: this.__identifiers.slice(0),
                     aliases: Object.keys(this.__aliases)
@@ -3181,7 +3184,7 @@ var plat;
              * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
              */
             Parser.prototype.__convertFunction = function (index, token, useLocalContext) {
-                if (token[0] === '@') {
+                if (token[0] === __RESOURCE_PREFIX) {
                     this.__aliases[token.slice(1)] = true;
                 }
                 else if (isKeyword(token)) {
@@ -3332,7 +3335,7 @@ var plat;
                     return true;
                 }
                 var codeArray = this.__codeArray, codeStr = codeArray.pop(), identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, previousToken = this._lookBack(index), identifierIndexer = tempIdentifiers.pop(), hasIdentifierIndexer = !isNull(identifierIndexer), lastIndex;
-                if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
+                if (hasIdentifierIndexer && identifierIndexer[0] === __RESOURCE_PREFIX) {
                     codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
                     identifiers.push(identifierIndexer);
                     if (tempIdentifiers.length > 0) {
@@ -3429,7 +3432,7 @@ var plat;
              * @param {string} token The property used to find the initial context.
              */
             Parser.prototype.__findInitialContext = function (context, aliases, token) {
-                if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
+                if (token[0] === __RESOURCE_PREFIX && aliases !== null && typeof aliases === 'object') {
                     return aliases[token.slice(1)];
                 }
                 else if (context !== null && typeof context === 'object') {
@@ -7144,17 +7147,31 @@ var plat;
             if (isNull(control)) {
                 return noop;
             }
+            else if (isNull(control.absoluteContextPath)) {
+                this._log.warn('Should not call plat.Control.observe prior to the control being loaded');
+                return noop;
+            }
             var absoluteIdentifier;
             if (isEmpty(identifier)) {
                 absoluteIdentifier = control.absoluteContextPath;
             }
             else if (isString(identifier)) {
-                var identifierExpression = (Control._parser || acquire(__Parser)).parse(identifier), expression = identifierExpression.identifiers[0], split = expression.split('.'), start = split.shift().slice(1), join = split.length > 0 ? ('.' + split.join('.')) : '';
-                if (start === __ROOT_CONTEXT_RESOURCE) {
-                    absoluteIdentifier = __CONTEXT + join;
+                var identifierExpression = (Control._parser || acquire(__Parser)).parse(identifier), identifiers = identifierExpression.identifiers;
+                if (identifiers.length > 1) {
+                    this._log.warn('Only a single identifier can be observed when calling the function plat.Control.observe');
                 }
-                else if (start === __CONTEXT_RESOURCE) {
-                    absoluteIdentifier = control.absoluteContextPath + join;
+                var expression = identifierExpression.identifiers[0];
+                if (expression[0] === __RESOURCE_PREFIX) {
+                    var split = expression.split('.'), start = split.shift().slice(1), join = split.length > 0 ? ('.' + split.join('.')) : '';
+                    if (start === __ROOT_CONTEXT_RESOURCE) {
+                        absoluteIdentifier = __CONTEXT + join;
+                    }
+                    else if (start === __CONTEXT_RESOURCE) {
+                        absoluteIdentifier = control.absoluteContextPath + join;
+                    }
+                    else {
+                        absoluteIdentifier = control.absoluteContextPath + '.' + expression;
+                    }
                 }
                 else {
                     absoluteIdentifier = control.absoluteContextPath + '.' + expression;
@@ -7247,7 +7264,7 @@ var plat;
                 identifier = identifiers[i];
                 split = identifier.split('.');
                 topIdentifier = split[0];
-                if (identifier[0] === '@') {
+                if (identifier[0] === __RESOURCE_PREFIX) {
                     alias = topIdentifier.slice(1);
                     if (alias === __CONTEXT_RESOURCE) {
                         managers[absoluteContextPath + identifier.replace(topIdentifier, '')] = contextManager;
@@ -7494,7 +7511,7 @@ var plat;
                 resources = resources || {};
                 for (var i = 0; i < length; ++i) {
                     alias = aliases[i];
-                    if (alias[0] === '@') {
+                    if (alias[0] === __RESOURCE_PREFIX) {
                         alias = alias.slice(1);
                     }
                     if (alias === __CONTEXT_RESOURCE) {
@@ -7548,7 +7565,7 @@ var plat;
                 if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
                     return;
                 }
-                if (alias[0] === '@') {
+                if (alias[0] === __RESOURCE_PREFIX) {
                     alias = alias.slice(1);
                 }
                 var isRootContext = alias === __ROOT_CONTEXT_RESOURCE;
@@ -12053,7 +12070,6 @@ var plat;
                         this._setListener();
                     }
                     else {
-                        this._log.debug(this.type + ' context set to something other than an Array.');
                         newValue = [];
                     }
                     this._executeEvent([{
@@ -12072,9 +12088,6 @@ var plat;
                     }
                     this._setAliases();
                     if (!isArray(context)) {
-                        if (!isNull(context)) {
-                            this._log.debug(this.type + ' context set to something other than an Array.');
-                        }
                         return;
                     }
                     var addQueue = this._addQueue, itemCount = context.length;
@@ -13050,7 +13063,6 @@ var plat;
                         return;
                     }
                     else if (!isArray(newValue)) {
-                        this._log.debug(this.type + ' context set to something other than an Array.');
                         return;
                     }
                     var newLength = isArray(newValue) ? newValue.length : 0, oldLength = isArray(oldValue) ? oldValue.length : 0;
@@ -13074,7 +13086,6 @@ var plat;
                     this._defaultOption = this.element.firstElementChild;
                     var context = this.context;
                     if (!isArray(context)) {
-                        this._log.debug(this.type + ' context set to something other than an Array.');
                         return;
                     }
                     this._addItems(context.length, 0);
@@ -13098,21 +13109,21 @@ var plat;
                  * databinding.
                  */
                 Select.prototype.observeProperties = function (binder) {
-                    var element = this.element, setter;
+                    var _this = this;
+                    var element = this.element;
                     this._binder = binder;
                     if (element.multiple) {
-                        setter = this._setSelectedIndices;
                         if (isNull(binder.evaluate())) {
                             this.inputChanged([]);
                         }
-                        binder.observeProperty(function () {
-                            setter(binder.evaluate(), null, null);
-                        }, null, true);
+                        binder.observeProperty(this._setSelectedIndices);
+                        binder.observeArrayChange(function () {
+                            _this._setSelectedIndices(binder.evaluate(), null, null);
+                        });
                     }
                     else {
-                        setter = this._setSelectedIndex;
+                        binder.observeProperty(this._setSelectedIndex);
                     }
-                    binder.observeProperty(setter);
                     this.addEventListener(element, 'change', this._observeChange, false);
                 };
                 /**
@@ -13138,19 +13149,25 @@ var plat;
                         return;
                     }
                     else if (!isString(newValue)) {
-                        var message;
                         if (isNumber(newValue)) {
+                            this._propertyType = 'number';
                             newValue = newValue.toString();
-                            message = 'Trying to bind a value of type number to a ' + this.type + '\'s element. ' +
-                                'The value will implicitly be converted to type string.';
+                        }
+                        else if (isBoolean(newValue)) {
+                            this._propertyType = 'boolean';
+                            newValue = newValue.toString();
                         }
                         else {
-                            message = 'Trying to bind a value that is not a string to a ' + this.type + '\'s element. ' +
-                                'The element\'s selected index will be set to -1.';
+                            if (isFunction(newValue.toString)) {
+                                newValue = newValue.toString();
+                            }
+                            else {
+                                newValue = Object.prototype.toString.call(newValue);
+                            }
+                            this._log.info('Trying to bind the invalid value "' + newValue + '" to a ' + this.type + '.');
                         }
-                        this._log.info(message);
                     }
-                    else if (value === newValue) {
+                    if (value === newValue) {
                         return;
                     }
                     this.itemsLoaded.then(function () {
@@ -13158,7 +13175,7 @@ var plat;
                             element.value = newValue;
                             if (element.value !== newValue) {
                                 element.value = value;
-                                _this.inputChanged(element.value);
+                                _this.inputChanged(_this._castValue(element.value));
                             }
                             return;
                         }
@@ -13179,8 +13196,8 @@ var plat;
                  */
                 Select.prototype._setSelectedIndices = function (newValue, oldValue, identifier, firstTime) {
                     var _this = this;
-                    var element = this.element, options = element.options, length = isNull(options) ? 0 : options.length, option, nullValue = isNull(newValue);
                     this.itemsLoaded.then(function () {
+                        var element = _this.element, options = element.options, length = isNull(options) ? 0 : options.length, option, nullValue = isNull(newValue);
                         if (nullValue || !isArray(newValue)) {
                             if (firstTime === true && isNull(_this._binder.evaluate())) {
                                 _this.inputChanged(_this._getSelectedValues());
@@ -13196,12 +13213,29 @@ var plat;
                             }
                             return;
                         }
-                        var value, numberValue;
+                        var value, numberValue, index, highestIndex = Infinity;
                         while (length-- > 0) {
                             option = options[length];
                             value = option.value;
+                            if (newValue.indexOf(value) !== -1) {
+                                option.selected = true;
+                                continue;
+                            }
                             numberValue = Number(value);
-                            if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                            if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                                if (index < highestIndex) {
+                                    _this._propertyType = 'number';
+                                    highestIndex = index;
+                                }
+                                option.selected = true;
+                                continue;
+                            }
+                            else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
+                                value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                                if (index < highestIndex) {
+                                    _this._propertyType = 'boolean';
+                                    highestIndex = index;
+                                }
                                 option.selected = true;
                                 continue;
                             }
@@ -13214,7 +13248,7 @@ var plat;
                  */
                 Select.prototype._observeChange = function () {
                     var element = this.element;
-                    this.inputChanged(element.multiple ? this._getSelectedValues() : element.value);
+                    this.inputChanged(element.multiple ? this._getSelectedValues() : this._castValue(element.value));
                 };
                 /**
                  * Getter for select-multiple.
@@ -13224,10 +13258,45 @@ var plat;
                     for (var i = 0; i < length; ++i) {
                         option = options[i];
                         if (option.selected) {
-                            selectedValues.push(option.value);
+                            selectedValues.push(this._castValue(option.value));
                         }
                     }
                     return selectedValues;
+                };
+                /**
+                 * Casts a value to the determined initial property type.
+                 */
+                Select.prototype._castValue = function (value) {
+                    var type = this._propertyType;
+                    if (isNull(type)) {
+                        return value;
+                    }
+                    var castValue;
+                    switch (type) {
+                        case 'number':
+                            castValue = isEmpty(value) ? undefined : Number(value);
+                            break;
+                        case 'boolean':
+                            switch (value) {
+                                case 'true':
+                                    castValue = true;
+                                    break;
+                                case 'false':
+                                case '0':
+                                case 'null':
+                                case 'undefined':
+                                    castValue = false;
+                                    break;
+                                default:
+                                    castValue = !!value;
+                                    break;
+                            }
+                            break;
+                        default:
+                            castValue = value;
+                            break;
+                    }
+                    return castValue;
                 };
                 /**
                  * Sets a listener for the changes to the array.
@@ -14055,7 +14124,7 @@ var plat;
              */
             NodeManager.__getObservationDetails = function (identifier, control) {
                 var _ContextManager = NodeManager._ContextManager, manager, split = identifier.split('.'), absoluteIdentifier = '', isDefined = false;
-                if (identifier[0] === '@') {
+                if (identifier[0] === __RESOURCE_PREFIX) {
                     // we found an alias 
                     var resourceObj, resources = {}, topIdentifier = split.shift(), alias = topIdentifier.slice(1);
                     if (split.length > 0) {
@@ -14634,7 +14703,7 @@ var plat;
                     var uiControl = controlNode.control, childContext = nodeMap.childContext, getManager = this._ContextManager.getManager, contextManager, absoluteContextPath = isNull(parent) ? __CONTEXT : parent.absoluteContextPath, _TemplateControlFactory = this._TemplateControlFactory, inheritsContext = !uiControl.hasOwnContext;
                     controls.push(uiControl);
                     if (inheritsContext && !isNull(childContext)) {
-                        if (childContext[0] === '@') {
+                        if (childContext[0] === __RESOURCE_PREFIX) {
                             var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl, alias);
                             if (isObject(resourceObj)) {
                                 var resource = resourceObj.resource;
@@ -17058,7 +17127,7 @@ var plat;
                     aliases = parent.getResources(this._aliases);
                     argContext = parent.context;
                 }
-                if (listenerStr[0] !== '@') {
+                if (listenerStr[0] !== __RESOURCE_PREFIX) {
                     listener = this.findProperty(listenerStr);
                     if (isNull(listener)) {
                         this._log.warn('Could not find property ' + listenerStr + ' on any parent control.');
@@ -18435,7 +18504,7 @@ var plat;
                 var attr = camelCase(this.type), _parser = this._parser, expression = this._expression = _parser.parse(this.attributes[attr]);
                 var identifiers = expression.identifiers;
                 if (identifiers.length !== 1) {
-                    this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression');
+                    this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression.');
                     this._contextExpression = null;
                     return;
                 }
@@ -18511,55 +18580,11 @@ var plat;
                 }
                 return this.evaluateExpression(expression);
             };
-            Bind.prototype.observeProperty = function (listener, identifier, arrayMutationsOnly) {
-                var _this = this;
-                var parsedIdentifier;
-                if (isEmpty(identifier)) {
-                    parsedIdentifier = this._expression.expression;
-                }
-                else if (isNumber(identifier)) {
-                    parsedIdentifier = this._expression.expression + '.' + identifier;
-                }
-                else {
-                    var _parser = this._parser, identifierExpression = _parser.parse(identifier), identifiers = identifierExpression.identifiers;
-                    if (identifiers.length !== 1) {
-                        this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
-                            'implementing ISupportTwoWayBinding and working with ' + this.type);
-                        return;
-                    }
-                    var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
-                    parsedIdentifier = expression.identifiers[0];
-                    var split = parsedIdentifier.split('.');
-                    split.pop();
-                    var contextExpression = split.join('.'), context = this.evaluateExpression(contextExpression);
-                    if (!isObject(context)) {
-                        if (isNull(context)) {
-                            context = this._ContextManager.createContext(this.parent, contextExpression);
-                        }
-                        else {
-                            this._log.warn('A control implementing ISupportTwoWayBinding is trying to index into a primitive type ' +
-                                'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
-                            return;
-                        }
-                    }
-                }
-                listener = listener.bind(this.templateControl);
-                var removeListener;
-                if (arrayMutationsOnly === true) {
-                    removeListener = this.observeArray(function (changes) {
-                        listener(changes, identifier);
-                    }, parsedIdentifier);
-                }
-                else {
-                    removeListener = this.observe(function (newValue, oldValue) {
-                        if (_this.__isSelf || newValue === oldValue) {
-                            return;
-                        }
-                        listener(newValue, oldValue, identifier);
-                    }, parsedIdentifier);
-                }
-                listener(this.evaluateExpression(parsedIdentifier), undefined, identifier, true);
-                return removeListener;
+            Bind.prototype.observeProperty = function (listener, identifier, autocast) {
+                return this._observeProperty(listener, identifier, autocast);
+            };
+            Bind.prototype.observeArrayChange = function (listener, identifier) {
+                return this._observeProperty(listener, identifier, false, true);
             };
             /**
              * Adds a text event as the event listener.
@@ -18746,7 +18771,7 @@ var plat;
                     return;
                 }
                 if (isEmpty(newValue)) {
-                    newValue = 0;
+                    newValue = newValue === '' ? '0' : 0;
                     if (firstTime === true) {
                         if (isEmpty(this.element.value)) {
                             this._setValue(newValue);
@@ -18786,6 +18811,16 @@ var plat;
              */
             Bind.prototype._setValue = function (newValue) {
                 var element = this.element;
+                if (!isString(newValue)) {
+                    if (isNumber(newValue)) {
+                        this._propertyType = 'number';
+                        newValue = newValue.toString();
+                    }
+                    else if (isBoolean(newValue)) {
+                        this._propertyType = 'boolean';
+                        newValue = newValue.toString();
+                    }
+                }
                 if (element.value === newValue) {
                     return;
                 }
@@ -18803,11 +18838,12 @@ var plat;
                     return;
                 }
                 else if (!isBoolean(newValue)) {
+                    newValue = !!newValue;
                     if (firstTime === true) {
+                        this.element.checked = newValue;
                         this._propertyChanged();
                         return;
                     }
-                    newValue = !!newValue;
                 }
                 this.element.checked = newValue;
             };
@@ -18820,9 +18856,21 @@ var plat;
                 if (this.__isSelf) {
                     return;
                 }
-                else if (isNull(newValue) && element.checked) {
-                    this._propertyChanged();
+                else if (isNull(newValue)) {
+                    if (element.checked) {
+                        this._propertyChanged();
+                    }
                     return;
+                }
+                else if (!isString(newValue)) {
+                    if (isNumber(newValue)) {
+                        this._propertyType = 'number';
+                        newValue = newValue.toString();
+                    }
+                    else if (isBoolean(newValue)) {
+                        this._propertyType = 'boolean';
+                        newValue = newValue.toString();
+                    }
                 }
                 element.checked = (element.value === newValue);
             };
@@ -18847,22 +18895,22 @@ var plat;
                     return;
                 }
                 else if (!isString(newValue)) {
-                    var message;
                     if (isNumber(newValue)) {
+                        this._propertyType = 'number';
                         newValue = newValue.toString();
-                        message = 'Trying to bind a value of type number to a <select> element. ' +
-                            'The value will implicitly be converted to type string.';
+                    }
+                    else if (isBoolean(newValue)) {
+                        this._propertyType = 'boolean';
+                        newValue = newValue.toString();
                     }
                     else {
-                        message = 'Trying to bind a value that is not a string to a <select> element. ' +
-                            'The element\'s selected index will be set to -1.';
+                        this._log.info('Trying to bind an invalid value to a <select> element using a ' + this.type + '.');
                     }
-                    this._log.info(message);
                 }
-                else if (value === newValue) {
+                if (value === newValue) {
                     return;
                 }
-                if (!this._document.body.contains(element)) {
+                else if (!this._document.body.contains(element)) {
                     element.value = newValue;
                     if (element.value !== newValue) {
                         element.value = value;
@@ -18904,12 +18952,29 @@ var plat;
                     }
                     return;
                 }
-                var value, numberValue;
+                var value, numberValue, index, highestIndex = Infinity;
                 while (length-- > 0) {
                     option = options[length];
                     value = option.value;
+                    if (newValue.indexOf(value) !== -1) {
+                        option.selected = true;
+                        continue;
+                    }
                     numberValue = Number(value);
-                    if (newValue.indexOf(value) !== -1 || (isNumber(numberValue) && newValue.indexOf(numberValue) !== -1)) {
+                    if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                        if (index < highestIndex) {
+                            this._propertyType = 'number';
+                            highestIndex = index;
+                        }
+                        option.selected = true;
+                        continue;
+                    }
+                    else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
+                        value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                        if (index < highestIndex) {
+                            this._propertyType = 'boolean';
+                            highestIndex = index;
+                        }
                         option.selected = true;
                         continue;
                     }
@@ -19020,6 +19085,7 @@ var plat;
             };
             /**
              * Handles creating context with an identifier.
+             * @param {string} identifier The identifier to base the created context off of.
              */
             Bind.prototype._createContext = function (identifier) {
                 var split = identifier.split('.'), start = split.shift().slice(1), parent = this.parent;
@@ -19033,6 +19099,76 @@ var plat;
                 return this._ContextManager.createContext(parent, identifier);
             };
             /**
+             * Handles casting the bound property back to its initial type if necessary.
+             * @param {any} value The value to cast.
+             * @param {any} type? The optional type to cast the value to.
+             */
+            Bind.prototype._castProperty = function (value, type) {
+                var castValue;
+                type = type || this._propertyType;
+                if (isNull(type)) {
+                    return value;
+                }
+                else if (isObject(value)) {
+                    if (isArray(value)) {
+                        var length_11 = value.length;
+                        castValue = [];
+                        for (var i = 0; i < length_11; ++i) {
+                            castValue.push(this._castProperty(value[i], type));
+                        }
+                    }
+                    else if (isDate(value) || isFile(value) || isPromise(value) || isWindow(value) || isNode(value)) {
+                        castValue = value;
+                    }
+                    else {
+                        var keys = Object.keys(value), key;
+                        castValue = {};
+                        while (keys.length > 0) {
+                            key = keys.pop();
+                            castValue[key] = value[key];
+                        }
+                    }
+                }
+                else {
+                    switch (type) {
+                        case 'string':
+                            if (isString(value)) {
+                                castValue = value;
+                            }
+                            else if (isFunction(value.toString)) {
+                                castValue = value.toString();
+                            }
+                            else {
+                                castValue = Object.prototype.toString.call(value);
+                            }
+                            break;
+                        case 'number':
+                            castValue = isEmpty(value) ? undefined : Number(value);
+                            break;
+                        case 'boolean':
+                            switch (value) {
+                                case 'true':
+                                    castValue = true;
+                                    break;
+                                case 'false':
+                                case '0':
+                                case 'null':
+                                case 'undefined':
+                                    castValue = false;
+                                    break;
+                                default:
+                                    castValue = !!value;
+                                    break;
+                            }
+                            break;
+                        default:
+                            castValue = value;
+                            break;
+                    }
+                }
+                return castValue;
+            };
+            /**
              * Sets the context property being bound to when the
              * element's property is changed.
              */
@@ -19040,9 +19176,12 @@ var plat;
                 if (isNull(this._contextExpression)) {
                     return;
                 }
-                var context = this.evaluateExpression(this._contextExpression), property = this._property;
-                var newValue = this._getter();
-                if (isNull(context) || context[property] === newValue) {
+                var context = this.evaluateExpression(this._contextExpression);
+                if (!isObject(context)) {
+                    return;
+                }
+                var property = this._property, newValue = this._castProperty(this._getter());
+                if (context[property] === newValue) {
                     return;
                 }
                 // set flag to let setter functions know we changed the property 
@@ -19103,6 +19242,92 @@ var plat;
                     return (this._supportsTwoWayBinding = true);
                 }
                 return false;
+            };
+            /**
+             * A function that allows a ISupportTwoWayBinding to observe either the
+             * bound property specified by the identifier (as well as potential child properties if being bound to an object) or
+             * Array mutations.
+             * @param {Function} listener The listener function.
+             * @param {any} identifier? The index off of the bound object to listen to for changes if the bound object is an Array.
+             * If undefined or empty the listener will listen for changes to the bound Array itself.
+             * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
+             * @param {boolean} arrayMutations? Whether or not this is for Array mutation changes.
+             */
+            Bind.prototype._observeProperty = function (listener, identifier, autocast, arrayMutations) {
+                var _this = this;
+                var parsedIdentifier;
+                if (isEmpty(identifier)) {
+                    parsedIdentifier = this._expression.expression;
+                }
+                else if (isNumber(identifier)) {
+                    parsedIdentifier = this._expression.expression + '.' + identifier;
+                }
+                else {
+                    var _parser = this._parser, identifierExpression = _parser.parse(identifier), identifiers = identifierExpression.identifiers;
+                    if (identifiers.length !== 1) {
+                        this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
+                            'implementing observable.ISupportTwoWayBinding and working with ' + this.type);
+                        return;
+                    }
+                    var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
+                    parsedIdentifier = expression.identifiers[0];
+                    var split = parsedIdentifier.split('.');
+                    split.pop();
+                    var contextExpression = split.join('.'), context = this.evaluateExpression(contextExpression);
+                    if (!isObject(context)) {
+                        if (isNull(context)) {
+                            context = this._ContextManager.createContext(this.parent, contextExpression);
+                        }
+                        else {
+                            this._log.warn('A control implementing observable.ISupportTwoWayBinding is trying to index into a primitive type ' +
+                                'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
+                            return;
+                        }
+                    }
+                }
+                listener = listener.bind(this.templateControl);
+                autocast = autocast === true;
+                var removeListener;
+                if (arrayMutations === true) {
+                    removeListener = this.observeArray(function (changes) {
+                        listener(changes, identifier);
+                    }, parsedIdentifier);
+                }
+                else {
+                    removeListener = this.observe(function (newValue, oldValue) {
+                        if (_this.__isSelf || newValue === oldValue) {
+                            return;
+                        }
+                        else if (autocast) {
+                            _this._propertyType = _this._getPropertyType(newValue);
+                        }
+                        listener(newValue, oldValue, identifier);
+                    }, parsedIdentifier);
+                    var value = this.evaluateExpression(parsedIdentifier);
+                    if (autocast) {
+                        this._propertyType = this._getPropertyType(value);
+                    }
+                    listener(value, undefined, identifier, true);
+                }
+                return removeListener;
+            };
+            /**
+             * Gets the property type of the passed in argument.
+             * @param {any} value The value to grab the property type from.
+             */
+            Bind.prototype._getPropertyType = function (value) {
+                if (isObject(value)) {
+                    return value;
+                }
+                else if (isString(value)) {
+                    return 'string';
+                }
+                else if (isNumber(value)) {
+                    return 'number';
+                }
+                else if (isBoolean(value)) {
+                    return 'boolean';
+                }
             };
             Bind._inject = {
                 _parser: __Parser,
