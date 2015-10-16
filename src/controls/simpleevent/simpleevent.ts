@@ -183,7 +183,7 @@ module plat.controls {
                 argContext = parent.context;
             }
 
-            if (listenerStr[0] !== __RESOURCE_PREFIX) {
+            if (listenerStr[0] !== '@') {
                 listener = this.findProperty(listenerStr);
 
                 if (isNull(listener)) {

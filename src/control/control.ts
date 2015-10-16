@@ -801,7 +801,7 @@ module plat {
                 }
 
                 let expression = identifierExpression.identifiers[0];
-                if (expression[0] === __RESOURCE_PREFIX) {
+                if (expression[0] === '@') {
                     let split: Array<string> = expression.split('.'),
                         start = split.shift().slice(1),
                         join = split.length > 0 ? ('.' + split.join('.')) : '';
@@ -1029,7 +1029,7 @@ module plat {
                 split = identifier.split('.');
                 topIdentifier = split[0];
 
-                if (identifier[0] === __RESOURCE_PREFIX) {
+                if (identifier[0] === '@') {
                     alias = topIdentifier.slice(1);
 
                     if (alias === __CONTEXT_RESOURCE) {

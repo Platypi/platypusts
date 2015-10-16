@@ -1031,7 +1031,7 @@ module plat.processing {
                 controls.push(uiControl);
 
                 if (inheritsContext && !isNull(childContext)) {
-                    if (childContext[0] === __RESOURCE_PREFIX) {
+                    if (childContext[0] === '@') {
                         let split = childContext.split('.'),
                             topIdentifier = split.shift(),
                             alias = topIdentifier.slice(1),

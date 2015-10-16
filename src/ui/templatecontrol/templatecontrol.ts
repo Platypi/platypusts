@@ -524,7 +524,7 @@ module plat.ui {
             for (let i = 0; i < length; ++i) {
                 alias = aliases[i];
 
-                if (alias[0] === __RESOURCE_PREFIX) {
+                if (alias[0] === '@') {
                     alias = alias.slice(1);
                 }
 
@@ -596,7 +596,7 @@ module plat.ui {
                 return;
             }
 
-            if (alias[0] === __RESOURCE_PREFIX) {
+            if (alias[0] === '@') {
                 alias = alias.slice(1);
             }
 

@@ -134,7 +134,7 @@ module plat.expressions {
          * @description
          * The constant that needs to be prepended to every dyanmic eval function.
          */
-        private __fnEvalConstant: string = 'var initialContext,__RESOURCE_PREFIX="' + __RESOURCE_PREFIX + '";return ';
+        private __fnEvalConstant: string = 'var initialContext;return ';
 
         /**
          * @name parse
@@ -544,7 +544,7 @@ module plat.expressions {
          * @returns {string} The correctly evaluated object or function represented as a string.
          */
         private __convertFunction(index: number, token: string, useLocalContext: boolean): string {
-            if (token[0] === __RESOURCE_PREFIX) {
+            if (token[0] === '@') {
                 this.__aliases[token.slice(1)] = true;
             } else if (isKeyword(token)) {
                 this.__tempIdentifiers.push('.');
@@ -779,7 +779,7 @@ module plat.expressions {
                 hasIdentifierIndexer = !isNull(identifierIndexer),
                 lastIndex: number;
 
-            if (hasIdentifierIndexer && identifierIndexer[0] === __RESOURCE_PREFIX) {
+            if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                 codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
                 identifiers.push(identifierIndexer);
                 if (tempIdentifiers.length > 0) {
@@ -933,7 +933,7 @@ module plat.expressions {
          * @returns {any} The correct initial context.
          */
         private __findInitialContext(context: any, aliases: any, token: string): any {
-            if (token[0] === __RESOURCE_PREFIX && aliases !== null && typeof aliases === 'object') {
+            if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
                 return aliases[token.slice(1)];
             } else if (context !== null && typeof context === 'object') {
                 return context[token];
