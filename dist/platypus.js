@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.17.0 (https://platypi.io)
+ * PlatypusTS v0.17.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -60,7 +60,7 @@ var plat;
     __BASE_SEGMENT_TYPE = 'base', __VARIABLE_SEGMENT_TYPE = 'variable', __STATIC_SEGMENT_TYPE = 'static', __SPLAT_SEGMENT_TYPE = 'splat', __DYNAMIC_SEGMENT_TYPE = 'dynamic', 
     /**
      */
-    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __RESOURCE_PREFIX = '@', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __CONTEXT_RESOURCE = __CONTEXT;
+    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __CONTEXT_RESOURCE = __CONTEXT;
     /* tslint:disable:no-unused-variable */
     var ___Promise, ___compat, __camelCaseRegex, __capitalCaseRegex, __nativeIsArray = !!Array.isArray;
     var __uids = {}, __objToString = Object.prototype.toString, __toStringClass = '[object ', __errorClass = __toStringClass + 'Error]', __fileClass = __toStringClass + 'File]', __arrayClass = __toStringClass + 'Array]', __boolClass = __toStringClass + 'Boolean]', __dateClass = __toStringClass + 'Date]', __funcClass = __toStringClass + 'Function]', __numberClass = __toStringClass + 'Number]', __objectClass = __toStringClass + 'Object]', __regexpClass = __toStringClass + 'RegExp]', __stringClass = __toStringClass + 'String]', __promiseClass = __toStringClass + 'Promise]', __objectTypes = {
@@ -2930,7 +2930,7 @@ var plat;
                 /**
                  * The constant that needs to be prepended to every dyanmic eval function.
                  */
-                this.__fnEvalConstant = 'var initialContext,__RESOURCE_PREFIX="' + __RESOURCE_PREFIX + '";return ';
+                this.__fnEvalConstant = 'var initialContext;return ';
             }
             /**
              * Parses a JavaScript expression string.
@@ -3184,7 +3184,7 @@ var plat;
              * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
              */
             Parser.prototype.__convertFunction = function (index, token, useLocalContext) {
-                if (token[0] === __RESOURCE_PREFIX) {
+                if (token[0] === '@') {
                     this.__aliases[token.slice(1)] = true;
                 }
                 else if (isKeyword(token)) {
@@ -3335,7 +3335,7 @@ var plat;
                     return true;
                 }
                 var codeArray = this.__codeArray, codeStr = codeArray.pop(), identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, previousToken = this._lookBack(index), identifierIndexer = tempIdentifiers.pop(), hasIdentifierIndexer = !isNull(identifierIndexer), lastIndex;
-                if (hasIdentifierIndexer && identifierIndexer[0] === __RESOURCE_PREFIX) {
+                if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
                     codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
                     identifiers.push(identifierIndexer);
                     if (tempIdentifiers.length > 0) {
@@ -3432,7 +3432,7 @@ var plat;
              * @param {string} token The property used to find the initial context.
              */
             Parser.prototype.__findInitialContext = function (context, aliases, token) {
-                if (token[0] === __RESOURCE_PREFIX && aliases !== null && typeof aliases === 'object') {
+                if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
                     return aliases[token.slice(1)];
                 }
                 else if (context !== null && typeof context === 'object') {
@@ -7161,7 +7161,7 @@ var plat;
                     this._log.warn('Only a single identifier can be observed when calling the function plat.Control.observe');
                 }
                 var expression = identifierExpression.identifiers[0];
-                if (expression[0] === __RESOURCE_PREFIX) {
+                if (expression[0] === '@') {
                     var split = expression.split('.'), start = split.shift().slice(1), join = split.length > 0 ? ('.' + split.join('.')) : '';
                     if (start === __ROOT_CONTEXT_RESOURCE) {
                         absoluteIdentifier = __CONTEXT + join;
@@ -7264,7 +7264,7 @@ var plat;
                 identifier = identifiers[i];
                 split = identifier.split('.');
                 topIdentifier = split[0];
-                if (identifier[0] === __RESOURCE_PREFIX) {
+                if (identifier[0] === '@') {
                     alias = topIdentifier.slice(1);
                     if (alias === __CONTEXT_RESOURCE) {
                         managers[absoluteContextPath + identifier.replace(topIdentifier, '')] = contextManager;
@@ -7511,7 +7511,7 @@ var plat;
                 resources = resources || {};
                 for (var i = 0; i < length; ++i) {
                     alias = aliases[i];
-                    if (alias[0] === __RESOURCE_PREFIX) {
+                    if (alias[0] === '@') {
                         alias = alias.slice(1);
                     }
                     if (alias === __CONTEXT_RESOURCE) {
@@ -7565,7 +7565,7 @@ var plat;
                 if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
                     return;
                 }
-                if (alias[0] === __RESOURCE_PREFIX) {
+                if (alias[0] === '@') {
                     alias = alias.slice(1);
                 }
                 var isRootContext = alias === __ROOT_CONTEXT_RESOURCE;
@@ -14124,7 +14124,7 @@ var plat;
              */
             NodeManager.__getObservationDetails = function (identifier, control) {
                 var _ContextManager = NodeManager._ContextManager, manager, split = identifier.split('.'), absoluteIdentifier = '', isDefined = false;
-                if (identifier[0] === __RESOURCE_PREFIX) {
+                if (identifier[0] === '@') {
                     // we found an alias 
                     var resourceObj, resources = {}, topIdentifier = split.shift(), alias = topIdentifier.slice(1);
                     if (split.length > 0) {
@@ -14703,7 +14703,7 @@ var plat;
                     var uiControl = controlNode.control, childContext = nodeMap.childContext, getManager = this._ContextManager.getManager, contextManager, absoluteContextPath = isNull(parent) ? __CONTEXT : parent.absoluteContextPath, _TemplateControlFactory = this._TemplateControlFactory, inheritsContext = !uiControl.hasOwnContext;
                     controls.push(uiControl);
                     if (inheritsContext && !isNull(childContext)) {
-                        if (childContext[0] === __RESOURCE_PREFIX) {
+                        if (childContext[0] === '@') {
                             var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl, alias);
                             if (isObject(resourceObj)) {
                                 var resource = resourceObj.resource;
@@ -17127,7 +17127,7 @@ var plat;
                     aliases = parent.getResources(this._aliases);
                     argContext = parent.context;
                 }
-                if (listenerStr[0] !== __RESOURCE_PREFIX) {
+                if (listenerStr[0] !== '@') {
                     listener = this.findProperty(listenerStr);
                     if (isNull(listener)) {
                         this._log.warn('Could not find property ' + listenerStr + ' on any parent control.');
