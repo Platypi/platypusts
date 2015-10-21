@@ -16568,7 +16568,16 @@ var plat;
                         segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
                         childUrl = childUrl.replace(segment, '');
                     }
-                    result = this._childRecognizer.recognize(childUrl);
+                    if (childUrl === '/' || childUrl === '') {
+                        childUrl = '';
+                        some(function (child) {
+                            result = child._recognizer.recognize(childUrl);
+                            return !isEmpty(result);
+                        }, this.children);
+                    }
+                    else {
+                        result = this._childRecognizer.recognize(childUrl);
+                    }
                     if (isEmpty(result)) {
                         if (!emptyResult) {
                             result = recognizer.recognize(url);
@@ -16825,7 +16834,13 @@ var plat;
                 if (poll === void 0) { poll = true; }
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
                 if (!poll) {
-                    return this._resolve(true);
+                    return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then(function () {
+                        return _this._callInterceptors(info);
+                    }).then(function () {
+                        return true;
+                    }, function () {
+                        return true;
+                    });
                 }
                 return this._canNavigateFrom(sameRoute)
                     .then(function (canNavigateFrom) {
