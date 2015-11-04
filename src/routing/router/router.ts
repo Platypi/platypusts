@@ -831,7 +831,17 @@
                     childUrl = childUrl.replace(segment, '');
                 }
 
-                result = this._childRecognizer.recognize(childUrl);
+                if (childUrl === '/' || childUrl === '') {
+                    childUrl = '';
+
+                    some((child: Router) => {
+                        result = child._recognizer.recognize(childUrl);
+
+                        return !isEmpty(result);
+                    }, this.children);
+                } else {
+                    result = this._childRecognizer.recognize(childUrl);
+                }
 
                 if (isEmpty(result)) {
                     if(!emptyResult) {
@@ -1247,7 +1257,13 @@
             let sameRoute = this._isSameRoute(this._nextRouteInfo);
 
             if (!poll) {
-                return this._resolve(true);
+                return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then((): async.IThenable<boolean> => {
+                    return this._callInterceptors(info);
+                }).then(() => {
+                    return true;
+                }, () => {
+                    return true;
+                });
             }
 
             return this._canNavigateFrom(sameRoute)
