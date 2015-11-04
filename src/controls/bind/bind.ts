@@ -675,8 +675,12 @@ module plat.controls {
             let element = <HTMLInputElement>this.element,
                 value = element.value;
 
-            if (this.__fileSupported && element.files.length > 0) {
-                return <IFile>element.files[0];
+            if (this.__fileSupported) {
+                if (element.files.length > 0) {
+                    return <IFile>element.files[0];
+                }
+
+                return null;
             }
 
             return {
