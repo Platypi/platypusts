@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.17.2 (https://platypi.io)
+ * PlatypusTS v0.17.3 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -18697,8 +18697,11 @@ var plat;
              */
             Bind.prototype._getFile = function () {
                 var element = this.element, value = element.value;
-                if (this.__fileSupported && element.files.length > 0) {
-                    return element.files[0];
+                if (this.__fileSupported) {
+                    if (element.files.length > 0) {
+                        return element.files[0];
+                    }
+                    return null;
                 }
                 return {
                     name: value.replace(this.__fileNameRegex, ''),
