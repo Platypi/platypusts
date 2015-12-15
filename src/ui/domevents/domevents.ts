@@ -11,6 +11,7 @@
      */
     export class DomEvents {
         protected static _inject: any = {
+            _window: __Window,
             _document: __Document,
             _compat: __Compat
         };
@@ -179,11 +180,23 @@
         protected _gestures: IGestures<string> = DomEvents.gestures;
 
         /**
+         * @name _window
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access protected
+         *
+         * @type {Window}
+         *
+         * @description
+         * Reference to the Window injectable.
+         */
+        protected _window: Window;
+
+        /**
          * @name _document
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * @static
          *
          * @type {Document}
          *
@@ -197,7 +210,6 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * @static
          *
          * @type {plat.Compat}
          *
@@ -211,7 +223,6 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * @static
          *
          * @type {number}
          *
@@ -225,7 +236,6 @@
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access protected
-         * @static
          *
          * @type {boolean}
          *
@@ -2537,7 +2547,7 @@
                         let _document = this._document;
                         if (_document.body.contains(target)) {
                             let event = <MouseEvent>_document.createEvent('MouseEvents');
-                            event.initMouseEvent('mousedown', false, false, null, null, null,
+                            event.initMouseEvent('mousedown', true, true, this._window, null, null,
                                 null, null, null, null, null, null, null, null, null);
                             target.dispatchEvent(event);
                         }

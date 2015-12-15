@@ -779,7 +779,7 @@ module plat {
          */
         observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
         observe(listener: (value: any, oldValue: any, identifier: any) => void, identifier?: any): IRemoveListener {
-            let control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
+            let control: ui.TemplateControl = isObject((<any>this).context) ? <any>this : this.parent,
                 root = Control.getRootControl(control);
 
             if (isNull(control)) {
@@ -877,7 +877,7 @@ module plat {
             identifier?: number): IRemoveListener;
         observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: any) => void,
             identifier?: any): IRemoveListener {
-            let control = isObject((<ui.TemplateControl>this).context) ? <ui.TemplateControl>this : this.parent,
+            let control: ui.TemplateControl = isObject((<any>this).context) ? <any>this : this.parent,
                 context = control.context;
             if (isNull(control) || !isObject(context)) {
                 return noop;

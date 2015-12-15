@@ -978,7 +978,7 @@
                 name = alias;
             }
 
-            let router = this,
+            let router: Router = this,
                 prefix = '';
 
             while (!(isNull(router) || router._recognizer.exists(name))) {
