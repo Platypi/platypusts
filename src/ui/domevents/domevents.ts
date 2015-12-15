@@ -532,18 +532,6 @@
          */
         private __capturedTarget: ICustomElement;
         /**
-         * @name __delayedClickFiring
-         * @memberof plat.ui.DomEvents
-         * @kind property
-         * @access private
-         *
-         * @type {boolean}
-         *
-         * @description
-         * A boolean denoting whether delayed click handling is required.
-         */
-        private __delayedClickFiring: boolean = true;
-        /**
          * @name __delayedClickRemover
          * @memberof plat.ui.DomEvents
          * @kind property
@@ -552,9 +540,30 @@
          * @type {plat.IRemoveListener}
          *
          * @description
-         * A function to stop listening for the click event removal.
+         * A function to stop listening for the phantom click event removal.
          */
-        private __delayedClickRemover: IRemoveListener;
+        private __delayedClickRemover: {
+            [key: string]: IRemoveListener;
+            mousedown: IRemoveListener;
+            mouseup: IRemoveListener;
+            click: IRemoveListener;
+        };
+        /**
+         * @name __ignoreEvent
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         *
+         * @type {{ mousedown: boolean; mouseup: boolean; }}
+         *
+         * @description
+         * A set of flags signifying whether we should ignore native events or not.
+         */
+        private __ignoreEvent: {
+            [key: string]: boolean;
+            mousedown: boolean;
+            mouseup: boolean;
+        } = { mousedown: false, mouseup: false };
         /**
          * @name __boundPreventDefaultClick
          * @memberof plat.ui.DomEvents
@@ -564,7 +573,7 @@
          * @type {(ev: Event) => boolean}
          *
          * @description
-         * A function with a bound context that prevents default and stops propagation for delayed or "phantom" clicks.
+         * A function with a bound context that prevents default and stops propagation for delayed or phantom clicks.
          */
         private __boundPreventDefaultClick = this.__preventDefaultClick.bind(this);
         /**
@@ -866,11 +875,15 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchStart(ev: IPointerEvent): boolean {
-            if (this.__touchCount++ > 0) {
+            let eventType = ev.type;
+            if (this.__ignoreEvent[eventType]) {
+                this.__ignoreEvent[eventType] = false;
+                this.__delayedClickRemover[eventType]();
+                return true;
+            } else if (this.__touchCount++ > 0) {
                 return true;
             }
 
-            let eventType = ev.type;
             if (eventType !== 'mousedown') {
                 this._inTouch = true;
             } else if (this._inTouch === true) {
@@ -1059,8 +1072,14 @@
          * @returns {boolean} Prevents default and stops propagation if false is returned.
          */
         protected _onTouchEnd(ev: IPointerEvent): boolean {
-            let eventType = ev.type,
-                hasMoved = this.__hasMoved,
+            let eventType = ev.type;
+            if (this.__ignoreEvent[eventType]) {
+                this.__ignoreEvent[eventType] = false;
+                this.__delayedClickRemover[eventType]();
+                return true;
+            }
+
+            let hasMoved = this.__hasMoved,
                 notMouseUp = eventType !== 'mouseup';
 
             if (this.__touchCount <= 0) {
@@ -2453,20 +2472,24 @@
          * @returns {void}
          */
         private __preventClickFromTouch(): void {
-            if (!this.__delayedClickFiring) {
-                return;
-            }
+            let _document = this._document,
+                ignoreEvents = this.__ignoreEvent,
+                boundPreventDefault = this.__boundPreventDefaultClick;
 
-            let _document = this._document;
+            this.__delayedClickRemover = {
+                mousedown: defer((): void => {
+                    ignoreEvents.mousedown = false;
+                }, 400),
+                mouseup: defer((): void => {
+                    ignoreEvents.mouseup = false;
+                }, 400),
+                click: defer((): void => {
+                    _document.removeEventListener('click', boundPreventDefault, true);
+                }, 400)
+            };
 
-            this.__delayedClickRemover = defer((): void => {
-                this.__delayedClickFiring = false;
-                _document.removeEventListener('click', this.__boundPreventDefaultClick, true);
-            }, 500);
-
-            postpone((): void => {
-                _document.addEventListener('click', this.__boundPreventDefaultClick, true);
-            });
+            ignoreEvents.mousedown = ignoreEvents.mouseup = true;
+            _document.addEventListener('click', boundPreventDefault, true);
         }
 
         /**
@@ -2476,7 +2499,7 @@
          * @access private
          *
          * @description
-         * Prevents default and stops propagation for delayed or "phantom" clicks.
+         * Prevents default and stops propagation for delayed or phantom clicks.
          *
          * @param {Event} ev The event object.
          *
@@ -2485,8 +2508,8 @@
         private __preventDefaultClick(ev: Event): boolean {
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            this._document.removeEventListener(ev.type, this.__boundPreventDefaultClick, true);
-            this.__delayedClickRemover();
+            this._document.removeEventListener('click', this.__boundPreventDefaultClick, true);
+            this.__delayedClickRemover.click();
             return false;
         }
 
