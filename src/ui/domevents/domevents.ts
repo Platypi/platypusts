@@ -532,17 +532,41 @@
          */
         private __capturedTarget: ICustomElement;
         /**
-         * @name __focusedElement
+         * @name __delayedClickFiring
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          *
-         * @type {HTMLInputElement}
+         * @type {boolean}
          *
          * @description
-         * The currently focused element on the screen. Used in the case of WebKit touch events.
+         * A boolean denoting whether delayed click handling is required.
          */
-        private __focusedElement: HTMLInputElement;
+        private __delayedClickFiring: boolean = true;
+        /**
+         * @name __delayedClickRemover
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         *
+         * @type {plat.IRemoveListener}
+         *
+         * @description
+         * A function to stop listening for the click event removal.
+         */
+        private __delayedClickRemover: IRemoveListener;
+        /**
+         * @name __boundPreventDefaultClick
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         *
+         * @type {(ev: Event) => boolean}
+         *
+         * @description
+         * A function with a bound context that prevents default and stops propagation for delayed or "phantom" clicks.
+         */
+        private __boundPreventDefaultClick = this.__preventDefaultClick.bind(this);
         /**
          * @name __reverseMap
          * @memberof plat.ui.DomEvents
@@ -824,7 +848,7 @@
             this.__tapCount = this.__touchCount = 0;
             this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__haveSwipeSubscribers = false;
             this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
-            this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = null;
+            this.__swipeOrigin = this.__capturedTarget = null;
             this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
         }
 
@@ -1055,11 +1079,7 @@
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
-                    } else if (this._inTouch === true) {
-                        // handleInput must be called prior to preventClickFromTouch due to an
-                        // order of operations issue / potential race condition
-                        this.__handleInput(ev);
-                    } else {
+                    } else if (this._inTouch !== true) {
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
@@ -2422,147 +2442,6 @@
         }
 
         /**
-         * @name __isFocused
-         * @memberof plat.ui.DomEvents
-         * @kind function
-         * @access private
-         *
-         * @description
-         * Determines whether the target is the currently focused element.
-         *
-         * @param {EventTarget} target The event target.
-         *
-         * @returns {boolean} Whether or not the target is focused.
-         */
-        private __isFocused(target: EventTarget): boolean {
-            return target === this.__focusedElement;
-        }
-
-        /**
-         * @name __handleInput
-         * @memberof plat.ui.DomEvents
-         * @kind function
-         * @access private
-         *
-         * @description
-         * Handles HTMLInputElements in WebKit based touch applications.
-         *
-         * @param {Event} ev The touchend event.
-         *
-         * @returns {void}
-         */
-        private __handleInput(ev: Event): void {
-            let target = <HTMLInputElement>ev.target,
-                nodeName = target.nodeName,
-                focusedElement = this.__focusedElement || <HTMLInputElement>{};
-
-            if (!isString(nodeName)) {
-                this.__focusedElement = null;
-                if (isFunction(focusedElement.blur)) {
-                    focusedElement.blur();
-                }
-                return;
-            }
-
-            let remover: IRemoveListener;
-            switch (nodeName.toLowerCase()) {
-                case 'input':
-                    switch (target.type) {
-                        case 'range':
-                            if (isFunction(focusedElement.blur)) {
-                                focusedElement.blur();
-                            }
-                            break;
-                        case 'button':
-                        case 'submit':
-                        case 'checkbox':
-                        case 'radio':
-                        case 'file':
-                            if (isFunction(focusedElement.blur)) {
-                                focusedElement.blur();
-                            }
-                            postpone((): void => {
-                                if (this._document.body.contains(target) && isFunction(target.click)) {
-                                    target.click();
-                                }
-                            });
-                            break;
-                        default:
-                            this.__focusedElement = target;
-                            target.focus();
-                            remover = this.addEventListener(target, 'blur', (): void => {
-                                if (this.__isFocused(target)) {
-                                    this.__focusedElement = null;
-                                }
-                                remover();
-                            }, false);
-
-                            if (this._androidVersion === -1 && ev.cancelable === true) {
-                                ev.preventDefault();
-                            }
-                            return;
-                    }
-                    break;
-                case 'a':
-                case 'button':
-                case 'label':
-                    if (isFunction(focusedElement.blur)) {
-                        focusedElement.blur();
-                    }
-                    postpone((): void => {
-                        if (this._document.body.contains(target) && isFunction(target.click)) {
-                            target.click();
-                        }
-                    });
-                    break;
-                case 'textarea':
-                    this.__focusedElement = target;
-                    target.focus();
-                    remover = this.addEventListener(target, 'blur', (): void => {
-                        if (this.__isFocused(target)) {
-                            this.__focusedElement = null;
-                        }
-                        remover();
-                    }, false);
-
-                    if (this._androidVersion === -1 && ev.cancelable === true) {
-                        ev.preventDefault();
-                    }
-                    return;
-                case 'select':
-                    if (isFunction(focusedElement.blur)) {
-                        focusedElement.blur();
-                    }
-                    postpone((): void => {
-                        let _document = this._document;
-                        if (_document.body.contains(target)) {
-                            let event = <MouseEvent>_document.createEvent('MouseEvents');
-                            event.initMouseEvent('mousedown', false, false, null, null, null,
-                                null, null, null, null, null, null, null, null, null);
-                            target.dispatchEvent(event);
-                        }
-                    });
-                    break;
-                default:
-                    if (isFunction(focusedElement.blur)) {
-                        focusedElement.blur();
-                    }
-                    postpone((): void => {
-                        if (this._document.body.contains(target) && isFunction(target.click)) {
-                            target.click();
-                        }
-                    });
-                    break;
-            }
-
-            this.__focusedElement = null;
-
-            if (ev.cancelable === true) {
-                ev.preventDefault();
-            }
-        }
-
-        /**
          * @name __preventClickFromTouch
          * @memberof plat.ui.DomEvents
          * @kind function
@@ -2574,41 +2453,41 @@
          * @returns {void}
          */
         private __preventClickFromTouch(): void {
-            let _document = this._document,
-                preventDefault: (ev: Event) => boolean,
-                delayedClickRemover = defer((): void => {
-                    _document.removeEventListener('click', preventDefault, true);
-                    _document.removeEventListener('mousedown', preventDefault, true);
-                    _document.removeEventListener('mouseup', preventDefault, true);
-                }, 400);
+            if (!this.__delayedClickFiring) {
+                return;
+            }
 
-            preventDefault = (ev: Event): boolean => {
-                ev.preventDefault();
-                ev.stopPropagation();
-                _document.removeEventListener(ev.type, preventDefault, true);
-                if (delayedClickRemover === noop) {
-                    return false;
-                }
-                delayedClickRemover();
-                delayedClickRemover = noop;
+            let _document = this._document;
 
-                let touchDown = this.__lastTouchDown;
-                if (isNull(touchDown) || this.__isFocused(touchDown.target)) {
-                    return false;
-                }
-                this.__handleInput(<Event>{
-                    target: touchDown.target,
-                    cancelable: false,
-                    preventDefault: () => {}
-                });
-                return false;
-            };
+            this.__delayedClickRemover = defer((): void => {
+                this.__delayedClickFiring = false;
+                _document.removeEventListener('click', this.__boundPreventDefaultClick, true);
+            }, 500);
 
             postpone((): void => {
-                _document.addEventListener('click', preventDefault, true);
-                _document.addEventListener('mousedown', preventDefault, true);
-                _document.addEventListener('mouseup', preventDefault, true);
+                _document.addEventListener('click', this.__boundPreventDefaultClick, true);
             });
+        }
+
+        /**
+         * @name __preventDefaultClick
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Prevents default and stops propagation for delayed or "phantom" clicks.
+         *
+         * @param {Event} ev The event object.
+         *
+         * @returns {boolean} Prevents default and stops propagation if false.
+         */
+        private __preventDefaultClick(ev: Event): boolean {
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+            this._document.removeEventListener(ev.type, this.__boundPreventDefaultClick, true);
+            this.__delayedClickRemover();
+            return false;
         }
 
         /**
