@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.17.3 (https://platypi.io)
+  * PlatypusTS v0.18.0 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -5992,9 +5992,25 @@ declare module plat {
               */
             private __capturedTarget;
             /**
-              * The currently focused element on the screen. Used in the case of WebKit touch events.
+              * The currently focused or active element.
               */
             private __focusedElement;
+            /**
+              * A function to stop listening for blur events on the currently focused element.
+              */
+            private __blurRemover;
+            /**
+              * A function to stop listening for the phantom click event removal.
+              */
+            private __delayedClickRemover;
+            /**
+              * A set of flags signifying whether we should ignore native events or not.
+              */
+            private __ignoreEvent;
+            /**
+              * A function with a bound context that prevents default and stops propagation for delayed or phantom clicks.
+              */
+            private __boundPreventDefaultClick;
             /**
               * A hash map for mapping custom events to standard events.
               */
@@ -6282,19 +6298,33 @@ declare module plat {
               */
             private __createStyle(styleClass);
             /**
-              * Determines whether the target is the currently focused element.
-              * @param {EventTarget} target The event target.
+              * Blurs the currently focused element.
               */
-            private __isFocused(target);
+            private __blurFocusedElement();
+            /**
+              * Listens for blur and then sets the focused element back to null for the next case.
+              * @param {HTMLInputElement} target The target to listen for the blur event on.
+              */
+            private __waitForBlur(target);
+            /**
+              * Handles a click target case.
+              * @param {HTMLInputElement} target The target to handle click functionaliy for.
+              */
+            private __clickTarget(target);
             /**
               * Handles HTMLInputElements in WebKit based touch applications.
-              * @param {Event} ev The touchend event.
+              * @param {HTMLInputElement} target The target to handle functionality for.
               */
-            private __handleInput(ev);
+            private __handleInput(target);
             /**
               * Handles the phantom click in WebKit based touch applications.
               */
             private __preventClickFromTouch();
+            /**
+              * Prevents default and stops propagation for delayed or phantom clicks.
+              * @param {Event} ev The event object.
+              */
+            private __preventDefaultClick(ev);
             /**
               * Removes selection capability from the element.
               * @param {Node} element The element to remove selections on.
@@ -6730,7 +6760,7 @@ declare module plat {
         interface IIntervals {
             /**
               * The max time in milliseconds a user can hold down on the screen
-              * for a tap event to be fired. Defaults to 250 ms.
+              * for a tap event to be fired. Defaults to 300 ms.
               */
             tapInterval: number;
             /**
@@ -6750,6 +6780,11 @@ declare module plat {
               * feature is required. Defaults to 0 ms.
               */
             dblTapZoomDelay: number;
+            /**
+              * The delay in milliseconds we preventDefault on click events after a
+              * successful touchend event. Defaults to 400 ms.
+              */
+            delayedClickInterval: number;
         }
         /**
           * Describes an object containing distance information that

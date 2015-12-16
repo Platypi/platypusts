@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.17.3 (https://platypi.io)
+ * PlatypusTS v0.18.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -8993,6 +8993,18 @@ var plat;
                  */
                 this.__haveSwipeSubscribers = false;
                 /**
+                 * A function to stop listening for blur events on the currently focused element.
+                 */
+                this.__blurRemover = noop;
+                /**
+                 * A set of flags signifying whether we should ignore native events or not.
+                 */
+                this.__ignoreEvent = { mousedown: false, mouseup: false };
+                /**
+                 * A function with a bound context that prevents default and stops propagation for delayed or phantom clicks.
+                 */
+                this.__boundPreventDefaultClick = this.__preventDefaultClick.bind(this);
+                /**
                  * A hash map for mapping custom events to standard events.
                  */
                 this.__reverseMap = {};
@@ -9111,7 +9123,7 @@ var plat;
                 this.__tapCount = this.__touchCount = 0;
                 this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__haveSwipeSubscribers = false;
                 this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
-                this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = null;
+                this.__swipeOrigin = this.__capturedTarget = null;
                 this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
             };
             /**
@@ -9120,10 +9132,21 @@ var plat;
              */
             DomEvents.prototype._onTouchStart = function (ev) {
                 var _this = this;
-                if (this.__touchCount++ > 0) {
+                var eventType = ev.type;
+                if (this.__ignoreEvent[eventType]) {
+                    this.__ignoreEvent[eventType] = false;
+                    this.__delayedClickRemover[eventType]();
+                    if (ev.target !== this.__focusedElement) {
+                        if (ev.cancelable === true) {
+                            ev.preventDefault();
+                        }
+                        return false;
+                    }
                     return true;
                 }
-                var eventType = ev.type;
+                else if (this.__touchCount++ > 0) {
+                    return true;
+                }
                 if (eventType !== 'mousedown') {
                     this._inTouch = true;
                 }
@@ -9253,7 +9276,26 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch end event object.
              */
             DomEvents.prototype._onTouchEnd = function (ev) {
-                var eventType = ev.type, hasMoved = this.__hasMoved, notMouseUp = eventType !== 'mouseup';
+                var _this = this;
+                var eventType = ev.type;
+                if (this.__ignoreEvent[eventType]) {
+                    this.__ignoreEvent[eventType] = false;
+                    this.__delayedClickRemover[eventType]();
+                    if (ev.target !== this.__focusedElement) {
+                        if (ev.cancelable === true) {
+                            ev.preventDefault();
+                        }
+                        postpone(function () {
+                            var target = (_this.__lastTouchUp || {}).target;
+                            if (_this._document.body.contains(target)) {
+                                _this.__handleInput(target);
+                            }
+                        });
+                        return false;
+                    }
+                    return true;
+                }
+                var hasMoved = this.__hasMoved, notMouseUp = eventType !== 'mouseup';
                 if (this.__touchCount <= 0) {
                     this.__touchCount = 0;
                 }
@@ -9272,9 +9314,12 @@ var plat;
                             }
                         }
                         else if (this._inTouch === true) {
-                            // handleInput must be called prior to preventClickFromTouch due to an 
-                            // order of operations issue / potential race condition 
-                            this.__handleInput(ev);
+                            // immediately handle the input depending on type for more native-like experience 
+                            if (ev.target !== this.__focusedElement) {
+                                if (this.__handleInput(ev.target) && ev.cancelable === true) {
+                                    ev.preventDefault();
+                                }
+                            }
                         }
                         else {
                             if (ev.cancelable === true) {
@@ -10094,153 +10139,139 @@ var plat;
                 return style;
             };
             /**
-             * Determines whether the target is the currently focused element.
-             * @param {EventTarget} target The event target.
+             * Blurs the currently focused element.
              */
-            DomEvents.prototype.__isFocused = function (target) {
-                return target === this.__focusedElement;
+            DomEvents.prototype.__blurFocusedElement = function () {
+                var focusedElement = this.__focusedElement || {};
+                if (isFunction(focusedElement.blur)) {
+                    focusedElement.blur();
+                }
+            };
+            /**
+             * Listens for blur and then sets the focused element back to null for the next case.
+             * @param {HTMLInputElement} target The target to listen for the blur event on.
+             */
+            DomEvents.prototype.__waitForBlur = function (target) {
+                var _this = this;
+                this.__blurRemover = this.addEventListener(target, 'blur', function () {
+                    _this.__blurRemover();
+                    _this.__blurRemover = noop;
+                    if (target === _this.__focusedElement) {
+                        _this.__focusedElement = null;
+                    }
+                }, false);
+            };
+            /**
+             * Handles a click target case.
+             * @param {HTMLInputElement} target The target to handle click functionaliy for.
+             */
+            DomEvents.prototype.__clickTarget = function (target) {
+                var _this = this;
+                var clicked = false, handler = function () {
+                    clicked = true;
+                    target.removeEventListener('click', handler, false);
+                };
+                target.addEventListener('click', handler, false);
+                postpone(function () {
+                    if (clicked) {
+                        return;
+                    }
+                    target.removeEventListener('click', handler, false);
+                    if (_this._document.body.contains(target) && isFunction(target.click)) {
+                        target.click();
+                    }
+                });
             };
             /**
              * Handles HTMLInputElements in WebKit based touch applications.
-             * @param {Event} ev The touchend event.
+             * @param {HTMLInputElement} target The target to handle functionality for.
              */
-            DomEvents.prototype.__handleInput = function (ev) {
-                var _this = this;
-                var target = ev.target, nodeName = target.nodeName, focusedElement = this.__focusedElement || {};
+            DomEvents.prototype.__handleInput = function (target) {
+                this.__blurRemover();
+                var nodeName = target.nodeName;
                 if (!isString(nodeName)) {
                     this.__focusedElement = null;
-                    if (isFunction(focusedElement.blur)) {
-                        focusedElement.blur();
-                    }
+                    this.__blurFocusedElement();
                     return;
                 }
-                var remover;
+                var preventDefault = true;
                 switch (nodeName.toLowerCase()) {
                     case 'input':
                         switch (target.type) {
                             case 'range':
-                                if (isFunction(focusedElement.blur)) {
-                                    focusedElement.blur();
-                                }
+                                this.__blurFocusedElement();
                                 break;
-                            case 'button':
-                            case 'submit':
-                            case 'checkbox':
-                            case 'radio':
-                            case 'file':
-                                if (isFunction(focusedElement.blur)) {
-                                    focusedElement.blur();
-                                }
-                                postpone(function () {
-                                    if (_this._document.body.contains(target) && isFunction(target.click)) {
-                                        target.click();
-                                    }
-                                });
+                            case 'text':
+                            case 'password':
+                            case 'email':
+                            case 'number':
+                            case 'tel':
+                            case 'search':
+                            case 'url':
+                                target.focus();
+                                this.__waitForBlur(target);
                                 break;
                             default:
-                                this.__focusedElement = target;
-                                target.focus();
-                                remover = this.addEventListener(target, 'blur', function () {
-                                    if (_this.__isFocused(target)) {
-                                        _this.__focusedElement = null;
-                                    }
-                                    remover();
-                                }, false);
-                                if (this._androidVersion === -1 && ev.cancelable === true) {
-                                    ev.preventDefault();
-                                }
-                                return;
+                                this.__blurFocusedElement();
+                                this.__clickTarget(target);
+                                break;
                         }
                         break;
                     case 'a':
                     case 'button':
                     case 'label':
-                        if (isFunction(focusedElement.blur)) {
-                            focusedElement.blur();
-                        }
-                        postpone(function () {
-                            if (_this._document.body.contains(target) && isFunction(target.click)) {
-                                target.click();
-                            }
-                        });
+                        this.__blurFocusedElement();
+                        this.__clickTarget(target);
                         break;
                     case 'textarea':
-                        this.__focusedElement = target;
                         target.focus();
-                        remover = this.addEventListener(target, 'blur', function () {
-                            if (_this.__isFocused(target)) {
-                                _this.__focusedElement = null;
-                            }
-                            remover();
-                        }, false);
-                        if (this._androidVersion === -1 && ev.cancelable === true) {
-                            ev.preventDefault();
-                        }
-                        return;
+                        this.__waitForBlur(target);
+                        break;
                     case 'select':
-                        if (isFunction(focusedElement.blur)) {
-                            focusedElement.blur();
-                        }
-                        postpone(function () {
-                            var _document = _this._document;
-                            if (_document.body.contains(target)) {
-                                var event_2 = _document.createEvent('MouseEvents');
-                                event_2.initMouseEvent('mousedown', false, false, null, null, null, null, null, null, null, null, null, null, null, null);
-                                target.dispatchEvent(event_2);
-                            }
-                        });
+                        preventDefault = false;
                         break;
                     default:
-                        if (isFunction(focusedElement.blur)) {
-                            focusedElement.blur();
-                        }
-                        postpone(function () {
-                            if (_this._document.body.contains(target) && isFunction(target.click)) {
-                                target.click();
-                            }
-                        });
+                        this.__blurFocusedElement();
+                        this.__clickTarget(target);
                         break;
                 }
-                this.__focusedElement = null;
-                if (ev.cancelable === true) {
-                    ev.preventDefault();
-                }
+                this.__focusedElement = target;
+                return preventDefault;
             };
             /**
              * Handles the phantom click in WebKit based touch applications.
              */
             DomEvents.prototype.__preventClickFromTouch = function () {
-                var _this = this;
-                var _document = this._document, preventDefault, delayedClickRemover = defer(function () {
-                    _document.removeEventListener('click', preventDefault, true);
-                    _document.removeEventListener('mousedown', preventDefault, true);
-                    _document.removeEventListener('mouseup', preventDefault, true);
-                }, 400);
-                preventDefault = function (ev) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    _document.removeEventListener(ev.type, preventDefault, true);
-                    if (delayedClickRemover === noop) {
-                        return false;
-                    }
-                    delayedClickRemover();
-                    delayedClickRemover = noop;
-                    var touchDown = _this.__lastTouchDown;
-                    if (isNull(touchDown) || _this.__isFocused(touchDown.target)) {
-                        return false;
-                    }
-                    _this.__handleInput({
-                        target: touchDown.target,
-                        cancelable: false,
-                        preventDefault: function () { }
-                    });
-                    return false;
+                var _document = this._document, ignoreEvents = this.__ignoreEvent, boundPreventDefault = this.__boundPreventDefaultClick, interval = DomEvents.config.intervals.delayedClickInterval;
+                if (interval <= 0) {
+                    return;
+                }
+                this.__delayedClickRemover = {
+                    mousedown: defer(function () {
+                        ignoreEvents.mousedown = false;
+                    }, interval),
+                    mouseup: defer(function () {
+                        ignoreEvents.mouseup = false;
+                    }, interval),
+                    click: defer(function () {
+                        _document.removeEventListener('click', boundPreventDefault, true);
+                    }, interval)
                 };
+                ignoreEvents.mousedown = ignoreEvents.mouseup = true;
                 postpone(function () {
-                    _document.addEventListener('click', preventDefault, true);
-                    _document.addEventListener('mousedown', preventDefault, true);
-                    _document.addEventListener('mouseup', preventDefault, true);
+                    _document.addEventListener('click', boundPreventDefault, true);
                 });
+            };
+            /**
+             * Prevents default and stops propagation for delayed or phantom clicks.
+             * @param {Event} ev The event object.
+             */
+            DomEvents.prototype.__preventDefaultClick = function (ev) {
+                ev.preventDefault();
+                ev.stopImmediatePropagation();
+                this._document.removeEventListener('click', this.__boundPreventDefaultClick, true);
+                this.__delayedClickRemover.click();
+                return false;
             };
             /**
              * Removes selection capability from the element.
@@ -10301,7 +10332,7 @@ var plat;
                 intervals: {
                     /**
                      */
-                    tapInterval: 250,
+                    tapInterval: 300,
                     /**
                      */
                     dblTapInterval: 300,
@@ -10310,7 +10341,10 @@ var plat;
                     holdInterval: 400,
                     /**
                      */
-                    dblTapZoomDelay: 0
+                    dblTapZoomDelay: 0,
+                    /**
+                     */
+                    delayedClickInterval: 400
                 },
                 /**
                  */
