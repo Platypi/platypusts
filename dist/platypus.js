@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.18.1 (https://platypi.io)
+ * PlatypusTS v0.19.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -9035,6 +9035,7 @@ var plat;
                  */
                 this.__listeners = {};
                 this.__getTypes();
+                this.initialize();
             }
             DomEvents.prototype.addEventListener = function (element, type, listener, useCapture) {
                 var _this = this;
@@ -9096,7 +9097,24 @@ var plat;
                 };
             };
             /**
-             * Stops listening for touch events and resets the DomEvents instance.
+             * If DomEvents is inactive, will initialize behavior and
+             * begin listening for events.
+             */
+            DomEvents.prototype.initialize = function () {
+                var isActive = this._isActive;
+                if (isActive === true) {
+                    // has already been initialized and was never disposed 
+                    return;
+                }
+                this.__registerTypes();
+                if (isNull(isActive)) {
+                    this.__appendGestureStyle();
+                }
+                this._isActive = true;
+            };
+            /**
+             * Stops listening for touch events and resets the DomEvents
+             * instance.
              */
             DomEvents.prototype.dispose = function () {
                 this.__unregisterTypes();
@@ -9657,14 +9675,6 @@ var plat;
                     id = uniqueId('domEvent_');
                     plat.domEvent = id;
                 }
-                // check if DomEvents is ready 
-                if (!this._isActive) {
-                    this.__registerTypes();
-                    if (isNull(this._isActive)) {
-                        this.__appendGestureStyle();
-                    }
-                    this._isActive = true;
-                }
                 var _domEvent;
                 if (isNull(id)) {
                     var subscriber = this._subscribers[plat.domEvent];
@@ -9867,10 +9877,6 @@ var plat;
                 deleteProperty(plat, 'domEvent');
                 if (isEmpty(plat)) {
                     deleteProperty(element, '__plat');
-                }
-                // check if no elements are left listening 
-                if (isEmpty(this._subscribers)) {
-                    this.dispose();
                 }
             };
             /**

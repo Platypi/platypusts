@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.18.1 (https://platypi.io)
+  * PlatypusTS v0.19.0 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -6073,7 +6073,13 @@ declare module plat {
               */
             addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
             /**
-              * Stops listening for touch events and resets the DomEvents instance.
+              * If DomEvents is inactive, will initialize behavior and
+              * begin listening for events.
+              */
+            initialize(): void;
+            /**
+              * Stops listening for touch events and resets the DomEvents
+              * instance.
               */
             dispose(): void;
             /**
