@@ -861,6 +861,8 @@
          */
         dispose(): void {
             this.__unregisterTypes();
+            this.__blurRemover();
+            this.__blurRemover = noop;
 
             this._gestureCount = {
                 $tap: 0,
@@ -882,10 +884,11 @@
             this.__pointerEvents = [];
             this.__pointerHash = {};
             this.__reverseMap = {};
+            this.__ignoreEvent = { mousedown: false, mouseup: false };
             this.__tapCount = this.__touchCount = 0;
             this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__haveSwipeSubscribers = false;
             this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
-            this.__swipeOrigin = this.__capturedTarget = null;
+            this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = this.__delayedClickRemover = null;
             this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
         }
 
