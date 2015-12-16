@@ -696,6 +696,7 @@
          */
         constructor() {
             this.__getTypes();
+            this.initialize();
         }
 
         /**
@@ -855,7 +856,36 @@
          * @access public
          *
          * @description
-         * Stops listening for touch events and resets the DomEvents instance.
+         * If {@link plat.ui.DomEvents|DomEvents} is inactive, will initialize behavior and
+         * begin listening for events.
+         *
+         * @returns {void}
+         */
+        initialize() {
+            let isActive = this._isActive;
+            if (isActive === true) {
+                // has already been initialized and was never disposed
+                return;
+            }
+
+            this.__registerTypes();
+
+            if (isNull(isActive)) {
+                this.__appendGestureStyle();
+            }
+
+            this._isActive = true;
+        }
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Stops listening for touch events and resets the {@link plat.ui.DomEvents|DomEvents}
+         * instance.
          *
          * @returns {void}
          */
@@ -1720,17 +1750,6 @@
                 plat.domEvent = id;
             }
 
-            // check if DomEvents is ready
-            if (!this._isActive) {
-                this.__registerTypes();
-
-                if (isNull(this._isActive)) {
-                    this.__appendGestureStyle();
-                }
-
-                this._isActive = true;
-            }
-
             let _domEvent: DomEvent;
             if (isNull(id)) {
                 let subscriber = this._subscribers[plat.domEvent];
@@ -2067,11 +2086,6 @@
             deleteProperty(plat, 'domEvent');
             if (isEmpty(plat)) {
                 deleteProperty(element, '__plat');
-            }
-
-            // check if no elements are left listening
-            if (isEmpty(this._subscribers)) {
-                this.dispose();
             }
         }
 
