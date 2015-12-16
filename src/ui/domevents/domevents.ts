@@ -37,7 +37,7 @@
                  * The max time in milliseconds a user can hold down on the screen
                  * for a tap event to be fired.
                  */
-                tapInterval: 250,
+                tapInterval: 300,
                 /**
                  * The max time in milliseconds a user can wait between consecutive
                  * taps for a dbltap event to be fired.
@@ -53,7 +53,11 @@
                  * the tap event fires. Used in the case where a double-tap-to-zoom
                  * feature is required.
                  */
-                dblTapZoomDelay: 0
+                dblTapZoomDelay: 0,
+                /**
+                 * The delay in milliseconds we preventDefault on click events after a successful touchend event.
+                 */
+                delayedClickInterval: 400
             },
 
             /**
@@ -532,12 +536,36 @@
          */
         private __capturedTarget: ICustomElement;
         /**
-         * @name __delayedClickRemover
+         * @name __focusedElement
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         *
+         * @type {HTMLElement}
+         *
+         * @description
+         * The currently focused or active element.
+         */
+        private __focusedElement: HTMLElement;
+        /**
+         * @name __blurRemover
          * @memberof plat.ui.DomEvents
          * @kind property
          * @access private
          *
          * @type {plat.IRemoveListener}
+         *
+         * @description
+         * A function to stop listening for blur events on the currently focused element.
+         */
+        private __blurRemover: IRemoveListener = noop;
+        /**
+         * @name __delayedClickRemover
+         * @memberof plat.ui.DomEvents
+         * @kind property
+         * @access private
+         *
+         * @type {{ mousedown: plat.IRemoveListener; mouseup: plat.IRemoveListener; click: plat.IRemoveListener; }}
          *
          * @description
          * A function to stop listening for the phantom click event removal.
@@ -879,6 +907,14 @@
             if (this.__ignoreEvent[eventType]) {
                 this.__ignoreEvent[eventType] = false;
                 this.__delayedClickRemover[eventType]();
+                if (ev.target !== this.__focusedElement) {
+                    if (ev.cancelable === true) {
+                        ev.preventDefault();
+                    }
+
+                    return false;
+                }
+
                 return true;
             } else if (this.__touchCount++ > 0) {
                 return true;
@@ -1076,6 +1112,20 @@
             if (this.__ignoreEvent[eventType]) {
                 this.__ignoreEvent[eventType] = false;
                 this.__delayedClickRemover[eventType]();
+                if (ev.target !== this.__focusedElement) {
+                    if (ev.cancelable === true) {
+                        ev.preventDefault();
+                    }
+
+                    postpone((): void => {
+                        let target = <HTMLInputElement>(this.__lastTouchUp || <IPointerEvent>{}).target;
+                        if (this._document.body.contains(target)) {
+                            this.__handleInput(target);
+                        }
+                    });
+                    return false;
+                }
+
                 return true;
             }
 
@@ -1098,7 +1148,14 @@
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
-                    } else if (this._inTouch !== true) {
+                    } else if (this._inTouch === true) {
+                        // immediately handle the input depending on type for more native-like experience
+                        if (ev.target !== this.__focusedElement) {
+                            if (this.__handleInput(<HTMLInputElement>ev.target) && ev.cancelable === true) {
+                                ev.preventDefault();
+                            }
+                        }
+                    } else {
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
@@ -2461,6 +2518,150 @@
         }
 
         /**
+         * @name __blurFocusedElement
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Blurs the currently focused element.
+         *
+         * @returns {void}
+         */
+        private __blurFocusedElement(): void {
+            let focusedElement = this.__focusedElement || <HTMLInputElement>{};
+            if (isFunction(focusedElement.blur)) {
+                focusedElement.blur();
+            }
+        }
+
+        /**
+         * @name __waitForBlur
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Listens for blur and then sets the focused element back to null for the next case.
+         *
+         * @param {HTMLInputElement} target The target to listen for the blur event on.
+         *
+         * @returns {void}
+         */
+        private __waitForBlur(target: HTMLInputElement): void {
+            this.__blurRemover = this.addEventListener(target, 'blur', (): void => {
+                this.__blurRemover();
+                this.__blurRemover = noop;
+                if (target === this.__focusedElement) {
+                    this.__focusedElement = null;
+                }
+            }, false);
+        }
+
+        /**
+         * @name __clickTarget
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Handles a click target case.
+         *
+         * @param {HTMLInputElement} target The target to handle click functionaliy for.
+         *
+         * @returns {void}
+         */
+        private __clickTarget(target: HTMLInputElement): void {
+            let clicked = false,
+                handler = (): void => {
+                    clicked = true;
+                    target.removeEventListener('click', handler, false);
+                };
+
+
+            target.addEventListener('click', handler, false);
+            postpone((): void => {
+                if (clicked) {
+                    return;
+                }
+
+                target.removeEventListener('click', handler, false);
+                if (this._document.body.contains(target) && isFunction(target.click)) {
+                    target.click();
+                }
+            });
+        }
+
+        /**
+         * @name __handleInput
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Handles HTMLInputElements in WebKit based touch applications.
+         *
+         * @param {HTMLInputElement} target The target to handle functionality for.
+         *
+         * @returns {boolean} Whether or not we should preventDefault on the Event.
+         */
+        private __handleInput(target: HTMLInputElement): boolean {
+            this.__blurRemover();
+
+            let nodeName = target.nodeName;
+            if (!isString(nodeName)) {
+                this.__focusedElement = null;
+                this.__blurFocusedElement();
+                return;
+            }
+​
+            let preventDefault = true;
+            switch (nodeName.toLowerCase()) {
+                case 'input':
+                    switch (target.type) {
+                        case 'range':
+                            this.__blurFocusedElement();
+                            break;
+                        case 'text':
+                        case 'password':
+                        case 'email':
+                        case 'number':
+                        case 'tel':
+                        case 'search':
+                        case 'url':
+                            target.focus();
+                            this.__waitForBlur(target);
+                            break;
+                        default:
+                            this.__blurFocusedElement();
+                            this.__clickTarget(target);
+                            break;
+                    }
+                    break;
+                case 'a':
+                case 'button':
+                case 'label':
+                    this.__blurFocusedElement();
+                    this.__clickTarget(target);
+                    break;
+                case 'textarea':
+                    target.focus();
+                    this.__waitForBlur(target);
+                    break;
+                case 'select':
+                    preventDefault = false;
+                    break;
+                default:
+                    this.__blurFocusedElement();
+                    this.__clickTarget(target);
+                    break;
+            }
+​
+            this.__focusedElement = target;
+            return preventDefault;
+        }
+
+        /**
          * @name __preventClickFromTouch
          * @memberof plat.ui.DomEvents
          * @kind function
@@ -2474,22 +2675,29 @@
         private __preventClickFromTouch(): void {
             let _document = this._document,
                 ignoreEvents = this.__ignoreEvent,
-                boundPreventDefault = this.__boundPreventDefaultClick;
+                boundPreventDefault = this.__boundPreventDefaultClick,
+                interval = DomEvents.config.intervals.delayedClickInterval;
+
+            if (interval <= 0) {
+                return;
+            }
 
             this.__delayedClickRemover = {
                 mousedown: defer((): void => {
                     ignoreEvents.mousedown = false;
-                }, 400),
+                }, interval),
                 mouseup: defer((): void => {
                     ignoreEvents.mouseup = false;
-                }, 400),
+                }, interval),
                 click: defer((): void => {
                     _document.removeEventListener('click', boundPreventDefault, true);
-                }, 400)
+                }, interval)
             };
 
             ignoreEvents.mousedown = ignoreEvents.mouseup = true;
-            _document.addEventListener('click', boundPreventDefault, true);
+            postpone((): void => {
+                _document.addEventListener('click', boundPreventDefault, true);
+            });
         }
 
         /**
@@ -3970,7 +4178,7 @@
          *
          * @description
          * The max time in milliseconds a user can hold down on the screen
-         * for a tap event to be fired. Defaults to 250 ms.
+         * for a tap event to be fired. Defaults to 300 ms.
          */
         tapInterval: number;
 
@@ -4017,6 +4225,20 @@
          * feature is required. Defaults to 0 ms.
          */
         dblTapZoomDelay: number;
+
+        /**
+         * @name delayedClickInterval
+         * @memberof plat.ui.IIntervals
+         * @kind property
+         * @access public
+         *
+         * @type {number}
+         *
+         * @description
+         * The delay in milliseconds we preventDefault on click events after a
+         * successful touchend event. Defaults to 400 ms.
+         */
+        delayedClickInterval: number;
     }
 
     /**
