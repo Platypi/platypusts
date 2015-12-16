@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.18.0 (https://platypi.io)
+ * PlatypusTS v0.18.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -9100,6 +9100,8 @@ var plat;
              */
             DomEvents.prototype.dispose = function () {
                 this.__unregisterTypes();
+                this.__blurRemover();
+                this.__blurRemover = noop;
                 this._gestureCount = {
                     $tap: 0,
                     $dbltap: 0,
@@ -9120,10 +9122,11 @@ var plat;
                 this.__pointerEvents = [];
                 this.__pointerHash = {};
                 this.__reverseMap = {};
+                this.__ignoreEvent = { mousedown: false, mouseup: false };
                 this.__tapCount = this.__touchCount = 0;
                 this.__detectingMove = this.__hasMoved = this.__hasRelease = this.__haveSwipeSubscribers = false;
                 this.__lastMoveEvent = this.__lastTouchDown = this.__lastTouchUp = null;
-                this.__swipeOrigin = this.__capturedTarget = null;
+                this.__swipeOrigin = this.__capturedTarget = this.__focusedElement = this.__delayedClickRemover = null;
                 this.__cancelDeferredHold = this.__cancelDeferredTap = noop;
             };
             /**
