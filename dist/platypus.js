@@ -17703,7 +17703,7 @@ var plat;
              */
             React.prototype._addEventListeners = function () {
                 var _this = this;
-                var element = this.element, _compat = this._compat, composing = false, input = 'input', timeout, eventListener = function (ev) {
+                var element = this.element, _compat = this._compat, composing = false, inputFired = false, input = 'input', timeout, eventListener = function (ev) {
                     if (composing) {
                         return;
                     }
@@ -17724,8 +17724,20 @@ var plat;
                         eventListener(ev);
                     }, false);
                 }
-                this.addEventListener(element, input, eventListener, false);
-                this.addEventListener(element, 'change', eventListener, false);
+                this.addEventListener(element, input, function (ev) {
+                    inputFired = true;
+                    console.log('input');
+                    eventListener(ev);
+                }, false);
+                this.addEventListener(element, 'change', function (ev) {
+                    console.log('change');
+                    if (inputFired) {
+                        inputFired = false;
+                        return;
+                    }
+                    console.log('change fired');
+                    eventListener(ev);
+                }, false);
                 if (_compat.hasEvent(input)) {
                     return;
                 }

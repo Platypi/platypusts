@@ -1093,6 +1093,7 @@ module plat.controls {
             let element = this.element,
                 _compat = this._compat,
                 composing = false,
+                inputFired = false,
                 input = 'input',
                 timeout: IRemoveListener,
                 eventListener = (ev: Event): void => {
@@ -1114,21 +1115,30 @@ module plat.controls {
                 };
 
             if (isUndefined(_compat.ANDROID)) {
-                this.addEventListener(element, 'compositionstart',(): void => { composing = true; }, false);
-                this.addEventListener(element, 'compositionend',(ev: Event): void => {
+                this.addEventListener(element, 'compositionstart', (): void => { composing = true; }, false);
+                this.addEventListener(element, 'compositionend', (ev: Event): void => {
                     composing = false;
                     eventListener(ev);
                 }, false);
             }
 
-            this.addEventListener(element, input, eventListener, false);
-            this.addEventListener(element, 'change', eventListener, false);
+            this.addEventListener(element, input, (ev: Event): void => {
+                inputFired = true;
+                eventListener(ev);
+            }, false);
+            this.addEventListener(element, 'change', (ev: Event): void => {
+                if (inputFired) {
+                    inputFired = false;
+                    return;
+                }
+                eventListener(ev);
+            }, false);
 
             if (_compat.hasEvent(input)) {
                 return;
             }
 
-            this.addEventListener(element, 'keydown',(ev: KeyboardEvent): void => {
+            this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
                 let key = ev.keyCode,
                     codes = KeyCodes;
 

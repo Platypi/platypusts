@@ -64,13 +64,13 @@ module plat {
          * Contains the GeolocationPositionCoordinates for the
          * position.
          */
-        coordinates: GeolocationPositionCoordinates;
+        coords: GeolocationPositionCoordinates;
 
         /**
-         * A Date, representing when the position
+         * A number, representing when the position
          * was acquired.
          */
-        timestamp: Date;
+        timestamp: number;
     }
 
     /**
