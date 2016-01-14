@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.19.0 (https://platypi.io)
+ * PlatypusTS v0.19.2 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -10494,7 +10494,7 @@ var plat;
                 var customEv = this._document.createEvent('CustomEvent'), element = this.element, target = ev.target;
                 this.__extendEventObject(customEv, ev);
                 customEv.initCustomEvent(this.event, true, true, 0);
-                var success = element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
+                var success = isDocument(element) || element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
                 if (!success) {
                     ev.preventDefault();
                 }
@@ -17726,16 +17726,13 @@ var plat;
                 }
                 this.addEventListener(element, input, function (ev) {
                     inputFired = true;
-                    console.log('input');
                     eventListener(ev);
                 }, false);
                 this.addEventListener(element, 'change', function (ev) {
-                    console.log('change');
                     if (inputFired) {
                         inputFired = false;
                         return;
                     }
-                    console.log('change fired');
                     eventListener(ev);
                 }, false);
                 if (_compat.hasEvent(input)) {
