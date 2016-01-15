@@ -170,6 +170,20 @@ module tests.expressions.tokenizer {
             ]
         },
         {
+            name: 'function with multiple parens',
+            expression: 'math((1 + 2), (3 + 10))',
+            expected: [
+                { val: 1, args: 0 },
+                { val: 2, args: 0 },
+                { val: '+', args: 2 },
+                { val: 3, args: 0 },
+                { val: 10, args: 0 },
+                { val: '+', args: 2 },
+                { val: 'math', args: -2 },
+                { val: '()', args: 2 },
+            ]
+        },
+        {
             name: 'Array literal',
             expression: '[1, 2, 3]',
             expected: [

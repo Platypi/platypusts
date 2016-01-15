@@ -781,6 +781,8 @@ module plat.expressions {
                 }
 
                 this.__argCount.push({ num: 0 });
+            } else {
+                this.__argCount.push({ num: -1 });
             }
 
             operatorStack.unshift({ val: char, args: 0 });
@@ -816,7 +818,7 @@ module plat.expressions {
             this.__lastCommaChar.pop();
 
             // check if function on top of stack
-            if (!isNull(localArgCountObj)) {
+            if (!isNull(localArgCountObj) && localArgCountObj.num >= 0) {
                 let localArgNum = localArgCountObj.num;
                 if (this.__previousChar === '(') {
                     if (this.__removeFnFromStack(localArgNum)) {
@@ -825,7 +827,6 @@ module plat.expressions {
                             args: 0
                         });
                     }
-                    return;
                 } else if (this.__removeFnFromStack(localArgNum + 1)) {
                     this.__outputQueue.push({
                         val: '()',
