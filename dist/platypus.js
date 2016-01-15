@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.19.2 (https://platypi.io)
+ * PlatypusTS v0.19.3 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -2677,6 +2677,9 @@ var plat;
                     }
                     this.__argCount.push({ num: 0 });
                 }
+                else {
+                    this.__argCount.push({ num: -1 });
+                }
                 operatorStack.unshift({ val: char, args: 0 });
                 this.__lastCommaChar.push(char);
             };
@@ -2694,7 +2697,7 @@ var plat;
                 operatorStack.shift();
                 this.__lastCommaChar.pop();
                 // check if function on top of stack 
-                if (!isNull(localArgCountObj)) {
+                if (!isNull(localArgCountObj) && localArgCountObj.num >= 0) {
                     var localArgNum = localArgCountObj.num;
                     if (this.__previousChar === '(') {
                         if (this.__removeFnFromStack(localArgNum)) {
@@ -2703,7 +2706,6 @@ var plat;
                                 args: 0
                             });
                         }
-                        return;
                     }
                     else if (this.__removeFnFromStack(localArgNum + 1)) {
                         this.__outputQueue.push({
@@ -3423,6 +3425,8 @@ var plat;
                         }
                     }
                 }
+                // push identifier for new result of operator 
+                tempIdentifiers.push('.');
                 codeArray.push('(' + OPERATORS[token].fn.toString() + ')(context, aliases,' + tempStr.slice(0, tempStr.length - 1) + ')');
             };
             /**
