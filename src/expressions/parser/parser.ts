@@ -912,6 +912,8 @@ module plat.expressions {
                 }
             }
 
+            // push identifier for new result of operator
+            tempIdentifiers.push('.');
             codeArray.push(
                 '(' + OPERATORS[token].fn.toString() + ')(context, aliases,' + tempStr.slice(0, tempStr.length - 1) + ')'
                 );

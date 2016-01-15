@@ -440,6 +440,13 @@ module tests.expressions.parser {
             fn: 'toBe'
         },
         {
+            name: 'a resource calling a function',
+            returns: 'hello high barz',
+            identifiers: ['@control.otherFn', 'index', 'five', 'test'],
+            expression: '@control.otherFn(test + " " + five, index)',
+            fn: 'toBe'
+        },
+        {
             name: 'a resource in object literal',
             returns: { condition: 'high ' },
             identifiers: ['@five'],
@@ -571,6 +578,9 @@ module tests.expressions.parser {
                         control: {
                             fn: function (a: string) {
                                 return 'hi ' + a;
+                            },
+                            otherFn: function (a: number, b: number) {
+                                return a + b;
                             }
                         },
                         index: 1

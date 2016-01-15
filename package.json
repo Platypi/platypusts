@@ -22,6 +22,7 @@
     "karma-html-reporter": "latest",
     "karma-ie-launcher": "latest",
     "karma-jasmine": "latest",
+    "jasmine-core": "latest",
     "load-grunt-tasks": "latest",
     "lodash": "latest",
     "rimraf": "latest",
