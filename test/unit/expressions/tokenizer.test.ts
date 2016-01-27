@@ -67,8 +67,28 @@ module tests.expressions.tokenizer {
             ]
         },
         {
+            name: 'Array-notation + Function with arguments with parens',
+            expression: 'bar["baz"]["value3"](("Tasty chocolate and " + "vanilla"), (peanut + butter), (fudge()))',
+            expected: [
+                { val: 'bar', args: -1 },
+                { val: 'baz', args: 0 },
+                { val: '[]', args: 0 },
+                { val: 'Tasty chocolate and ', args: 0 },
+                { val: 'vanilla', args: 0 },
+                { val: '+', args: 2 },
+                { val: 'peanut', args: -1 },
+                { val: 'butter', args: -1 },
+                { val: '+', args: 2 },
+                { val: 'fudge', args: -2 },
+                { val: '()', args: 0 },
+                { val: 'value3', args: 0 },
+                { val: '[]', args: 0 },
+                { val: '()', args: 3 },
+            ]
+        },
+        {
             name: 'Ternary',
-            expression: ' 2 > 1 ? !test : fudge()',
+            expression: '2 > 1 ? !test : fudge()',
             expected: [
                 { val: 2, args: 0 },
                 { val: 1, args: 0 },
@@ -78,6 +98,44 @@ module tests.expressions.tokenizer {
                 { val: '?', args: -2 },
                 { val: 'fudge', args: -2 },
                 { val: '()', args: 0 },
+                { val: ':', args: -2 }
+            ]
+        },
+        {
+            name: 'Ternary with parens',
+            expression: '2 > 1 ? "test" : ("hello " + user.world)',
+            expected: [
+                { val: 2, args: 0 },
+                { val: 1, args: 0 },
+                { val: '>', args: 2 },
+                { val: 'test', args: 0 },
+                { val: '?', args: -2 },
+                { val: 'hello ', args: 0 },
+                { val: 'user', args: -1 },
+                { val: 'world', args: -1 },
+                { val: '.', args: 0 },
+                { val: '+', args: 2 },
+                { val: ':', args: -2 }
+            ]
+        },
+        {
+            name: 'Ternary with multiple parens',
+            expression: '((2 > 1) ? (("test ") + user.test) : ("hello " + (user.world)))',
+            expected: [
+                { val: 2, args: 0 },
+                { val: 1, args: 0 },
+                { val: '>', args: 2 },
+                { val: 'test ', args: 0 },
+                { val: 'user', args: -1 },
+                { val: 'test', args: -1 },
+                { val: '.', args: 0 },
+                { val: '+', args: 2 },
+                { val: '?', args: -2 },
+                { val: 'hello ', args: 0 },
+                { val: 'user', args: -1 },
+                { val: 'world', args: -1 },
+                { val: '.', args: 0 },
+                { val: '+', args: 2 },
                 { val: ':', args: -2 }
             ]
         },

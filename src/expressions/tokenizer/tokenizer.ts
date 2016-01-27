@@ -417,6 +417,7 @@ module plat.expressions {
             } else if (obj.val === '') {
                 return char === '';
             }
+
             return char.indexOf(obj.val) !== -1;
         }
 
@@ -767,25 +768,28 @@ module plat.expressions {
          */
         private __handleLeftParenthesis(char: string): void {
             let previousChar = this.__previousChar,
-                operatorStack = this.__operatorStack;
+                operatorStack = this.__operatorStack,
+                args: number;
 
             if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
                 let outputQueue = this.__outputQueue,
-                    topOutput = outputQueue[outputQueue.length - 1];
+                    topOutput = outputQueue[outputQueue.length - 1],
+                    val = isNull(topOutput) ? undefined : topOutput.val;
 
-                if (this._isValEqual(topOutput, '[]')) {
+                if (val === '[]') {
                     operatorStack.unshift(outputQueue.pop());
                     operatorStack.unshift(outputQueue.pop());
-                } else if (!(this._isValEqual(topOutput, '()') || this._isNumeric(topOutput.val))) {
+                } else if (!(val === '()' || this._isNumeric(val))) {
                     operatorStack.unshift(outputQueue.pop());
                 }
 
-                this.__argCount.push({ num: 0 });
+                args = 0;
             } else {
-                this.__argCount.push({ num: -1 });
+                args = -1;
             }
 
-            operatorStack.unshift({ val: char, args: 0 });
+            this.__argCount.push({ num: args });
+            operatorStack.unshift({ val: char, args: args });
             this.__lastCommaChar.push(char);
         }
         /**
@@ -887,13 +891,15 @@ module plat.expressions {
          */
         private __handleStringLiteral(index: number, char: string): number {
             let lookAhead = this._lookAheadForDelimiter(char, index),
-                operatorStack = this.__operatorStack;
+                operatorStack = this.__operatorStack,
+                topOperator = operatorStack[0];
 
-            if (this._isValEqual(operatorStack[0], '([')) {
+            if (!isNull(topOperator) && (topOperator.val === '[' || (topOperator.val === '(' && topOperator.args >= 0))) {
                 operatorStack.unshift({ val: lookAhead, args: 0 });
             } else {
                 this.__outputQueue.push({ val: lookAhead, args: 0 });
             }
+
             return index + lookAhead.length + 1;
         }
 
@@ -1177,7 +1183,7 @@ module plat.expressions {
          *
          * @remarks
          * If -2: Denotes a function name unless indexed into with [] or a ternary expression.
-         * If -1: Denotes a variable or empty array literal.
+         * If -1: Denotes a variable, empty array literal or parenthesis.
          * If 0: Denotes a number, keyword, object indexer (.[]), string literal,
          *  function with 0 arguments, or empty object literal
          * If 1: Denotes a function type with 1 argument, a property on an object literal,
