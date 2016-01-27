@@ -1,6 +1,6 @@
 {
   "name": "platypus",
-  "version": "0.19.3",
+  "version": "0.19.4",
   "description": "A front-end MVVM framework written in TypeScript",
   "main": "dist/platypus.js",
   "devDependencies": {
