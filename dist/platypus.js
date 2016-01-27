@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.19.3 (https://platypi.io)
+ * PlatypusTS v0.19.4 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -2665,22 +2665,23 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleLeftParenthesis = function (char) {
-                var previousChar = this.__previousChar, operatorStack = this.__operatorStack;
+                var previousChar = this.__previousChar, operatorStack = this.__operatorStack, args;
                 if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
-                    var outputQueue = this.__outputQueue, topOutput = outputQueue[outputQueue.length - 1];
-                    if (this._isValEqual(topOutput, '[]')) {
+                    var outputQueue = this.__outputQueue, topOutput = outputQueue[outputQueue.length - 1], val = isNull(topOutput) ? undefined : topOutput.val;
+                    if (val === '[]') {
                         operatorStack.unshift(outputQueue.pop());
                         operatorStack.unshift(outputQueue.pop());
                     }
-                    else if (!(this._isValEqual(topOutput, '()') || this._isNumeric(topOutput.val))) {
+                    else if (!(val === '()' || this._isNumeric(val))) {
                         operatorStack.unshift(outputQueue.pop());
                     }
-                    this.__argCount.push({ num: 0 });
+                    args = 0;
                 }
                 else {
-                    this.__argCount.push({ num: -1 });
+                    args = -1;
                 }
-                operatorStack.unshift({ val: char, args: 0 });
+                this.__argCount.push({ num: args });
+                operatorStack.unshift({ val: char, args: args });
                 this.__lastCommaChar.push(char);
             };
             /**
@@ -2743,8 +2744,8 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleStringLiteral = function (index, char) {
-                var lookAhead = this._lookAheadForDelimiter(char, index), operatorStack = this.__operatorStack;
-                if (this._isValEqual(operatorStack[0], '([')) {
+                var lookAhead = this._lookAheadForDelimiter(char, index), operatorStack = this.__operatorStack, topOperator = operatorStack[0];
+                if (!isNull(topOperator) && (topOperator.val === '[' || (topOperator.val === '(' && topOperator.args >= 0))) {
                     operatorStack.unshift({ val: lookAhead, args: 0 });
                 }
                 else {
