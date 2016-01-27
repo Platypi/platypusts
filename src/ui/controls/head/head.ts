@@ -72,6 +72,19 @@
         protected _browser: web.Browser;
 
         /**
+         * @name _structuredDataElements
+         * @memberof plat.ui.controls.Head
+         * @kind property
+         * @access protected
+         *
+         * @type {Array<HTMLElement>}
+         *
+         * @description
+         * A reference to all the structured data elements added to the DOM for this page.
+         */
+        protected _structuredDataElements: Array<HTMLElement> = [];
+
+        /**
          * @name _titleElement
          * @memberof plat.ui.controls.Head
          * @kind property
@@ -584,6 +597,30 @@
         }
 
         /**
+         * @name structuredData
+         * @memberof plat.ui.controls.Head
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Adds a structured data ld+json element to the DOM.
+         *
+         * @param {any} The object, it will be stringified and put in the ld+json tag.
+         *
+         * @returns {void}
+         */
+        structuredData(obj: any): void {
+            let el = this._document.createElement('script'),
+                sibling = this._titleElement.nextSibling;
+
+            el.setAttribute('type', 'application/ld+json');
+            el.textContent = JSON.stringify(obj);
+
+            this._structuredDataElements.push(el);
+            this.dom.insertBefore(this.element, el, sibling);
+        }
+
+        /**
          * @name loaded
          * @memberof plat.ui.controls.Head
          * @kind function
@@ -747,7 +784,9 @@
                 this._descriptionElement,
                 this._authorElement,
                 this._googleAuthorElement
-            ].concat(slice.call(og), slice.call(twitter)));
+            ].concat(slice.call(og), slice.call(twitter), slice.call(this._structuredDataElements)));
+
+            this._structuredDataElements = [];
         }
 
         /**
