@@ -990,6 +990,20 @@
          * A brief description of the article.
          */
         description?: string;
+
+        /**
+         * @name name
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         * @optional
+         *
+         * @type {string}
+         *
+         * @description
+         * The name of the article.
+         */
+        name?: string;
     }
 
     /**
@@ -1002,7 +1016,7 @@
      * @description
      * An interface for the http://schema.org/BlogPosting type.
      */
-    export interface IBlogPosting extends IArticle {}
+    export interface IBlogPosting extends IArticle { }
 
 
     /**
