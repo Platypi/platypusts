@@ -8390,6 +8390,10 @@ declare module plat {
                   */
                 protected _browser: web.Browser;
                 /**
+                  * A reference to all the structured data elements added to the DOM for this page.
+                  */
+                protected _structuredDataElements: Array<HTMLElement>;
+                /**
                   * A reference to the the <title /> element.
                   */
                 protected _titleElement: HTMLTitleElement;
@@ -8504,6 +8508,11 @@ declare module plat {
                   * @param {Array<string>} videos For each video, a tag will be created
                   */
                 videos(videos: Array<string>): void;
+                /**
+                  * Adds a structured data ld+json element to the DOM.
+                  * @param {any} The object, it will be stringified and put in the ld+json tag.
+                  */
+                structuredData(obj: any): void;
                 /**
                   * Sets the url elements initially.
                   */

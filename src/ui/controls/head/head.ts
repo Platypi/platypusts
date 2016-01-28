@@ -266,7 +266,7 @@
          * @returns {void}
          */
         initialize(): void {
-            this.on(__navigating,(): void => {
+            this.on(__navigating, (): void => {
                 this._removeAllElements();
             });
         }
@@ -610,6 +610,10 @@
          * @returns {void}
          */
         structuredData(obj: any): void {
+            if (isEmpty(obj)) {
+                return;
+            }
+
             let el = this._document.createElement('script'),
                 sibling = this._titleElement.nextSibling;
 
@@ -618,6 +622,25 @@
 
             this._structuredDataElements.push(el);
             this.dom.insertBefore(this.element, el, sibling);
+        }
+
+        /**
+         * @name blogPostings
+         * @memberof plat.ui.controls.Head
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Takes in one or more BlogPosting <http://schema.org/BlogPosting> objects and sets them as ld+json tags in the head.
+         *
+         * @param {plat.ui.controls.IBlogPosting} The posting object, it will be stringified and put in the ld+json tag.
+         *
+         * @returns {void}
+         */
+        blogPostings(...postings: Array<IBlogPosting>): void {
+            for (let i = 0, length = postings.length; i < length; ++i {
+                this.structuredData(postings[i]);
+            }
         }
 
         /**
@@ -748,7 +771,7 @@
 
             if (!multiple && hasName) {
                 el = <T>element.querySelector(tag + '[' + attr + '="' + name + '"]');
-            } else if(!multiple) {
+            } else if (!multiple) {
                 el = <T>element.querySelector(tag);
             }
 
@@ -813,5 +836,250 @@
                 }
             }
         }
+    }
+
+    /**
+     * @name IArticle
+     * @memberof plat.ui.controls
+     * @kind interface
+     *
+     * @description
+     * An interface for the http://schema.org/Article type.
+     */
+    export interface IArticle {
+        /**
+         * @name @context
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {string}
+         *
+         * @description
+         * Should be http://schema.org
+         */
+        '@context': string;
+
+        /**
+         * @name @type
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {string}
+         *
+         * @description
+         * Should be the specific type of schema (i.e. Article, BlogPosting)
+         */
+        '@type': string;
+
+        /**
+         * @name mainEntityOfPage
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         * @optional
+         *
+         * @type {any}
+         *
+         * @description
+         * A WebPage object, with the id being the url of the page. This property is
+         * optional, but highly recommended.
+         */
+        mainEntityOfPage?: {
+            '@type': string;
+            '@id': string;
+        };
+
+        /**
+         * @name headline
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {any}
+         *
+         * @description
+         * A WebPage object, with the id being the url of the page. No longer than 110 characters.
+         */
+        headline: string;
+
+        /**
+         * @name image
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {plat.ui.controls.IImageObject}
+         *
+         * @description
+         * An image to associate with this article.
+         */
+        image: IImageObject;
+
+        /**
+         * @name datePublished
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {Date}
+         *
+         * @description
+         * The date the article was published.
+         */
+        datePublished: Date;
+
+        /**
+         * @name dateModified
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         * @optional
+         *
+         * @type {Date}
+         *
+         * @description
+         * The date the article was last modified.
+         */
+        dateModified?: Date;
+
+        /**
+         * @name author
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {any}
+         *
+         * @description
+         * The author of the article.
+         */
+        author: {
+            '@type': string;
+            name: string;
+        };
+
+        /**
+         * @name publisher
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         *
+         * @type {any}
+         *
+         * @description
+         * The publisher of the article.
+         */
+        publisher: {
+            '@type': string;
+            name: string;
+            logo: IImageObject;
+        };
+
+        /**
+         * @name description
+         * @memberof plat.ui.controls.IArticle
+         * @kind property
+         * @access public
+         * @optional
+         *
+         * @type {string}
+         *
+         * @description
+         * A brief description of the article.
+         */
+        description?: string;
+    }
+
+    /**
+     * @name IBlogPosting
+     * @memberof plat.ui.controls
+     * @kind interface
+     *
+     * @extends {plat.ui.controls.IArticle}
+     *
+     * @description
+     * An interface for the http://schema.org/BlogPosting type.
+     */
+    export interface IBlogPosting extends IArticle {}
+
+
+    /**
+     * @name IBlogPosting
+     * @memberof plat.ui.controls
+     * @kind interface
+     *
+     * @extends {plat.ui.controls.IArticle}
+     *
+     * @description
+     * An interface for the http://schema.org/ImageObject type.
+     */
+    export interface IImageObject {
+        /**
+         * @name @type
+         * @memberof plat.ui.controls.IImageObject
+         * @kind property
+         * @access public
+         *
+         * @type {string}
+         *
+         * @description
+         * Should be ImageObject
+         */
+        '@type': string;
+
+        /**
+         * @name url
+         * @memberof plat.ui.controls.IImageObject
+         * @kind property
+         * @access public
+         *
+         * @type {string}
+         *
+         * @description
+         * The url to the image location.
+         */
+        url: string;
+
+        /**
+         * @name caption
+         * @memberof plat.ui.controls.IImageObject
+         * @kind property
+         * @access public
+         * @optional
+         *
+         * @type {string}
+         *
+         * @description
+         * The caption for the image
+         */
+        caption?: string;
+
+        /**
+         * @name height
+         * @memberof plat.ui.controls.IImageObject
+         * @kind property
+         * @access public
+         *
+         * @type {string}
+         *
+         * @description
+         * The pixel height of the image
+         */
+        height: number;
+
+        /**
+         * @name width
+         * @memberof plat.ui.controls.IImageObject
+         * @kind property
+         * @access public
+         *
+         * @type {string}
+         *
+         * @description
+         * The pixel width of the image
+         */
+        width: number;
     }
 }

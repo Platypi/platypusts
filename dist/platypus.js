@@ -12666,6 +12666,10 @@ var plat;
                      * Rather than be replaced by a 'div', this control wants to be a 'head' element.
                      */
                     this.replaceWith = __Head;
+                    /**
+                     * A reference to all the structured data elements added to the DOM for this page.
+                     */
+                    this._structuredDataElements = [];
                 }
                 /**
                  * Registers for the navigating event to know when to remove all the elements so they
@@ -12848,6 +12852,17 @@ var plat;
                     }, videos);
                 };
                 /**
+                 * Adds a structured data ld+json element to the DOM.
+                 * @param {any} The object, it will be stringified and put in the ld+json tag.
+                 */
+                Head.prototype.structuredData = function (obj) {
+                    var el = this._document.createElement('script'), sibling = this._titleElement.nextSibling;
+                    el.setAttribute('type', 'application/ld+json');
+                    el.textContent = JSON.stringify(obj);
+                    this._structuredDataElements.push(el);
+                    this.dom.insertBefore(this.element, el, sibling);
+                };
+                /**
                  * Sets the url elements initially.
                  */
                 Head.prototype.loaded = function () {
@@ -12934,7 +12949,8 @@ var plat;
                         this._descriptionElement,
                         this._authorElement,
                         this._googleAuthorElement
-                    ].concat(slice.call(og), slice.call(twitter)));
+                    ].concat(slice.call(og), slice.call(twitter), slice.call(this._structuredDataElements)));
+                    this._structuredDataElements = [];
                 };
                 /**
                  * Removes elements from the <head />
