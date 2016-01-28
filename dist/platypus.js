@@ -5,7 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.19.4 (https://platypi.io)
+ * PlatypusTS v0.19.5 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -12856,11 +12856,27 @@ var plat;
                  * @param {any} The object, it will be stringified and put in the ld+json tag.
                  */
                 Head.prototype.structuredData = function (obj) {
+                    if (isEmpty(obj)) {
+                        return;
+                    }
                     var el = this._document.createElement('script'), sibling = this._titleElement.nextSibling;
                     el.setAttribute('type', 'application/ld+json');
                     el.textContent = JSON.stringify(obj);
                     this._structuredDataElements.push(el);
                     this.dom.insertBefore(this.element, el, sibling);
+                };
+                /**
+                 * Takes in one or more BlogPosting <http://schema.org/BlogPosting> objects and sets them as ld+json tags in the head.
+                 * @param {plat.ui.controls.IBlogPosting} The posting object, it will be stringified and put in the ld+json tag.
+                 */
+                Head.prototype.blogPostings = function () {
+                    var postings = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        postings[_i - 0] = arguments[_i];
+                    }
+                    for (var i = 0, length_11 = postings.length; i < length_11; ++i) {
+                        this.structuredData(postings[i]);
+                    }
                 };
                 /**
                  * Sets the url elements initially.
@@ -19202,9 +19218,9 @@ var plat;
                 }
                 else if (isObject(value)) {
                     if (isArray(value)) {
-                        var length_11 = value.length;
+                        var length_12 = value.length;
                         castValue = [];
-                        for (var i = 0; i < length_11; ++i) {
+                        for (var i = 0; i < length_12; ++i) {
                             castValue.push(this._castProperty(value[i], type));
                         }
                     }

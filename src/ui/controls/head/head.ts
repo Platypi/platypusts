@@ -638,7 +638,7 @@
          * @returns {void}
          */
         blogPostings(...postings: Array<IBlogPosting>): void {
-            for (let i = 0, length = postings.length; i < length; ++i {
+            for (let i = 0, length = postings.length; i < length; ++i) {
                 this.structuredData(postings[i]);
             }
         }
