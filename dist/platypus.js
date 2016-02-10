@@ -12990,7 +12990,7 @@ var plat;
                     _browser: __Browser
                 };
                 return Head;
-            })(plat.ui.TemplateControl);
+            })(ui.TemplateControl);
             controls_1.Head = Head;
             /**
              * A TemplateControl for adding HTML to the

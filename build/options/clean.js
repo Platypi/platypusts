@@ -10,7 +10,9 @@ module.exports = function(config, grunt) {
             force: true,
             src: [
                 config.build.dest.ts,
-                config.build.dest.tslocal
+                config.build.dest.tslocal,
+                config.build.dest.jslocal,
+                config.build.dest.minlocal
             ]
         }
 	};

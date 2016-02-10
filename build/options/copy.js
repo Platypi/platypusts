@@ -146,7 +146,7 @@ module.exports = function (config, grunt) {
         local: {
             options: {
                 process: function (data) {
-                    return stripDocs(localize(data.split(/\r\n|\n/)))
+                    return localize(data.split(/\r\n|\n/))
                         .join('\r\n');
                 }
             },
