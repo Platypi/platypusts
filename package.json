@@ -14,6 +14,7 @@
     "grunt-ts": "latest",
     "grunt-ts-bundle": "latest",
     "http-server": "latest",
+    "jasmine-core": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
     "karma-cli": "latest",
@@ -22,17 +23,16 @@
     "karma-html-reporter": "latest",
     "karma-ie-launcher": "latest",
     "karma-jasmine": "latest",
-    "jasmine-core": "latest",
     "load-grunt-tasks": "latest",
     "lodash": "latest",
     "rimraf": "latest",
     "tsconfig-glob": "latest",
     "tsconfig-lint": "latest",
-    "tsd": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "typings": "latest"
   },
   "scripts": {
-    "prepublish": "npm run tsd && npm run deploy",
+    "prepublish": "npm run typings && npm run deploy",
     "build": "npm run build:examples && npm run build:test && npm run build:src",
     "build:examples": "tsc -p build/tsc/examples",
     "build:src": "tsconfig && tsc -p .",
@@ -48,7 +48,7 @@
     "start": "concurrent -r \"npm run watch:examples\" \"npm run server:examples\"",
     "server:examples": "http-server -p 3000",
     "test": "npm run build:test && npm run karma",
-    "tsd": "tsd update -so && tsd link",
+    "typings": "typings install",
     "watch:examples": "npm run build:examples -- -w",
     "watch:src": "npm run build:src -- -w",
     "watch:test": "npm run build:test -- -w"
