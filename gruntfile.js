@@ -32,8 +32,10 @@ var config = {
         dest: {
             ts: 'dist/platypus.ts',
             dts: 'dist/platypus.d.ts',
+            dtslocal: 'dist/platypus-local.d.ts',
             js: 'dist/platypus.js',
-            min: 'dist/platypus.min.js'
+            min: 'dist/platypus.min.js',
+            tslocal: 'dist/platypus-local.ts'
         }
     }
 };
@@ -46,7 +48,7 @@ module.exports = function load(grunt) {
     require('load-grunt-tasks')(grunt);
 
     // By default, run all tests.
-    grunt.registerTask('default', ['clean:before', 'bundle', 'copy:main', 'ts:main', 'uglify', 'copy:typings', 'clean:after']);
+    grunt.registerTask('default', ['clean:before', 'bundle', 'copy:main', 'copy:local', 'ts:main', 'ts:local', 'uglify', 'copy:typings', 'clean:after']);
 
     grunt.registerTask('docs', ['clean:after', 'bundle', 'ts:main', 'uglify', 'copy:typings']);
 };

@@ -13,7 +13,7 @@
      * control will not exist unless you register it as a control with the name 'head'. It is static, so you can inject
      * it into other components and get access to its properties.
      */
-    export class Head extends plat.ui.TemplateControl {
+    export class Head extends ui.TemplateControl {
         protected static _inject: any = {
             _document: __Document,
             _browser: __Browser

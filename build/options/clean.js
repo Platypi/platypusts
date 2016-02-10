@@ -9,7 +9,8 @@ module.exports = function(config, grunt) {
         after: {
             force: true,
             src: [
-                config.build.dest.ts
+                config.build.dest.ts,
+                config.build.dest.tslocal
             ]
         }
 	};

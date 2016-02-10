@@ -65,5 +65,6 @@
   "homepage": "https://platypi.io",
   "typescript": {
     "definition": "dist/platypus.d.ts"
-  }
+  },
+  "typings": "dist/platypus-local.d.ts"
 }

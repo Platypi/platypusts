@@ -12,6 +12,11 @@ module.exports = function(config, grunt) {
             src: [
                 config.build.dest.ts
             ]
+        },
+        local: {
+            src: [
+                config.build.dest.tslocal
+            ]
         }
 	};
 };

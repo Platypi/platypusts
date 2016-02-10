@@ -984,28 +984,28 @@
         private __setAnimationId(id: string, elements: Array<Element>): Array<IAnimationThenable<any>> {
             let animatedElements = this._animatedElements,
                 animatedElement: IAnimatedElement,
-                plat: ICustomElementProperty,
+                _plat: ICustomElementProperty,
                 promises = <Array<IAnimationThenable<any>>>[],
                 length = elements.length,
                 element: Element;
 
             for (let i = 0; i < length; ++i) {
                 element = elements[i];
-                plat = (<ICustomElement>element).__plat;
+                _plat = (<ICustomElement>element).__plat;
 
-                if (isUndefined(plat)) {
+                if (isUndefined(_plat)) {
                     (<ICustomElement>element).__plat = { animation: id };
                     addClass(<HTMLElement>element, __Animating);
-                } else if (isUndefined(plat.animation)) {
-                    plat.animation = id;
+                } else if (isUndefined(_plat.animation)) {
+                    _plat.animation = id;
                     addClass(<HTMLElement>element, __Animating);
                 } else {
-                    animatedElement = animatedElements[plat.animation];
+                    animatedElement = animatedElements[_plat.animation];
                     if (!isUndefined(animatedElement)) {
                         promises.push(animatedElement.promise);
                         animatedElement.animationEnd(true);
                     }
-                    plat.animation = id;
+                    _plat.animation = id;
                 }
             }
 
@@ -1031,7 +1031,7 @@
         private __generateAnimatedElement(id: string, elements: Array<Element>, animationPromise: AnimationPromise): IAnimatedElement {
             let animatedElements = this._animatedElements,
                 removeListener = (cancel?: boolean): void => {
-                    let plat: ICustomElementProperty,
+                    let _plat: ICustomElementProperty,
                         element: ICustomElement,
                         length = elements.length,
                         animationId: string;
@@ -1044,14 +1044,14 @@
 
                     for (let i = 0; i < length; ++i) {
                         element = <ICustomElement>elements[i];
-                        plat = element.__plat || {};
-                        animationId = plat.animation;
+                        _plat = element.__plat || {};
+                        animationId = _plat.animation;
                         if (isUndefined(animationId) || animationId !== id) {
                             continue;
                         }
                         removeClass(<HTMLElement>element, __Animating);
-                        deleteProperty(plat, 'animation');
-                        if (isEmpty(plat)) {
+                        deleteProperty(_plat, 'animation');
+                        if (isEmpty(_plat)) {
                             deleteProperty(element, '__plat');
                         }
                     }
@@ -1083,14 +1083,16 @@
 
             while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
                 if (hasClass(<HTMLElement>element, __Animating)) {
-                    animationId = ((<ICustomElement>element).__plat || <ICustomElementProperty>{}).animation;
+                    let _plat = (<ICustomElement>element).__plat;
+
+                    animationId = (_plat || <ICustomElementProperty>{}).animation;
                     if (isString(animationId)) {
                         if (!isNull(this._animatedElements[animationId])) {
                             return animationId;
                         }
 
-                        deleteProperty((<ICustomElement>element).__plat, 'animation');
-                        if (isEmpty(plat)) {
+                        deleteProperty(_plat, 'animation');
+                        if (isEmpty(_plat)) {
                             deleteProperty(element, '__plat');
                         }
                         removeClass(<HTMLElement>element, __Animating);
@@ -1117,15 +1119,15 @@
                 slice = Array.prototype.slice,
                 customAnimationElements: Array<ICustomElement>,
                 animatedElement: IAnimatedElement,
-                plat: ICustomElementProperty,
+                _plat: ICustomElementProperty,
                 id: string;
 
             for (let i = 0; i < elements.length; ++i) {
                 customAnimationElements = slice.call(elements[i].querySelectorAll('.' + __Animating));
 
                 while (customAnimationElements.length > 0) {
-                    plat = customAnimationElements.pop().__plat || <ICustomElementProperty>{};
-                    id = plat.animation;
+                    _plat = customAnimationElements.pop().__plat || <ICustomElementProperty>{};
+                    id = _plat.animation;
                     if (isNull(id)) {
                         continue;
                     }

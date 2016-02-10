@@ -6,11 +6,11 @@ function stripDocs(data) {
         first = false;
 
     data.forEach(function (line) {
-        line = line.replace(linkRegex, function(value, qualifiedPath, linkValue, index, content) {
+        line = line.replace(linkRegex, function (value, qualifiedPath, linkValue, index, content) {
             return linkValue;
         });
 
-        if(line.trim().indexOf('/// <reference') > -1) {
+        if (line.trim().indexOf('/// <reference') > -1) {
             return;
         }
 
@@ -59,7 +59,7 @@ function useStrict(data) {
             if (trim === '\'use strict\';') {
                 return '';
             } else if (trim.indexOf('module plat ') > -1) {
-                plat = index+1;
+                plat = index + 1;
             }
 
             return line;
@@ -94,9 +94,45 @@ function addNodeTypeDefinition(data) {
         ]);
 }
 
-module.exports = function(config, grunt) {
-	return {
-		main: {
+function localize(data) {
+    var plat, trim;
+
+    data.some(function (line, index) {
+        trim = line.trim();
+
+        if (trim.indexOf('module plat ') > -1) {
+            plat = index;
+        }
+    });
+
+    data.splice(plat, 2);
+
+    for (var i = data.length - 1; i >= 0; --i) {
+        trim = data[i].trim();
+        if (trim.indexOf('}') > -1) {
+            plat = i;
+            break;
+        }
+    }
+
+    data.splice(plat, 4);
+
+    data = data.map(function (line, index) {
+        if (line.indexOf('!isUndefined(window)') > -1) {
+            plat = index;
+        }
+
+        return line.replace(/([^_])plat\./g, '$1');
+    });
+
+    data.splice(plat, 9);
+
+    return data;
+}
+
+module.exports = function (config, grunt) {
+    return {
+        main: {
             options: {
                 process: function (data) {
                     return stripDocs(useStrict(data.split(/\r\n|\n/)))
@@ -107,16 +143,35 @@ module.exports = function(config, grunt) {
             src: config.build.dest.ts,
             dest: config.build.dest.ts
         },
+        local: {
+            options: {
+                process: function (data) {
+                    return stripDocs(localize(data.split(/\r\n|\n/)))
+                        .join('\r\n');
+                }
+            },
+            src: config.build.dest.ts,
+            dest: config.build.dest.tslocal
+        },
         typings: {
             options: {
                 process: function (data) {
                     data = normalizeBlockComments(data.split(/\r\n|\n/));
                     return addNodeTypeDefinition(data.split(/\r\n|\n/))
-                        .join('\r\n');
+                    data.join('\r\n');
                 }
             },
             src: config.build.dest.dts,
             dest: config.build.dest.dts
+        },
+        typingslocal: {
+            options: {
+                process: function (data) {
+                    return normalizeBlockComments(data.split(/\r\n|\n/));
+                }
+            },
+            src: config.build.dest.dtslocal,
+            dest: config.build.dest.dtslocal
         }
-	};
+    };
 };

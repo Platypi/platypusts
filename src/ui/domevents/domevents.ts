@@ -1739,20 +1739,20 @@
          */
         private __registerElement(element: ICustomElement, type: string): void {
             let id: string,
-                plat = element.__plat;
-            if (isNull(plat)) {
+                _plat = element.__plat;
+            if (isNull(_plat)) {
                 id = uniqueId('domEvent_');
-                element.__plat = plat = {
+                element.__plat = _plat = {
                     domEvent: id
                 };
-            } else if (isNull(plat.domEvent)) {
+            } else if (isNull(_plat.domEvent)) {
                 id = uniqueId('domEvent_');
-                plat.domEvent = id;
+                _plat.domEvent = id;
             }
 
             let _domEvent: DomEvent;
             if (isNull(id)) {
-                let subscriber = this._subscribers[plat.domEvent];
+                let subscriber = this._subscribers[_plat.domEvent];
                 if (isUndefined((<any>subscriber)[type])) {
                     _domEvent = new CustomDomEvent(element, type);
                     (<any>subscriber)[type] = _domEvent;
@@ -1789,12 +1789,12 @@
          * @returns {void}
          */
         private __unregisterElement(element: ICustomElement, type: string): void {
-            let plat = element.__plat;
-            if (isNull(plat) || isNull(plat.domEvent)) {
+            let _plat = element.__plat;
+            if (isNull(_plat) || isNull(_plat.domEvent)) {
                 return;
             }
 
-            let domEventId = plat.domEvent,
+            let domEventId = _plat.domEvent,
                 eventSubscriber = this._subscribers[domEventId],
                 domEvent: CustomDomEvent = (<any>eventSubscriber)[type];
 
@@ -1927,17 +1927,17 @@
                 return;
             }
 
-            let plat: ICustomElementProperty,
+            let _plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
                 domEvent: DomEvent;
 
             do {
-                plat = eventTarget.__plat;
-                if (isUndefined(plat) || isUndefined(plat.domEvent)) {
+                _plat = eventTarget.__plat;
+                if (isUndefined(_plat) || isUndefined(_plat.domEvent)) {
                     continue;
                 }
 
-                subscriber = this._subscribers[plat.domEvent];
+                subscriber = this._subscribers[_plat.domEvent];
                 domEvent = (<any>subscriber)[type];
                 if (isUndefined(domEvent)) {
                     continue;
@@ -1969,7 +1969,7 @@
                 return [];
             }
 
-            let plat: ICustomElementProperty,
+            let _plat: ICustomElementProperty,
                 subscriber: IEventSubscriber,
                 subscriberKeys: Array<string>,
                 subscriberKey: string,
@@ -1977,12 +1977,12 @@
                 index: number;
 
             do {
-                plat = eventTarget.__plat;
-                if (isUndefined(plat) || isUndefined(plat.domEvent)) {
+                _plat = eventTarget.__plat;
+                if (isUndefined(_plat) || isUndefined(_plat.domEvent)) {
                     continue;
                 }
 
-                subscriber = this._subscribers[plat.domEvent];
+                subscriber = this._subscribers[_plat.domEvent];
                 subscriberKeys = Object.keys(subscriber);
                 while (subscriberKeys.length > 0) {
                     subscriberKey = subscriberKeys.pop();

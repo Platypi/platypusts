@@ -9669,20 +9669,20 @@ var plat;
              * @param {string} type The type of event.
              */
             DomEvents.prototype.__registerElement = function (element, type) {
-                var id, plat = element.__plat;
-                if (isNull(plat)) {
+                var id, _plat = element.__plat;
+                if (isNull(_plat)) {
                     id = uniqueId('domEvent_');
-                    element.__plat = plat = {
+                    element.__plat = _plat = {
                         domEvent: id
                     };
                 }
-                else if (isNull(plat.domEvent)) {
+                else if (isNull(_plat.domEvent)) {
                     id = uniqueId('domEvent_');
-                    plat.domEvent = id;
+                    _plat.domEvent = id;
                 }
                 var _domEvent;
                 if (isNull(id)) {
-                    var subscriber = this._subscribers[plat.domEvent];
+                    var subscriber = this._subscribers[_plat.domEvent];
                     if (isUndefined(subscriber[type])) {
                         _domEvent = new CustomDomEvent(element, type);
                         subscriber[type] = _domEvent;
@@ -9708,11 +9708,11 @@ var plat;
              * @param {string} type The type of event.
              */
             DomEvents.prototype.__unregisterElement = function (element, type) {
-                var plat = element.__plat;
-                if (isNull(plat) || isNull(plat.domEvent)) {
+                var _plat = element.__plat;
+                if (isNull(_plat) || isNull(_plat.domEvent)) {
                     return;
                 }
-                var domEventId = plat.domEvent, eventSubscriber = this._subscribers[domEventId], domEvent = eventSubscriber[type];
+                var domEventId = _plat.domEvent, eventSubscriber = this._subscribers[domEventId], domEvent = eventSubscriber[type];
                 if (isNull(domEvent)) {
                     return;
                 }
@@ -9789,13 +9789,13 @@ var plat;
                 if (isNull(eventTarget)) {
                     return;
                 }
-                var plat, subscriber, domEvent;
+                var _plat, subscriber, domEvent;
                 do {
-                    plat = eventTarget.__plat;
-                    if (isUndefined(plat) || isUndefined(plat.domEvent)) {
+                    _plat = eventTarget.__plat;
+                    if (isUndefined(_plat) || isUndefined(_plat.domEvent)) {
                         continue;
                     }
-                    subscriber = this._subscribers[plat.domEvent];
+                    subscriber = this._subscribers[_plat.domEvent];
                     domEvent = subscriber[type];
                     if (isUndefined(domEvent)) {
                         continue;
@@ -9813,13 +9813,13 @@ var plat;
                 if (isNull(eventTarget)) {
                     return [];
                 }
-                var plat, subscriber, subscriberKeys, subscriberKey, domEvents = [], index;
+                var _plat, subscriber, subscriberKeys, subscriberKey, domEvents = [], index;
                 do {
-                    plat = eventTarget.__plat;
-                    if (isUndefined(plat) || isUndefined(plat.domEvent)) {
+                    _plat = eventTarget.__plat;
+                    if (isUndefined(_plat) || isUndefined(_plat.domEvent)) {
                         continue;
                     }
-                    subscriber = this._subscribers[plat.domEvent];
+                    subscriber = this._subscribers[_plat.domEvent];
                     subscriberKeys = Object.keys(subscriber);
                     while (subscriberKeys.length > 0) {
                         subscriberKey = subscriberKeys.pop();
@@ -10804,25 +10804,25 @@ var plat;
                  * @param {Array<Element>} elements The Array of Elements being animated.
                  */
                 Animator.prototype.__setAnimationId = function (id, elements) {
-                    var animatedElements = this._animatedElements, animatedElement, plat, promises = [], length = elements.length, element;
+                    var animatedElements = this._animatedElements, animatedElement, _plat, promises = [], length = elements.length, element;
                     for (var i = 0; i < length; ++i) {
                         element = elements[i];
-                        plat = element.__plat;
-                        if (isUndefined(plat)) {
+                        _plat = element.__plat;
+                        if (isUndefined(_plat)) {
                             element.__plat = { animation: id };
                             addClass(element, __Animating);
                         }
-                        else if (isUndefined(plat.animation)) {
-                            plat.animation = id;
+                        else if (isUndefined(_plat.animation)) {
+                            _plat.animation = id;
                             addClass(element, __Animating);
                         }
                         else {
-                            animatedElement = animatedElements[plat.animation];
+                            animatedElement = animatedElements[_plat.animation];
                             if (!isUndefined(animatedElement)) {
                                 promises.push(animatedElement.promise);
                                 animatedElement.animationEnd(true);
                             }
-                            plat.animation = id;
+                            _plat.animation = id;
                         }
                     }
                     return promises;
@@ -10836,7 +10836,7 @@ var plat;
                  */
                 Animator.prototype.__generateAnimatedElement = function (id, elements, animationPromise) {
                     var animatedElements = this._animatedElements, removeListener = function (cancel) {
-                        var plat, element, length = elements.length, animationId;
+                        var _plat, element, length = elements.length, animationId;
                         if (cancel === true) {
                             animationPromise.cancel();
                             deleteProperty(animatedElements, id);
@@ -10844,14 +10844,14 @@ var plat;
                         }
                         for (var i = 0; i < length; ++i) {
                             element = elements[i];
-                            plat = element.__plat || {};
-                            animationId = plat.animation;
+                            _plat = element.__plat || {};
+                            animationId = _plat.animation;
                             if (isUndefined(animationId) || animationId !== id) {
                                 continue;
                             }
                             removeClass(element, __Animating);
-                            deleteProperty(plat, 'animation');
-                            if (isEmpty(plat)) {
+                            deleteProperty(_plat, 'animation');
+                            if (isEmpty(_plat)) {
                                 deleteProperty(element, '__plat');
                             }
                         }
@@ -10869,13 +10869,14 @@ var plat;
                     var animationId, element = elements[0];
                     while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
                         if (hasClass(element, __Animating)) {
-                            animationId = (element.__plat || {}).animation;
+                            var _plat = element.__plat;
+                            animationId = (_plat || {}).animation;
                             if (isString(animationId)) {
                                 if (!isNull(this._animatedElements[animationId])) {
                                     return animationId;
                                 }
-                                deleteProperty(element.__plat, 'animation');
-                                if (isEmpty(plat)) {
+                                deleteProperty(_plat, 'animation');
+                                if (isEmpty(_plat)) {
                                     deleteProperty(element, '__plat');
                                 }
                                 removeClass(element, __Animating);
@@ -10888,12 +10889,12 @@ var plat;
                  * @param {Element} element The element being animated.
                  */
                 Animator.prototype.__stopChildAnimations = function (elements) {
-                    var animatingElements = this._animatedElements, slice = Array.prototype.slice, customAnimationElements, animatedElement, plat, id;
+                    var animatingElements = this._animatedElements, slice = Array.prototype.slice, customAnimationElements, animatedElement, _plat, id;
                     for (var i = 0; i < elements.length; ++i) {
                         customAnimationElements = slice.call(elements[i].querySelectorAll('.' + __Animating));
                         while (customAnimationElements.length > 0) {
-                            plat = customAnimationElements.pop().__plat || {};
-                            id = plat.animation;
+                            _plat = customAnimationElements.pop().__plat || {};
+                            id = _plat.animation;
                             if (isNull(id)) {
                                 continue;
                             }
