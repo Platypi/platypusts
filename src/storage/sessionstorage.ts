@@ -5,15 +5,15 @@ module plat.storage {
      * @name SessionStorage
      * @memberof plat.storage
      * @kind class
-     * 
+     *
      * @extends {plat.storage.BaseStorage}
-     * 
+     *
      * @description
      * A class for wrapping SessionStorage as an injectable.
      */
     export class SessionStorage extends BaseStorage {
         constructor() {
-            super((<Window>plat.acquire(__Window)).sessionStorage);
+            super((<Window>acquire(__Window)).sessionStorage);
         }
     }
 
