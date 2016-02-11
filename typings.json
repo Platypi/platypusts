@@ -1,5 +1,8 @@
 {
   "name": "platypus",
+  "main": "dist/platypus.d.ts",
+  "author": "Platypi <support@platypi.io>",
+  "description": "A front-end MVVM framework written in TypeScript",
   "dependencies": {},
   "devDependencies": {},
   "ambientDependencies": {

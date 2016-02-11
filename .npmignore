@@ -7,12 +7,11 @@ examples
 node_modules
 src
 test
+typings
 .gitattributes
 .gitignore
 gruntfile.js
 karma.conf.js
 license.txt
-tsd.test.json
-tslint.json
 CONTRIBUTE.md
 bower.json

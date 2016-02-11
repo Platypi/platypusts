@@ -44,27 +44,18 @@ If you want to use `plat` on `window`, you need to include it in your `index.htm
 ## Use with TypeScript
 
 This package includes a declaration file, as well as the source `.js` and `.min.js` file. If you are
-using TypeScript, you will want to reference the declaration file. The recommended way is through TSD.
+using TypeScript >= 1.6.0 everything will be handled for you. Otherwise you can use one of the following
+methods.
 
-### with TSD
+### with Typings
 
 ```shell
-tsd link
+typings install --ambient --save npm:platypus
 ```
 
-```
-/// <reference path="/typings/tsd.d.ts" />
-```
+### without Typings
 
-### without TSD
-
-```ts
-/// <reference path="/node_modules/platypus/dist/platypus.d.ts" />
-```
-
-```ts
-/// <reference path="/bower_components/platypus/dist/platypus.d.ts" />
-```
+Reference `/node_modules/platypus/dist/platypus.d.ts` from your `tsconfig.json`
 
 ## Recommendations
 
@@ -73,4 +64,4 @@ using `window.plat`.
 
 ## Documentation
 
-Documentation is available on the [Platypi website](https://platypi.io/docs).
+Documentation is available on the [Platypi Developers Website](https://developers.platypi.io).

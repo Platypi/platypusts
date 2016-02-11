@@ -62,7 +62,7 @@
   "bugs": {
     "url": "https://github.com/Platypi/platypusts/issues"
   },
-  "homepage": "https://platypi.io",
+  "homepage": "https://developers.platypi.io",
   "typescript": {
     "definition": "dist/platypus.d.ts"
   },
