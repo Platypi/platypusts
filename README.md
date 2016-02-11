@@ -50,7 +50,7 @@ methods.
 ### with Typings
 
 ```shell
-typings install --ambient --save npm:platypus
+typings install --save npm:platypus
 ```
 
 ### without Typings
