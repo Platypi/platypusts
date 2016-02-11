@@ -158,7 +158,7 @@ module.exports = function (config, grunt) {
                 process: function (data) {
                     data = normalizeBlockComments(data.split(/\r\n|\n/));
                     return addNodeTypeDefinition(data.split(/\r\n|\n/))
-                    data.join('\r\n');
+                        .join('\r\n');
                 }
             },
             src: config.build.dest.dts,

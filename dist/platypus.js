@@ -5161,7 +5161,7 @@ var plat;
             /**
              * Adds data to storage with the designated key.
              * @param {string} key The key of the item to store in storage.
-             * @param {any} data The data to store in storage with the key.
+             * @param {string} data The data to store in storage with the key.
              */
             BaseStorage.prototype.setItem = function (key, data) {
                 this._storage.setItem(key, data);
@@ -5176,7 +5176,7 @@ var plat;
         var LocalStorage = (function (_super) {
             __extends(LocalStorage, _super);
             function LocalStorage() {
-                _super.call(this, plat.acquire(__Window).localStorage);
+                _super.call(this, acquire(__Window).localStorage);
             }
             return LocalStorage;
         })(BaseStorage);
@@ -5188,7 +5188,7 @@ var plat;
         var SessionStorage = (function (_super) {
             __extends(SessionStorage, _super);
             function SessionStorage() {
-                _super.call(this, plat.acquire(__Window).sessionStorage);
+                _super.call(this, acquire(__Window).sessionStorage);
             }
             return SessionStorage;
         })(BaseStorage);

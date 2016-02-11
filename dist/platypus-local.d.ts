@@ -2898,7 +2898,7 @@ export declare module storage {
           * Gets an item out of storage with the assigned key.
           * @param {string} key The key of the item to retrieve from storage.
           */
-        getItem<T>(key: string): T;
+        getItem(key: string): string;
         /**
           * Allows for iterating over storage keys with an index. When
           * called with an index, it will return the key at that index in
@@ -2915,9 +2915,9 @@ export declare module storage {
         /**
           * Adds data to storage with the designated key.
           * @param {string} key The key of the item to store in storage.
-          * @param {any} data The data to store in storage with the key.
+          * @param {string} data The data to store in storage with the key.
           */
-        setItem(key: string, data: any): void;
+        setItem(key: string, data: string): void;
     }
     /**
       * A class used to wrap HTML5 localStorage into an injectable.
