@@ -6004,10 +6004,6 @@ export declare module ui {
           */
         private __reverseMap;
         /**
-          * An EventListener with a bound context for registering mapped events.
-          */
-        private __mappedEventListener;
-        /**
           * An object containing the number of currently active mapped touch
           * events of each type.
           */
@@ -6130,11 +6126,6 @@ export declare module ui {
           */
         private __handleTrackEnd(ev);
         /**
-          * A function for handling and firing custom events that are mapped to standard events.
-          * @param {ui.IExtendedEvent} ev The touch event object.
-          */
-        private __handleMappedEvent(ev);
-        /**
           * A function for determining the proper touch events.
           */
         private __getTypes();
@@ -6198,13 +6189,6 @@ export declare module ui {
           * @param {Array<string>} types An array of the types of events being searched for.
           */
         private __findFirstSubscribers(eventTarget, types);
-        /**
-          * Adds a listener for listening to a standard event and mapping it to a custom event.
-          * @param {number} count The number of mapped events registered.
-          * @param {string} mappedEvent The mapped event type.
-          * @param {boolean} useCapture? Whether the mapped event listener is fired on the capture or bubble phase.
-          */
-        private __addMappedEvent(count, mappedEvent, useCapture?);
         /**
           * Removes an event listener for a given event type.
           * @param {ui.ICustomElement} element The element to remove the listener from.

@@ -9014,10 +9014,6 @@ var plat;
                  */
                 this.__reverseMap = {};
                 /**
-                 * An EventListener with a bound context for registering mapped events.
-                 */
-                this.__mappedEventListener = this.__handleMappedEvent.bind(this);
-                /**
                  * An object containing the number of currently active mapped touch
                  * events of each type.
                  */
@@ -9044,20 +9040,17 @@ var plat;
             }
             DomEvents.prototype.addEventListener = function (element, type, listener, useCapture) {
                 var _this = this;
-                var _compat = this._compat, mappedGestures = _compat.mappedEvents, mappedType = mappedGestures[type], mappingExists = !isNull(mappedType), mappedCount = this.__mappedCount, mappedRemoveListener = noop, mappedTouchRemoveListener = noop, gestures = this._gestures, listenerRemoved = false;
+                var _compat = this._compat, mappedGestures = _compat.mappedEvents, mappedType = mappedGestures[type], mappingExists = !isNull(mappedType), mappedCount = this.__mappedCount, gestures = this._gestures, listenerRemoved = false;
                 if (mappingExists) {
-                    var count = mappedCount[type];
                     this.__reverseMap[mappedType] = type;
                     this.__registerElement(element, type);
                     mappedCount[type]++;
-                    mappedRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
                     if (_compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
                         mappedType = mappedType
                             .replace('touch', 'mouse')
                             .replace('start', 'down')
                             .replace('end', 'up');
                         this.__reverseMap[mappedType] = type;
-                        mappedTouchRemoveListener = this.__addMappedEvent(count, mappedType, useCapture);
                     }
                 }
                 element.addEventListener(type, listener, useCapture);
@@ -9067,15 +9060,8 @@ var plat;
                             return;
                         }
                         else if (mappingExists) {
-                            var currentCount = mappedCount[type];
-                            if (isNumber(currentCount)) {
-                                if (currentCount > 0) {
-                                    currentCount = --mappedCount[type];
-                                }
-                                if (currentCount === 0) {
-                                    mappedRemoveListener();
-                                    mappedTouchRemoveListener();
-                                }
+                            if (mappedCount[type] > 0) {
+                                mappedCount[type]--;
                             }
                             _this.__unregisterElement(element, type);
                         }
@@ -9188,8 +9174,8 @@ var plat;
                 if (isNull(ev)) {
                     return true;
                 }
-                // set any captured target and last move back to null 
-                this.__capturedTarget = this.__lastMoveEvent = null;
+                // set last move back to null and hasMoved to false 
+                this.__lastMoveEvent = null;
                 this.__hasMoved = false;
                 var clientX = ev.clientX, clientY = ev.clientY, timeStamp = ev.timeStamp, target = ev.target, gestures = this._gestures;
                 this.__lastTouchDown = {
@@ -9211,12 +9197,20 @@ var plat;
                 if (this._android44orBelow) {
                     this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
                 }
-                var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0;
+                var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0, mappedCount = this.__mappedCount;
                 // if any moving events registered, register move 
-                if (eventType === 'touchstart' || gestureCount.$track > 0 ||
+                if (eventType === 'touchstart' || mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
                     gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
                     this.__registerType(this._moveEvents);
                     this.__detectingMove = true;
+                }
+                // check mapped events 
+                var mappedType = this.__reverseMap[eventType];
+                if (mappedCount[mappedType] > 0) {
+                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
+                    if (!isNull(mappedDomEvent)) {
+                        mappedDomEvent.trigger(ev);
+                    }
                 }
                 // return if no hold or release events are registered 
                 if (noHolds && noRelease) {
@@ -9264,14 +9258,23 @@ var plat;
                 // clear hold event 
                 this.__cancelDeferredHold();
                 this.__cancelDeferredHold = noop;
+                var eventType = ev.type;
                 // return immediately if there are multiple touches present, or 
                 // if it is a mouse event and currently in a touch 
-                if (this._inTouch === true && ev.type === 'mousemove') {
+                if (this._inTouch === true && eventType === 'mousemove') {
                     return true;
                 }
                 var evt = this.__standardizeEventObject(ev);
                 if (isNull(evt)) {
                     return true;
+                }
+                // check mapped events 
+                var mappedType = this.__reverseMap[eventType];
+                if (this.__mappedCount[mappedType] > 0) {
+                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
+                    if (!isNull(mappedDomEvent)) {
+                        mappedDomEvent.trigger(evt);
+                    }
                 }
                 var gestureCount = this._gestureCount, noTracking = gestureCount.$track <= 0, noSwiping = gestureCount.$swipe <= 0, config = DomEvents.config, swipeOrigin = this.__swipeOrigin, x = evt.clientX, y = evt.clientY, minMove = this.__hasMoved ||
                     (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
@@ -9381,6 +9384,14 @@ var plat;
                 else if (notMouseUp) {
                     this._inTouch = false;
                 }
+                // check mapped events 
+                var mappedType = this.__reverseMap[eventType];
+                if (this.__mappedCount[mappedType] > 0) {
+                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
+                    if (!isNull(mappedDomEvent)) {
+                        mappedDomEvent.trigger(ev);
+                    }
+                }
                 // additional check for mousedown/touchstart - mouseup/touchend inconsistencies 
                 if (this.__touchCount > 0) {
                     this.__touchCount = ev.touches.length;
@@ -9398,10 +9409,14 @@ var plat;
                 if (hasMoved) {
                     this.__handleTrackEnd(ev);
                     this.__tapCount = 0;
+                    // clear captured target 
+                    this.__capturedTarget = null;
                     return true;
                 }
                 else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
                     this.__tapCount = 0;
+                    // clear captured target 
+                    this.__capturedTarget = null;
                     return true;
                 }
                 var lastTouchUp = this.__lastTouchUp, x = ev.clientX, y = ev.clientY;
@@ -9419,6 +9434,8 @@ var plat;
                 // handle tap events 
                 this.__handleTap(ev);
                 this.__lastTouchUp = ev;
+                // clear captured target 
+                this.__capturedTarget = null;
             };
             /**
              * Clears all temporary states like move and hold events.
@@ -9440,6 +9457,7 @@ var plat;
                 this._inTouch = this.__hasRelease = false;
                 this.__pointerHash = {};
                 this.__pointerEvents = [];
+                // clear captured target 
                 this.__capturedTarget = null;
             };
             // gesture handling methods 
@@ -9452,6 +9470,14 @@ var plat;
                 ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
                 this._inTouch = false;
                 this.__clearTempStates();
+                // check mapped events 
+                var mappedType = this.__reverseMap[ev.type];
+                if (this.__mappedCount[mappedType] > 0) {
+                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
+                    if (!isNull(mappedDomEvent)) {
+                        mappedDomEvent.trigger(ev);
+                    }
+                }
                 if (this.__hasMoved) {
                     // Android 4.4.x fires touchcancel when the finger moves off an element that 
                     // is listening for touch events, so we should handle swipes here in that case. 
@@ -9577,21 +9603,6 @@ var plat;
                 }
                 var eventTarget = this.__capturedTarget || ev.target, domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
                 if (isNull(domEvent)) {
-                    return;
-                }
-                domEvent.trigger(ev);
-            };
-            /**
-             * A function for handling and firing custom events that are mapped to standard events.
-             * @param {plat.ui.IExtendedEvent} ev The touch event object.
-             */
-            DomEvents.prototype.__handleMappedEvent = function (ev) {
-                var mappedType = ev.type, eventType = this.__reverseMap[mappedType], domEvent = this.__findFirstSubscriber(ev.target, eventType);
-                if (isNull(domEvent)) {
-                    return;
-                }
-                ev = this.__standardizeEventObject(ev);
-                if (isNull(ev)) {
                     return;
                 }
                 domEvent.trigger(ev);
@@ -9833,22 +9844,6 @@ var plat;
                 return domEvents;
             };
             /**
-             * Adds a listener for listening to a standard event and mapping it to a custom event.
-             * @param {number} count The number of mapped events registered.
-             * @param {string} mappedEvent The mapped event type.
-             * @param {boolean} useCapture? Whether the mapped event listener is fired on the capture or bubble phase.
-             */
-            DomEvents.prototype.__addMappedEvent = function (count, mappedEvent, useCapture) {
-                var _this = this;
-                var _document = this._document;
-                if (count === 0) {
-                    _document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
-                }
-                return function () {
-                    _document.removeEventListener(mappedEvent, _this.__mappedEventListener, useCapture);
-                };
-            };
-            /**
              * Removes an event listener for a given event type.
              * @param {plat.ui.ICustomElement} element The element to remove the listener from.
              * @param {string} type The type of event being removed.
@@ -9988,16 +9983,25 @@ var plat;
                         y: ev.clientY
                     };
                 }
-                else if (!isUndefined(ev.offsetX) && target === ev.target) {
+                else if (!isUndefined(ev.offsetX) && !isUndefined(ev.offsetY) && target === ev.target) {
                     return {
                         x: ev.offsetX,
                         y: ev.offsetY
                     };
                 }
-                var x = target.offsetLeft, y = target.offsetTop;
-                while (!isNull(target = target.offsetParent)) {
-                    x += target.offsetLeft;
-                    y += target.offsetTop;
+                var x, y;
+                if (isFunction(target.getBoundingClientRect)) {
+                    var rect = target.getBoundingClientRect();
+                    x = rect.left;
+                    y = rect.top;
+                }
+                else {
+                    x = target.offsetLeft;
+                    y = target.offsetTop;
+                    while (!isNull(target = target.offsetParent)) {
+                        x += target.offsetLeft;
+                        y += target.offsetTop;
+                    }
                 }
                 return {
                     x: (ev.clientX - x),
