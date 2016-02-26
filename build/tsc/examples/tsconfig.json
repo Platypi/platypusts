@@ -1,11 +1,11 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "ES5",
+		"target": "es5",
 		"noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "out": "examples/app.js",
+        "outFile": "examples/app.js",
 		"watch": false,
         "inlineSourceMap": true
 	},
