@@ -5,7 +5,7 @@
 		"noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outFile": "examples/app.js",
+        "out": "examples/app.js",
 		"watch": false,
         "inlineSourceMap": true
 	},
