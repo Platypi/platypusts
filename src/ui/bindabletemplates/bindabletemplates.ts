@@ -695,10 +695,11 @@ module plat.ui {
          *
          * @param {string} key The key used to store the template.
          * @param {Element} template An Element representing the DOM template.
+         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
          *
          * @returns {void}
          */
-        add(key: string, template: Element): void;
+        add(key: string, template: Element, overwrite?: boolean): void;
         /**
          * @name add
          * @memberof plat.ui.BindableTemplates
@@ -712,10 +713,11 @@ module plat.ui {
          *
          * @param {string} key The key used to store the template.
          * @param {Array<Node>} template A node Array representing the DOM template.
+         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
          *
          * @returns {void}
          */
-        add(key: string, template: Array<Node>): void;
+        add(key: string, template: Array<Node>, overwrite?: boolean): void;
         /**
          * @name add
          * @memberof plat.ui.BindableTemplates
@@ -729,10 +731,11 @@ module plat.ui {
          *
          * @param {string} key The key used to store the template.
          * @param {NodeList} template A NodeList representing the DOM template.
+         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
          *
          * @returns {void}
          */
-        add(key: string, template: NodeList): void;
+        add(key: string, template: NodeList, overwrite?: boolean): void;
         /**
          * @name add
          * @memberof plat.ui.BindableTemplates
@@ -746,10 +749,11 @@ module plat.ui {
          *
          * @param {string} key The key used to store the template.
          * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
          *
          * @returns {void}
          */
-        add(key: string, template: DocumentFragment): void;
+        add(key: string, template: DocumentFragment, overwrite?: boolean): void;
         /**
          * @name add
          * @memberof plat.ui.BindableTemplates
@@ -763,10 +767,11 @@ module plat.ui {
          *
          * @param {string} key The key used to store the template.
          * @param {Node} template A Node representing the DOM template.
+         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
          *
          * @returns {void}
          */
-        add(key: string, template: Node): void;
+        add(key: string, template: Node, overwrite?: boolean): void;
         /**
          * @name add
          * @memberof plat.ui.BindableTemplates
@@ -780,13 +785,20 @@ module plat.ui {
          *
          * @param {string} key The key used to store the template.
          * @param {string} template A template string representing the DOM template.
+         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
          *
          * @returns {void}
          */
-        add(key: string, template: string): void;
-        add(key: string, template: any): void {
+        add(key: string, template: string, overwrite?: boolean): void;
+        add(key: string, template: any, overwrite?: boolean): void {
             if (isEmpty(key)) {
                 this._log.debug(this.control.type + ' must use a valid key to add a template to BindableTemplates.');
+                return;
+            }
+
+            let templatePromise = this.templates[key];
+
+            if (!isNull(templatePromise) && !overwrite) {
                 return;
             }
 
