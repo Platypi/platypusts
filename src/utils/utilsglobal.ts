@@ -94,6 +94,9 @@ function _extend(deep: boolean, redefine: any, destination: any, ...sources: any
                 } else if (isNode(property)) {
                     define(destination, key, (<Node>property).cloneNode(true));
                     return;
+                } else if (isFile(property)) {
+                    define(destination, key, property);
+                    return;
                 } else if (isObject(property)) {
                     _extend(deep, define, destination[key] || (destination[key] = {}), property);
                     return;
@@ -115,6 +118,8 @@ function _clone(obj: any, deep?: boolean): any {
         return new RegExp(obj);
     } else if (isNode(obj)) {
         return (<Node>obj).cloneNode(deep);
+    } else if (isFile(obj)) {
+        return obj;
     } else if (isError(obj)) {
         return new obj.constructor((<Error>obj).message);
     }
@@ -321,13 +326,13 @@ function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array
     iterator = iterator.bind(context);
 
     let inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
-            array: Array<T>): plat.async.IThenable<Array<R>> => {
-            return previousValue.then((items): plat.async.IThenable<Array<R>> => {
-                return iterator(nextValue, nextIndex, array).then((moreItems): Array<R> => {
-                    return items.concat(moreItems);
-                });
+        array: Array<T>): plat.async.IThenable<Array<R>> => {
+        return previousValue.then((items): plat.async.IThenable<Array<R>> => {
+            return iterator(nextValue, nextIndex, array).then((moreItems): Array<R> => {
+                return items.concat(moreItems);
             });
-        };
+        });
+    };
 
     if (descending === true) {
         return array.reduceRight(inOrder, initialValue);
@@ -496,7 +501,7 @@ function delimit(str: string, delimiter: string): string {
     }
 
     __capitalCaseRegex = __capitalCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).capitalCaseRegex;
-    return str.replace(__capitalCaseRegex, (match: string, index?: number): string  =>
+    return str.replace(__capitalCaseRegex, (match: string, index?: number): string =>
         index ? delimiter + match.toLowerCase() : match.toLowerCase());
 }
 
@@ -547,7 +552,7 @@ function serializeQuery(query: plat.IObject<string>): string {
         return key + '=' + value;
     }, query).join('&');
 
-    if(!isEmpty(q)) {
+    if (!isEmpty(q)) {
         q = '?' + q;
     }
 
