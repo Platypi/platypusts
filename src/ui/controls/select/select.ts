@@ -33,6 +33,19 @@ module plat.ui.controls {
         replaceWith: string = 'select';
 
         /**
+         * @name element
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access public
+         *
+         * @type {HTMLSelectElement}
+         *
+         * @description
+         * Specifies the element as being an HTMLSelectElement.
+         */
+        element: HTMLSelectElement;
+
+        /**
          * @name priority
          * @memberof plat.ui.controls.Select
          * @kind property
@@ -412,7 +425,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         observeProperties(binder: observable.IImplementTwoWayBinding): void {
-            let element = <HTMLSelectElement>this.element;
+            let element = this.element;
 
             this._binder = binder;
 
@@ -449,7 +462,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void {
-            let element = <HTMLSelectElement>this.element,
+            let element = this.element,
                 value = element.value;
 
             if (isNull(newValue)) {
@@ -522,19 +535,19 @@ module plat.ui.controls {
          */
         protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void {
             this.itemsLoaded.then((): void => {
-                let element = <HTMLSelectElement>this.element,
+                let element = this.element,
                     options = element.options,
                     length = isNull(options) ? 0 : options.length,
                     option: HTMLOptionElement,
                     nullValue = isNull(newValue);
-                    
+
                 if (nullValue || !isArray(newValue)) {
                     if (firstTime === true && isNull(this._binder.evaluate())) {
                         this.inputChanged(this._getSelectedValues());
                     }
                     // unselects the options unless a match is found
                     while (length-- > 0) {
-                        option = options[length];
+                        option = <HTMLOptionElement>options[length];
                         if (!nullValue && option.value === '' + newValue) {
                             option.selected = true;
                             return;
@@ -551,7 +564,7 @@ module plat.ui.controls {
                     highestIndex = Infinity;
 
                 while (length-- > 0) {
-                    option = options[length];
+                    option = <HTMLOptionElement>options[length];
                     value = option.value;
 
                     if (newValue.indexOf(value) !== -1) {
@@ -594,7 +607,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _observeChange(): void {
-            let element = <HTMLSelectElement>this.element;
+            let element = this.element;
             this.inputChanged(element.multiple ? this._getSelectedValues() : this._castValue(element.value));
         }
 
@@ -610,13 +623,13 @@ module plat.ui.controls {
          * @returns {Array<string>} The selected values.
          */
         protected _getSelectedValues(): Array<string> {
-            let options = (<HTMLSelectElement>this.element).options,
+            let options = this.element.options,
                 length = options.length,
                 option: HTMLOptionElement,
                 selectedValues: Array<string> = [];
 
             for (let i = 0; i < length; ++i) {
-                option = options[i];
+                option = <HTMLOptionElement>options[i];
                 if (option.selected) {
                     selectedValues.push(this._castValue(option.value));
                 }
