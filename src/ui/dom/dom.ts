@@ -641,6 +641,24 @@ module plat.ui {
         }
 
         /**
+         * @name whenPresent
+         * @memberof plat.ui.Dom
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Inspects the Element and resolves when the Element is present in the DOM body.
+         *
+         * @param {() => void} cb A callback that will fire when the element is present in the DOM body.
+         * @param {Element} element The element whose presence is being inspected.
+         *
+         * @returns {plat.IRemoveListener} A function to stop listening for the element to be placed in the DOM.
+         */
+        whenPresent(cb: () => void, element: Element): IRemoveListener {
+            return whenPresent(cb, element);
+        }
+
+        /**
          * @name whenVisible
          * @memberof plat.ui.Dom
          * @kind function
@@ -652,7 +670,7 @@ module plat.ui {
          * @param {() => void} cb A callback that will fire when the element is visible in the DOM.
          * @param {Element} element The element whose visibility is being inspected.
          *
-         * @returns {IRemoveListener} A function to stop listening for the element to become visible.
+         * @returns {plat.IRemoveListener} A function to stop listening for the element to become visible.
          */
         whenVisible(cb: () => void, element: Element): IRemoveListener {
             return whenVisible(cb, element);

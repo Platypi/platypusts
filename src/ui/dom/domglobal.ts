@@ -509,6 +509,31 @@ function getTemplate(templateUrl: string): plat.async.IThenable<DocumentFragment
         }));
 }
 
+function whenPresent(cb: () => void, element: Element): plat.IRemoveListener {
+    if (!isNode(element)) {
+        ___log = ___log || (___log = plat.acquire(__Log));
+        ___log.error(new Error('Attempting to check DOM presence of something that isn\'t a Node.'));
+        return noop;
+    }
+
+    ___document = ___document || (___document = plat.acquire(__Document));
+    let body = ___document.body;
+
+    if (isNode(element.parentElement) && body.contains(element)) {
+        cb();
+        return noop;
+    }
+
+    let remove = setIntervalGlobal((): void => {
+        if (isNode(element.parentElement) && body.contains(element)) {
+            remove();
+            cb();
+        }
+    }, 100);
+
+    return remove;
+}
+
 function whenVisible(cb: () => void, element: Element): plat.IRemoveListener {
     if (!isNode(element)) {
         ___log = ___log || (___log = plat.acquire(__Log));
