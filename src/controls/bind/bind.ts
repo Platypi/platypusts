@@ -756,7 +756,7 @@ module plat.controls {
                 selectedValues: Array<string> = [];
 
             for (let i = 0; i < length; ++i) {
-                option = options[i];
+                option = <HTMLOptionElement>options[i];
                 if (option.selected) {
                     selectedValues.push(option.value);
                 }
@@ -1067,7 +1067,7 @@ module plat.controls {
                 }
                 // unselects the options unless a match is found
                 while (length-- > 0) {
-                    option = options[length];
+                    option = <HTMLOptionElement>options[length];
                     if (!nullValue && option.value === '' + newValue) {
                         option.selected = true;
                         return;
@@ -1084,7 +1084,7 @@ module plat.controls {
                 highestIndex = Infinity;
 
             while (length-- > 0) {
-                option = options[length];
+                option = <HTMLOptionElement>options[length];
                 value = option.value;
 
                 if (newValue.indexOf(value) !== -1) {
@@ -1431,7 +1431,7 @@ module plat.controls {
                 multiple = element.multiple,
                 options = element.options,
                 length = options.length,
-                option: HTMLSelectElement;
+                option: HTMLOptionElement;
 
             this._addEventType = this._addChangeEventListener;
             if (multiple) {
@@ -1443,7 +1443,7 @@ module plat.controls {
             }
 
             for (let i = 0; i < length; ++i) {
-                option = options[i];
+                option = <HTMLOptionElement>options[i];
                 if (!option.hasAttribute('value')) {
                     option.setAttribute('value', option.textContent);
                 }

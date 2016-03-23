@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -5,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.3 (https://platypi.io)
+ * PlatypusTS v0.20.4 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -136,6 +137,10 @@ var plat;
                         define(destination, key, property.cloneNode(true));
                         return;
                     }
+                    else if (isFile(property)) {
+                        define(destination, key, property);
+                        return;
+                    }
                     else if (isObject(property)) {
                         _extend(deep, define, destination[key] || (destination[key] = {}), property);
                         return;
@@ -158,6 +163,9 @@ var plat;
         }
         else if (isNode(obj)) {
             return obj.cloneNode(deep);
+        }
+        else if (isFile(obj)) {
+            return obj;
         }
         else if (isError(obj)) {
             return new obj.constructor(obj.message);
@@ -534,7 +542,7 @@ var plat;
         }
         var list = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList), length = list.length, i;
         if (clone === true) {
-            var item;
+            var item = void 0;
             for (i = 0; i < length; ++i) {
                 item = list[i].cloneNode(true);
                 fragment.insertBefore(item, null);
@@ -655,7 +663,7 @@ var plat;
             return newNode;
         }
         if (node.nodeType === Node.ELEMENT_NODE) {
-            var attributes = node.attributes, length_1 = attributes.length, attribute;
+            var attributes = node.attributes, length_1 = attributes.length, attribute = void 0;
             for (var i = 0; i < length_1; ++i) {
                 attribute = attributes[i];
                 newNode.setAttribute(attribute.name, attribute.value);
@@ -785,7 +793,7 @@ var plat;
         }
         var split = className.split(__whiteSpaceRegex), name;
         if (isUndefined(element.classList)) {
-            var classNameRegex;
+            var classNameRegex = void 0;
             if (cName === '') {
                 element.className = className;
             }
@@ -887,6 +895,26 @@ var plat;
             });
             return error;
         }));
+    }
+    function whenPresent(cb, element) {
+        if (!isNode(element)) {
+            ___log = ___log || (___log = plat.acquire(__Log));
+            ___log.error(new Error('Attempting to check DOM presence of something that isn\'t a Node.'));
+            return noop;
+        }
+        ___document = ___document || (___document = plat.acquire(__Document));
+        var body = ___document.body;
+        if (isNode(element.parentElement) && body.contains(element)) {
+            cb();
+            return noop;
+        }
+        var remove = setIntervalGlobal(function () {
+            if (isNode(element.parentElement) && body.contains(element)) {
+                remove();
+                cb();
+            }
+        }, 100);
+        return remove;
     }
     function whenVisible(cb, element) {
         if (!isNode(element)) {
@@ -1425,7 +1453,7 @@ var plat;
                 return this;
             };
             return Injector;
-        })();
+        }());
         dependency_1.Injector = Injector;
         /**
          * Publically exposes all the dependency injector objects.
@@ -1585,7 +1613,7 @@ var plat;
                 return this._level < level;
             };
             return Log;
-        })();
+        }());
         debug.Log = Log;
         register.injectable(__Log, Log);
     })(debug = plat_1.debug || (plat_1.debug = {}));
@@ -1771,7 +1799,7 @@ var plat;
             _document: __Document
         };
         return Compat;
-    })();
+    }());
     plat_1.Compat = Compat;
     register.injectable(__Compat, Compat);
     /**
@@ -2073,7 +2101,7 @@ var plat;
             return delimit(str, delimiter);
         };
         return Utils;
-    })();
+    }());
     plat_1.Utils = Utils;
     register.injectable(__Utils, Utils);
     /**
@@ -2248,7 +2276,7 @@ var plat;
                 configurable: true
             });
             return Regex;
-        })();
+        }());
         expressions.Regex = Regex;
         register.injectable(__Regex, Regex);
         /**
@@ -2897,7 +2925,7 @@ var plat;
                 _log: __Log
             };
             return Tokenizer;
-        })();
+        }());
         expressions.Tokenizer = Tokenizer;
         register.injectable(__Tokenizer, Tokenizer);
         /**
@@ -2953,8 +2981,8 @@ var plat;
                 parsedObject = this._evaluate(expression);
                 var identifiers = parsedObject.identifiers;
                 if (identifiers.length === 0) {
-                    var noModel = parsedObject.evaluate(null);
-                    parsedObject.evaluate = function () { return noModel; };
+                    var noModel_1 = parsedObject.evaluate(null);
+                    parsedObject.evaluate = function () { return noModel_1; };
                 }
                 this.__cache[expression] = parsedObject;
                 return parsedObject;
@@ -3459,7 +3487,7 @@ var plat;
                 _log: __Log
             };
             return Parser;
-        })();
+        }());
         expressions.Parser = Parser;
         register.injectable(__Parser, Parser);
     })(expressions = plat_1.expressions || (plat_1.expressions = {}));
@@ -3734,7 +3762,7 @@ var plat;
                 baseUrl: ''
             };
             return Browser;
-        })();
+        }());
         web.Browser = Browser;
         register.injectable(__Browser, Browser);
         /**
@@ -3851,7 +3879,7 @@ var plat;
                 _browserConfig: __BrowserConfig
             };
             return UrlUtils;
-        })();
+        }());
         web.UrlUtils = UrlUtils;
         register.injectable(__UrlUtilsInstance, UrlUtils, null, __INSTANCE);
     })(web = plat_1.web || (plat_1.web = {}));
@@ -4139,9 +4167,9 @@ var plat;
                 var promise = this;
                 var thenPromise = new this.constructor(noop, this);
                 if (this.__state) {
-                    var callbacks = arguments;
+                    var callbacks_1 = arguments;
                     Promise.config.async(function () {
-                        Promise.__invokeCallback(promise.__state, thenPromise, callbacks[promise.__state - 1], promise.__detail);
+                        Promise.__invokeCallback(promise.__state, thenPromise, callbacks_1[promise.__state - 1], promise.__detail);
                     });
                 }
                 else {
@@ -4172,7 +4200,7 @@ var plat;
                 }
             };
             return Promise;
-        })();
+        }());
         async.Promise = Promise;
         var State;
         (function (State) {
@@ -4688,7 +4716,7 @@ var plat;
                         else {
                             // rare case but may have multiple forms with file inputs 
                             // that have the same name 
-                            var fileInput, path = val.path;
+                            var fileInput = void 0, path = val.path;
                             while (length_4-- > 0) {
                                 fileInput = fileList[length_4];
                                 if (fileInput.value === path) {
@@ -4726,7 +4754,7 @@ var plat;
                 _log: __Log
             };
             return HttpRequest;
-        })();
+        }());
         async.HttpRequest = HttpRequest;
         /**
          * A class that forms an Error object with an IAjaxResponse.
@@ -4758,7 +4786,7 @@ var plat;
                 return 'Request failed with status: ' + this.status + ' and response: ' + responseText;
             };
             return AjaxError;
-        })();
+        }());
         async.AjaxError = AjaxError;
         // have to bypass TS flags in order to properly extend Error 
         AjaxError.prototype = Error.prototype;
@@ -4813,7 +4841,7 @@ var plat;
                 return _super.prototype.catch.call(this, onRejected);
             };
             return AjaxPromise;
-        })(Promise);
+        }(Promise));
         async.AjaxPromise = AjaxPromise;
         /**
          * The instantiated class of the injectable for making
@@ -4892,7 +4920,7 @@ var plat;
                 contentType: 'application/json;charset=utf-8'
             };
             return Http;
-        })();
+        }());
         async.Http = Http;
         register.injectable(__Http, Http);
         register.injectable(__HttpRequestInstance, HttpRequest, null, __INSTANCE);
@@ -5029,7 +5057,7 @@ var plat;
                 deleteProperty(caches, this.__uid);
             };
             return Cache;
-        })();
+        }());
         storage_1.Cache = Cache;
         /**
          */
@@ -5101,7 +5129,7 @@ var plat;
                 _log: __Log
             };
             return TemplateCache;
-        })(Cache);
+        }(Cache));
         storage_1.TemplateCache = TemplateCache;
         register.injectable(__TemplateCache, TemplateCache);
         /**
@@ -5168,7 +5196,7 @@ var plat;
                 this[key] = this.getItem(key);
             };
             return BaseStorage;
-        })();
+        }());
         storage_1.BaseStorage = BaseStorage;
         /**
          * A class used to wrap HTML5 localStorage into an injectable.
@@ -5179,7 +5207,7 @@ var plat;
                 _super.call(this, acquire(__Window).localStorage);
             }
             return LocalStorage;
-        })(BaseStorage);
+        }(BaseStorage));
         storage_1.LocalStorage = LocalStorage;
         register.injectable(__LocalStorage, LocalStorage);
         /**
@@ -5191,7 +5219,7 @@ var plat;
                 _super.call(this, acquire(__Window).sessionStorage);
             }
             return SessionStorage;
-        })(BaseStorage);
+        }(BaseStorage));
         storage_1.SessionStorage = SessionStorage;
         register.injectable(__SessionStorage, SessionStorage);
     })(storage = plat_1.storage || (plat_1.storage = {}));
@@ -5759,13 +5787,13 @@ var plat;
                     hasIdentifier = true;
                 }
                 if (hasObservableListener) {
-                    var removeObservedCallback = noop, removeAbsoluteCallback = this._addObservableListener(absoluteIdentifier, observableListener, isLength);
+                    var removeObservedCallback_1 = noop, removeAbsoluteCallback_1 = this._addObservableListener(absoluteIdentifier, observableListener, isLength);
                     if (isObserved && absoluteIdentifier !== observedIdentifier) {
-                        removeObservedCallback = this._addObservableListener(observedIdentifier, observableListener, isLength);
+                        removeObservedCallback_1 = this._addObservableListener(observedIdentifier, observableListener, isLength);
                     }
                     removeCallback = function () {
-                        removeAbsoluteCallback();
-                        removeObservedCallback();
+                        removeAbsoluteCallback_1();
+                        removeObservedCallback_1();
                     };
                 }
                 var parentIsArray = isArray(context), removeObservableListener = removeCallback, removeListener = noop, removeArrayObserve = noop, numKey = Number(key);
@@ -5795,13 +5823,13 @@ var plat;
                             join = this.__observedIdentifier;
                         }
                         if (hasObservableListener) {
-                            var uid = observableListener.uid;
-                            removeListener = this.observeArrayMutation(uid, noop, join, context, null);
+                            var uid_1 = observableListener.uid;
+                            removeListener = this.observeArrayMutation(uid_1, noop, join, context, null);
                             removeArrayObserve = this.observe(join, {
-                                uid: uid,
+                                uid: uid_1,
                                 listener: function (newValue, oldValue) {
                                     removeListener();
-                                    removeListener = _this.observeArrayMutation(uid, noop, join, newValue, oldValue);
+                                    removeListener = _this.observeArrayMutation(uid_1, noop, join, newValue, oldValue);
                                 }
                             });
                         }
@@ -5911,7 +5939,7 @@ var plat;
                     array.__proto__ = Object.create(Array.prototype);
                 }
                 else {
-                    var length_5 = arrayMethods.length, method;
+                    var length_5 = arrayMethods.length, method = void 0;
                     for (var i = 0; i < length_5; ++i) {
                         method = arrayMethods[i];
                         array[method] = Array.prototype[method];
@@ -6441,7 +6469,7 @@ var plat;
              */
             ContextManager.__controls = {};
             return ContextManager;
-        })();
+        }());
         observable.ContextManager = ContextManager;
         /**
          */
@@ -6508,7 +6536,7 @@ var plat;
                 _ContextManager: __ContextManagerStatic
             };
             return DispatchEvent;
-        })();
+        }());
         events.DispatchEvent = DispatchEvent;
         register.injectable(__DispatchEventInstance, DispatchEvent, null, __INSTANCE);
         /**
@@ -6539,7 +6567,7 @@ var plat;
                 _super.prototype.initialize.call(this, name, sender, this._EventManager.DIRECT);
             };
             return LifecycleEvent;
-        })(DispatchEvent);
+        }(DispatchEvent));
         events.LifecycleEvent = LifecycleEvent;
         /**
          */
@@ -6569,9 +6597,9 @@ var plat;
                     _document.removeEventListener(listener.name, listener.value, false);
                 }
                 if (_compat.cordova) {
-                    var eventNames = [__resume, __online, __offline], winJs = _compat.winJs, length_7 = eventNames.length, event_1, dispatcher = function (ev) { return function () {
+                    var eventNames = [__resume, __online, __offline], winJs_1 = _compat.winJs, length_7 = eventNames.length, event_1, dispatcher = function (ev) { return function () {
                         dispatch(ev, EventManager);
-                    }; }, fn;
+                    }; }, fn = void 0;
                     for (var i = 0; i < length_7; ++i) {
                         event_1 = eventNames[i];
                         fn = dispatcher(event_1);
@@ -6594,7 +6622,7 @@ var plat;
                     });
                     _dom.addEventListener(_document, __deviceReady, fn, false);
                     fn = function () {
-                        if (!winJs) {
+                        if (!winJs_1) {
                             dispatch(__backButton, EventManager);
                         }
                         return true;
@@ -6604,7 +6632,7 @@ var plat;
                         value: fn
                     });
                     _dom.addEventListener(_document, __backButton, fn, false);
-                    if (winJs) {
+                    if (winJs_1) {
                         fn = function () {
                             dispatch(__backButton, EventManager);
                             return true;
@@ -6821,7 +6849,7 @@ var plat;
              */
             EventManager.__initialized = false;
             return EventManager;
-        })();
+        }());
         events.EventManager = EventManager;
         /**
          */
@@ -6870,7 +6898,7 @@ var plat;
                 this.error = error;
             };
             return ErrorEvent;
-        })(DispatchEvent);
+        }(DispatchEvent));
         events.ErrorEvent = ErrorEvent;
         /**
          */
@@ -7370,7 +7398,7 @@ var plat;
          */
         Control.__eventListeners = {};
         return Control;
-    })();
+    }());
     plat_1.Control = Control;
     /**
      */
@@ -7423,7 +7451,7 @@ var plat;
             return new AttributeControl();
         };
         return AttributeControl;
-    })(Control);
+    }(Control));
     plat_1.AttributeControl = AttributeControl;
     /**
      */
@@ -7749,12 +7777,12 @@ var plat;
                     templateUrl = control.templateUrl;
                 }
                 else if (!isNull(control.templateString)) {
-                    var type = control.type;
-                    return templateCache.read(type).catch(function (template) {
+                    var type_1 = control.type;
+                    return templateCache.read(type_1).catch(function (template) {
                         if (isNull(template)) {
                             template = control.templateString;
                         }
-                        return templateCache.put(type, template);
+                        return templateCache.put(type_1, template);
                     });
                 }
                 else {
@@ -7833,7 +7861,7 @@ var plat;
              */
             TemplateControl.__resourceCache = {};
             return TemplateControl;
-        })(Control);
+        }(Control));
         ui.TemplateControl = TemplateControl;
         /**
          */
@@ -7923,7 +7951,7 @@ var plat;
                 this._listeners = [];
             };
             return BindControl;
-        })(TemplateControl);
+        }(TemplateControl));
         ui.BindControl = BindControl;
         /**
          * A control used in a Viewport for page navigation. The
@@ -7977,7 +8005,7 @@ var plat;
              */
             ViewControl.prototype.navigatedTo = function (parameters, query) { };
             return ViewControl;
-        })(TemplateControl);
+        }(TemplateControl));
         ui.ViewControl = ViewControl;
         /**
          * An extensible class dealing with the creation, deletion, and modification
@@ -8112,6 +8140,14 @@ var plat;
                 return getTemplate(templateUrl);
             };
             /**
+             * Inspects the Element and resolves when the Element is present in the DOM body.
+             * @param {() => void} cb A callback that will fire when the element is present in the DOM body.
+             * @param {Element} element The element whose presence is being inspected.
+             */
+            Dom.prototype.whenPresent = function (cb, element) {
+                return whenPresent(cb, element);
+            };
+            /**
              * Inspects the Element and resolves when the Element is visible in the DOM.
              * @param {() => void} cb A callback that will fire when the element is visible in the DOM.
              * @param {Element} element The element whose visibility is being inspected.
@@ -8123,7 +8159,7 @@ var plat;
                 _domEvents: __DomEvents
             };
             return Dom;
-        })();
+        }());
         ui.Dom = Dom;
         register.injectable(__Dom, Dom);
         /**
@@ -8282,9 +8318,13 @@ var plat;
             BindableTemplates.prototype.bind = function (key, relativeIdentifier, resources) {
                 return this._bind(key, relativeIdentifier, resources);
             };
-            BindableTemplates.prototype.add = function (key, template) {
+            BindableTemplates.prototype.add = function (key, template, overwrite) {
                 if (isEmpty(key)) {
                     this._log.debug(this.control.type + ' must use a valid key to add a template to BindableTemplates.');
+                    return;
+                }
+                var templatePromise = this.templates[key];
+                if (!isNull(templatePromise) && !overwrite) {
                     return;
                 }
                 if (isNull(template)) {
@@ -8533,7 +8573,7 @@ var plat;
                 return control;
             };
             return BindableTemplates;
-        })();
+        }());
         ui.BindableTemplates = BindableTemplates;
         /**
          */
@@ -8605,7 +8645,7 @@ var plat;
                 }
             };
             return Attributes;
-        })();
+        }());
         ui.Attributes = Attributes;
         function IAttributesFactory() {
             return Attributes;
@@ -8891,7 +8931,7 @@ var plat;
              */
             Resources.__observableResourceRemoveListeners = {};
             return Resources;
-        })();
+        }());
         ui.Resources = Resources;
         /**
          */
@@ -10435,7 +10475,7 @@ var plat;
                 $trackend: __trackend
             };
             return DomEvents;
-        })();
+        }());
         ui.DomEvents = DomEvents;
         register.injectable(__DomEvents, DomEvents);
         /**
@@ -10476,7 +10516,7 @@ var plat;
                 return (dispatchElement || this.element).dispatchEvent(customEv);
             };
             return DomEvent;
-        })();
+        }());
         ui.DomEvent = DomEvent;
         register.injectable(__DomEventInstance, DomEvent, null, __INSTANCE);
         /**
@@ -10553,7 +10593,7 @@ var plat;
                 return (eventType.indexOf('mouse') === -1) ? 'touch' : 'mouse';
             };
             return CustomDomEvent;
-        })(DomEvent);
+        }(DomEvent));
         /**
          * Holds all the classes and interfaces related to UI animation components for platypus.
          */
@@ -10699,14 +10739,14 @@ var plat;
                             if (!isNull(animatingParentId)) {
                                 _this._handleEndFunctionality(elements, elementNodes, functionality);
                                 animatedElement.animationEnd(true);
-                                var parent_1 = _this._animatedElements[animatingParentId], resolvedPromise = isPromise(parent_1.promise) ?
+                                var parent_1 = _this._animatedElements[animatingParentId], resolvedPromise_1 = isPromise(parent_1.promise) ?
                                     function () {
                                         return parent_1.promise;
                                     } : function () {
                                     return animationPromise;
                                 };
                                 animationsFinished.then(function () {
-                                    resolve(resolvedPromise);
+                                    resolve(resolvedPromise_1);
                                 });
                             }
                             _this.__stopChildAnimations(elementNodes);
@@ -10949,7 +10989,7 @@ var plat;
                     _document: __Document
                 };
                 return Animator;
-            })();
+            }());
             animations.Animator = Animator;
             register.injectable(__Animator, Animator);
             /**
@@ -11077,7 +11117,7 @@ var plat;
                     return _super.prototype.catch.call(this, onRejected);
                 };
                 return AnimationPromise;
-            })(async.Promise);
+            }(async.Promise));
             animations.AnimationPromise = AnimationPromise;
             /**
              * A class representing a single animation for a single element.
@@ -11182,7 +11222,7 @@ var plat;
                     utils: __Utils
                 };
                 return BaseAnimation;
-            })();
+            }());
             animations.BaseAnimation = BaseAnimation;
             /**
              * A class representing a single CSS animation for a single element.
@@ -11232,7 +11272,7 @@ var plat;
                     return this.addEventListener(this._animationEvents.$transitionEnd, listener, false);
                 };
                 return CssAnimation;
-            })(BaseAnimation);
+            }(BaseAnimation));
             animations.CssAnimation = CssAnimation;
             /**
              * A simple CSS Animation class that places the 'plat-animation' class on an
@@ -11342,7 +11382,7 @@ var plat;
                     this._cancelAnimation = noop;
                 };
                 return SimpleCssAnimation;
-            })(CssAnimation);
+            }(CssAnimation));
             animations.SimpleCssAnimation = SimpleCssAnimation;
             register.animation(__SimpleAnimation, SimpleCssAnimation);
             /**
@@ -11358,7 +11398,7 @@ var plat;
                     this.className = __FadeIn;
                 }
                 return FadeIn;
-            })(SimpleCssAnimation);
+            }(SimpleCssAnimation));
             animations.FadeIn = FadeIn;
             register.animation(__FadeIn, FadeIn);
             /**
@@ -11374,7 +11414,7 @@ var plat;
                     this.className = __FadeOut;
                 }
                 return FadeOut;
-            })(SimpleCssAnimation);
+            }(SimpleCssAnimation));
             animations.FadeOut = FadeOut;
             register.animation(__FadeOut, FadeOut);
             /**
@@ -11390,7 +11430,7 @@ var plat;
                     this.className = __Enter;
                 }
                 return Enter;
-            })(SimpleCssAnimation);
+            }(SimpleCssAnimation));
             animations.Enter = Enter;
             register.animation(__Enter, Enter);
             /**
@@ -11406,7 +11446,7 @@ var plat;
                     this.className = __Leave;
                 }
                 return Leave;
-            })(SimpleCssAnimation);
+            }(SimpleCssAnimation));
             animations.Leave = Leave;
             register.animation(__Leave, Leave);
             /**
@@ -11422,7 +11462,7 @@ var plat;
                     this.className = __Move;
                 }
                 return Move;
-            })(SimpleCssAnimation);
+            }(SimpleCssAnimation));
             animations.Move = Move;
             register.animation(__Move, Move);
             /**
@@ -11660,7 +11700,7 @@ var plat;
                     return 0;
                 };
                 return SimpleCssTransition;
-            })(CssAnimation);
+            }(CssAnimation));
             animations.SimpleCssTransition = SimpleCssTransition;
             register.animation(__SimpleTransition, SimpleCssTransition);
         })(animations = ui.animations || (ui.animations = {}));
@@ -11763,11 +11803,11 @@ var plat;
                     var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
                     this._nextInjector = this._nextView = undefined;
                     if (this._animate) {
-                        var animator = this._animator, dom = this.dom;
+                        var animator = this._animator, dom_1 = this.dom;
                         if (this._navigator.isBackNavigation()) {
-                            dom.addClass(node, __NavigatingBack);
+                            dom_1.addClass(node, __NavigatingBack);
                             animator.enter(node, __Enter, element).then(function () {
-                                dom.removeClass(node, __NavigatingBack);
+                                dom_1.removeClass(node, __NavigatingBack);
                             });
                         }
                         else {
@@ -11877,7 +11917,7 @@ var plat;
                     _navigator: __NavigatorInstance
                 };
                 return Viewport;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.Viewport = Viewport;
             register.control(__Viewport, Viewport);
             /**
@@ -12026,7 +12066,7 @@ var plat;
                     _document: __Document
                 };
                 return Template;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.Template = Template;
             register.control(__Template, Template);
             /**
@@ -12051,7 +12091,7 @@ var plat;
                     this.element.appendChild(this.innerTemplate.cloneNode(true));
                 };
                 return Ignore;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.Ignore = Ignore;
             register.control(__Ignore, Ignore);
             /**
@@ -12436,10 +12476,10 @@ var plat;
                         if (animating) {
                             this._cancelCurrentAnimations();
                         }
-                        var newLength = change.object.length, itemCount = currentLength - newLength;
+                        var newLength = change.object.length, itemCount_1 = currentLength - newLength;
                         if (newLength > currentLength) {
                             // itemCount will be negative 
-                            addPromise = this._addItems(currentLength, -itemCount, 0).then(function () {
+                            addPromise = this._addItems(currentLength, -itemCount_1, 0).then(function () {
                                 var index = addQueue.indexOf(addPromise);
                                 if (index !== -1) {
                                     addQueue.splice(index, 1);
@@ -12448,21 +12488,21 @@ var plat;
                             addQueue.push(addPromise);
                         }
                         else if (currentLength > newLength) {
-                            if (currentLength >= itemCount) {
-                                this._itemLength -= itemCount;
+                            if (currentLength >= itemCount_1) {
+                                this._itemLength -= itemCount_1;
                             }
                             else {
                                 this._itemLength = 0;
                             }
                             this._Promise.all(addQueue).then(function () {
-                                _this._removeItems(currentLength - itemCount, itemCount);
+                                _this._removeItems(currentLength - itemCount_1, itemCount_1);
                             });
                         }
                         return;
                     }
                     var removeCount = change.removed.length, animationQueue = this._animationQueue;
                     if (addCount > removeCount) {
-                        var itemAddCount = addCount - removeCount, animationCount;
+                        var itemAddCount = addCount - removeCount, animationCount = void 0;
                         if (animating) {
                             animationCount = addCount;
                             var animationLength = animationQueue.length, startIndex = change.index;
@@ -12484,23 +12524,23 @@ var plat;
                         addQueue.push(addPromise);
                     }
                     else if (removeCount > addCount) {
-                        var adding = addCount > 0;
-                        if (animating && !adding && addQueue.length === 0) {
+                        var adding_1 = addCount > 0;
+                        if (animating && !adding_1 && addQueue.length === 0) {
                             addQueue = addQueue.concat([this._animateItems(change.index, removeCount, __Leave, 'clone', true)]);
                         }
-                        var deleteCount = removeCount - addCount;
-                        if (currentLength >= deleteCount) {
-                            this._itemLength -= deleteCount;
+                        var deleteCount_1 = removeCount - addCount;
+                        if (currentLength >= deleteCount_1) {
+                            this._itemLength -= deleteCount_1;
                         }
                         else {
                             this._itemLength = 0;
                         }
                         this._Promise.all(addQueue).then(function () {
-                            if (animating && adding) {
+                            if (animating && adding_1) {
                                 var animLength = animationQueue.length;
                                 _this._animateItems(change.index, addCount, __Enter, null, animLength > 0 && animationQueue[animLength - 1].op === 'clone');
                             }
-                            _this._removeItems(currentLength - deleteCount, deleteCount);
+                            _this._removeItems(currentLength - deleteCount_1, deleteCount_1);
                         });
                     }
                 };
@@ -12655,7 +12695,7 @@ var plat;
                     _Promise: __Promise
                 };
                 return ForEach;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.ForEach = ForEach;
             register.control(__ForEach, ForEach);
             /**
@@ -12994,7 +13034,7 @@ var plat;
                     _browser: __Browser
                 };
                 return Head;
-            })(ui.TemplateControl);
+            }(ui.TemplateControl));
             controls_1.Head = Head;
             /**
              * A TemplateControl for adding HTML to the
@@ -13056,9 +13096,9 @@ var plat;
                         return;
                     }
                     else if (newValue.compile === true) {
-                        var hasControl = this.controls.length > 0;
+                        var hasControl_1 = this.controls.length > 0;
                         this.bindableTemplates.once(html).then(function (template) {
-                            if (hasControl) {
+                            if (hasControl_1) {
                                 _this._TemplateControlFactory.dispose(_this.controls[0]);
                             }
                             else {
@@ -13074,7 +13114,7 @@ var plat;
                     _TemplateControlFactory: __TemplateControlFactory
                 };
                 return InnerHtml;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.InnerHtml = InnerHtml;
             register.control(__Html, InnerHtml);
             /**
@@ -13443,22 +13483,22 @@ var plat;
                 Select.prototype._insertOption = function (index, option) {
                     var element = this.element;
                     if (this._isGrouped) {
-                        var groups = this.groups, newGroup = (this.context[index] || {})[this._group], optgroup = groups[newGroup];
-                        if (isNull(optgroup)) {
-                            return (groups[newGroup] = this.bindableTemplates.bind('group', index)
+                        var groups_1 = this.groups, newGroup_1 = (this.context[index] || {})[this._group], optgroup_1 = groups_1[newGroup_1];
+                        if (isNull(optgroup_1)) {
+                            return (groups_1[newGroup_1] = this.bindableTemplates.bind('group', index)
                                 .then(function (groupFragment) {
-                                optgroup = groups[newGroup] = groupFragment.childNodes[1];
-                                optgroup.insertBefore(option, null);
+                                optgroup_1 = groups_1[newGroup_1] = groupFragment.childNodes[1];
+                                optgroup_1.insertBefore(option, null);
                                 element.insertBefore(groupFragment, null);
-                                return optgroup;
+                                return optgroup_1;
                             }));
                         }
-                        else if (isPromise(optgroup)) {
-                            return optgroup.then(function (group) {
+                        else if (isPromise(optgroup_1)) {
+                            return optgroup_1.then(function (group) {
                                 group.insertBefore(option, null);
                             });
                         }
-                        optgroup.insertBefore(option, null);
+                        optgroup_1.insertBefore(option, null);
                         return this._Promise.resolve();
                     }
                     element.insertBefore(option, null);
@@ -13594,7 +13634,7 @@ var plat;
                     _document: __Document
                 };
                 return Select;
-            })(BindControl);
+            }(BindControl));
             controls_1.Select = Select;
             register.control(__Select, Select);
             /**
@@ -13785,7 +13825,7 @@ var plat;
                     _document: __Document
                 };
                 return If;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.If = If;
             register.control(__If, If);
             /**
@@ -13927,7 +13967,7 @@ var plat;
                     _browser: __Browser
                 };
                 return Link;
-            })(TemplateControl);
+            }(TemplateControl));
             controls_1.Link = Link;
             register.control(__Link, Link);
         })(controls = ui.controls || (ui.controls = {}));
@@ -14014,7 +14054,7 @@ var plat;
                 _managerCache: __ManagerCache
             };
             return Compiler;
-        })();
+        }());
         processing.Compiler = Compiler;
         register.injectable(__Compiler, Compiler);
         /**
@@ -14211,7 +14251,7 @@ var plat;
                 var _ContextManager = NodeManager._ContextManager, manager, split = identifier.split('.'), absoluteIdentifier = '', isDefined = false;
                 if (identifier[0] === '@') {
                     // we found an alias 
-                    var resourceObj, resources = {}, topIdentifier = split.shift(), alias = topIdentifier.slice(1);
+                    var resourceObj = void 0, resources = {}, topIdentifier = split.shift(), alias = topIdentifier.slice(1);
                     if (split.length > 0) {
                         absoluteIdentifier = '.' + split.join('.');
                     }
@@ -14294,7 +14334,7 @@ var plat;
              */
             NodeManager.prototype.bind = function () { };
             return NodeManager;
-        })();
+        }());
         processing.NodeManager = NodeManager;
         /**
          */
@@ -14785,67 +14825,67 @@ var plat;
                 var _this = this;
                 var nodeMap = this.nodeMap, parent = this.getParentControl(), controlNode = nodeMap.uiControlNode, controls = [];
                 if (!isNull(controlNode)) {
-                    var uiControl = controlNode.control, childContext = nodeMap.childContext, getManager = this._ContextManager.getManager, contextManager, absoluteContextPath = isNull(parent) ? __CONTEXT : parent.absoluteContextPath, _TemplateControlFactory = this._TemplateControlFactory, inheritsContext = !uiControl.hasOwnContext;
-                    controls.push(uiControl);
+                    var uiControl_1 = controlNode.control, childContext = nodeMap.childContext, getManager = this._ContextManager.getManager, contextManager_1, absoluteContextPath_1 = isNull(parent) ? __CONTEXT : parent.absoluteContextPath, _TemplateControlFactory = this._TemplateControlFactory, inheritsContext = !uiControl_1.hasOwnContext;
+                    controls.push(uiControl_1);
                     if (inheritsContext && !isNull(childContext)) {
                         if (childContext[0] === '@') {
-                            var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl, alias);
+                            var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl_1, alias);
                             if (isObject(resourceObj)) {
                                 var resource = resourceObj.resource;
                                 childContext = (split.length > 0 ? ('.' + split.join('.')) : '');
                                 if (alias === __CONTEXT_RESOURCE) {
-                                    absoluteContextPath += childContext;
+                                    absoluteContextPath_1 += childContext;
                                 }
                                 else if (alias === __ROOT_CONTEXT_RESOURCE) {
-                                    absoluteContextPath = __CONTEXT + childContext;
+                                    absoluteContextPath_1 = __CONTEXT + childContext;
                                 }
                                 else if (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE) {
-                                    absoluteContextPath = 'resources.' + alias + '.value' + childContext;
-                                    uiControl.root = resourceObj.control;
+                                    absoluteContextPath_1 = 'resources.' + alias + '.value' + childContext;
+                                    uiControl_1.root = resourceObj.control;
                                 }
                                 else {
                                     this._log.warn('Only resources of type "observable" can be set as context.');
                                 }
                             }
                             else {
-                                this._log.warn('Could not set the context of ' + uiControl.type +
+                                this._log.warn('Could not set the context of ' + uiControl_1.type +
                                     ' with the resource specified as "' + childContext + '".');
                             }
                         }
                         else {
-                            absoluteContextPath += '.' + childContext;
+                            absoluteContextPath_1 += '.' + childContext;
                         }
                     }
-                    if (!isObject(uiControl.root)) {
-                        uiControl.root = this._ControlFactory.getRootControl(uiControl) || uiControl;
+                    if (!isObject(uiControl_1.root)) {
+                        uiControl_1.root = this._ControlFactory.getRootControl(uiControl_1) || uiControl_1;
                     }
-                    contextManager = getManager(uiControl.root);
+                    contextManager_1 = getManager(uiControl_1.root);
                     var awaitContext = false;
                     if (inheritsContext) {
-                        uiControl.context = contextManager.getContext(absoluteContextPath.split('.'), false);
-                        awaitContext = isUndefined(uiControl.context) && !this._BindableTemplatesFactory.isBoundControl(uiControl);
+                        uiControl_1.context = contextManager_1.getContext(absoluteContextPath_1.split('.'), false);
+                        awaitContext = isUndefined(uiControl_1.context) && !this._BindableTemplatesFactory.isBoundControl(uiControl_1);
                     }
                     else {
-                        absoluteContextPath = __CONTEXT;
+                        absoluteContextPath_1 = __CONTEXT;
                     }
                     if (awaitContext) {
                         this.contextPromise = new this._Promise(function (resolve, reject) {
-                            var removeListener = contextManager.observe(absoluteContextPath, {
-                                uid: uiControl.uid,
+                            var removeListener = contextManager_1.observe(absoluteContextPath_1, {
+                                uid: uiControl_1.uid,
                                 listener: function (newValue, oldValue) {
                                     if (isUndefined(newValue)) {
                                         return;
                                     }
                                     removeListener();
-                                    uiControl.context = newValue;
-                                    _this._beforeLoad(uiControl, absoluteContextPath);
+                                    uiControl_1.context = newValue;
+                                    _this._beforeLoad(uiControl_1, absoluteContextPath_1);
                                     resolve();
                                 }
                             });
                         });
                     }
                     else {
-                        this._beforeLoad(uiControl, absoluteContextPath);
+                        this._beforeLoad(uiControl_1, absoluteContextPath_1);
                     }
                 }
                 this._observeControlIdentifiers(nodeMap.nodes, parent, controls, nodeMap.element);
@@ -14862,18 +14902,18 @@ var plat;
                 var _this = this;
                 var controlNode = this.nodeMap.uiControlNode;
                 if (!isNull(controlNode)) {
-                    var control = controlNode.control;
-                    this.templatePromise = this._TemplateControlFactory.determineTemplate(control, templateUrl).then(function (template) {
+                    var control_1 = controlNode.control;
+                    this.templatePromise = this._TemplateControlFactory.determineTemplate(control_1, templateUrl).then(function (template) {
                         _this.templatePromise = null;
-                        _this._initializeControl(control, template.cloneNode(true));
+                        _this._initializeControl(control_1, template.cloneNode(true));
                     }, function (error) {
                         _this.templatePromise = null;
                         if (isNull(error)) {
                             var template = error;
-                            if (_this._BindableTemplatesFactory.isBoundControl(control)) {
-                                template = appendChildren(control.element.childNodes);
+                            if (_this._BindableTemplatesFactory.isBoundControl(control_1)) {
+                                template = appendChildren(control_1.element.childNodes);
                             }
-                            _this._initializeControl(control, template);
+                            _this._initializeControl(control_1, template);
                         }
                         else {
                             postpone(function () {
@@ -15218,7 +15258,7 @@ var plat;
                 _log: __Log
             };
             return ElementManager;
-        })(NodeManager);
+        }(NodeManager));
         processing.ElementManager = ElementManager;
         /**
          */
@@ -15341,7 +15381,7 @@ var plat;
                 node.nodeValue = NodeManager.build(expressions, (control || {}));
             };
             return TextManager;
-        })(NodeManager);
+        }(NodeManager));
         processing.TextManager = TextManager;
         /**
          */
@@ -15392,7 +15432,7 @@ var plat;
                 return 1;
             };
             return CommentManager;
-        })(NodeManager);
+        }(NodeManager));
         processing.CommentManager = CommentManager;
         /**
          */
@@ -15498,7 +15538,7 @@ var plat;
                 }
             };
             return AttributeManager;
-        })();
+        }());
         processing.AttributeManager = AttributeManager;
     })(processing = plat_1.processing || (plat_1.processing = {}));
     /**
@@ -15733,7 +15773,7 @@ var plat;
                 _history: __History
             };
             return Navigator;
-        })();
+        }());
         routing.Navigator = Navigator;
         register.injectable(__NavigatorInstance, Navigator, null, __INSTANCE);
         /**
@@ -15851,7 +15891,7 @@ var plat;
                 return this.name;
             };
             return BaseSegment;
-        })();
+        }());
         routing.BaseSegment = BaseSegment;
         /**
          */
@@ -15897,7 +15937,7 @@ var plat;
                 return value;
             };
             return StaticSegment;
-        })(BaseSegment);
+        }(BaseSegment));
         routing.StaticSegment = StaticSegment;
         register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
         /**
@@ -15923,7 +15963,7 @@ var plat;
                 }
             };
             return VariableSegment;
-        })(BaseSegment);
+        }(BaseSegment));
         routing.VariableSegment = VariableSegment;
         register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
         /**
@@ -15951,7 +15991,7 @@ var plat;
                 };
             }
             return SplatSegment;
-        })(VariableSegment);
+        }(VariableSegment));
         routing.SplatSegment = SplatSegment;
         register.injectable(__SplatSegmentInstance, SplatSegment, null, __INSTANCE);
         /**
@@ -15979,7 +16019,7 @@ var plat;
                 };
             }
             return DynamicSegment;
-        })(VariableSegment);
+        }(VariableSegment));
         routing.DynamicSegment = DynamicSegment;
         register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
         /**
@@ -16159,7 +16199,7 @@ var plat;
                 return false;
             };
             return State;
-        })();
+        }());
         routing.State = State;
         /**
          */
@@ -16414,7 +16454,7 @@ var plat;
                 _rootState: __StateInstance
             };
             return RouteRecognizer;
-        })();
+        }());
         routing.RouteRecognizer = RouteRecognizer;
         register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
         ;
@@ -16648,20 +16688,20 @@ var plat;
                 }
                 var sameRoute = this._isSameRoute(routeInfo);
                 if (emptyResult || sameRoute) {
-                    var childUrl = url;
+                    var childUrl_1 = url;
                     if (sameRoute) {
                         segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
-                        childUrl = childUrl.replace(segment, '');
+                        childUrl_1 = childUrl_1.replace(segment, '');
                     }
-                    if (childUrl === '/' || childUrl === '') {
-                        childUrl = '';
+                    if (childUrl_1 === '/' || childUrl_1 === '') {
+                        childUrl_1 = '';
                         some(function (child) {
-                            result = child._recognizer.recognize(childUrl);
+                            result = child._recognizer.recognize(childUrl_1);
                             return !isEmpty(result);
                         }, this.children);
                     }
                     else {
-                        result = this._childRecognizer.recognize(childUrl);
+                        result = this._childRecognizer.recognize(childUrl_1);
                     }
                     if (isEmpty(result)) {
                         if (!emptyResult) {
@@ -16672,16 +16712,16 @@ var plat;
                         }
                         else {
                             // route has not been matched 
-                            this._previousUrl = childUrl;
+                            this._previousUrl = childUrl_1;
                             this._previousQuery = queryString;
                             this.currentRouteInfo = routeInfo;
                             if (isFunction(this._unknownHandler)) {
-                                var unknownRouteConfig = {
+                                var unknownRouteConfig_1 = {
                                     segment: url,
                                     view: undefined
                                 };
-                                return resolve(this._unknownHandler(unknownRouteConfig)).then(function () {
-                                    var view = unknownRouteConfig.view;
+                                return resolve(this._unknownHandler(unknownRouteConfig_1)).then(function () {
+                                    var view = unknownRouteConfig_1.view;
                                     if (isUndefined(view)) {
                                         return;
                                     }
@@ -17081,7 +17121,7 @@ var plat;
                 _childRecognizer: __RouteRecognizerInstance
             };
             return Router;
-        })();
+        }());
         routing.Router = Router;
         register.injectable(__Router, Router, null, __INSTANCE);
         /**
@@ -17170,7 +17210,7 @@ var plat;
                 return false;
             };
             return Name;
-        })(AttributeControl);
+        }(AttributeControl));
         controls.Name = Name;
         register.control(__Name, Name);
         /**
@@ -17323,7 +17363,7 @@ var plat;
                 _regex: __Regex
             };
             return SimpleEventControl;
-        })(AttributeControl);
+        }(AttributeControl));
         controls.SimpleEventControl = SimpleEventControl;
         /**
          * A SimpleEventControl for the '$tap' event.
@@ -17338,7 +17378,7 @@ var plat;
                 this.event = __tap;
             }
             return Tap;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Tap = Tap;
         /**
          * A SimpleEventControl for the 'blur' event.
@@ -17353,7 +17393,7 @@ var plat;
                 this.event = 'blur';
             }
             return Blur;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Blur = Blur;
         /**
          * A SimpleEventControl for the 'change' event.
@@ -17368,7 +17408,7 @@ var plat;
                 this.event = 'change';
             }
             return Change;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Change = Change;
         /**
          * A SimpleEventControl for the 'copy' event.
@@ -17383,7 +17423,7 @@ var plat;
                 this.event = 'copy';
             }
             return Copy;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Copy = Copy;
         /**
          * A SimpleEventControl for the 'cut' event.
@@ -17398,7 +17438,7 @@ var plat;
                 this.event = 'cut';
             }
             return Cut;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Cut = Cut;
         /**
          * A SimpleEventControl for the 'paste' event.
@@ -17413,7 +17453,7 @@ var plat;
                 this.event = 'paste';
             }
             return Paste;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Paste = Paste;
         /**
          * A SimpleEventControl for the '$dbltap' event.
@@ -17428,7 +17468,7 @@ var plat;
                 this.event = __dbltap;
             }
             return DblTap;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.DblTap = DblTap;
         /**
          * A SimpleEventControl for the 'focus' event.
@@ -17443,7 +17483,7 @@ var plat;
                 this.event = 'focus';
             }
             return Focus;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Focus = Focus;
         /**
          * A SimpleEventControl for the '$touchstart' event.
@@ -17458,7 +17498,7 @@ var plat;
                 this.event = __touchstart;
             }
             return TouchStart;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TouchStart = TouchStart;
         /**
          * A SimpleEventControl for the '$touchend' event.
@@ -17473,7 +17513,7 @@ var plat;
                 this.event = __touchend;
             }
             return TouchEnd;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TouchEnd = TouchEnd;
         /**
          * A SimpleEventControl for the '$touchmove' event.
@@ -17488,7 +17528,7 @@ var plat;
                 this.event = __touchmove;
             }
             return TouchMove;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TouchMove = TouchMove;
         /**
          * A SimpleEventControl for the '$touchcancel' event.
@@ -17503,7 +17543,7 @@ var plat;
                 this.event = __touchcancel;
             }
             return TouchCancel;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TouchCancel = TouchCancel;
         /**
          * A SimpleEventControl for the '$hold' event.
@@ -17518,7 +17558,7 @@ var plat;
                 this.event = __hold;
             }
             return Hold;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Hold = Hold;
         /**
          * A SimpleEventControl for the '$release' event.
@@ -17533,7 +17573,7 @@ var plat;
                 this.event = __release;
             }
             return Release;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Release = Release;
         /**
          * A SimpleEventControl for the '$swipe' event.
@@ -17548,7 +17588,7 @@ var plat;
                 this.event = __swipe;
             }
             return Swipe;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Swipe = Swipe;
         /**
          * A SimpleEventControl for the '$swipeleft' event.
@@ -17563,7 +17603,7 @@ var plat;
                 this.event = __swipeleft;
             }
             return SwipeLeft;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.SwipeLeft = SwipeLeft;
         /**
          * A SimpleEventControl for the '$swiperight' event.
@@ -17578,7 +17618,7 @@ var plat;
                 this.event = __swiperight;
             }
             return SwipeRight;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.SwipeRight = SwipeRight;
         /**
          * A SimpleEventControl for the '$swipeup' event.
@@ -17593,7 +17633,7 @@ var plat;
                 this.event = __swipeup;
             }
             return SwipeUp;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.SwipeUp = SwipeUp;
         /**
          * A SimpleEventControl for the '$swipedown' event.
@@ -17608,7 +17648,7 @@ var plat;
                 this.event = __swipedown;
             }
             return SwipeDown;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.SwipeDown = SwipeDown;
         /**
          * A SimpleEventControl for the '$track' event.
@@ -17623,7 +17663,7 @@ var plat;
                 this.event = __track;
             }
             return Track;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Track = Track;
         /**
          * A SimpleEventControl for the '$trackleft' event.
@@ -17638,7 +17678,7 @@ var plat;
                 this.event = __trackleft;
             }
             return TrackLeft;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TrackLeft = TrackLeft;
         /**
          * A SimpleEventControl for the '$trackright' event.
@@ -17653,7 +17693,7 @@ var plat;
                 this.event = __trackright;
             }
             return TrackRight;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TrackRight = TrackRight;
         /**
          * A SimpleEventControl for the '$trackup' event.
@@ -17668,7 +17708,7 @@ var plat;
                 this.event = __trackup;
             }
             return TrackUp;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TrackUp = TrackUp;
         /**
          * A SimpleEventControl for the '$trackdown' event.
@@ -17683,7 +17723,7 @@ var plat;
                 this.event = __trackdown;
             }
             return TrackDown;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TrackDown = TrackDown;
         /**
          * A SimpleEventControl for the '$trackend' event.
@@ -17698,7 +17738,7 @@ var plat;
                 this.event = __trackend;
             }
             return TrackEnd;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.TrackEnd = TrackEnd;
         /**
          * A SimpleEventControl for the 'submit' event.
@@ -17724,7 +17764,7 @@ var plat;
                 _super.prototype._onEvent.call(this, ev);
             };
             return Submit;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.Submit = Submit;
         /**
          * A SimpleEventControl for the 'input' event. If
@@ -17797,7 +17837,7 @@ var plat;
                 _compat: __Compat
             };
             return React;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.React = React;
         register.control(__Tap, Tap);
         register.control(__Blur, Blur);
@@ -18016,7 +18056,7 @@ var plat;
                 }
             };
             return KeyCodeEventControl;
-        })(SimpleEventControl);
+        }(SimpleEventControl));
         controls.KeyCodeEventControl = KeyCodeEventControl;
         /**
          * Used for filtering keys on keydown events. Does not take capitalization into account.
@@ -18031,7 +18071,7 @@ var plat;
                 this.event = 'keydown';
             }
             return KeyDown;
-        })(KeyCodeEventControl);
+        }(KeyCodeEventControl));
         controls.KeyDown = KeyDown;
         /**
          * Used for filtering only printing keys (a-z, A-Z, 0-9, and special characters) on keydown events.
@@ -18055,8 +18095,8 @@ var plat;
                 var keyCode = ev.keyCode || ev.which;
                 if (_super.prototype._compareKeys.call(this, ev) && ((keyCode >= 48 && keyCode <= 90) ||
                     (keyCode >= 186) || (keyCode >= 96 && keyCode <= 111))) {
-                    var remove = this.addEventListener(this.element, 'keypress', function (e) {
-                        remove();
+                    var remove_1 = this.addEventListener(this.element, 'keypress', function (e) {
+                        remove_1();
                         _super.prototype._onEvent.call(_this, e);
                     }, false);
                 }
@@ -18069,7 +18109,7 @@ var plat;
                 return true;
             };
             return KeyPress;
-        })(KeyCodeEventControl);
+        }(KeyCodeEventControl));
         controls.KeyPress = KeyPress;
         /**
          * Used for filtering keys on keyup events. Does not take capitalization into account.
@@ -18084,7 +18124,7 @@ var plat;
                 this.event = 'keyup';
             }
             return KeyUp;
-        })(KeyCodeEventControl);
+        }(KeyCodeEventControl));
         controls.KeyUp = KeyUp;
         /**
          * Used for filtering keys on keypress events. Takes capitalization into account.
@@ -18168,7 +18208,7 @@ var plat;
                 }
             };
             return CharPress;
-        })(KeyCodeEventControl);
+        }(KeyCodeEventControl));
         controls.CharPress = CharPress;
         register.control(__KeyDown, KeyDown);
         register.control(__KeyPress, KeyPress);
@@ -18251,7 +18291,7 @@ var plat;
                 });
             };
             return SetAttributeControl;
-        })(AttributeControl);
+        }(AttributeControl));
         controls.SetAttributeControl = SetAttributeControl;
         /**
          * A SetAttributeControl for the 'checked' attribute.
@@ -18266,7 +18306,7 @@ var plat;
                 this.property = 'checked';
             }
             return Checked;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.Checked = Checked;
         /**
          * A SetAttributeControl for the 'disabled' attribute.
@@ -18281,7 +18321,7 @@ var plat;
                 this.property = 'disabled';
             }
             return Disabled;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.Disabled = Disabled;
         /**
          * A SetAttributeControl for the 'selected' attribute.
@@ -18296,7 +18336,7 @@ var plat;
                 this.property = 'selected';
             }
             return Selected;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.Selected = Selected;
         /**
          * A SetAttributeControl for the 'readonly' attribute.
@@ -18311,7 +18351,7 @@ var plat;
                 this.property = 'readonly';
             }
             return ReadOnly;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.ReadOnly = ReadOnly;
         /**
          * A SetAttributeControl for the 'plat-hide' attribute.
@@ -18394,7 +18434,7 @@ var plat;
                 style.setProperty(property, value, importance);
             };
             return Visible;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.Visible = Visible;
         /**
          * A SetAttributeControl for the 'style' attribute.
@@ -18483,7 +18523,7 @@ var plat;
                 });
             };
             return Style;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.Style = Style;
         register.control(__Checked, Checked);
         register.control(__Disabled, Disabled);
@@ -18513,7 +18553,7 @@ var plat;
                 }
             };
             return ElementPropertyControl;
-        })(SetAttributeControl);
+        }(SetAttributeControl));
         controls.ElementPropertyControl = ElementPropertyControl;
         /**
          * A type of ElementPropertyControl used to set 'href' on an anchor tag.
@@ -18528,7 +18568,7 @@ var plat;
                 this.property = 'href';
             }
             return Href;
-        })(ElementPropertyControl);
+        }(ElementPropertyControl));
         controls.Href = Href;
         /**
          * A type of ElementPropertyControl used to set 'src' on an anchor tag.
@@ -18559,7 +18599,7 @@ var plat;
                 _browser: __Browser
             };
             return Src;
-        })(ElementPropertyControl);
+        }(ElementPropertyControl));
         controls.Src = Src;
         register.control(__Href, Href);
         register.control(__Src, Src);
@@ -18620,15 +18660,15 @@ var plat;
                 var split = identifiers[0].split('.');
                 this._property = split.pop();
                 if (expression.aliases.length > 0) {
-                    var alias = expression.aliases[0], resourceObj = parent.findResource(alias), type;
-                    if (isObject(resourceObj)) {
-                        type = resourceObj.resource.type;
+                    var alias = expression.aliases[0], resourceObj_1 = parent.findResource(alias), type = void 0;
+                    if (isObject(resourceObj_1)) {
+                        type = resourceObj_1.resource.type;
                         if (type !== __OBSERVABLE_RESOURCE && type !== __LITERAL_RESOURCE) {
                             return;
                         }
                     }
                     else {
-                        resourceObj = { resource: {} };
+                        resourceObj_1 = { resource: {} };
                     }
                     if (alias === __CONTEXT_RESOURCE || alias === __ROOT_CONTEXT_RESOURCE) {
                         this._contextExpression = _parser.parse(split.join('.'));
@@ -18637,7 +18677,7 @@ var plat;
                         this._property = 'value';
                         this._contextExpression = {
                             evaluate: function () {
-                                return resourceObj.resource;
+                                return resourceObj_1.resource;
                             },
                             aliases: [],
                             identifiers: [],
@@ -19233,7 +19273,7 @@ var plat;
                         castValue = value;
                     }
                     else {
-                        var keys = Object.keys(value), key;
+                        var keys = Object.keys(value), key = void 0;
                         castValue = {};
                         while (keys.length > 0) {
                             key = keys.pop();
@@ -19448,7 +19488,7 @@ var plat;
                 _document: __Document
             };
             return Bind;
-        })(AttributeControl);
+        }(AttributeControl));
         controls.Bind = Bind;
         register.control(__Bind, Bind);
         /**
@@ -19567,7 +19607,7 @@ var plat;
                 _ContextManager: __ContextManagerStatic
             };
             return ObservableAttributeControl;
-        })(AttributeControl);
+        }(AttributeControl));
         controls.ObservableAttributeControl = ObservableAttributeControl;
         /**
          * An ObservableAttributeControl that sets 'options' as the
@@ -19583,7 +19623,7 @@ var plat;
                 this.property = 'options';
             }
             return Options;
-        })(ObservableAttributeControl);
+        }(ObservableAttributeControl));
         controls.Options = Options;
         register.control(__Options, Options);
     })(controls = plat_1.controls || (plat_1.controls = {}));
@@ -19810,7 +19850,7 @@ var plat;
          */
         App.app = null;
         return App;
-    })();
+    }());
     plat_1.App = App;
     /**
      */
