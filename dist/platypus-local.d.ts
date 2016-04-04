@@ -9913,10 +9913,6 @@ export declare module processing {
           */
         protected _NodeManager: INodeManagerStatic;
         /**
-          * A regular expression for finding markup in a string.
-          */
-        protected _markupRegex: RegExp;
-        /**
           * The controls which need to be notified of changes to this attribute.
           */
         protected _controls: Array<Control>;

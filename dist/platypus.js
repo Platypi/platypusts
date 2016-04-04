@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.5 (https://platypi.io)
+ * PlatypusTS v0.20.6 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -14082,15 +14082,15 @@ var plat;
              * @param {string} text The text string in which to search for markup.
              */
             NodeManager.findMarkup = function (text) {
-                var start, end, parsedExpressions = [], wrapExpression = NodeManager._wrapExpression, substring, expression, _parser = NodeManager._parser;
+                var start, end, startLength = __startSymbol.length, endLength = __endSymbol.length, endChar = __endSymbol[endLength - 1], parsedExpressions = [], wrapExpression = NodeManager._wrapExpression, substring, expression, _parser = NodeManager._parser;
                 text = text.replace(NodeManager._newLineRegex, '');
                 while ((start = text.indexOf(__startSymbol)) !== -1 && (end = text.indexOf(__endSymbol)) !== -1) {
                     if (start !== 0) {
                         parsedExpressions.push(wrapExpression(text.slice(0, start)));
                     }
                     // incremement with while loop instead of just += 2 for nested object literal case. 
-                    while (text[++end] === '}') { }
-                    substring = text.slice(start + 2, end - 2);
+                    while (text[end++] !== endChar || text[end] === endChar) { }
+                    substring = text.slice(start + startLength, end - endLength);
                     // check for one-time databinding 
                     if (substring[0] === '=') {
                         expression = _parser.parse(substring.slice(1).trim());
@@ -14102,7 +14102,7 @@ var plat;
                     }
                     text = text.slice(end);
                 }
-                if (start > -1 && end >= 0) {
+                if (start >= 0 && end >= 0) {
                     parsedExpressions.push(wrapExpression(text.slice(end)));
                 }
                 else if (text !== '') {
@@ -15451,10 +15451,6 @@ var plat;
         var AttributeManager = (function () {
             function AttributeManager() {
                 /**
-                 * A regular expression for finding markup in a string.
-                 */
-                this._markupRegex = new RegExp("^" + __startSymbol + "[\\S\\s]*?" + __endSymbol + "\\S*\\s*|\\s*\\S*" + __startSymbol + "[\\S\\s]*?" + __endSymbol + "\\S*", 'g');
-                /**
                  * Keeps track of the previous bound values of a "dynamic" attribute.
                  */
                 this._lastValues = {};
@@ -15482,7 +15478,7 @@ var plat;
                 this.parent = parent;
                 this._controls = controls;
                 this.replace = replace;
-                if (node.nodeName !== 'class') {
+                if (node.nodeName !== __CLASS) {
                     this.attributeChanged = this._staticAttributeChanged;
                 }
                 else {
@@ -15494,9 +15490,15 @@ var plat;
              * we need to only mutate the piece of the attribute corresponding to expressions with markup.
              */
             AttributeManager.prototype._dynamicAttributeChanged = function () {
-                var node = this.node, attr = node.node, nodeValue = attr.value, classes = this._NodeManager.build(node.expressions, this.parent).trim().split(/\s/), last = this._lastValues, element = this.element, c, length = classes.length, i;
-                if (this._NodeManager.hasMarkup(nodeValue)) {
-                    attr.value = nodeValue.replace(this._markupRegex, '').trim();
+                var node = this.node, attr = node.node, nodeManager = this._NodeManager, nodeValue = attr.value, classes = nodeManager.build(node.expressions, this.parent).trim().split(/\s+/), last = this._lastValues, element = this.element, c, length = classes.length, i;
+                if (nodeManager.hasMarkup(nodeValue)) {
+                    var start = void 0, end = void 0, startLength = __startSymbol.length, endLength = __endSymbol.length, endChar = __endSymbol[endLength - 1];
+                    while ((start = nodeValue.indexOf(__startSymbol)) !== -1 && (end = nodeValue.indexOf(__endSymbol)) !== -1) {
+                        // incremement with while loop instead of just += 2 for nested object literal case. 
+                        while (nodeValue[end++] !== endChar || nodeValue[end] === endChar) { }
+                        nodeValue = nodeValue.slice(0, start).trim() + ' ' + nodeValue.slice(end).trim();
+                    }
+                    attr.value = nodeValue.trim();
                 }
                 for (i = 0; i < length; ++i) {
                     last[classes[i]] = true;
