@@ -978,26 +978,19 @@
 
             let gestureCount = this._gestureCount,
                 noHolds = gestureCount.$hold <= 0,
-                noRelease = gestureCount.$release <= 0,
-                mappedCount = this.__mappedCount;
-
-            // if any moving events registered, register move
-            if (eventType === 'touchstart' || mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
-                gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
-                this.__registerType(this._moveEvents);
-                this.__detectingMove = true;
-            }
+                noRelease = gestureCount.$release <= 0;
 
             // return if no hold or release events are registered
             if (noHolds && noRelease) {
-                this.__handleMappedEvents(ev, ev);
+                this.__handleMappedEvents(eventType, ev, ev);
+                this.__registerMove(eventType);
                 return true;
             }
 
             let holdInterval = DomEvents.config.intervals.holdInterval,
                 domEvent: DomEvent,
                 subscribeFn: () => void,
-                domEventFound = false;
+                domEventFound: boolean;
 
             if (noHolds) {
                 this.__hasRelease = false;
@@ -1005,7 +998,8 @@
                     this.__hasRelease = true;
                 }, holdInterval);
 
-                this.__handleMappedEvents(ev, ev);
+                this.__handleMappedEvents(eventType, ev, ev);
+                this.__registerMove(eventType);
                 return true;
             } else if (noRelease) {
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
@@ -1033,7 +1027,8 @@
                 this.__cancelDeferredHold = defer(subscribeFn, holdInterval);
             }
 
-            this.__handleMappedEvents(ev, ev);
+            this.__handleMappedEvents(eventType, ev, ev);
+            this.__registerMove(eventType);
         }
 
         /**
@@ -1078,7 +1073,7 @@
 
             // if minimum distance not met
             if (!minMove) {
-                this.__handleMappedEvents(ev, evt);
+                this.__handleMappedEvents(eventType, ev, evt);
                 return true;
             }
 
@@ -1086,7 +1081,7 @@
 
             // if no moving events return
             if (noTracking && noSwiping) {
-                this.__handleMappedEvents(ev, evt);
+                this.__handleMappedEvents(eventType, ev, evt);
                 return true;
             }
 
@@ -1109,7 +1104,7 @@
                 this.__handleTrack(evt, ev);
             }
 
-            this.__handleMappedEvents(ev, evt);
+            this.__handleMappedEvents(eventType, ev, evt);
 
             this.__lastMoveEvent = evt;
         }
@@ -1236,13 +1231,13 @@
             // else if they had their finger down too long to be considered a tap, we want to return
             if (hasMoved) {
                 this.__handleTrackEnd(ev);
-                this.__handleMappedEvents(ev, ev);
+                this.__handleMappedEvents(eventType, ev, ev);
                 this.__tapCount = 0;
                 // clear captured target
                 this.__capturedTarget = null;
                 return true;
             } else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
-                this.__handleMappedEvents(ev, ev);
+                this.__handleMappedEvents(eventType, ev, ev);
                 this.__tapCount = 0;
                 // clear captured target
                 this.__capturedTarget = null;
@@ -1266,7 +1261,7 @@
 
             // handle tap events
             this.__handleTap(ev);
-            this.__handleMappedEvents(ev, ev);
+            this.__handleMappedEvents(eventType, ev, ev);
 
             this.__lastTouchUp = ev;
 
@@ -1334,7 +1329,8 @@
          */
         private __handleCanceled(ev: IPointerEvent): void {
             let touches = ev.touches || this.__pointerEvents,
-                index = this.__getTouchIndex(touches);
+                index = this.__getTouchIndex(touches),
+                type = ev.type;
 
             ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
             this._inTouch = false;
@@ -1350,7 +1346,7 @@
                 this.__handleTrackEnd(ev);
             }
 
-            this.__handleMappedEvents(ev, ev);
+            this.__handleMappedEvents(type, ev, ev);
             this.__resetTouchEnd();
         }
 
@@ -1363,13 +1359,14 @@
          * @description
          * A function for handling and firing mapped events.
          *
+         * @param {string} type The event type.
          * @param {plat.ui.IPointerEvent} ev The touch end event object.
          * @param {plat.ui.IPointerEvent} payload The trigger payload.
          *
          * @returns {void}
          */
-        private __handleMappedEvents(ev: IPointerEvent, payload: IPointerEvent): void {
-            let mappedType = this.__reverseMap[ev.type];
+        private __handleMappedEvents(type: string, ev: IPointerEvent, payload: IPointerEvent): void {
+            let mappedType = this.__reverseMap[type];
             if (this.__mappedCount[mappedType] > 0) {
                 let mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
 
@@ -1715,6 +1712,28 @@
 
             while (index-- > 0) {
                 _document.removeEventListener(eventSplit[index], listener, false);
+            }
+        }
+
+        /**
+         * @name __registerMove
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * Registers for and begins listening to touch move event types if any moving events are registered.
+         *
+         * @param {string} eventType The current event's type.
+         *
+         * @returns {void}
+         */
+        private __registerMove(eventType: string): void {
+            let gestureCount = this._gestureCount;
+            if (eventType === 'touchstart' || this.__mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
+                gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+                this.__registerType(this._moveEvents);
+                this.__detectingMove = true;
             }
         }
 
