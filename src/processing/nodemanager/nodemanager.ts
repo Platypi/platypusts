@@ -183,6 +183,9 @@ module plat.processing {
         static findMarkup(text: string): Array<expressions.IParsedExpression> {
             let start: number,
                 end: number,
+                startLength = __startSymbol.length,
+                endLength = __endSymbol.length,
+                endChar = __endSymbol[endLength - 1],
                 parsedExpressions: Array<expressions.IParsedExpression> = [],
                 wrapExpression = NodeManager._wrapExpression,
                 substring: string,
@@ -197,9 +200,9 @@ module plat.processing {
                 }
 
                 // incremement with while loop instead of just += 2 for nested object literal case.
-                while (text[++end] === '}') { }
+                while (text[end++] !== endChar || text[end] === endChar) { }
 
-                substring = text.slice(start + 2, end - 2);
+                substring = text.slice(start + startLength, end - endLength);
 
                 // check for one-time databinding
                 if (substring[0] === '=') {
@@ -213,7 +216,7 @@ module plat.processing {
                 text = text.slice(end);
             }
 
-            if (start > -1 && end >= 0) {
+            if (start >= 0 && end >= 0) {
                 parsedExpressions.push(wrapExpression(text.slice(end)));
             } else if (text !== '') {
                 parsedExpressions.push(wrapExpression(text));

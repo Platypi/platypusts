@@ -183,7 +183,7 @@
             this._controls = controls;
             this.replace = replace;
 
-            if (node.nodeName !== 'class') {
+            if (node.nodeName !== __CLASS) {
                 this.attributeChanged = this._staticAttributeChanged;
             } else {
                 this.attributeChanged = this._dynamicAttributeChanged;
@@ -205,16 +205,30 @@
         protected _dynamicAttributeChanged(): void {
             let node = this.node,
                 attr: Attr = <Attr>node.node,
+                nodeManager = this._NodeManager,
                 nodeValue = attr.value,
-                classes = this._NodeManager.build(node.expressions, this.parent).trim().split(/\s/),
+                classes = nodeManager.build(node.expressions, this.parent).trim().split(/\s+/),
                 last = this._lastValues,
                 element: HTMLElement = this.element,
                 c: string,
                 length = classes.length,
                 i: number;
 
-            if (this._NodeManager.hasMarkup(nodeValue)) {
-                attr.value = nodeValue.replace(this._markupRegex, '').trim();
+            if (nodeManager.hasMarkup(nodeValue)) {
+                let start: number,
+                    end: number,
+                    startLength = __startSymbol.length,
+                    endLength = __endSymbol.length,
+                    endChar = __endSymbol[endLength - 1];
+
+                while ((start = nodeValue.indexOf(__startSymbol)) !== -1 && (end = nodeValue.indexOf(__endSymbol)) !== -1) {
+                    // incremement with while loop instead of just += 2 for nested object literal case.
+                    while (nodeValue[end++] !== endChar || nodeValue[end] === endChar) { }
+
+                    nodeValue = nodeValue.slice(0, start).trim() + ' ' + nodeValue.slice(end).trim();
+                }
+
+                attr.value = nodeValue.trim();
             }
 
             for (i = 0; i < length; ++i) {
