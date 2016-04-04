@@ -89,19 +89,6 @@
         protected _NodeManager: INodeManagerStatic;
 
         /**
-         * @name _markupRegex
-         * @memberof plat.processing.AttributeManager
-         * @kind property
-         * @access protected
-         *
-         * @type {RegExp}
-         *
-         * @description
-         * A regular expression for finding markup in a string.
-         */
-        protected _markupRegex: RegExp = new RegExp(`^${__startSymbol}[\\S\\s]*?${__endSymbol}\\S*\\s*|\\s*\\S*${__startSymbol}[\\S\\s]*?${__endSymbol}\\S*`, 'g');
-
-        /**
          * @name _controls
          * @memberof plat.processing.AttributeManager
          * @kind property
