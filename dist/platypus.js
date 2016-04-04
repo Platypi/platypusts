@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.4 (https://platypi.io)
+ * PlatypusTS v0.20.5 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -9237,31 +9237,21 @@ var plat;
                 if (this._android44orBelow) {
                     this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
                 }
-                var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0, mappedCount = this.__mappedCount;
-                // if any moving events registered, register move 
-                if (eventType === 'touchstart' || mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
-                    gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
-                    this.__registerType(this._moveEvents);
-                    this.__detectingMove = true;
-                }
-                // check mapped events 
-                var mappedType = this.__reverseMap[eventType];
-                if (mappedCount[mappedType] > 0) {
-                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
-                    if (!isNull(mappedDomEvent)) {
-                        mappedDomEvent.trigger(ev);
-                    }
-                }
+                var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0;
                 // return if no hold or release events are registered 
                 if (noHolds && noRelease) {
+                    this.__handleMappedEvents(eventType, ev, ev);
+                    this.__registerMove(eventType);
                     return true;
                 }
-                var holdInterval = DomEvents.config.intervals.holdInterval, domEvent, subscribeFn, domEventFound = false;
+                var holdInterval = DomEvents.config.intervals.holdInterval, domEvent, subscribeFn, domEventFound;
                 if (noHolds) {
                     this.__hasRelease = false;
                     this.__cancelDeferredHold = defer(function () {
                         _this.__hasRelease = true;
                     }, holdInterval);
+                    this.__handleMappedEvents(eventType, ev, ev);
+                    this.__registerMove(eventType);
                     return true;
                 }
                 else if (noRelease) {
@@ -9289,6 +9279,8 @@ var plat;
                 if (domEventFound) {
                     this.__cancelDeferredHold = defer(subscribeFn, holdInterval);
                 }
+                this.__handleMappedEvents(eventType, ev, ev);
+                this.__registerMove(eventType);
             };
             /**
              * A listener for touch/mouse move events.
@@ -9308,23 +9300,17 @@ var plat;
                 if (isNull(evt)) {
                     return true;
                 }
-                // check mapped events 
-                var mappedType = this.__reverseMap[eventType];
-                if (this.__mappedCount[mappedType] > 0) {
-                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
-                    if (!isNull(mappedDomEvent)) {
-                        mappedDomEvent.trigger(evt);
-                    }
-                }
                 var gestureCount = this._gestureCount, noTracking = gestureCount.$track <= 0, noSwiping = gestureCount.$swipe <= 0, config = DomEvents.config, swipeOrigin = this.__swipeOrigin, x = evt.clientX, y = evt.clientY, minMove = this.__hasMoved ||
                     (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
                 // if minimum distance not met 
                 if (!minMove) {
+                    this.__handleMappedEvents(eventType, ev, evt);
                     return true;
                 }
                 this.__hasMoved = true;
                 // if no moving events return 
                 if (noTracking && noSwiping) {
+                    this.__handleMappedEvents(eventType, ev, evt);
                     return true;
                 }
                 var lastMove = this.__lastMoveEvent || swipeOrigin, direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
@@ -9338,6 +9324,7 @@ var plat;
                 if (!noTracking) {
                     this.__handleTrack(evt, ev);
                 }
+                this.__handleMappedEvents(eventType, ev, evt);
                 this.__lastMoveEvent = evt;
             };
             /**
@@ -9424,14 +9411,6 @@ var plat;
                 else if (notMouseUp) {
                     this._inTouch = false;
                 }
-                // check mapped events 
-                var mappedType = this.__reverseMap[eventType];
-                if (this.__mappedCount[mappedType] > 0) {
-                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
-                    if (!isNull(mappedDomEvent)) {
-                        mappedDomEvent.trigger(ev);
-                    }
-                }
                 // additional check for mousedown/touchstart - mouseup/touchend inconsistencies 
                 if (this.__touchCount > 0) {
                     this.__touchCount = ev.touches.length;
@@ -9448,12 +9427,14 @@ var plat;
                 // else if they had their finger down too long to be considered a tap, we want to return 
                 if (hasMoved) {
                     this.__handleTrackEnd(ev);
+                    this.__handleMappedEvents(eventType, ev, ev);
                     this.__tapCount = 0;
                     // clear captured target 
                     this.__capturedTarget = null;
                     return true;
                 }
                 else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+                    this.__handleMappedEvents(eventType, ev, ev);
                     this.__tapCount = 0;
                     // clear captured target 
                     this.__capturedTarget = null;
@@ -9473,6 +9454,7 @@ var plat;
                 }
                 // handle tap events 
                 this.__handleTap(ev);
+                this.__handleMappedEvents(eventType, ev, ev);
                 this.__lastTouchUp = ev;
                 // clear captured target 
                 this.__capturedTarget = null;
@@ -9506,18 +9488,10 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
              */
             DomEvents.prototype.__handleCanceled = function (ev) {
-                var touches = ev.touches || this.__pointerEvents, index = this.__getTouchIndex(touches);
+                var touches = ev.touches || this.__pointerEvents, index = this.__getTouchIndex(touches), type = ev.type;
                 ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
                 this._inTouch = false;
                 this.__clearTempStates();
-                // check mapped events 
-                var mappedType = this.__reverseMap[ev.type];
-                if (this.__mappedCount[mappedType] > 0) {
-                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
-                    if (!isNull(mappedDomEvent)) {
-                        mappedDomEvent.trigger(ev);
-                    }
-                }
                 if (this.__hasMoved) {
                     // Android 4.4.x fires touchcancel when the finger moves off an element that 
                     // is listening for touch events, so we should handle swipes here in that case. 
@@ -9526,7 +9500,23 @@ var plat;
                     }
                     this.__handleTrackEnd(ev);
                 }
+                this.__handleMappedEvents(type, ev, ev);
                 this.__resetTouchEnd();
+            };
+            /**
+             * A function for handling and firing mapped events.
+             * @param {string} type The event type.
+             * @param {plat.ui.IPointerEvent} ev The touch end event object.
+             * @param {plat.ui.IPointerEvent} payload The trigger payload.
+             */
+            DomEvents.prototype.__handleMappedEvents = function (type, ev, payload) {
+                var mappedType = this.__reverseMap[type];
+                if (this.__mappedCount[mappedType] > 0) {
+                    var mappedDomEvent = this.__findFirstSubscriber(ev.target, mappedType);
+                    if (!isNull(mappedDomEvent)) {
+                        mappedDomEvent.trigger(payload);
+                    }
+                }
             };
             /**
              * A function for handling and firing tap events.
@@ -9712,6 +9702,18 @@ var plat;
                 var listener = this.__listeners[events], _document = this._document, eventSplit = events.split(' '), index = eventSplit.length;
                 while (index-- > 0) {
                     _document.removeEventListener(eventSplit[index], listener, false);
+                }
+            };
+            /**
+             * Registers for and begins listening to touch move event types if any moving events are registered.
+             * @param {string} eventType The current event's type.
+             */
+            DomEvents.prototype.__registerMove = function (eventType) {
+                var gestureCount = this._gestureCount;
+                if (eventType === 'touchstart' || this.__mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
+                    gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+                    this.__registerType(this._moveEvents);
+                    this.__detectingMove = true;
                 }
             };
             /**

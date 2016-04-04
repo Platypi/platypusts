@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.20.4 (https://platypi.io)
+  * PlatypusTS v0.20.5 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -6119,6 +6119,13 @@ declare module plat {
               */
             private __handleCanceled(ev);
             /**
+              * A function for handling and firing mapped events.
+              * @param {string} type The event type.
+              * @param {plat.ui.IPointerEvent} ev The touch end event object.
+              * @param {plat.ui.IPointerEvent} payload The trigger payload.
+              */
+            private __handleMappedEvents(type, ev, payload);
+            /**
               * A function for handling and firing tap events.
               * @param {plat.ui.IPointerEvent} ev The touch end event object.
               */
@@ -6171,6 +6178,11 @@ declare module plat {
               * @param {string} events The events to stop listening for.
               */
             private __unregisterType(events);
+            /**
+              * Registers for and begins listening to touch move event types if any moving events are registered.
+              * @param {string} eventType The current event's type.
+              */
+            private __registerMove(eventType);
             /**
               * Registers and associates an element with an event.
               * @param {plat.ui.ICustomElement} element The element being tied to a custom event.

@@ -6107,6 +6107,13 @@ export declare module ui {
           */
         private __handleCanceled(ev);
         /**
+          * A function for handling and firing mapped events.
+          * @param {string} type The event type.
+          * @param {ui.IPointerEvent} ev The touch end event object.
+          * @param {ui.IPointerEvent} payload The trigger payload.
+          */
+        private __handleMappedEvents(type, ev, payload);
+        /**
           * A function for handling and firing tap events.
           * @param {ui.IPointerEvent} ev The touch end event object.
           */
@@ -6159,6 +6166,11 @@ export declare module ui {
           * @param {string} events The events to stop listening for.
           */
         private __unregisterType(events);
+        /**
+          * Registers for and begins listening to touch move event types if any moving events are registered.
+          * @param {string} eventType The current event's type.
+          */
+        private __registerMove(eventType);
         /**
           * Registers and associates an element with an event.
           * @param {ui.ICustomElement} element The element being tied to a custom event.
