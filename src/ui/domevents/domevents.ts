@@ -988,18 +988,9 @@
                 this.__detectingMove = true;
             }
 
-            // check mapped events
-            let mappedType = this.__reverseMap[eventType];
-            if (mappedCount[mappedType] > 0) {
-                let mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
-
-                if (!isNull(mappedDomEvent)) {
-                    mappedDomEvent.trigger(ev);
-                }
-            }
-
             // return if no hold or release events are registered
             if (noHolds && noRelease) {
+                this.__handleMappedEvents(ev, ev);
                 return true;
             }
 
@@ -1013,6 +1004,8 @@
                 this.__cancelDeferredHold = defer((): void => {
                     this.__hasRelease = true;
                 }, holdInterval);
+
+                this.__handleMappedEvents(ev, ev);
                 return true;
             } else if (noRelease) {
                 domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
@@ -1039,6 +1032,8 @@
             if (domEventFound) {
                 this.__cancelDeferredHold = defer(subscribeFn, holdInterval);
             }
+
+            this.__handleMappedEvents(ev, ev);
         }
 
         /**
@@ -1071,16 +1066,6 @@
                 return true;
             }
 
-            // check mapped events
-            let mappedType = this.__reverseMap[eventType];
-            if (this.__mappedCount[mappedType] > 0) {
-                let mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
-
-                if (!isNull(mappedDomEvent)) {
-                    mappedDomEvent.trigger(evt);
-                }
-            }
-
             let gestureCount = this._gestureCount,
                 noTracking = gestureCount.$track <= 0,
                 noSwiping = gestureCount.$swipe <= 0,
@@ -1093,6 +1078,7 @@
 
             // if minimum distance not met
             if (!minMove) {
+                this.__handleMappedEvents(ev, evt);
                 return true;
             }
 
@@ -1100,6 +1086,7 @@
 
             // if no moving events return
             if (noTracking && noSwiping) {
+                this.__handleMappedEvents(ev, evt);
                 return true;
             }
 
@@ -1121,6 +1108,8 @@
             if (!noTracking) {
                 this.__handleTrack(evt, ev);
             }
+
+            this.__handleMappedEvents(ev, evt);
 
             this.__lastMoveEvent = evt;
         }
@@ -1223,16 +1212,6 @@
                 this._inTouch = false;
             }
 
-            // check mapped events
-            let mappedType = this.__reverseMap[eventType];
-            if (this.__mappedCount[mappedType] > 0) {
-                let mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
-
-                if (!isNull(mappedDomEvent)) {
-                    mappedDomEvent.trigger(ev);
-                }
-            }
-
             // additional check for mousedown/touchstart - mouseup/touchend inconsistencies
             if (this.__touchCount > 0) {
                 this.__touchCount = ev.touches.length;
@@ -1257,11 +1236,13 @@
             // else if they had their finger down too long to be considered a tap, we want to return
             if (hasMoved) {
                 this.__handleTrackEnd(ev);
+                this.__handleMappedEvents(ev, ev);
                 this.__tapCount = 0;
                 // clear captured target
                 this.__capturedTarget = null;
                 return true;
             } else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+                this.__handleMappedEvents(ev, ev);
                 this.__tapCount = 0;
                 // clear captured target
                 this.__capturedTarget = null;
@@ -1285,6 +1266,7 @@
 
             // handle tap events
             this.__handleTap(ev);
+            this.__handleMappedEvents(ev, ev);
 
             this.__lastTouchUp = ev;
 
@@ -1358,16 +1340,6 @@
             this._inTouch = false;
             this.__clearTempStates();
 
-            // check mapped events
-            let mappedType = this.__reverseMap[ev.type];
-            if (this.__mappedCount[mappedType] > 0) {
-                let mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
-
-                if (!isNull(mappedDomEvent)) {
-                    mappedDomEvent.trigger(ev);
-                }
-            }
-
             if (this.__hasMoved) {
                 // Android 4.4.x fires touchcancel when the finger moves off an element that
                 // is listening for touch events, so we should handle swipes here in that case.
@@ -1378,7 +1350,33 @@
                 this.__handleTrackEnd(ev);
             }
 
+            this.__handleMappedEvents(ev, ev);
             this.__resetTouchEnd();
+        }
+
+        /**
+         * @name __handleMappedEvents
+         * @memberof plat.ui.DomEvents
+         * @kind function
+         * @access private
+         *
+         * @description
+         * A function for handling and firing mapped events.
+         *
+         * @param {plat.ui.IPointerEvent} ev The touch end event object.
+         * @param {plat.ui.IPointerEvent} payload The trigger payload.
+         *
+         * @returns {void}
+         */
+        private __handleMappedEvents(ev: IPointerEvent, payload: IPointerEvent): void {
+            let mappedType = this.__reverseMap[ev.type];
+            if (this.__mappedCount[mappedType] > 0) {
+                let mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
+
+                if (!isNull(mappedDomEvent)) {
+                    mappedDomEvent.trigger(payload);
+                }
+            }
         }
 
         /**
