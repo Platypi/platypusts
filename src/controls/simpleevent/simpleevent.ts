@@ -71,17 +71,17 @@ module plat.controls {
         attribute: string;
 
         /**
-         * @name _expression
+         * @name _listener
          * @memberof plat.controls.SimpleEventControl
          * @kind property
          * @access protected
          *
-         * @type {Array<string>}
+         * @type {string}
          *
          * @description
-         * A parsed form of the expression found in the attribute's value.
+         * The string representation of the function to be fired.
          */
-        protected _expression: Array<string> = [];
+        protected _listener: string;
 
         /**
          * @name _aliases
@@ -95,6 +95,19 @@ module plat.controls {
          * An array of the aliases used in the expression.
          */
         protected _aliases: Array<string> = [];
+
+        /**
+         * @name _args
+         * @memberof plat.controls.SimpleEventControl
+         * @kind property
+         * @access protected
+         *
+         * @type {plat.expressions.IParsedExpression}
+         *
+         * @description
+         * A parsed form of an Array of the arguments to be passed into the function to be fired.
+         */
+        protected _args: expressions.IParsedExpression;
 
         /**
          * @name loaded
@@ -160,34 +173,67 @@ module plat.controls {
          * @access protected
          *
          * @description
-         * Constructs the function to evaluate with
-         * the evaluated arguments taking resources
+         * Constructs the function to evaluate with the evaluated arguments taking resources
          * into account.
          *
          * @returns {{ fn: () => void; control: any; args: Array<expressions.IParsedExpression>; }}
          * The function to call and the associated arguments, as well as the control context with which to call the function.
          */
         protected _buildExpression(): { fn: () => void; context: any; args: Array<expressions.IParsedExpression>; } {
-            let expression = this._expression.slice(0),
-                _parser = this._parser,
-                parent = this.parent,
-                listenerStr = expression.shift(),
-                listener: IControlProperty,
+            let parent = this.parent,
+                templateControl = this.templateControl,
+                listenerStr = this._listener,
                 context: any,
-                fn: () => void,
+                fn: () => void = noop,
                 aliases: IObject<any>,
                 argContext: any;
 
-            if (!isNull(parent)) {
+            if (!isNull(templateControl)) {
+                aliases = templateControl.getResources(this._aliases);
+                if (!isNull(parent)) {
+                    argContext = parent.context;
+                }
+            } else if (!isNull(parent)) {
                 aliases = parent.getResources(this._aliases);
                 argContext = parent.context;
             }
 
-            if (listenerStr[0] !== '@') {
-                listener = this.findProperty(listenerStr);
+            if (listenerStr[0] === '@') {
+                if (!isNull(aliases)) {
+                    let functionSplit = listenerStr.split('.'),
+                        fnObj = aliases[functionSplit[0].slice(1)];
 
+                    if (isObject(fnObj)) {
+                        // shift off alias
+                        functionSplit.shift();
+
+                        let segment: string;
+                        while (functionSplit.length > 1) {
+                            segment = functionSplit.shift();
+                            if (isNull(fnObj[segment])) {
+                                break;
+                            } else {
+                                fnObj = fnObj[segment];
+                            }
+                        }
+
+                        if (functionSplit.length === 1) {
+                            segment = functionSplit.shift();
+                            if (isFunction(fnObj[segment])) {
+                                context = fnObj;
+                                fn = fnObj[segment];
+                            }
+                        } else {
+                            this._log.warn('Invalid path for function "' + listenerStr + '"');
+                        }
+                    } else if (isFunction(fnObj)) {
+                        fn = fnObj;
+                    }
+                }
+            } else {
+                let listener = this.findProperty(listenerStr, this.templateControl);
                 if (isNull(listener)) {
-                    this._log.warn('Could not find property ' + listenerStr + ' on any parent control.');
+                    this._log.warn('Could not find property ' + listenerStr + ' on any associated control.');
                     return {
                         fn: noop,
                         context: <ui.TemplateControl>{},
@@ -209,28 +255,31 @@ module plat.controls {
                 }
 
                 let identifier = identifiers[0],
-                    split = identifier.split('.');
+                    split = identifier.split('.'),
+                    control: any = listener.control;
 
                 // pop key
                 split.pop();
-                context = split.length === 0 ? listener.control : _parser.parse(split.join('.')).evaluate(listener.control);
+                if (split.length > 0) {
+                    let seg: string;
+                    while (split.length > 0) {
+                        seg = split.shift();
+                        if (isNull(control[seg])) {
+                            break;
+                        } else {
+                            control = control[seg];
+                        }
+                    }
+                }
+
                 fn = listener.value;
-            } else {
-                fn = isNull(aliases) ? noop : (aliases[listenerStr] || noop);
-                context = undefined;
-            }
-
-            let length = expression.length,
-                args: Array<expressions.IParsedExpression> = [];
-
-            for (let i = 0; i < length; ++i) {
-                args.push(_parser.parse(expression[i]).evaluate(argContext, aliases));
+                context = control;
             }
 
             return {
                 fn: fn,
                 context: context,
-                args: args
+                args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases)
             };
         }
 
@@ -253,48 +302,11 @@ module plat.controls {
 
             if (!isFunction(fn)) {
                 this._log.warn('Cannot find registered event method ' +
-                    this._expression[0] + ' for control: ' + this.type);
+                    this._listener + ' for control: ' + this.type);
                 return;
             }
 
             fn.apply(expression.context, expression.args.concat(<any>ev));
-        }
-
-        /**
-         * @name _findAliases
-         * @memberof plat.controls.SimpleEventControl
-         * @kind function
-         * @access protected
-         *
-         * @description
-         * Finds all alias contained within the expression.
-         *
-         * @param {Array<string>} args The array of arguments as strings.
-         *
-         * @returns {Array<string>} The aliases.
-         */
-        protected _findAliases(args: Array<string>): Array<string> {
-            let length = args.length,
-                arg: string,
-                hash: IObject<boolean> = {},
-                aliases: Array<string> = [],
-                parsedAliases: Array<string> = [],
-                _parser = this._parser;
-
-            while (length-- > 0) {
-                arg = args[length].trim();
-                parsedAliases = parsedAliases.concat(_parser.parse(arg).aliases);
-            }
-
-            while (parsedAliases.length > 0) {
-                arg = parsedAliases.pop();
-                if (!hash[arg]) {
-                    aliases.push(arg);
-                    hash[arg] = true;
-                }
-            }
-
-            return aliases;
         }
 
         /**
@@ -316,15 +328,31 @@ module plat.controls {
                 return;
             }
 
-            let exec = this._regex.argumentRegex.exec(expression);
-            if (!isNull(exec)) {
-                this._expression = [expression.slice(0, exec.index)]
-                    .concat((exec[1] !== '') ? exec[1].split(',') : []);
+            let exec = this._regex.argumentRegex.exec(expression),
+                listenerStr: string,
+                aliases: Array<string> = [];
+
+            if (isNull(exec)) {
+                listenerStr = expression;
             } else {
-                this._expression.push(expression);
+                listenerStr = expression.slice(0, exec.index);
+                if (exec[1] !== '') {
+                    // parse args as an array
+                    let argExp = this._parser.parse('[' + exec[1] + ']');
+                    aliases = argExp.aliases;
+                    this._args = argExp;
+                }
             }
 
-            this._aliases = this._findAliases(this._expression);
+            if (listenerStr[0] === '@') {
+                let alias = listenerStr.slice(1).split('.')[0];
+                if (aliases.indexOf(alias) === -1) {
+                    aliases.push(alias);
+                }
+            }
+
+            this._listener = listenerStr;
+            this._aliases = aliases;
         }
     }
 

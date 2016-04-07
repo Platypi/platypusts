@@ -1127,14 +1127,19 @@ module plat {
          * in the parent control chain. Returns undefined if not found.
          *
          * @param {string} property The property identifer
+         * @param {plat.Control} control? An optional control to use as a starting point to find the property.
+         * If nothing is passed in, then the control calling the method will be the starting point.
          *
          * @returns {plat.IControlProperty} An object containing the property's parsed expression, the
          * evaluated property value, and the control that it's on.
          */
-        findProperty(property: string): IControlProperty {
-            let control = <Control>this,
-                expression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property),
+        findProperty(property: string, control?: Control): IControlProperty {
+            let expression = (Control._parser || <expressions.Parser>acquire(__Parser)).parse(property),
                 value: any;
+
+            if (isNull(control)) {
+                control = <Control>this;
+            }
 
             while (!isNull(control)) {
                 value = expression.evaluate(control);
