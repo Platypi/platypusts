@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.20.6 (https://platypi.io)
+  * PlatypusTS v0.20.7 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -4213,8 +4213,10 @@ declare module plat {
           * Finds the first instance of the specified property
           * in the parent control chain. Returns undefined if not found.
           * @param {string} property The property identifer
+          * @param {plat.Control} control? An optional control to use as a starting point to find the property.
+          * If nothing is passed in, then the control calling the method will be the starting point.
           */
-        findProperty(property: string): IControlProperty;
+        findProperty(property: string, control?: Control): IControlProperty;
         /**
           * Creates a new DispatchEvent and propagates it to controls based on the
           * provided direction mechanism. Controls in the propagation chain that registered
@@ -11118,13 +11120,17 @@ declare module plat {
               */
             attribute: string;
             /**
-              * A parsed form of the expression found in the attribute's value.
+              * The string representation of the function to be fired.
               */
-            protected _expression: Array<string>;
+            protected _listener: string;
             /**
               * An array of the aliases used in the expression.
               */
             protected _aliases: Array<string>;
+            /**
+              * A parsed form of an Array of the arguments to be passed into the function to be fired.
+              */
+            protected _args: expressions.IParsedExpression;
             /**
               * Kicks off finding and setting the listener.
               */
@@ -11138,8 +11144,7 @@ declare module plat {
               */
             protected _addEventListeners(): void;
             /**
-              * Constructs the function to evaluate with
-              * the evaluated arguments taking resources
+              * Constructs the function to evaluate with the evaluated arguments taking resources
               * into account.
               */
             protected _buildExpression(): {
@@ -11152,11 +11157,6 @@ declare module plat {
               * @param {Event} ev The event object.
               */
             protected _onEvent(ev: Event): void;
-            /**
-              * Finds all alias contained within the expression.
-              * @param {Array<string>} args The array of arguments as strings.
-              */
-            protected _findAliases(args: Array<string>): Array<string>;
             /**
               * Parses the expression and separates the function
               * from its arguments.

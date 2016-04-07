@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.6 (https://platypi.io)
+ * PlatypusTS v0.20.7 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -7343,9 +7343,14 @@ var plat;
          * Finds the first instance of the specified property
          * in the parent control chain. Returns undefined if not found.
          * @param {string} property The property identifer
+         * @param {plat.Control} control? An optional control to use as a starting point to find the property.
+         * If nothing is passed in, then the control calling the method will be the starting point.
          */
-        Control.prototype.findProperty = function (property) {
-            var control = this, expression = (Control._parser || acquire(__Parser)).parse(property), value;
+        Control.prototype.findProperty = function (property, control) {
+            var expression = (Control._parser || acquire(__Parser)).parse(property), value;
+            if (isNull(control)) {
+                control = this;
+            }
             while (!isNull(control)) {
                 value = expression.evaluate(control);
                 if (!isNull(value)) {
@@ -17225,10 +17230,6 @@ var plat;
             function SimpleEventControl() {
                 _super.apply(this, arguments);
                 /**
-                 * A parsed form of the expression found in the attribute's value.
-                 */
-                this._expression = [];
-                /**
                  * An array of the aliases used in the expression.
                  */
                 this._aliases = [];
@@ -17261,20 +17262,57 @@ var plat;
                 this.addEventListener(this.element, this.event, this._onEvent, false);
             };
             /**
-             * Constructs the function to evaluate with
-             * the evaluated arguments taking resources
+             * Constructs the function to evaluate with the evaluated arguments taking resources
              * into account.
              */
             SimpleEventControl.prototype._buildExpression = function () {
-                var expression = this._expression.slice(0), _parser = this._parser, parent = this.parent, listenerStr = expression.shift(), listener, context, fn, aliases, argContext;
-                if (!isNull(parent)) {
+                var parent = this.parent, templateControl = this.templateControl, listenerStr = this._listener, context, fn = noop, aliases, argContext;
+                if (!isNull(templateControl)) {
+                    aliases = templateControl.getResources(this._aliases);
+                    if (!isNull(parent)) {
+                        argContext = parent.context;
+                    }
+                }
+                else if (!isNull(parent)) {
                     aliases = parent.getResources(this._aliases);
                     argContext = parent.context;
                 }
-                if (listenerStr[0] !== '@') {
-                    listener = this.findProperty(listenerStr);
+                if (listenerStr[0] === '@') {
+                    if (!isNull(aliases)) {
+                        var functionSplit = listenerStr.split('.'), fnObj = aliases[functionSplit[0].slice(1)];
+                        if (isObject(fnObj)) {
+                            // shift off alias 
+                            functionSplit.shift();
+                            var segment = void 0;
+                            while (functionSplit.length > 1) {
+                                segment = functionSplit.shift();
+                                if (isNull(fnObj[segment])) {
+                                    break;
+                                }
+                                else {
+                                    fnObj = fnObj[segment];
+                                }
+                            }
+                            if (functionSplit.length === 1) {
+                                segment = functionSplit.shift();
+                                if (isFunction(fnObj[segment])) {
+                                    context = fnObj;
+                                    fn = fnObj[segment];
+                                }
+                            }
+                            else {
+                                this._log.warn('Invalid path for function "' + listenerStr + '"');
+                            }
+                        }
+                        else if (isFunction(fnObj)) {
+                            fn = fnObj;
+                        }
+                    }
+                }
+                else {
+                    var listener = this.findProperty(listenerStr, this.templateControl);
                     if (isNull(listener)) {
-                        this._log.warn('Could not find property ' + listenerStr + ' on any parent control.');
+                        this._log.warn('Could not find property ' + listenerStr + ' on any associated control.');
                         return {
                             fn: noop,
                             context: {},
@@ -17291,24 +17329,28 @@ var plat;
                             args: []
                         };
                     }
-                    var identifier = identifiers[0], split = identifier.split('.');
+                    var identifier = identifiers[0], split = identifier.split('.'), control = listener.control;
                     // pop key 
                     split.pop();
-                    context = split.length === 0 ? listener.control : _parser.parse(split.join('.')).evaluate(listener.control);
+                    if (split.length > 0) {
+                        var seg = void 0;
+                        while (split.length > 0) {
+                            seg = split.shift();
+                            if (isNull(control[seg])) {
+                                break;
+                            }
+                            else {
+                                control = control[seg];
+                            }
+                        }
+                    }
                     fn = listener.value;
-                }
-                else {
-                    fn = isNull(aliases) ? noop : (aliases[listenerStr] || noop);
-                    context = undefined;
-                }
-                var length = expression.length, args = [];
-                for (var i = 0; i < length; ++i) {
-                    args.push(_parser.parse(expression[i]).evaluate(argContext, aliases));
+                    context = control;
                 }
                 return {
                     fn: fn,
                     context: context,
-                    args: args
+                    args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases)
                 };
             };
             /**
@@ -17319,29 +17361,10 @@ var plat;
                 var expression = this._buildExpression(), fn = expression.fn;
                 if (!isFunction(fn)) {
                     this._log.warn('Cannot find registered event method ' +
-                        this._expression[0] + ' for control: ' + this.type);
+                        this._listener + ' for control: ' + this.type);
                     return;
                 }
                 fn.apply(expression.context, expression.args.concat(ev));
-            };
-            /**
-             * Finds all alias contained within the expression.
-             * @param {Array<string>} args The array of arguments as strings.
-             */
-            SimpleEventControl.prototype._findAliases = function (args) {
-                var length = args.length, arg, hash = {}, aliases = [], parsedAliases = [], _parser = this._parser;
-                while (length-- > 0) {
-                    arg = args[length].trim();
-                    parsedAliases = parsedAliases.concat(_parser.parse(arg).aliases);
-                }
-                while (parsedAliases.length > 0) {
-                    arg = parsedAliases.pop();
-                    if (!hash[arg]) {
-                        aliases.push(arg);
-                        hash[arg] = true;
-                    }
-                }
-                return aliases;
             };
             /**
              * Parses the expression and separates the function
@@ -17352,15 +17375,27 @@ var plat;
                 if (isEmpty(expression)) {
                     return;
                 }
-                var exec = this._regex.argumentRegex.exec(expression);
-                if (!isNull(exec)) {
-                    this._expression = [expression.slice(0, exec.index)]
-                        .concat((exec[1] !== '') ? exec[1].split(',') : []);
+                var exec = this._regex.argumentRegex.exec(expression), listenerStr, aliases = [];
+                if (isNull(exec)) {
+                    listenerStr = expression;
                 }
                 else {
-                    this._expression.push(expression);
+                    listenerStr = expression.slice(0, exec.index);
+                    if (exec[1] !== '') {
+                        // parse args as an array 
+                        var argExp = this._parser.parse('[' + exec[1] + ']');
+                        aliases = argExp.aliases;
+                        this._args = argExp;
+                    }
                 }
-                this._aliases = this._findAliases(this._expression);
+                if (listenerStr[0] === '@') {
+                    var alias = listenerStr.slice(1).split('.')[0];
+                    if (aliases.indexOf(alias) === -1) {
+                        aliases.push(alias);
+                    }
+                }
+                this._listener = listenerStr;
+                this._aliases = aliases;
             };
             SimpleEventControl._inject = {
                 _parser: __Parser,

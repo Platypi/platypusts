@@ -4201,8 +4201,10 @@ export declare class Control {
       * Finds the first instance of the specified property
       * in the parent control chain. Returns undefined if not found.
       * @param {string} property The property identifer
+      * @param {Control} control? An optional control to use as a starting point to find the property.
+      * If nothing is passed in, then the control calling the method will be the starting point.
       */
-    findProperty(property: string): IControlProperty;
+    findProperty(property: string, control?: Control): IControlProperty;
     /**
       * Creates a new DispatchEvent and propagates it to controls based on the
       * provided direction mechanism. Controls in the propagation chain that registered
@@ -11106,13 +11108,17 @@ export declare module controls {
           */
         attribute: string;
         /**
-          * A parsed form of the expression found in the attribute's value.
+          * The string representation of the function to be fired.
           */
-        protected _expression: Array<string>;
+        protected _listener: string;
         /**
           * An array of the aliases used in the expression.
           */
         protected _aliases: Array<string>;
+        /**
+          * A parsed form of an Array of the arguments to be passed into the function to be fired.
+          */
+        protected _args: expressions.IParsedExpression;
         /**
           * Kicks off finding and setting the listener.
           */
@@ -11126,8 +11132,7 @@ export declare module controls {
           */
         protected _addEventListeners(): void;
         /**
-          * Constructs the function to evaluate with
-          * the evaluated arguments taking resources
+          * Constructs the function to evaluate with the evaluated arguments taking resources
           * into account.
           */
         protected _buildExpression(): {
@@ -11140,11 +11145,6 @@ export declare module controls {
           * @param {Event} ev The event object.
           */
         protected _onEvent(ev: Event): void;
-        /**
-          * Finds all alias contained within the expression.
-          * @param {Array<string>} args The array of arguments as strings.
-          */
-        protected _findAliases(args: Array<string>): Array<string>;
         /**
           * Parses the expression and separates the function
           * from its arguments.
