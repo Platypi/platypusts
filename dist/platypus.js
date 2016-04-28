@@ -9357,12 +9357,6 @@ var plat;
                     return true;
                 }
                 var hasMoved = this.__hasMoved, notMouseUp = eventType !== 'mouseup';
-                if (this.__touchCount <= 0) {
-                    this.__touchCount = 0;
-                }
-                else {
-                    this.__touchCount--;
-                }
                 if (notMouseUp) {
                     // all non mouse cases 
                     if (eventType === 'touchend') {
@@ -9387,6 +9381,8 @@ var plat;
                                 ev.preventDefault();
                             }
                             this.__preventClickFromTouch();
+                            // reset touch count 
+                            this.__touchCount = 0;
                             return true;
                         }
                         this.__preventClickFromTouch();
@@ -9408,6 +9404,12 @@ var plat;
                     this.__handleCanceled(ev);
                     return true;
                 }
+                if (this.__touchCount <= 0) {
+                    this.__touchCount = 0;
+                }
+                else {
+                    this.__touchCount--;
+                }
                 // standardizeEventObject creates touches 
                 ev = this.__standardizeEventObject(ev);
                 if (isNull(ev)) {
@@ -9418,7 +9420,7 @@ var plat;
                 }
                 // additional check for mousedown/touchstart - mouseup/touchend inconsistencies 
                 if (this.__touchCount > 0) {
-                    this.__touchCount = ev.touches.length;
+                    this.__touchCount = ev._touches.length;
                 }
                 this.__clearTempStates();
                 // handle release event 
@@ -9957,7 +9959,7 @@ var plat;
                     this.__setCapture(ev.target);
                 }
                 this.__normalizeButtons(ev);
-                ev.touches = touches;
+                ev._touches = touches;
                 ev.offset = this.__getOffset(ev);
                 if (isUndefined(ev.timeStamp) || timeStamp > ev.timeStamp) {
                     ev.timeStamp = timeStamp;
@@ -10573,7 +10575,7 @@ var plat;
                     y: 'none',
                     primary: 'none'
                 };
-                customEv.touches = ev.touches;
+                customEv.touches = ev._touches;
                 customEv.velocity = ev.velocity || { x: 0, y: 0 };
                 customEv.identifier = ev.identifier || 0;
                 customEv.pointerType = isNumber(pointerType) ? this.__convertPointerType(pointerType, ev.type) : pointerType;

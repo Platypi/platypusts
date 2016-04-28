@@ -6520,6 +6520,7 @@ export declare module ui {
           * The potential velocity associated with the event.
           */
         velocity?: IVelocity;
+        _touches?: Array<IExtendedEvent>;
         /**
           * An array containing all current touch points. The IExtendedEvents
           * may slightly differ depending on the browser implementation.
