@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.8 (https://platypi.io)
+ * PlatypusTS v0.20.9 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -12740,6 +12740,7 @@ var plat;
                  */
                 Head.prototype.setTemplate = function () {
                     var meta = __Meta, title = __Title, link = __MetaLink, author = __Author, type = __MetaType, creator = __Creator, image = __MetaImage, video = __MetaVideo, description = __Description, url = __Url, og = __OpenGraph, article = __Article, twitter = __Twitter;
+                    this.element.setAttribute('prefix', 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#');
                     this._titleElement = this._createElement(title);
                     this._ogTitleElement = this._createElement(meta, og + title);
                     this._twitterTitleElement = this._createElement(meta, twitter + title);
