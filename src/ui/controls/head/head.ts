@@ -297,6 +297,8 @@
                 article = __Article,
                 twitter = __Twitter;
 
+            this.element.setAttribute('prefix', 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#');
+
             this._titleElement = this._createElement<HTMLTitleElement>(title);
             this._ogTitleElement = this._createElement<HTMLMetaElement>(meta, og + title);
             this._twitterTitleElement = this._createElement<HTMLMetaElement>(meta, twitter + title);
