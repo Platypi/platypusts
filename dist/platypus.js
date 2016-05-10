@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.9 (https://platypi.io)
+ * PlatypusTS v0.20.10 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -12877,11 +12877,15 @@ var plat;
                     if (!isArray(images)) {
                         return;
                     }
-                    var meta = __Meta, og = __OpenGraph, twitter = __Twitter, ogElement, twitterElement;
+                    var meta = __Meta, og = __OpenGraph, twitter = __Twitter, ogElement, twitterElement, head = this.element;
                     forEach(function (image) {
+                        image = _this._browser.urlUtils(image).href;
+                        var elements = head.querySelectorAll(meta + "[content=\"" + image + "\"]");
+                        if (elements.length === 2) {
+                            return;
+                        }
                         ogElement = _this._createElement(meta, og + __MetaImage, true);
                         twitterElement = _this._createElement(meta, twitter + __MetaImage, true);
-                        image = _this._browser.urlUtils(image).href;
                         _this._setContent([
                             ogElement,
                             twitterElement
@@ -12897,10 +12901,14 @@ var plat;
                     if (!isArray(videos)) {
                         return;
                     }
-                    var meta = __Meta, og = __OpenGraph, metaVideo = __MetaVideo, _browser = this._browser, ogElement;
+                    var meta = __Meta, og = __OpenGraph, metaVideo = __MetaVideo, _browser = this._browser, ogElement, head = this.element;
                     forEach(function (video) {
-                        ogElement = _this._createElement(meta, og + metaVideo, true);
                         video = _browser.urlUtils(video).href;
+                        var elements = head.querySelectorAll(meta + "[content=\"" + video + "\"]");
+                        if (elements.length === 1) {
+                            return;
+                        }
+                        ogElement = _this._createElement(meta, og + metaVideo, true);
                         _this._setContent([
                             ogElement
                         ], video);
