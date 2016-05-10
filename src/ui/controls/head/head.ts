@@ -549,13 +549,20 @@
                 og = __OpenGraph,
                 twitter = __Twitter,
                 ogElement: HTMLMetaElement,
-                twitterElement: HTMLMetaElement;
+                twitterElement: HTMLMetaElement,
+                head = this.element;
 
             forEach((image: string): void => {
+                image = this._browser.urlUtils(image).href;
+
+                let elements = head.querySelectorAll(`${meta}[content="${image}"]`);
+
+                if (elements.length === 2) {
+                    return;
+                }
+
                 ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaImage, true);
                 twitterElement = this._createElement<HTMLMetaElement>(meta, twitter + __MetaImage, true);
-
-                image = this._browser.urlUtils(image).href;
 
                 this._setContent([
                     ogElement,
@@ -586,11 +593,19 @@
                 og = __OpenGraph,
                 metaVideo = __MetaVideo,
                 _browser = this._browser,
-                ogElement: HTMLMetaElement;
+                ogElement: HTMLMetaElement,
+                head = this.element;
 
             forEach((video: string): void => {
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo, true);
                 video = _browser.urlUtils(video).href;
+
+                let elements = head.querySelectorAll(`${meta}[content="${video}"]`);
+
+                if (elements.length === 1) {
+                    return;
+                }
+
+                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo, true);
 
                 this._setContent([
                     ogElement
