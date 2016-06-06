@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.10 (https://platypi.io)
+ * PlatypusTS v0.20.11 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -3520,6 +3520,10 @@ var plat;
                  */
                 this.__lastUrl = this._location.href;
                 /**
+                 * The local url protocol.
+                 */
+                this.__protocol = this.urlUtils().protocol;
+                /**
                  * Whether or not the browser is in an initialization state.
                  */
                 this.__initializing = false;
@@ -3623,30 +3627,35 @@ var plat;
              * @param url The URL to format.
              */
             Browser.prototype.formatUrl = function (url) {
-                var config = Browser.config, baseUrl = config.baseUrl, isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+                var config = Browser.config, baseUrl = config.baseUrl;
                 if (!isString(url)) {
                     return '';
                 }
                 if (url === baseUrl) {
                     return url;
                 }
+                var isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
                 if (url[0] === '/') {
                     url = url.slice(1);
                 }
-                if (isLocal && config.routingType === config.HASH) {
-                    var hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1, prefix = config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp(append + '|#/');
-                    if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
-                        url += '/';
+                if (isLocal) {
+                    if (config.routingType === config.HASH) {
+                        var hasProtocol = url.indexOf(this.__protocol + ':') === 0, prefix = config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp(append + '|#/');
+                        if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
+                            url += '/';
+                        }
+                        if (!hashRegex.test(url)) {
+                            if (hasProtocol) {
+                                url = url + append + '/';
+                            }
+                            else {
+                                url = append + ((url[0] !== '/') ? '/' : '') + url;
+                            }
+                        }
                     }
-                    if (hasProtocol && !hashRegex.test(url)) {
-                        url = url + append + '/';
+                    if (url.indexOf(baseUrl) === -1) {
+                        url = baseUrl + url;
                     }
-                    else if (!hashRegex.test(url)) {
-                        url = append + ((url[0] !== '/') ? '/' : '') + url;
-                    }
-                }
-                if (isLocal && url.indexOf(baseUrl) === -1) {
-                    url = baseUrl + url;
                 }
                 return url;
             };

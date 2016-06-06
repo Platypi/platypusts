@@ -1641,6 +1641,10 @@ export declare module web {
           */
         private __lastUrl;
         /**
+          * The local url protocol.
+          */
+        private __protocol;
+        /**
           * Whether or not the browser is in an initialization state.
           */
         private __initializing;

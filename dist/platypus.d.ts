@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.20.10 (https://platypi.io)
+  * PlatypusTS v0.20.11 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -1652,6 +1652,10 @@ declare module plat {
               * The browser's last URL.
               */
             private __lastUrl;
+            /**
+              * The local url protocol.
+              */
+            private __protocol;
             /**
               * Whether or not the browser is in an initialization state.
               */
