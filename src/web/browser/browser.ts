@@ -195,6 +195,19 @@ module plat.web {
         private __lastUrl: string = this._location.href;
 
         /**
+         * @name __protocol
+         * @memberof plat.web.Browser
+         * @kind property
+         * @access protected
+         *
+         * @type {string}
+         *
+         * @description
+         * The local url protocol.
+         */
+        private __protocol: string = this.urlUtils().protocol;
+
+        /**
          * @name __initializing
          * @memberof plat.web.Browser
          * @kind property
@@ -417,8 +430,7 @@ module plat.web {
          */
         formatUrl(url: string): string {
             let config = Browser.config,
-                baseUrl = config.baseUrl,
-                isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+                baseUrl = config.baseUrl;
 
             if (!isString(url)) {
                 return '';
@@ -428,29 +440,34 @@ module plat.web {
                 return url;
             }
 
+            let isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
             if (url[0] === '/') {
                 url = url.slice(1);
             }
 
-            if (isLocal && config.routingType === config.HASH) {
-                let hasProtocol = url.indexOf(this.urlUtils().protocol) !== -1,
-                    prefix = config.hashPrefix || '',
-                    append = '#' + prefix,
-                    hashRegex = new RegExp(append + '|#/');
+            if (isLocal) {
+                if (config.routingType === config.HASH) {
+                    let hasProtocol = url.indexOf(this.__protocol + ':') === 0,
+                        prefix = config.hashPrefix || '',
+                        append = '#' + prefix,
+                        hashRegex = new RegExp(append + '|#/');
 
-                if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
-                    url += '/';
+                    if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
+                        url += '/';
+                    }
+
+                    if (!hashRegex.test(url)) {
+                        if (hasProtocol) {
+                            url = url + append + '/';
+                        } else {
+                            url = append + ((url[0] !== '/') ? '/' : '') + url;
+                        }
+                    }
                 }
 
-                if (hasProtocol && !hashRegex.test(url)) {
-                    url = url + append + '/';
-                } else if (!hashRegex.test(url)) {
-                    url = append + ((url[0] !== '/') ? '/' : '') + url;
+                if (url.indexOf(baseUrl) === -1) {
+                    url = baseUrl + url;
                 }
-            }
-
-            if (isLocal && url.indexOf(baseUrl) === -1) {
-                url = baseUrl + url;
             }
 
             return url;
