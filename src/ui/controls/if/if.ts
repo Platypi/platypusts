@@ -307,26 +307,23 @@ module plat.ui.controls {
 
             if (value === this.__condition && !this.__firstTime) {
                 return this._Promise.resolve(null);
-            }
-
-            if (value) {
-                if (!isNull(this.__leaveAnimation)) {
+            } else if (value) {
+                if (isNull(this.__leaveAnimation)) {
+                    promise = this._addItem();
+                } else {
                     promise = <any>this.__leaveAnimation.cancel().then((): async.IThenable<void> => {
                         this.__leaveAnimation = null;
                         return this._addItem();
                     });
-                } else {
-                    promise = this._addItem();
                 }
             } else {
-                if (!isNull(this.__enterAnimation)) {
+                if (isNull(this.__enterAnimation)) {
+                    promise = this._removeItem();
+                } else {
                     promise = this.__enterAnimation.cancel().then((): void => {
                         this.__enterAnimation = null;
                         return <any>this._removeItem();
                     });
-                } else {
-                    this._removeItem();
-                    promise = this._Promise.resolve(null);
                 }
             }
 
@@ -347,16 +344,17 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _addItem(): async.IThenable<void> {
-            if (!isNode(this.commentNode.parentNode) && !this.__firstTime) {
+            if (!(this.__firstTime || isNode(this.commentNode.parentNode))) {
                 return this._Promise.resolve(null);
             }
 
             if (this.__firstTime) {
                 this.__firstTime = false;
-                this.__initialBind = this.bindableTemplates.bind('template').then((template): animations.IAnimatingThenable => {
-                    let element = this.element;
+
+                return this.__initialBind = this.bindableTemplates.bind('template').then((template): animations.IAnimatingThenable => {
                     this.__initialBind = null;
 
+                    let element = this.element;
                     if (element.parentNode === this.fragmentStore) {
                         element.insertBefore(template, null);
                         return <any>this._animateEntrance();
@@ -368,12 +366,11 @@ module plat.ui.controls {
                 }).then((): void => {
                     this.__enterAnimation = null;
                 });
-
-                return this.__initialBind;
             }
 
             if (isPromise(this.__initialBind)) {
-                return this.__initialBind.then((): animations.IAnimationThenable<void> => {
+                return this.__initialBind = this.__initialBind.then((): animations.IAnimationThenable<void> => {
+                    this.__initialBind = null;
                     return this._animateEntrance();
                 });
             }
@@ -418,7 +415,8 @@ module plat.ui.controls {
          */
         protected _removeItem(): async.IThenable<void> {
             if (isPromise(this.__initialBind)) {
-                return this.__initialBind.then((): async.IThenable<void> => {
+                return this.__initialBind = this.__initialBind.then((): async.IThenable<void> => {
+                    this.__initialBind = null;
                     return this._animateLeave();
                 });
             }
