@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.11 (https://platypi.io)
+ * PlatypusTS v0.20.12 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13748,27 +13748,26 @@ var plat;
                     if (value === this.__condition && !this.__firstTime) {
                         return this._Promise.resolve(null);
                     }
-                    if (value) {
-                        if (!isNull(this.__leaveAnimation)) {
+                    else if (value) {
+                        if (isNull(this.__leaveAnimation)) {
+                            promise = this._addItem();
+                        }
+                        else {
                             promise = this.__leaveAnimation.cancel().then(function () {
                                 _this.__leaveAnimation = null;
                                 return _this._addItem();
                             });
                         }
-                        else {
-                            promise = this._addItem();
-                        }
                     }
                     else {
-                        if (!isNull(this.__enterAnimation)) {
+                        if (isNull(this.__enterAnimation)) {
+                            promise = this._removeItem();
+                        }
+                        else {
                             promise = this.__enterAnimation.cancel().then(function () {
                                 _this.__enterAnimation = null;
                                 return _this._removeItem();
                             });
-                        }
-                        else {
-                            this._removeItem();
-                            promise = this._Promise.resolve(null);
                         }
                     }
                     this.__condition = value;
@@ -13779,14 +13778,14 @@ var plat;
                  */
                 If.prototype._addItem = function () {
                     var _this = this;
-                    if (!isNode(this.commentNode.parentNode) && !this.__firstTime) {
+                    if (!(this.__firstTime || isNode(this.commentNode.parentNode))) {
                         return this._Promise.resolve(null);
                     }
                     if (this.__firstTime) {
                         this.__firstTime = false;
-                        this.__initialBind = this.bindableTemplates.bind('template').then(function (template) {
-                            var element = _this.element;
+                        return this.__initialBind = this.bindableTemplates.bind('template').then(function (template) {
                             _this.__initialBind = null;
+                            var element = _this.element;
                             if (element.parentNode === _this.fragmentStore) {
                                 element.insertBefore(template, null);
                                 return _this._animateEntrance();
@@ -13797,10 +13796,10 @@ var plat;
                         }).then(function () {
                             _this.__enterAnimation = null;
                         });
-                        return this.__initialBind;
                     }
                     if (isPromise(this.__initialBind)) {
-                        return this.__initialBind.then(function () {
+                        return this.__initialBind = this.__initialBind.then(function () {
+                            _this.__initialBind = null;
                             return _this._animateEntrance();
                         });
                     }
@@ -13825,7 +13824,8 @@ var plat;
                 If.prototype._removeItem = function () {
                     var _this = this;
                     if (isPromise(this.__initialBind)) {
-                        return this.__initialBind.then(function () {
+                        return this.__initialBind = this.__initialBind.then(function () {
+                            _this.__initialBind = null;
                             return _this._animateLeave();
                         });
                     }
