@@ -140,8 +140,7 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "watch": false,
-        "inlineSourceMap": true,
-        "outFile": "test.js"
+        "inlineSourceMap": true
     },
     "filesGlob": [
         "src/**/*.ts"
