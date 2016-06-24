@@ -322,9 +322,7 @@ module plat.ui.controls {
                 return;
             }
 
-            let element = this.element,
-                target = element.target;
-
+            let target = this.element.target;
             if (isEmpty(target) || target === __SELF) {
                 ev.preventDefault();
 
@@ -335,6 +333,8 @@ module plat.ui.controls {
             }
 
             this._allowClick = true;
+            // force call click to handle delay
+            this.element.click();
         }
 
         /**
