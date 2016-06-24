@@ -301,6 +301,7 @@ const __prefix = '$',
     __ROOT_RESOURCE = 'root',
     __ROOT_CONTEXT_RESOURCE = 'rootContext',
     __CONTROL_RESOURCE = 'control',
+    __SELF = '_self',
     __CONTEXT_RESOURCE = __CONTEXT;
 /* tslint:enable:no-unused-variable */
 

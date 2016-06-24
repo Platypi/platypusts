@@ -26,7 +26,8 @@ module plat.ui.controls {
         protected static _inject: any = {
             _Router: __RouterStatic,
             _Injector: __InjectorStatic,
-            _browser: __Browser
+            _browser: __Browser,
+            _window: __Window
         };
 
         /**
@@ -95,6 +96,19 @@ module plat.ui.controls {
         protected _browser: web.Browser;
 
         /**
+         * @name _window
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access protected
+         *
+         * @type {Window}
+         *
+         * @description
+         * Reference to the Window injectable.
+         */
+        protected _window: Window;
+
+        /**
          * @name _router
          * @memberof plat.ui.controls.Link
          * @kind property
@@ -121,6 +135,19 @@ module plat.ui.controls {
         protected _removeClickListener: IRemoveListener;
 
         /**
+         * @name _allowClick
+         * @memberof plat.ui.controls.Link
+         * @kind property
+         * @access protected
+         *
+         * @type {boolean}
+         *
+         * @description
+         * A property that when set allows for the next click event to process.
+         */
+        protected _allowClick = false;
+
+        /**
          * @name initialize
          * @memberof plat.ui.controls.Link
          * @kind function
@@ -132,7 +159,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         initialize(): void {
-            this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick, false);
+            this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick.bind(this), false);
         }
 
         /**
@@ -232,6 +259,11 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _handleClick(ev: Event): void {
+            if (this._allowClick) {
+                this._allowClick = false;
+                return;
+            }
+
             let buttons: number;
 
             if (isNumber((<any>ev).buttons) && (<any>ev).buttons !== 0) {
@@ -289,11 +321,20 @@ module plat.ui.controls {
             if (isUndefined(href)) {
                 return;
             }
-            ev.preventDefault();
 
-            requestAnimationFrameGlobal((): void => {
-                this._browser.url(href);
-            });
+            let element = this.element,
+                target = element.target;
+
+            if (isEmpty(target) || target === __SELF) {
+                ev.preventDefault();
+
+                requestAnimationFrameGlobal((): void => {
+                    this._browser.url(href);
+                });
+                return;
+            }
+
+            this._allowClick = true;
         }
 
         /**
