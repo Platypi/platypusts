@@ -5,7 +5,8 @@
   "description": "A front-end MVVM framework written in TypeScript",
   "dependencies": {},
   "devDependencies": {},
-  "ambientDependencies": {
-    "jasmine": "github:DefinitelyTyped/DefinitelyTyped/jasmine/jasmine.d.ts#bc92442c075929849ec41d28ab618892ba493504"
+  "globalDependencies": {},
+  "globalDevDependencies": {
+    "jasmine": "registry:dt/jasmine#2.2.0+20160505161446"
   }
 }
