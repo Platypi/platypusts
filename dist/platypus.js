@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.12 (https://platypi.io)
+ * PlatypusTS v0.20.13 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -61,7 +61,7 @@ var plat;
     __BASE_SEGMENT_TYPE = 'base', __VARIABLE_SEGMENT_TYPE = 'variable', __STATIC_SEGMENT_TYPE = 'static', __SPLAT_SEGMENT_TYPE = 'splat', __DYNAMIC_SEGMENT_TYPE = 'dynamic', 
     /**
      */
-    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __CONTEXT_RESOURCE = __CONTEXT;
+    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __SELF = '_self', __CONTEXT_RESOURCE = __CONTEXT;
     /* tslint:disable:no-unused-variable */
     var ___Promise, ___compat, __camelCaseRegex, __capitalCaseRegex, __nativeIsArray = !!Array.isArray;
     var __uids = {}, __objToString = Object.prototype.toString, __toStringClass = '[object ', __errorClass = __toStringClass + 'Error]', __fileClass = __toStringClass + 'File]', __arrayClass = __toStringClass + 'Array]', __boolClass = __toStringClass + 'Boolean]', __dateClass = __toStringClass + 'Date]', __funcClass = __toStringClass + 'Function]', __numberClass = __toStringClass + 'Number]', __objectClass = __toStringClass + 'Object]', __regexpClass = __toStringClass + 'RegExp]', __stringClass = __toStringClass + 'String]', __promiseClass = __toStringClass + 'Promise]', __objectTypes = {
@@ -13871,12 +13871,16 @@ var plat;
                      * The router associated with this link.
                      */
                     this._router = this._Router.currentRouter();
+                    /**
+                     * A property that when set allows for the next click event to process.
+                     */
+                    this._allowClick = false;
                 }
                 /**
                  * Initializes click event.
                  */
                 Link.prototype.initialize = function () {
-                    this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick, false);
+                    this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick.bind(this), false);
                 };
                 /**
                  * Calls to normalize the href for internal links and initializes the tap event.
@@ -13929,6 +13933,10 @@ var plat;
                  * Determines Whether or not the default click behavior should be prevented.
                  */
                 Link.prototype._handleClick = function (ev) {
+                    if (this._allowClick) {
+                        this._allowClick = false;
+                        return;
+                    }
                     var buttons;
                     if (isNumber(ev.buttons) && ev.buttons !== 0) {
                         buttons = ev.buttons;
@@ -13977,10 +13985,15 @@ var plat;
                     if (isUndefined(href)) {
                         return;
                     }
-                    ev.preventDefault();
-                    requestAnimationFrameGlobal(function () {
-                        _this._browser.url(href);
-                    });
+                    var element = this.element, target = element.target;
+                    if (isEmpty(target) || target === __SELF) {
+                        ev.preventDefault();
+                        requestAnimationFrameGlobal(function () {
+                            _this._browser.url(href);
+                        });
+                        return;
+                    }
+                    this._allowClick = true;
                 };
                 /**
                  * Calls to remove the click eater after a delay.
@@ -13991,7 +14004,8 @@ var plat;
                 Link._inject = {
                     _Router: __RouterStatic,
                     _Injector: __InjectorStatic,
-                    _browser: __Browser
+                    _browser: __Browser,
+                    _window: __Window
                 };
                 return Link;
             }(TemplateControl));

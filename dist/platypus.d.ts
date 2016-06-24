@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.20.12 (https://platypi.io)
+  * PlatypusTS v0.20.13 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -9108,6 +9108,10 @@ declare module plat {
                   */
                 protected _browser: web.Browser;
                 /**
+                  * Reference to the Window injectable.
+                  */
+                protected _window: Window;
+                /**
                   * The router associated with this link.
                   */
                 protected _router: routing.Router;
@@ -9115,6 +9119,10 @@ declare module plat {
                   * The a method for removing the click event listener for this control's element.
                   */
                 protected _removeClickListener: IRemoveListener;
+                /**
+                  * A property that when set allows for the next click event to process.
+                  */
+                protected _allowClick: boolean;
                 /**
                   * Initializes click event.
                   */

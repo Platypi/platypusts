@@ -9096,6 +9096,10 @@ export declare module ui {
               */
             protected _browser: web.Browser;
             /**
+              * Reference to the Window injectable.
+              */
+            protected _window: Window;
+            /**
               * The router associated with this link.
               */
             protected _router: routing.Router;
@@ -9103,6 +9107,10 @@ export declare module ui {
               * The a method for removing the click event listener for this control's element.
               */
             protected _removeClickListener: IRemoveListener;
+            /**
+              * A property that when set allows for the next click event to process.
+              */
+            protected _allowClick: boolean;
             /**
               * Initializes click event.
               */
