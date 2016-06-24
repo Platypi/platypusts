@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.13 (https://platypi.io)
+ * PlatypusTS v0.20.14 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13985,7 +13985,7 @@ var plat;
                     if (isUndefined(href)) {
                         return;
                     }
-                    var element = this.element, target = element.target;
+                    var target = this.element.target;
                     if (isEmpty(target) || target === __SELF) {
                         ev.preventDefault();
                         requestAnimationFrameGlobal(function () {
@@ -13994,6 +13994,8 @@ var plat;
                         return;
                     }
                     this._allowClick = true;
+                    // force call click to handle delay 
+                    this.element.click();
                 };
                 /**
                  * Calls to remove the click eater after a delay.
