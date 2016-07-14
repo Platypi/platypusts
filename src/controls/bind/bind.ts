@@ -208,6 +208,32 @@ module plat.controls {
         protected _supportsTwoWayBinding: boolean = false;
 
         /**
+         * @name _dateRegex
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         *
+         * @type {RegExp}
+         *
+         * @description
+         * A regular expression used to determine if the value is in HTML5 date format YYYY-MM-DD.
+         */
+        protected _dateRegex: RegExp = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])/;
+
+        /**
+         * @name _dateTimeLocalRegex
+         * @memberof plat.controls.Bind
+         * @kind property
+         * @access protected
+         *
+         * @type {RegExp}
+         *
+         * @description
+         * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
+         */
+        protected _dateTimeLocalRegex: RegExp = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
+
+        /**
          * @name __fileSupported
          * @memberof plat.controls.Bind
          * @kind property
@@ -660,6 +686,64 @@ module plat.controls {
         }
 
         /**
+         * @name _getDate
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Getter for input[type="date"].
+         *
+         * @returns {any} A date object if browser supports HTML5 format YYYY-MM-DD
+         * and the user didn't initially bind to a valid string value else just the string value.
+         */
+        protected _getDate(): any {
+            let value = (<HTMLInputElement>this.element).value,
+                regex = this._dateRegex;
+
+            if (this._propertyType !== 'string' && regex.test(value)) {
+                let exec = regex.exec(value);
+                if (exec.length === 4) {
+                    return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]));
+                }
+            }
+
+            return <any>value;
+        }
+
+        /**
+         * @name _getDateTimeLocal
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Getter for input[type="datetime-local"].
+         *
+         * @returns {any} A date object if browser supports HTML5 format YYYY-MM-DDTHH:MM(:ss.SSS)
+         * and the user didn't initially bind to a valid string value else just the string value.
+         */
+        protected _getDateTimeLocal(): Date {
+            let value = (<HTMLInputElement>this.element).value,
+                regex = this._dateTimeLocalRegex;
+
+            if (this._propertyType !== 'string' && regex.test(value)) {
+                let exec = regex.exec(value);
+                if (exec.length === 8) {
+                    if (isNull(exec[6])) {
+                        return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]));
+                    } else if (isNull(exec[7])) {
+                        return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]), Number(exec[6]));
+                    }
+
+                    return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]), Number(exec[6]), Number(exec[7]));
+                }
+            }
+
+            return <any>value;
+        }
+
+        /**
          * @name _getFile
          * @memberof plat.controls.Bind
          * @kind function
@@ -974,6 +1058,100 @@ module plat.controls {
         }
 
         /**
+         * @name _setDate
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Setter for input[type="date"]
+         *
+         * @param {any} newValue The new value to set in the form YYYY-MM-DD
+         * @param {any} oldValue The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
+         * should thus change the property if null
+         *
+         * @returns {void}
+         */
+        protected _setDate(newValue: any, oldValue: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            if (!isDate(newValue)) {
+                if (this._dateRegex.test(newValue)) {
+                    this._propertyType = 'string';
+                    this._setValue(newValue);
+                    return;
+                }
+
+                newValue = '';
+
+                if (firstTime === true) {
+                    if (isNull((<HTMLInputElement>this.element).value)) {
+                        this._setValue(newValue);
+                    }
+                    this._propertyChanged();
+                    return;
+                }
+            }
+
+            let day = (`0${newValue.getDate()}`).slice(-2),
+                month = (`0${(newValue.getMonth() + 1)}`).slice(-2);
+
+            this._setValue(`${newValue.getFullYear()}-${month}-${day}`);
+        }
+
+        /**
+         * @name _setDateTimeLocal
+         * @memberof plat.controls.Bind
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Setter for input[type="datetime-local"]
+         *
+         * @param {any} newValue The new value to set in the form YYYY-MM-DD
+         * @param {any} oldValue The previously bound value
+         * @param {boolean} firstTime? The context is being evaluated for the first time and
+         * should thus change the property if null
+         *
+         * @returns {void}
+         */
+        protected _setDateTimeLocal(newValue: any, oldValue: any, firstTime?: boolean): void {
+            if (this.__isSelf) {
+                return;
+            }
+
+            if (!isDate(newValue)) {
+                if (this._dateTimeLocalRegex.test(newValue)) {
+                    this._propertyType = 'string';
+                    this._setValue(newValue);
+                    return;
+                }
+
+                newValue = '';
+
+                if (firstTime === true) {
+                    if (isNull((<HTMLInputElement>this.element).value)) {
+                        this._setValue(newValue);
+                    }
+                    this._propertyChanged();
+                    return;
+                }
+            }
+
+            let day = (`0${newValue.getDate()}`).slice(-2),
+                month = (`0${(newValue.getMonth() + 1)}`).slice(-2),
+                hour = (`0${newValue.getHours()}`).slice(-2),
+                minutes = (`0${newValue.getMinutes()}`).slice(-2),
+                seconds = (`0${newValue.getSeconds()}`).slice(-2),
+                ms = newValue.getMilliseconds();
+
+            this._setValue(`${newValue.getFullYear()}-${month}-${day}T${hour}:${minutes}:${seconds}.${ms}`);
+        }
+
+        /**
          * @name _setSelectedIndex
          * @memberof plat.controls.Bind
          * @kind function
@@ -1158,6 +1336,16 @@ module plat.controls {
                             this._addEventType = this._addRangeEventListener;
                             this._getter = this._getValue;
                             this._setter = this._setRange;
+                            break;
+                        case 'date':
+                            this._addEventType = this._addChangeEventListener;
+                            this._getter = this._getDate;
+                            this._setter = this._setDate;
+                            break;
+                        case 'datetime-local':
+                            this._addEventType = this._addChangeEventListener;
+                            this._getter = this._getDateTimeLocal;
+                            this._setter = this._setDateTimeLocal;
                             break;
                         case 'file':
                             let multi = (<HTMLInputElement>element).multiple;
