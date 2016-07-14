@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.20.14 (https://platypi.io)
+  * PlatypusTS v0.20.15 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -12044,6 +12044,14 @@ declare module plat {
               */
             protected _supportsTwoWayBinding: boolean;
             /**
+              * A regular expression used to determine if the value is in HTML5 date format YYYY-MM-DD.
+              */
+            protected _dateRegex: RegExp;
+            /**
+              * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
+              */
+            protected _dateTimeLocalRegex: RegExp;
+            /**
               * Whether or not the File API is supported.
               */
             private __fileSupported;
@@ -12146,6 +12154,14 @@ declare module plat {
               */
             protected _getTextContent(): string;
             /**
+              * Getter for input[type="date"].
+              */
+            protected _getDate(): any;
+            /**
+              * Getter for input[type="datetime-local"].
+              */
+            protected _getDateTimeLocal(): Date;
+            /**
               * Getter for input[type="file"]. Creates a partial IFile
               * element if file is not supported.
               */
@@ -12201,6 +12217,22 @@ declare module plat {
               * @param {any} newValue The new value to set
               */
             protected _setRadio(newValue: any): void;
+            /**
+              * Setter for input[type="date"]
+              * @param {any} newValue The new value to set in the form YYYY-MM-DD
+              * @param {any} oldValue The previously bound value
+              * @param {boolean} firstTime? The context is being evaluated for the first time and
+              * should thus change the property if null
+              */
+            protected _setDate(newValue: any, oldValue: any, firstTime?: boolean): void;
+            /**
+              * Setter for input[type="datetime-local"]
+              * @param {any} newValue The new value to set in the form YYYY-MM-DD
+              * @param {any} oldValue The previously bound value
+              * @param {boolean} firstTime? The context is being evaluated for the first time and
+              * should thus change the property if null
+              */
+            protected _setDateTimeLocal(newValue: any, oldValue: any, firstTime?: boolean): void;
             /**
               * Setter for select
               * @param {any} newValue The new value to set

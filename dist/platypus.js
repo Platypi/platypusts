@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.20.14 (https://platypi.io)
+ * PlatypusTS v0.20.15 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -18698,6 +18698,14 @@ var plat;
                  */
                 this._supportsTwoWayBinding = false;
                 /**
+                 * A regular expression used to determine if the value is in HTML5 date format YYYY-MM-DD.
+                 */
+                this._dateRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])/;
+                /**
+                 * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
+                 */
+                this._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
+                /**
                  * Whether or not the File API is supported.
                  */
                 this.__fileSupported = acquire(__Compat).fileSupported;
@@ -18901,6 +18909,38 @@ var plat;
                 return this.element.textContent;
             };
             /**
+             * Getter for input[type="date"].
+             */
+            Bind.prototype._getDate = function () {
+                var value = this.element.value, regex = this._dateRegex;
+                if (this._propertyType !== 'string' && regex.test(value)) {
+                    var exec = regex.exec(value);
+                    if (exec.length === 4) {
+                        return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]));
+                    }
+                }
+                return value;
+            };
+            /**
+             * Getter for input[type="datetime-local"].
+             */
+            Bind.prototype._getDateTimeLocal = function () {
+                var value = this.element.value, regex = this._dateTimeLocalRegex;
+                if (this._propertyType !== 'string' && regex.test(value)) {
+                    var exec = regex.exec(value);
+                    if (exec.length === 8) {
+                        if (isNull(exec[6])) {
+                            return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]));
+                        }
+                        else if (isNull(exec[7])) {
+                            return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]), Number(exec[6]));
+                        }
+                        return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]), Number(exec[6]), Number(exec[7]));
+                    }
+                }
+                return value;
+            };
+            /**
              * Getter for input[type="file"]. Creates a partial IFile
              * element if file is not supported.
              */
@@ -19102,6 +19142,64 @@ var plat;
                 element.checked = (element.value === newValue);
             };
             /**
+             * Setter for input[type="date"]
+             * @param {any} newValue The new value to set in the form YYYY-MM-DD
+             * @param {any} oldValue The previously bound value
+             * @param {boolean} firstTime? The context is being evaluated for the first time and
+             * should thus change the property if null
+             */
+            Bind.prototype._setDate = function (newValue, oldValue, firstTime) {
+                if (this.__isSelf) {
+                    return;
+                }
+                if (!isDate(newValue)) {
+                    if (this._dateRegex.test(newValue)) {
+                        this._propertyType = 'string';
+                        this._setValue(newValue);
+                        return;
+                    }
+                    newValue = '';
+                    if (firstTime === true) {
+                        if (isNull(this.element.value)) {
+                            this._setValue(newValue);
+                        }
+                        this._propertyChanged();
+                        return;
+                    }
+                }
+                var day = ("0" + newValue.getDate()).slice(-2), month = ("0" + (newValue.getMonth() + 1)).slice(-2);
+                this._setValue(newValue.getFullYear() + "-" + month + "-" + day);
+            };
+            /**
+             * Setter for input[type="datetime-local"]
+             * @param {any} newValue The new value to set in the form YYYY-MM-DD
+             * @param {any} oldValue The previously bound value
+             * @param {boolean} firstTime? The context is being evaluated for the first time and
+             * should thus change the property if null
+             */
+            Bind.prototype._setDateTimeLocal = function (newValue, oldValue, firstTime) {
+                if (this.__isSelf) {
+                    return;
+                }
+                if (!isDate(newValue)) {
+                    if (this._dateTimeLocalRegex.test(newValue)) {
+                        this._propertyType = 'string';
+                        this._setValue(newValue);
+                        return;
+                    }
+                    newValue = '';
+                    if (firstTime === true) {
+                        if (isNull(this.element.value)) {
+                            this._setValue(newValue);
+                        }
+                        this._propertyChanged();
+                        return;
+                    }
+                }
+                var day = ("0" + newValue.getDate()).slice(-2), month = ("0" + (newValue.getMonth() + 1)).slice(-2), hour = ("0" + newValue.getHours()).slice(-2), minutes = ("0" + newValue.getMinutes()).slice(-2), seconds = ("0" + newValue.getSeconds()).slice(-2), ms = newValue.getMilliseconds();
+                this._setValue(newValue.getFullYear() + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":" + seconds + "." + ms);
+            };
+            /**
              * Setter for select
              * @param {any} newValue The new value to set
              * @param {any} oldValue The previously bound value
@@ -19242,6 +19340,16 @@ var plat;
                                 this._addEventType = this._addRangeEventListener;
                                 this._getter = this._getValue;
                                 this._setter = this._setRange;
+                                break;
+                            case 'date':
+                                this._addEventType = this._addChangeEventListener;
+                                this._getter = this._getDate;
+                                this._setter = this._setDate;
+                                break;
+                            case 'datetime-local':
+                                this._addEventType = this._addChangeEventListener;
+                                this._getter = this._getDateTimeLocal;
+                                this._setter = this._setDateTimeLocal;
                                 break;
                             case 'file':
                                 var multi = element.multiple;
