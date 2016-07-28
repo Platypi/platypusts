@@ -5583,7 +5583,7 @@ var plat;
                     }
                 }
                 deleteProperty(controls, uid);
-                if (!isNull(control.context)) {
+                if (control.hasOwnContext && !isNull(control.context)) {
                     ContextManager.unObserve(control.context);
                     ContextManager.defineProperty(control, __CONTEXT, control.context, true, true, true);
                 }
