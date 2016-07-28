@@ -273,7 +273,7 @@ module plat.observable {
 
             deleteProperty(controls, uid);
 
-            if (!isNull(control.context)) {
+            if (control.hasOwnContext && !isNull(control.context)) {
                 ContextManager.unObserve(control.context);
                 ContextManager.defineProperty(control, __CONTEXT, control.context, true, true, true);
             }
@@ -642,6 +642,7 @@ module plat.observable {
             let observedIdentifier = this.__observedIdentifier,
                 isObserved = !isNull(observedIdentifier),
                 removeCallback = noop;
+
             if (isObserved) {
                 hasIdentifier = true;
             }
