@@ -19158,14 +19158,11 @@ var plat;
                         this._setValue(newValue);
                         return;
                     }
-                    newValue = '';
+                    this._setValue('');
                     if (firstTime === true) {
-                        if (isNull(this.element.value)) {
-                            this._setValue(newValue);
-                        }
                         this._propertyChanged();
-                        return;
                     }
+                    return;
                 }
                 var day = ("0" + newValue.getDate()).slice(-2), month = ("0" + (newValue.getMonth() + 1)).slice(-2);
                 this._setValue(newValue.getFullYear() + "-" + month + "-" + day);
@@ -19187,14 +19184,11 @@ var plat;
                         this._setValue(newValue);
                         return;
                     }
-                    newValue = '';
+                    this._setValue('');
                     if (firstTime === true) {
-                        if (isNull(this.element.value)) {
-                            this._setValue(newValue);
-                        }
                         this._propertyChanged();
-                        return;
                     }
+                    return;
                 }
                 var day = ("0" + newValue.getDate()).slice(-2), month = ("0" + (newValue.getMonth() + 1)).slice(-2), hour = ("0" + newValue.getHours()).slice(-2), minutes = ("0" + newValue.getMinutes()).slice(-2), seconds = ("0" + newValue.getSeconds()).slice(-2), ms = newValue.getMilliseconds();
                 this._setValue(newValue.getFullYear() + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":" + seconds + "." + ms);
@@ -19342,16 +19336,19 @@ var plat;
                                 this._setter = this._setRange;
                                 break;
                             case 'date':
+                                this._propertyType = 'nullable';
                                 this._addEventType = this._addChangeEventListener;
                                 this._getter = this._getDate;
                                 this._setter = this._setDate;
                                 break;
                             case 'datetime-local':
+                                this._propertyType = 'nullable';
                                 this._addEventType = this._addChangeEventListener;
                                 this._getter = this._getDateTimeLocal;
                                 this._setter = this._setDateTimeLocal;
                                 break;
                             case 'file':
+                                this._propertyType = 'nullable';
                                 var multi = element.multiple;
                                 this._addEventType = this._addChangeEventListener;
                                 this._getter = multi ? this._getFiles : this._getFile;
@@ -19496,6 +19493,11 @@ var plat;
                                 default:
                                     castValue = !!value;
                                     break;
+                            }
+                            break;
+                        case 'nullable':
+                            if (isEmpty(value)) {
+                                castValue = null;
                             }
                             break;
                         default:
