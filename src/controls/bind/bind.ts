@@ -1356,6 +1356,8 @@ module plat.controls {
                             this._getter = this._getValue;
                             this._setter = this._setHidden;
                             break;
+                        case 'number':
+                            this._propertyType = 'number';
                         default:
                             this._addEventType = this._addTextEventListener;
                             this._getter = this._getValue;
