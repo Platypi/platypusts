@@ -1085,15 +1085,13 @@ module plat.controls {
                     return;
                 }
 
-                newValue = '';
+                this._setValue('');
 
                 if (firstTime === true) {
-                    if (isNull((<HTMLInputElement>this.element).value)) {
-                        this._setValue(newValue);
-                    }
                     this._propertyChanged();
-                    return;
                 }
+
+                return;
             }
 
             let day = (`0${newValue.getDate()}`).slice(-2),
@@ -1130,15 +1128,13 @@ module plat.controls {
                     return;
                 }
 
-                newValue = '';
+                this._setValue('');
 
                 if (firstTime === true) {
-                    if (isNull((<HTMLInputElement>this.element).value)) {
-                        this._setValue(newValue);
-                    }
                     this._propertyChanged();
-                    return;
                 }
+
+                return;
             }
 
             let day = (`0${newValue.getDate()}`).slice(-2),
@@ -1338,16 +1334,19 @@ module plat.controls {
                             this._setter = this._setRange;
                             break;
                         case 'date':
+                            this._propertyType = 'nullable';
                             this._addEventType = this._addChangeEventListener;
                             this._getter = this._getDate;
                             this._setter = this._setDate;
                             break;
                         case 'datetime-local':
+                            this._propertyType = 'nullable';
                             this._addEventType = this._addChangeEventListener;
                             this._getter = this._getDateTimeLocal;
                             this._setter = this._setDateTimeLocal;
                             break;
                         case 'file':
+                            this._propertyType = 'nullable';
                             let multi = (<HTMLInputElement>element).multiple;
                             this._addEventType = this._addChangeEventListener;
                             this._getter = multi ? this._getFiles : this._getFile;
@@ -1526,6 +1525,11 @@ module plat.controls {
                             default:
                                 castValue = !!value;
                                 break;
+                        }
+                        break;
+                    case 'nullable':
+                        if (isEmpty(value)) {
+                            castValue = null;
                         }
                         break;
                     default:
