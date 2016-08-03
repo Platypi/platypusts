@@ -6450,19 +6450,19 @@ var plat;
                     return;
                 }
                 identifierHash[identifier] = {};
-                var index, period = '.', ident = identifier, hashValue;
+                var index, period = '.', ident = identifier, hashValue, previous = [], i, length;
                 while ((index = ident.lastIndexOf(period)) !== -1) {
                     ident = ident.slice(0, index);
                     hashValue = identifierHash[ident];
+                    length = previous.length;
                     if (isNull(hashValue)) {
                         hashValue = identifierHash[ident] = {};
-                        if (ident !== identifier) {
-                            hashValue[identifier] = true;
-                        }
                     }
-                    else if (ident !== identifier && !hashValue[identifier]) {
-                        hashValue[identifier] = true;
+                    hashValue[identifier] = true;
+                    for (i = 0; i < length; ++i) {
+                        hashValue[previous[i]] = true;
                     }
+                    previous.push(ident);
                 }
             };
             /**
