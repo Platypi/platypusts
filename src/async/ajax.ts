@@ -526,7 +526,7 @@ module plat.async {
                             this.clearTimeout = defer((): void => {
                                 reject(new AjaxError({
                                     response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
-                                    status: xhr.status,
+                                    status: 408,
                                     getAllResponseHeaders: (): string => { return xhr.getAllResponseHeaders(); },
                                     xhr: xhr
                                 }));
