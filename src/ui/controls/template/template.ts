@@ -273,6 +273,8 @@ module plat.ui.controls {
                 appendChildren(this.elementNodes, template);
             }
 
+            this.elementNodes = [];
+
             let controlPromise: async.IThenable<TemplateControl>;
             if (isPromise(template)) {
                 controlPromise = template.catch((error: Error): async.IThenable<DocumentFragment> => {

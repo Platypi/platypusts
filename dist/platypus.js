@@ -12020,6 +12020,7 @@ var plat;
                         template = this._document.createDocumentFragment();
                         appendChildren(this.elementNodes, template);
                     }
+                    this.elementNodes = [];
                     var controlPromise;
                     if (isPromise(template)) {
                         controlPromise = template.catch(function (error) {
@@ -13791,7 +13792,9 @@ var plat;
                                 return _this._animateEntrance();
                             }
                             _this.__enterAnimation = _this._animator.animate(element, __Enter);
-                            element.insertBefore(template, null);
+                            requestAnimationFrameGlobal(function () {
+                                element.insertBefore(template, null);
+                            });
                             return _this.__enterAnimation;
                         }).then(function () {
                             _this.__enterAnimation = null;
