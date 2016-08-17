@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.22.0 (https://platypi.io)
+ * PlatypusTS v0.22.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13792,9 +13792,7 @@ var plat;
                                 return _this._animateEntrance();
                             }
                             _this.__enterAnimation = _this._animator.animate(element, __Enter);
-                            requestAnimationFrameGlobal(function () {
-                                element.insertBefore(template, null);
-                            });
+                            element.insertBefore(template, null);
                             return _this.__enterAnimation;
                         }).then(function () {
                             _this.__enterAnimation = null;
