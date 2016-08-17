@@ -1451,7 +1451,7 @@
                 currentDelegate.alias === delegate.alias &&
                 currentDelegate.pattern === delegate.pattern &&
                 currentParameters === parameters &&
-                currentQuery === query;
+                (currentQuery === query || this.children.length > 0);
         }
 
         /**

@@ -17123,11 +17123,21 @@ var plat;
                     return false;
                 }
                 var currentDelegate = currentRouteInfo.delegate, delegate = info.delegate, currentParameters = serializeQuery(currentRouteInfo.parameters), parameters = serializeQuery(info.parameters), currentQuery = serializeQuery(currentRouteInfo.query), query = serializeQuery(info.query);
+                console.log(this.uid);
+                console.log('Current pattern: ' + currentDelegate.pattern);
+                console.log('New pattern: ' + delegate.pattern);
+                console.log(currentDelegate.view === delegate.view);
+                console.log(currentDelegate.alias === delegate.alias);
+                console.log(currentDelegate.pattern === delegate.pattern);
+                console.log(currentParameters === parameters);
+                console.log(currentQuery === query);
+                console.log(this.children.length > 0);
+                console.log('\n');
                 return currentDelegate.view === delegate.view &&
                     currentDelegate.alias === delegate.alias &&
                     currentDelegate.pattern === delegate.pattern &&
                     currentParameters === parameters &&
-                    currentQuery === query;
+                    (currentQuery === query || this.children.length > 0);
             };
             /**
              * Removes childRoute from routeInfo
