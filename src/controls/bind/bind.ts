@@ -1509,7 +1509,7 @@ module plat.controls {
                         }
                         break;
                     case 'number':
-                        castValue = isEmpty(value) ? undefined : Number(value);
+                        castValue = isEmpty(value) ? null : Number(value);
                         break;
                     case 'boolean':
                         switch (value) {
