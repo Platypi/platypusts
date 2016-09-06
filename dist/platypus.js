@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.22.1 (https://platypi.io)
+ * PlatypusTS v0.22.2 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13267,7 +13267,9 @@ var plat;
                     this._binder = binder;
                     if (element.multiple) {
                         if (isNull(binder.evaluate())) {
-                            this.inputChanged([]);
+                            var newValue = [];
+                            this.inputChanged(newValue, this.__lastValue);
+                            this.__lastValue = newValue;
                         }
                         binder.observeProperty(this._setSelectedIndices);
                         binder.observeArrayChange(function () {
@@ -13293,7 +13295,9 @@ var plat;
                         if (firstTime === true || !this._document.body.contains(element)) {
                             this.itemsLoaded.then(function () {
                                 if (isNull(_this._binder.evaluate())) {
-                                    _this.inputChanged(element.value);
+                                    var newLast = element.value;
+                                    _this.inputChanged(newLast, _this.__lastValue);
+                                    _this.__lastValue = newLast;
                                 }
                             });
                             return;
@@ -13328,7 +13332,9 @@ var plat;
                             element.value = newValue;
                             if (element.value !== newValue) {
                                 element.value = value;
-                                _this.inputChanged(_this._castValue(element.value));
+                                var newLastValue = _this._castValue(element.value);
+                                _this.inputChanged(newLastValue, _this.__lastValue);
+                                _this.__lastValue = newLastValue;
                             }
                             return;
                         }
@@ -13353,7 +13359,9 @@ var plat;
                         var element = _this.element, options = element.options, length = isNull(options) ? 0 : options.length, option, nullValue = isNull(newValue);
                         if (nullValue || !isArray(newValue)) {
                             if (firstTime === true && isNull(_this._binder.evaluate())) {
-                                _this.inputChanged(_this._getSelectedValues());
+                                var newLast = _this._getSelectedValues();
+                                _this.inputChanged(newLast, _this.__lastValue);
+                                _this.__lastValue = newLast;
                             }
                             // unselects the options unless a match is found 
                             while (length-- > 0) {
@@ -13400,8 +13408,9 @@ var plat;
                  * Fires the inputChanged event when the select's value changes.
                  */
                 Select.prototype._observeChange = function () {
-                    var element = this.element;
-                    this.inputChanged(element.multiple ? this._getSelectedValues() : this._castValue(element.value));
+                    var element = this.element, newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+                    this.inputChanged(newLast, this.__lastValue);
+                    this.__lastValue = newLast;
                 };
                 /**
                  * Getter for select-multiple.
@@ -13427,7 +13436,7 @@ var plat;
                     var castValue;
                     switch (type) {
                         case 'number':
-                            castValue = isEmpty(value) ? undefined : Number(value);
+                            castValue = isEmpty(value) ? null : Number(value);
                             break;
                         case 'boolean':
                             switch (value) {
@@ -19478,7 +19487,7 @@ var plat;
                             }
                             break;
                         case 'number':
-                            castValue = isEmpty(value) ? undefined : Number(value);
+                            castValue = isEmpty(value) ? null : Number(value);
                             break;
                         case 'boolean':
                             switch (value) {
