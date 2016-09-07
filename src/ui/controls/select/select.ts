@@ -524,10 +524,11 @@ module plat.ui.controls {
                         this.inputChanged(newLastValue, this.__lastValue);
                         this.__lastValue = newLastValue;
                     }
+                    this.__lastValue = newValue;
                     return;
                 }
 
-                element.value = newValue;
+                element.value = this.__lastValue = newValue;
                 // check to make sure the user changed to a valid value
                 // second boolean argument is an ie fix for inconsistency
                 if (element.value !== newValue || element.selectedIndex === -1) {
@@ -576,6 +577,8 @@ module plat.ui.controls {
 
                         option.selected = false;
                     }
+
+                    this.__lastValue = newValue;
                     return;
                 }
 
@@ -613,6 +616,8 @@ module plat.ui.controls {
 
                     option.selected = false;
                 }
+
+                this.__lastValue = newValue;
             });
         }
 
