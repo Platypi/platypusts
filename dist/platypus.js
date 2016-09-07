@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.22.2 (https://platypi.io)
+ * PlatypusTS v0.22.3 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13336,9 +13336,10 @@ var plat;
                                 _this.inputChanged(newLastValue, _this.__lastValue);
                                 _this.__lastValue = newLastValue;
                             }
+                            _this.__lastValue = newValue;
                             return;
                         }
-                        element.value = newValue;
+                        element.value = _this.__lastValue = newValue;
                         // check to make sure the user changed to a valid value 
                         // second boolean argument is an ie fix for inconsistency 
                         if (element.value !== newValue || element.selectedIndex === -1) {
@@ -13372,6 +13373,7 @@ var plat;
                                 }
                                 option.selected = false;
                             }
+                            _this.__lastValue = newValue;
                             return;
                         }
                         var value, numberValue, index, highestIndex = Infinity;
@@ -13402,6 +13404,7 @@ var plat;
                             }
                             option.selected = false;
                         }
+                        _this.__lastValue = newValue;
                     });
                 };
                 /**
