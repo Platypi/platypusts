@@ -1,20 +1,9 @@
-﻿<!--<plat-foreach plat-context="items">
-    <div>{{value}}</div>
-</plat-foreach>-->
-<div>
-    <ul class="left">
-        <plat-foreach plat-context="views">
-            <li>
-                <button plat-tap="navigateTo(@context)">{{@index + 1}}</button>
-            </li>
-        </plat-foreach>
-    </ul>
-    <div class="right">
-        <div>Main View</div>
-        <button plat-tap="goBack">Back</button>
-        <plat-viewport></plat-viewport>
-    </div>
-</div>
+﻿<plat-foreach plat-context="arr">
+    <plat-foreach plat-context="arr">
+        <div>{{name}}</div>
+    </plat-foreach>
+    <button plat-tap="push2(@index)">Push2</button>
+    <button plat-tap="splice1(@index)">Splice1</button>
+</plat-foreach>
 
-<input plat-bind="inputText" plat-keypress="key('press')" plat-keydown="key('down')" id="1" type="text" />
-{{inputText}}
+<button plat-tap="push1">Push1</button>

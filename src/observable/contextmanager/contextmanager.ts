@@ -1271,7 +1271,7 @@ module plat.observable {
             // we can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]): any {
                 let oldLength = this.length,
-                    originalArray = this.slice(0),
+                    originalArray = _clone(this, true),
                     returnValue: any,
                     isUnshift = method === 'unshift',
                     isShift = method === 'shift',
