@@ -905,7 +905,7 @@ module plat.observable {
                 i: number;
 
             if (_compat.proto) {
-                let obj = Object.create(Array.prototype);
+                let obj: any = Object.create(Array.prototype);
 
                 for (i = 0; i < length; ++i) {
                     method = arrayMethods[i];

@@ -1,5 +1,4 @@
 ﻿/// <reference path="../src/references.d.ts" />
-/// <reference path="../typings/index.d.ts" />
 /// <reference path="unit/acquire/acquire.test.ts" />
 /// <reference path="unit/app/app.test.ts" />
 /// <reference path="unit/app/appstatic.test.ts" />

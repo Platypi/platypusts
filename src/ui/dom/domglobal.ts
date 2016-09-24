@@ -42,8 +42,8 @@ function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
     let isFragment = isDocumentFragment(root),
         nullRoot = !isNode(root),
         fragment: DocumentFragment = isFragment ?
-        <DocumentFragment>root :
-        (___document || (___document = plat.acquire(__Document))).createDocumentFragment();
+            <DocumentFragment>root :
+            (___document || (___document = plat.acquire(__Document))).createDocumentFragment();
 
     if (nullRoot) {
         root = fragment;
@@ -447,7 +447,9 @@ function hasClass(element: HTMLElement, className: string): boolean {
         return false;
     }
 
-    let split = className.split(__whiteSpaceRegex);
+    let split = className.split(__whiteSpaceRegex),
+        name: string;
+
     if (isUndefined(element.classList)) {
         if (cName === '') {
             return false;
@@ -455,7 +457,6 @@ function hasClass(element: HTMLElement, className: string): boolean {
             return true;
         }
 
-        let name: string;
         while (split.length > 0) {
             name = split.shift();
             if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '\\s', 'g').test(cName))) {

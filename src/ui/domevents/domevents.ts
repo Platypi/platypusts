@@ -2130,7 +2130,7 @@
             ev.offset = this.__getOffset(ev);
 
             if (isUndefined(ev.timeStamp) || timeStamp > ev.timeStamp) {
-                ev.timeStamp = timeStamp;
+                (<any>ev).timeStamp = timeStamp;
             }
 
             return ev;

@@ -767,7 +767,7 @@ module plat.controls {
                 return null;
             }
 
-            return {
+            return <any>{
                 name: value.replace(this.__fileNameRegex, ''),
                 path: value,
                 lastModifiedDate: undefined,
@@ -807,7 +807,7 @@ module plat.controls {
 
             for (let i = 0; i < length; ++i) {
                 fileValue = filelist[i];
-                files.push({
+                files.push(<any>{
                     name: fileValue.replace(this.__fileNameRegex, ''),
                     path: fileValue,
                     lastModifiedDate: undefined,

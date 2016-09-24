@@ -4,6 +4,7 @@
   "description": "A front-end MVVM framework written in TypeScript",
   "main": "dist/platypus.js",
   "devDependencies": {
+    "@types/jasmine": "latest",
     "concurrently": "latest",
     "glob": "latest",
     "grunt": "latest",
@@ -26,16 +27,14 @@
     "load-grunt-tasks": "latest",
     "lodash": "latest",
     "rimraf": "latest",
-    "tsconfig-glob": "latest",
     "tsconfig-lint": "latest",
-    "typescript": "latest",
-    "typings": "latest"
+    "typescript": "latest"
   },
   "scripts": {
     "prepublish": "npm run typings && npm run deploy",
     "build": "npm run build:examples && npm run build:test && npm run build:src",
     "build:examples": "tsc -p build/tsc/examples",
-    "build:src": "tsconfig && tsc -p .",
+    "build:src": "tsc -p .",
     "build:test": "tsc -p build/tsc/test",
     "clean": "rimraf examples/app.* dist/* src/**/*.js src/**/*.map test/**/*.js",
     "clean:examples": "rimraf examples/app.*",
