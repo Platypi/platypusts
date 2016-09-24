@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.22.0 (https://platypi.io)
+  * PlatypusTS v0.22.3 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -8782,6 +8782,10 @@ declare module plat {
                   * The initial type of the bound property if defined.
                   */
                 protected _propertyType: string;
+                /**
+                  * The last value of the control.
+                  */
+                private __lastValue;
                 /**
                   * Whether or not the Array listener has been set.
                   */

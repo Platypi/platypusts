@@ -217,6 +217,19 @@ module plat.ui.controls {
         protected _propertyType: string;
 
         /**
+         * @name __lastValue
+         * @memberof plat.ui.controls.Select
+         * @kind property
+         * @access private
+         *
+         * @type {any}
+         *
+         * @description
+         * The last value of the control.
+         */
+        private __lastValue: any;
+
+        /**
          * @name __listenerSet
          * @memberof plat.ui.controls.Select
          * @kind property
@@ -431,7 +444,9 @@ module plat.ui.controls {
 
             if (element.multiple) {
                 if (isNull(binder.evaluate())) {
-                    this.inputChanged([]);
+                    let newValue = <Array<any>>[];
+                    this.inputChanged(newValue, this.__lastValue);
+                    this.__lastValue = newValue;
                 }
 
                 binder.observeProperty(this._setSelectedIndices);
@@ -469,7 +484,9 @@ module plat.ui.controls {
                 if (firstTime === true || !this._document.body.contains(element)) {
                     this.itemsLoaded.then((): void => {
                         if (isNull(this._binder.evaluate())) {
-                            this.inputChanged(element.value);
+                            let newLast = element.value;
+                            this.inputChanged(newLast, this.__lastValue);
+                            this.__lastValue = newLast;
                         }
                     });
                     return;
@@ -503,12 +520,15 @@ module plat.ui.controls {
                     element.value = newValue;
                     if (element.value !== newValue) {
                         element.value = value;
-                        this.inputChanged(this._castValue(element.value));
+                        let newLastValue = this._castValue(element.value);
+                        this.inputChanged(newLastValue, this.__lastValue);
+                        this.__lastValue = newLastValue;
                     }
+                    this.__lastValue = newValue;
                     return;
                 }
 
-                element.value = newValue;
+                element.value = this.__lastValue = newValue;
                 // check to make sure the user changed to a valid value
                 // second boolean argument is an ie fix for inconsistency
                 if (element.value !== newValue || element.selectedIndex === -1) {
@@ -543,7 +563,9 @@ module plat.ui.controls {
 
                 if (nullValue || !isArray(newValue)) {
                     if (firstTime === true && isNull(this._binder.evaluate())) {
-                        this.inputChanged(this._getSelectedValues());
+                        let newLast = this._getSelectedValues();
+                        this.inputChanged(newLast, this.__lastValue);
+                        this.__lastValue = newLast;
                     }
                     // unselects the options unless a match is found
                     while (length-- > 0) {
@@ -555,6 +577,8 @@ module plat.ui.controls {
 
                         option.selected = false;
                     }
+
+                    this.__lastValue = newValue;
                     return;
                 }
 
@@ -592,6 +616,8 @@ module plat.ui.controls {
 
                     option.selected = false;
                 }
+
+                this.__lastValue = newValue;
             });
         }
 
@@ -607,8 +633,11 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _observeChange(): void {
-            let element = this.element;
-            this.inputChanged(element.multiple ? this._getSelectedValues() : this._castValue(element.value));
+            let element = this.element,
+                newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+
+            this.inputChanged(newLast, this.__lastValue);
+            this.__lastValue = newLast;
         }
 
         /**
@@ -658,7 +687,7 @@ module plat.ui.controls {
             let castValue: any;
             switch (type) {
                 case 'number':
-                    castValue = isEmpty(value) ? undefined : Number(value);
+                    castValue = isEmpty(value) ? null : Number(value);
                     break;
                 case 'boolean':
                     switch (value) {

@@ -8771,6 +8771,10 @@ export declare module ui {
               */
             protected _propertyType: string;
             /**
+              * The last value of the control.
+              */
+            private __lastValue;
+            /**
               * Whether or not the Array listener has been set.
               */
             private __listenerSet;
