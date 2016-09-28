@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.22.3 (https://platypi.io)
+ * PlatypusTS v0.23.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -841,7 +841,7 @@ var plat;
         if (!isString(cName) || !isString(className) || className === '') {
             return false;
         }
-        var split = className.split(__whiteSpaceRegex);
+        var split = className.split(__whiteSpaceRegex), name;
         if (isUndefined(element.classList)) {
             if (cName === '') {
                 return false;
@@ -849,10 +849,9 @@ var plat;
             else if (cName === className) {
                 return true;
             }
-            var name_1;
             while (split.length > 0) {
-                name_1 = split.shift();
-                if (!(name_1 === '' || new RegExp('^' + name_1 + '\\s|\\s' + name_1 + '$|\\s' + name_1 + '\\s', 'g').test(cName))) {
+                name = split.shift();
+                if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '\\s', 'g').test(cName))) {
                     return false;
                 }
             }
@@ -6196,7 +6195,7 @@ var plat;
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i - 0] = arguments[_i];
                     }
-                    var oldLength = this.length, originalArray = this.slice(0), returnValue, isUnshift = method === 'unshift', isShift = method === 'shift', isSplice = method === 'splice', selfNotify = isShift || isUnshift || isSplice, isUpdate = method === 'sort' || method === 'reverse', oldArray, addedCount, index, newLength, removed;
+                    var oldLength = this.length, originalArray = _clone(this, true), returnValue, isUnshift = method === 'unshift', isShift = method === 'shift', isSplice = method === 'splice', selfNotify = isShift || isUnshift || isSplice, isUpdate = method === 'sort' || method === 'reverse', oldArray, addedCount, index, newLength, removed;
                     if (selfNotify) {
                         _this.__isArrayFunction = true;
                         returnValue = Array.prototype[method].apply(this, args);
@@ -17079,7 +17078,7 @@ var plat;
             Router.prototype._callAllHandlers = function (view, parameters, query) {
                 var _this = this;
                 return this._callHandlers(this._queryTransforms['*'], query)
-                    .then(function () { return _this._callHandlers(_this._queryTransforms[view], query); })
+                    .then(function () { return _this._callHandlers(_this._queryTransforms[view], query, undefined, true); })
                     .then(function () { return _this._callHandlers(_this._paramTransforms['*'], parameters, query); })
                     .then(function () { return _this._callHandlers(_this._paramTransforms[view], parameters, query); })
                     .then(noop);
@@ -17089,14 +17088,18 @@ var plat;
              * @param {plat.routing.IRouteTransforms} allHandlers The transform functions
              * @param {any} obj The parameters.
              * @param {any} query? The query parameters.
+             * @param {boolean} force? Whether or not the handler should be called if its param/queryParam does not exist.
              */
-            Router.prototype._callHandlers = function (allHandlers, obj, query) {
+            Router.prototype._callHandlers = function (allHandlers, obj, query, force) {
                 var resolve = this._resolve;
                 if (!isObject(obj)) {
                     obj = {};
                 }
                 return mapAsync(function (handlers, key) {
                     return mapAsyncInOrder(function (handler) {
+                        if (force !== true && isUndefined(obj[key])) {
+                            return resolve();
+                        }
                         return resolve(handler(obj[key], obj, query));
                     }, handlers);
                 }, allHandlers)

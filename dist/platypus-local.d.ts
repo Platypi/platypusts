@@ -1071,44 +1071,44 @@ export declare module expressions {
         /**
           * A regular expression for matching or removing all newline characters.
           */
-        newLineRegex: RegExp;
+        readonly newLineRegex: RegExp;
         /**
           * Finds optional parameters in a route string.
           */
-        optionalRouteRegex: RegExp;
+        readonly optionalRouteRegex: RegExp;
         /**
           * Finds named parameters in a route string.
           */
-        namedParameterRouteRegex: RegExp;
+        readonly namedParameterRouteRegex: RegExp;
         /**
           * Finds an alphanumeric wildcard match in a route string.
           * exec('/foo/*bar/baz');
           */
-        wildcardRouteRegex: RegExp;
+        readonly wildcardRouteRegex: RegExp;
         /**
           * Finds invalid characters in a route string.
           */
-        escapeRouteRegex: RegExp;
+        readonly escapeRouteRegex: RegExp;
         /**
           * Finds delimeters for spinal-case, snake_case, and dot.case.
           * useful for converting to camelCase. Also can turn a string
           * into camelCase with space as a delimeter.
           */
-        camelCaseRegex: RegExp;
+        readonly camelCaseRegex: RegExp;
         /**
           * Finds all capital letters.
           */
-        capitalCaseRegex: RegExp;
+        readonly capitalCaseRegex: RegExp;
         /**
           * Finds all whitespace and newline characters
           * not in string literals. Needs to be combined
           * with string replace function using $1 argument.
           */
-        whiteSpaceRegex: RegExp;
+        readonly whiteSpaceRegex: RegExp;
         /**
           * Finds all single and double quotes.
           */
-        quotationRegex: RegExp;
+        readonly quotationRegex: RegExp;
     }
     /**
       * A class that is responsible for taking in a JavaScript expression string and
@@ -2893,7 +2893,7 @@ export declare module storage {
         /**
           * Returns the number of items in storage.
           */
-        length: number;
+        readonly length: number;
         /**
           * Clears storage, deleting all of its keys.
           */
@@ -10928,8 +10928,9 @@ export declare module routing {
           * @param {routing.IRouteTransforms} allHandlers The transform functions
           * @param {any} obj The parameters.
           * @param {any} query? The query parameters.
+          * @param {boolean} force? Whether or not the handler should be called if its param/queryParam does not exist.
           */
-        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<void>;
+        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any, force?: boolean): async.IThenable<void>;
         /**
           * Calls the interceptors for a particular route.
           * @param {routing.IRouteInfo} info The route information.
