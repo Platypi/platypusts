@@ -1349,7 +1349,7 @@
          */
         protected _callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
             return this._callHandlers(this._queryTransforms['*'], query)
-                .then((): async.IThenable<void> => this._callHandlers(this._queryTransforms[view], query))
+                .then((): async.IThenable<void> => this._callHandlers(this._queryTransforms[view], query, undefined, true))
                 .then((): async.IThenable<void> => this._callHandlers(this._paramTransforms['*'], parameters, query))
                 .then((): async.IThenable<void> => this._callHandlers(this._paramTransforms[view], parameters, query))
                 .then(noop);
@@ -1367,10 +1367,11 @@
          * @param {plat.routing.IRouteTransforms} allHandlers The transform functions
          * @param {any} obj The parameters.
          * @param {any} query? The query parameters.
+         * @param {boolean} force? Whether or not the handler should be called if its param/queryParam does not exist.
          *
          * @returns {plat.async.IThenable<void>} Resolves when the handlers have finished execution.
          */
-        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any): async.IThenable<void> {
+        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any, force?: boolean): async.IThenable<void> {
             let resolve = this._resolve;
             if (!isObject(obj)) {
                 obj = {};
@@ -1378,6 +1379,10 @@
 
             return mapAsync((handlers: Array<(value: string, values: any, query?: any) => any>, key: string): async.IThenable<Array<any>> => {
                 return mapAsyncInOrder((handler): async.IThenable<any> => {
+                    if (force !== true && isUndefined(obj[key])) {
+                        return resolve();
+                    }
+
                     return resolve(handler(obj[key], obj, query));
                 }, handlers);
             }, allHandlers)

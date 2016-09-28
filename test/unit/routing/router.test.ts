@@ -256,12 +256,12 @@ module test.routing.router {
                 router
                     .param(<any>spy1, 'id', 'posts')
                     .param(<any>spy2, 'id', PostsViewControl)
-                    .param(<any>spy3, 'id', 'posts');
+                    .param(<any>spy3, 'foo', 'posts');
 
                 router.navigate('/posts/2').then(() => {
                     expect(spy1).toHaveBeenCalled();
                     expect(spy2).toHaveBeenCalled();
-                    expect(spy3).toHaveBeenCalled();
+                    expect(spy3).not.toHaveBeenCalled();
                     done();
                 });
             });
@@ -277,15 +277,20 @@ module test.routing.router {
                         expect(query.title).toBe(value);
                         expect(post.title).not.toBe(query.title);
                         expect(post.title).toBe('My different post');
+                    }).and.callThrough(),
+                    spy3 = jasmine.createSpy('checkPost2', (value: number, query: typeof post) => {
+                        expect((<any>query).title2).toBeUndefined();
                     }).and.callThrough();
 
                 router
                     .queryParam(<any>spy1, 'title', 'posts')
-                    .queryParam(<any>spy2, 'title', PostsViewControl);
+                    .queryParam(<any>spy2, 'title', PostsViewControl)
+                    .queryParam(<any>spy3, 'title2', PostsViewControl);
 
                 router.navigate('/posts/2', { title: 'My different post' }).then(() => {
                     expect(spy1).toHaveBeenCalled();
                     expect(spy2).toHaveBeenCalled();
+                    expect(spy3).toHaveBeenCalled();
                     done();
                 });
             });
