@@ -557,11 +557,12 @@
          * route to a particular {@link plat.ui.ViewControl|ViewControl}. Also forces a navigation.
          *
          * @param {plat.routing.IRouteMapping} route A route mapping to register.
+         * @param {boolean} force whether or not we should force navigate.
          *
          * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the
          * forced navigation is complete.
          */
-        configure(route: IRouteMapping): async.IThenable<void>;
+        configure(route: IRouteMapping, force?: boolean): async.IThenable<void>;
         /**
          * @name configure
          * @memberof plat.routing.Router
@@ -574,12 +575,13 @@
          * route to a particular {@link plat.ui.ViewControl|ViewControl}. Also forces a navigation.
          *
          * @param {Array<plat.routing.IRouteMapping>} routes Route mappings to register.
+         * @param {boolean} force whether or not we should force navigate.
          *
          * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the
          * forced navigation is complete.
          */
-        configure(routes: Array<IRouteMapping>): async.IThenable<void>;
-        configure(routes: any): async.IThenable<void> {
+        configure(routes: Array<IRouteMapping>, force?: boolean): async.IThenable<void>;
+        configure(routes: any, force?: boolean): async.IThenable<void> {
             if (isArray(routes)) {
                 forEach((route: IRouteMapping): void => {
                     this._configureRoute(route);
@@ -588,7 +590,11 @@
                 this._configureRoute(routes);
             }
 
-            return this._forceNavigate();
+            if (force !== false) {
+                return this._forceNavigate();
+            }
+
+            return this._resolve();
         }
 
         /**

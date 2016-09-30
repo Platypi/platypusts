@@ -16665,7 +16665,7 @@ var plat;
                     this.parent.removeChild(this);
                 }
             };
-            Router.prototype.configure = function (routes) {
+            Router.prototype.configure = function (routes, force) {
                 var _this = this;
                 if (isArray(routes)) {
                     forEach(function (route) {
@@ -16675,7 +16675,10 @@ var plat;
                 else {
                     this._configureRoute(routes);
                 }
-                return this._forceNavigate();
+                if (force !== false) {
+                    return this._forceNavigate();
+                }
+                return this._resolve();
             };
             /**
              * Allows for dynamic routing. Call this method in order to register a handler for dynamically determining what view to

@@ -10776,14 +10776,16 @@ declare module plat {
               * Configures routes for the router to match. Routes contain the information necessary to map a
               * route to a particular ViewControl. Also forces a navigation.
               * @param {plat.routing.IRouteMapping} route A route mapping to register.
+              * @param {boolean} force whether or not we should force navigate.
               */
-            configure(route: IRouteMapping): async.IThenable<void>;
+            configure(route: IRouteMapping, force?: boolean): async.IThenable<void>;
             /**
               * Configures routes for the router to match. Routes contain the information necessary to map a
               * route to a particular ViewControl. Also forces a navigation.
               * @param {Array<plat.routing.IRouteMapping>} routes Route mappings to register.
+              * @param {boolean} force whether or not we should force navigate.
               */
-            configure(routes: Array<IRouteMapping>): async.IThenable<void>;
+            configure(routes: Array<IRouteMapping>, force?: boolean): async.IThenable<void>;
             /**
               * Allows for dynamic routing. Call this method in order to register a handler for dynamically determining what view to
               * use when a registered route is not found.
