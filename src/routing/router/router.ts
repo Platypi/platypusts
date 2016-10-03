@@ -1130,11 +1130,7 @@
                 query = deserializeQuery(this._previousQuery);
             }
 
-            if (!isEmpty(this._previousUrl)) {
-                return this.navigate(this._previousUrl, query, true);
-            }
-
-            return resolve();
+            return this.navigate(this._previousUrl, query, true);
         }
 
         /**
@@ -1354,7 +1350,7 @@
          * @returns {plat.async.IThenable<void>} Resolves when the handlers have finished execution.
          */
         protected _callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void> {
-            return this._callHandlers(this._queryTransforms['*'], query)
+            return this._callHandlers(this._queryTransforms['*'], query, undefined, true)
                 .then((): async.IThenable<void> => this._callHandlers(this._queryTransforms[view], query, undefined, true))
                 .then((): async.IThenable<void> => this._callHandlers(this._paramTransforms['*'], parameters, query))
                 .then((): async.IThenable<void> => this._callHandlers(this._paramTransforms[view], parameters, query))
