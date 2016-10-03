@@ -16941,10 +16941,7 @@ var plat;
                 if (!isEmpty(this._previousQuery)) {
                     query = deserializeQuery(this._previousQuery);
                 }
-                if (!isEmpty(this._previousUrl)) {
-                    return this.navigate(this._previousUrl, query, true);
-                }
-                return resolve();
+                return this.navigate(this._previousUrl, query, true);
             };
             /**
              * Navigates the child routers.
@@ -17080,7 +17077,7 @@ var plat;
              */
             Router.prototype._callAllHandlers = function (view, parameters, query) {
                 var _this = this;
-                return this._callHandlers(this._queryTransforms['*'], query)
+                return this._callHandlers(this._queryTransforms['*'], query, undefined, true)
                     .then(function () { return _this._callHandlers(_this._queryTransforms[view], query, undefined, true); })
                     .then(function () { return _this._callHandlers(_this._paramTransforms['*'], parameters, query); })
                     .then(function () { return _this._callHandlers(_this._paramTransforms[view], parameters, query); })
