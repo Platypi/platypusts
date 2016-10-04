@@ -531,6 +531,8 @@ function deserializeQuery(search: string): plat.IObject<string> {
         return;
     }
 
+    search = search.replace(/^\?+/, '');
+
     let split = search.split('&'),
         query: plat.IObject<string> = {},
         length = split.length,
