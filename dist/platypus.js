@@ -13178,21 +13178,19 @@ var plat;
                         if (!isEmpty(oldValue)) {
                             this.itemsLoaded.then(function () {
                                 _this._removeItems(_this.controls.length);
-                                _this._observeChange();
-                            });
+                            }).then(this._observeChange.bind(this));
                         }
                         return;
                     }
                     var newLength = isArray(newValue) ? newValue.length : 0, oldLength = isArray(oldValue) ? oldValue.length : 0;
                     this._setListener();
                     if (newLength > oldLength) {
-                        this._addItems(newLength - oldLength, oldLength).then(this._observeChange.bind(this));
-                        return;
+                        this._addItems(newLength - oldLength, oldLength);
                     }
                     else if (newLength < oldLength) {
                         this._removeItems(oldLength - newLength);
                     }
-                    this._observeChange();
+                    this.itemsLoaded.then(this._observeChange.bind(this));
                 };
                 /**
                  * Observes the new array context and adds
@@ -13378,15 +13376,12 @@ var plat;
                  * Fires the inputChanged event when the select's value changes.
                  */
                 Select.prototype._observeChange = function () {
-                    var _this = this;
-                    this.itemsLoaded.then(function () {
-                        var element = _this.element, newLast = element.multiple ? _this._getSelectedValues() : _this._castValue(element.value);
-                        if (newLast === _this.__lastValue) {
-                            return;
-                        }
-                        _this.inputChanged(newLast, _this.__lastValue);
-                        _this.__lastValue = newLast;
-                    });
+                    var element = this.element, newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+                    if (newLast === this.__lastValue) {
+                        return;
+                    }
+                    this.inputChanged(newLast, this.__lastValue);
+                    this.__lastValue = newLast;
                 };
                 /**
                  * Getter for select-multiple.
