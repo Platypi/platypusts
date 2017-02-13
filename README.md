@@ -64,4 +64,4 @@ using `window.plat`.
 
 ## Documentation
 
-Documentation is available on the [Platypi Developers Website](https://developers.platypi.io).
+Documentation is available on the [Platypi Developers Website](http://platypusts.com/).
