@@ -31,7 +31,7 @@
     "typescript": "latest"
   },
   "scripts": {
-    "prepublish": "npm run typings && npm run deploy",
+    "prepublish": "npm run deploy",
     "build": "npm run build:examples && npm run build:test && npm run build:src",
     "build:examples": "tsc -p build/tsc/examples",
     "build:src": "tsc -p .",
@@ -47,7 +47,6 @@
     "start": "concurrent -r \"npm run watch:examples\" \"npm run server:examples\"",
     "server:examples": "http-server -p 3000",
     "test": "npm run build:test && npm run karma",
-    "typings": "typings install",
     "watch:examples": "npm run build:examples -- -w",
     "watch:src": "npm run build:src -- -w",
     "watch:test": "npm run build:test -- -w"
@@ -61,7 +60,7 @@
   "bugs": {
     "url": "https://github.com/Platypi/platypusts/issues"
   },
-  "homepage": "https://developers.platypi.io",
+  "homepage": "http://platypusts.com",
   "typescript": {
     "definition": "dist/platypus.d.ts"
   },
