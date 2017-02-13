@@ -345,14 +345,13 @@ module plat.ui.controls {
          * @returns {void}
          */
         contextChanged(newValue: Array<any>, oldValue: Array<any>): void {
-            if (isEmpty(newValue)) {
+            if (isEmpty(newValue) || !isArray(newValue)) {
                 if (!isEmpty(oldValue)) {
                     this.itemsLoaded.then((): void => {
                         this._removeItems(this.controls.length);
+                        this._observeChange();
                     });
                 }
-                return;
-            } else if (!isArray(newValue)) {
                 return;
             }
 
@@ -362,10 +361,13 @@ module plat.ui.controls {
             this._setListener();
 
             if (newLength > oldLength) {
-                this._addItems(newLength - oldLength, oldLength);
+                this._addItems(newLength - oldLength, oldLength).then(this._observeChange.bind(this));
+                return;
             } else if (newLength < oldLength) {
                 this._removeItems(oldLength - newLength);
             }
+
+            this._observeChange();
         }
 
         /**
@@ -633,11 +635,17 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _observeChange(): void {
-            let element = this.element,
-                newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+            this.itemsLoaded.then(() => {
+                let element = this.element,
+                    newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
 
-            this.inputChanged(newLast, this.__lastValue);
-            this.__lastValue = newLast;
+                if (newLast === this.__lastValue) {
+                    return;
+                }
+
+                this.inputChanged(newLast, this.__lastValue);
+                this.__lastValue = newLast;
+            });
         }
 
         /**
