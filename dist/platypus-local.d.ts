@@ -121,11 +121,11 @@ export declare module register {
         /**
           * A CSS animation.
           */
-        const CSS: string;
+        const CSS = "css";
         /**
           * A JavaScript animation.
           */
-        const JS: string;
+        const JS = "js";
     }
 }
 /**

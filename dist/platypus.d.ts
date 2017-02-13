@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.23.3 (https://platypi.io)
+  * PlatypusTS v0.23.4 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -133,11 +133,11 @@ declare module plat {
             /**
               * A CSS animation.
               */
-            const CSS: string;
+            const CSS = "css";
             /**
               * A JavaScript animation.
               */
-            const JS: string;
+            const JS = "js";
         }
     }
     /**

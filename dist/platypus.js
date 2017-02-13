@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /* tslint:disable */
 /**
- * PlatypusTS v0.23.3 (https://platypi.io)
+ * PlatypusTS v0.23.4 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -1042,7 +1042,6 @@ var plat;
         /**
          * Contains constants for injectable type.
          */
-        var injectable;
         (function (injectable) {
             /**
              * Static injectables will be injected before the application loads. This provides a way to create
@@ -1086,7 +1085,6 @@ var plat;
         /**
          * Contains constants for animation type.
          */
-        var animation;
         (function (animation) {
             /**
              * A CSS animation.
@@ -1793,13 +1791,13 @@ var plat;
             this.platCss = display === 'none' || visibility === 'hidden';
             head.removeChild(element);
         };
-        Compat._inject = {
-            _window: __Window,
-            _history: __History,
-            _document: __Document
-        };
         return Compat;
     }());
+    Compat._inject = {
+        _window: __Window,
+        _history: __History,
+        _document: __Document
+    };
     plat_1.Compat = Compat;
     register.injectable(__Compat, Compat);
     /**
@@ -2921,11 +2919,11 @@ var plat;
                 }
                 return atLeastOne;
             };
-            Tokenizer._inject = {
-                _log: __Log
-            };
             return Tokenizer;
         }());
+        Tokenizer._inject = {
+            _log: __Log
+        };
         expressions.Tokenizer = Tokenizer;
         register.injectable(__Tokenizer, Tokenizer);
         /**
@@ -3482,12 +3480,12 @@ var plat;
                     return context[token];
                 }
             };
-            Parser._inject = {
-                _tokenizer: __Tokenizer,
-                _log: __Log
-            };
             return Parser;
         }());
+        Parser._inject = {
+            _tokenizer: __Tokenizer,
+            _log: __Log
+        };
         expressions.Parser = Parser;
         register.injectable(__Parser, Parser);
     })(expressions = plat_1.expressions || (plat_1.expressions = {}));
@@ -3751,27 +3749,27 @@ var plat;
                 }
                 return url.slice(0, -1);
             };
-            Browser._inject = {
-                _EventManager: __EventManagerStatic,
-                _compat: __Compat,
-                _regex: __Regex,
-                _window: __Window,
-                _location: __Location,
-                _history: __History,
-                _dom: __Dom
-            };
-            /**
-             * The IBrowserConfig injectable object.
-             */
-            Browser.config = {
-                HASH: 'hash',
-                STATE: 'state',
-                routingType: 'hash',
-                hashPrefix: '!',
-                baseUrl: ''
-            };
             return Browser;
         }());
+        Browser._inject = {
+            _EventManager: __EventManagerStatic,
+            _compat: __Compat,
+            _regex: __Regex,
+            _window: __Window,
+            _location: __Location,
+            _history: __History,
+            _dom: __Dom
+        };
+        /**
+         * The IBrowserConfig injectable object.
+         */
+        Browser.config = {
+            HASH: 'hash',
+            STATE: 'state',
+            routingType: 'hash',
+            hashPrefix: '!',
+            baseUrl: ''
+        };
         web.Browser = Browser;
         register.injectable(__Browser, Browser);
         /**
@@ -3879,16 +3877,16 @@ var plat;
             UrlUtils.prototype.toString = function () {
                 return this.href;
             };
-            UrlUtils._inject = {
-                _EventManager: __EventManagerStatic,
-                _document: __Document,
-                _window: __Window,
-                _compat: __Compat,
-                _regex: __Regex,
-                _browserConfig: __BrowserConfig
-            };
             return UrlUtils;
         }());
+        UrlUtils._inject = {
+            _EventManager: __EventManagerStatic,
+            _document: __Document,
+            _window: __Window,
+            _compat: __Compat,
+            _regex: __Regex,
+            _browserConfig: __BrowserConfig
+        };
         web.UrlUtils = UrlUtils;
         register.injectable(__UrlUtilsInstance, UrlUtils, null, __INSTANCE);
     })(web = plat_1.web || (plat_1.web = {}));
@@ -4195,21 +4193,21 @@ var plat;
             Promise.prototype.toString = function () {
                 return '[object Promise]';
             };
-            /**
-             * The configuration for creating asynchronous promise flushing.
-             */
-            Promise.config = {
-                /**
-                 */
-                async: function (callback, arg) {
-                    var length = __promiseQueue.push([callback, arg]);
-                    if (length === 1) {
-                        scheduleFlush();
-                    }
-                }
-            };
             return Promise;
         }());
+        /**
+         * The configuration for creating asynchronous promise flushing.
+         */
+        Promise.config = {
+            /**
+             */
+            async: function (callback, arg) {
+                var length = __promiseQueue.push([callback, arg]);
+                if (length === 1) {
+                    scheduleFlush();
+                }
+            }
+        };
         async.Promise = Promise;
         var State;
         (function (State) {
@@ -4755,15 +4753,15 @@ var plat;
                 }
                 return input;
             };
-            HttpRequest._inject = {
-                _browser: __Browser,
-                _window: __Window,
-                _document: __Document,
-                _config: __HttpConfig,
-                _log: __Log
-            };
             return HttpRequest;
         }());
+        HttpRequest._inject = {
+            _browser: __Browser,
+            _window: __Window,
+            _document: __Document,
+            _config: __HttpConfig,
+            _log: __Log
+        };
         async.HttpRequest = HttpRequest;
         /**
          * A class that forms an Error object with an IAjaxResponse.
@@ -4806,14 +4804,15 @@ var plat;
         var AjaxPromise = (function (_super) {
             __extends(AjaxPromise, _super);
             function AjaxPromise(resolveFunction, promise) {
-                _super.call(this, resolveFunction);
+                var _this = _super.call(this, resolveFunction) || this;
                 /**
                  * The Window object.
                  */
-                this._window = acquire(__Window);
+                _this._window = acquire(__Window);
                 if (!isNull(promise)) {
-                    this.__http = promise.__http;
+                    _this.__http = promise.__http;
                 }
+                return _this;
             }
             /**
              * A method to initialize this AjaxPromise, passing it the
@@ -4914,22 +4913,22 @@ var plat;
                 request.initialize(_extend(false, false, {}, options, { responseType: 'json' }));
                 return request.execute();
             };
-            /**
-             * Default Http config
-             */
-            Http.config = {
-                url: null,
-                method: 'GET',
-                responseType: '',
-                transforms: [],
-                headers: {},
-                withCredentials: false,
-                timeout: null,
-                jsonpIdentifier: 'callback',
-                contentType: 'application/json;charset=utf-8'
-            };
             return Http;
         }());
+        /**
+         * Default Http config
+         */
+        Http.config = {
+            url: null,
+            method: 'GET',
+            responseType: '',
+            transforms: [],
+            headers: {},
+            withCredentials: false,
+            timeout: null,
+            jsonpIdentifier: 'callback',
+            contentType: 'application/json;charset=utf-8'
+        };
         async.Http = Http;
         register.injectable(__Http, Http);
         register.injectable(__HttpRequestInstance, HttpRequest, null, __INSTANCE);
@@ -5097,7 +5096,7 @@ var plat;
              * with the ID "__templateCache".
              */
             function TemplateCache() {
-                _super.call(this, '__templateCache');
+                return _super.call(this, '__templateCache') || this;
             }
             TemplateCache.prototype.put = function (key, value) {
                 var Promise = this._Promise;
@@ -5133,12 +5132,12 @@ var plat;
                     return null;
                 });
             };
-            TemplateCache._inject = {
-                _Promise: __Promise,
-                _log: __Log
-            };
             return TemplateCache;
         }(Cache));
+        TemplateCache._inject = {
+            _Promise: __Promise,
+            _log: __Log
+        };
         storage_1.TemplateCache = TemplateCache;
         register.injectable(__TemplateCache, TemplateCache);
         /**
@@ -5213,7 +5212,7 @@ var plat;
         var LocalStorage = (function (_super) {
             __extends(LocalStorage, _super);
             function LocalStorage() {
-                _super.call(this, acquire(__Window).localStorage);
+                return _super.call(this, acquire(__Window).localStorage) || this;
             }
             return LocalStorage;
         }(BaseStorage));
@@ -5225,7 +5224,7 @@ var plat;
         var SessionStorage = (function (_super) {
             __extends(SessionStorage, _super);
             function SessionStorage() {
-                _super.call(this, acquire(__Window).sessionStorage);
+                return _super.call(this, acquire(__Window).sessionStorage) || this;
             }
             return SessionStorage;
         }(BaseStorage));
@@ -5239,45 +5238,31 @@ var plat;
     var OPERATORS = {
         'u+': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) {
-                return +a(context, aliases);
-            }
+            fn: function (context, aliases, a) { return +a(context, aliases); }
         },
         '+': {
             precedence: 6, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) + b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) + b(context, aliases); }
         },
         'u-': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) {
-                return -a(context, aliases);
-            }
+            fn: function (context, aliases, a) { return -a(context, aliases); }
         },
         '-': {
             precedence: 6, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) - b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) - b(context, aliases); }
         },
         '*': {
             precedence: 5, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) * b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) * b(context, aliases); }
         },
         '/': {
             precedence: 5, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) / b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) / b(context, aliases); }
         },
         '%': {
             precedence: 5, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) % b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) % b(context, aliases); }
         },
         '?': {
             precedence: 15, associativity: 'rtl',
@@ -5289,107 +5274,73 @@ var plat;
         },
         '>': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) > b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) > b(context, aliases); }
         },
         '<': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) < b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) < b(context, aliases); }
         },
         '!': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) {
-                return !a(context, aliases);
-            }
+            fn: function (context, aliases, a) { return !a(context, aliases); }
         },
         '~': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) {
-                return ~a(context, aliases);
-            }
+            fn: function (context, aliases, a) { return ~a(context, aliases); }
         },
         '&': {
             precedence: 10, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) & b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) & b(context, aliases); }
         },
         '|': {
             precedence: 12, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) | b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) | b(context, aliases); }
         },
         '>>': {
             precedence: 7, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) >> b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) >> b(context, aliases); }
         },
         '<<': {
             precedence: 7, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) << b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) << b(context, aliases); }
         },
         '>>>': {
             precedence: 7, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) >>> b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) >>> b(context, aliases); }
         },
         '&&': {
             precedence: 13, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) && b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) && b(context, aliases); }
         },
         '||': {
             precedence: 14, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) || b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) || b(context, aliases); }
         },
         '==': {
             precedence: 9, associativity: 'ltr',
             /* tslint:disable:triple-equals */
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) == b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) == b(context, aliases); }
         },
         '===': {
             precedence: 9, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) === b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) === b(context, aliases); }
         },
         '!=': {
             precedence: 9, associativity: 'ltr',
             /* tslint:disable:triple-equals */
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) != b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) != b(context, aliases); }
         },
         '!==': {
             precedence: 9, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) !== b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) !== b(context, aliases); }
         },
         '>=': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) >= b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) >= b(context, aliases); }
         },
         '<=': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) {
-                return a(context, aliases) <= b(context, aliases);
-            }
+            fn: function (context, aliases, a, b) { return a(context, aliases) <= b(context, aliases); }
         },
         '=': {
             precedence: 17, associativity: 'rtl',
@@ -6194,7 +6145,7 @@ var plat;
                 return function observedArrayFn() {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i - 0] = arguments[_i];
+                        args[_i] = arguments[_i];
                     }
                     var oldLength = this.length, originalArray = _clone(this, true), returnValue, isUnshift = method === 'unshift', isShift = method === 'shift', isSplice = method === 'splice', selfNotify = isShift || isUnshift || isSplice, isUpdate = method === 'sort' || method === 'reverse', oldArray, addedCount, index, newLength, removed;
                     if (selfNotify) {
@@ -6465,20 +6416,20 @@ var plat;
                     previous.push(ident);
                 }
             };
-            /**
-             * A set of functions to be fired when a particular observed array is mutated.
-             */
-            ContextManager.arrayChangeListeners = {};
-            /**
-             * An object for quickly accessing a previously created ContextManager.
-             */
-            ContextManager.__managers = {};
-            /**
-             * An object for storing functions to remove listeners for observed identifiers.
-             */
-            ContextManager.__controls = {};
             return ContextManager;
         }());
+        /**
+         * A set of functions to be fired when a particular observed array is mutated.
+         */
+        ContextManager.arrayChangeListeners = {};
+        /**
+         * An object for quickly accessing a previously created ContextManager.
+         */
+        ContextManager.__managers = {};
+        /**
+         * An object for storing functions to remove listeners for observed identifiers.
+         */
+        ContextManager.__controls = {};
         observable.ContextManager = ContextManager;
         /**
          */
@@ -6540,12 +6491,12 @@ var plat;
                     this._EventManager.propagatingEvents[this.name] = false;
                 }
             };
-            DispatchEvent._inject = {
-                _EventManager: __EventManagerStatic,
-                _ContextManager: __ContextManagerStatic
-            };
             return DispatchEvent;
         }());
+        DispatchEvent._inject = {
+            _EventManager: __EventManagerStatic,
+            _ContextManager: __ContextManagerStatic
+        };
         events.DispatchEvent = DispatchEvent;
         register.injectable(__DispatchEventInstance, DispatchEvent, null, __INSTANCE);
         /**
@@ -6554,7 +6505,7 @@ var plat;
         var LifecycleEvent = (function (_super) {
             __extends(LifecycleEvent, _super);
             function LifecycleEvent() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             /**
              * Creates a new LifecycleEvent and fires it.
@@ -6827,38 +6778,38 @@ var plat;
                     }
                 }
             };
-            /**
-             * An upward-moving event will start at the sender and move
-             * up the parent chain.
-             */
-            EventManager.UP = 'up';
-            /**
-             * A downward-moving event will start at the sender and move
-             * to its children and beyond.
-             */
-            EventManager.DOWN = 'down';
-            /**
-             * Goes through all listeners for an event name, ignoring order.
-             */
-            EventManager.DIRECT = 'direct';
-            /**
-             * Keeps track of which events are currently propagating.
-             */
-            EventManager.propagatingEvents = {};
-            /**
-             * Holds all the event listeners keyed by uid.
-             */
-            EventManager.__eventsListeners = {};
-            /**
-             * Holds all the event listeners for the application lifefycle events.
-             */
-            EventManager.__lifecycleEventListeners = [];
-            /**
-             * whether or not the event manager has been initialized.
-             */
-            EventManager.__initialized = false;
             return EventManager;
         }());
+        /**
+         * An upward-moving event will start at the sender and move
+         * up the parent chain.
+         */
+        EventManager.UP = 'up';
+        /**
+         * A downward-moving event will start at the sender and move
+         * to its children and beyond.
+         */
+        EventManager.DOWN = 'down';
+        /**
+         * Goes through all listeners for an event name, ignoring order.
+         */
+        EventManager.DIRECT = 'direct';
+        /**
+         * Keeps track of which events are currently propagating.
+         */
+        EventManager.propagatingEvents = {};
+        /**
+         * Holds all the event listeners keyed by uid.
+         */
+        EventManager.__eventsListeners = {};
+        /**
+         * Holds all the event listeners for the application lifefycle events.
+         */
+        EventManager.__lifecycleEventListeners = [];
+        /**
+         * whether or not the event manager has been initialized.
+         */
+        EventManager.__initialized = false;
         events.EventManager = EventManager;
         /**
          */
@@ -6886,7 +6837,7 @@ var plat;
         var ErrorEvent = (function (_super) {
             __extends(ErrorEvent, _super);
             function ErrorEvent() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             /**
              * Creates a new ErrorEvent and fires it.
@@ -7407,12 +7358,12 @@ var plat;
          * all of the memory it is using, including DOM event and property listeners.
          */
         Control.prototype.dispose = function () { };
-        /**
-         * An object containing all controls' registered event listeners.
-         */
-        Control.__eventListeners = {};
         return Control;
     }());
+    /**
+     * An object containing all controls' registered event listeners.
+     */
+    Control.__eventListeners = {};
     plat_1.Control = Control;
     /**
      */
@@ -7441,13 +7392,14 @@ var plat;
     var AttributeControl = (function (_super) {
         __extends(AttributeControl, _super);
         function AttributeControl() {
-            _super.apply(this, arguments);
+            var _this = _super !== null && _super.apply(this, arguments) || this;
             /**
              * Specifies the TemplateControl associated with this
              * control's element. Can be null if no TemplateControl
              * exists.
              */
-            this.templateControl = null;
+            _this.templateControl = null;
+            return _this;
         }
         /**
          * Method for disposing an attribute control. Removes any
@@ -7486,25 +7438,25 @@ var plat;
         var TemplateControl = (function (_super) {
             __extends(TemplateControl, _super);
             function TemplateControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * By default TemplateControls have a priority of 100.
                  */
-                this.priority = 100;
+                _this.priority = 100;
                 /**
                  * The context of an TemplateControl, used for inheritance and data-binding.
                  */
-                this.context = null;
+                _this.context = null;
                 /**
                  * Specifies the absolute path from where the context was created to this Control's context.
                  * Used by the ContextManager for maintaining context parity
                  * (e.g. 'context.childContextProperty.grandChildContextProperty').
                  */
-                this.absoluteContextPath = null;
+                _this.absoluteContextPath = null;
                 /**
                  * Flag indicating whether or not the TemplateControl defines the context property.
                  */
-                this.hasOwnContext = false;
+                _this.hasOwnContext = false;
                 /**
                  * Allows a TemplateControl to either swap its element with another element (e.g. plat-select),
                  * or replace its element altogether. If null or empty string, the element will be removed from the DOM, and the
@@ -7516,7 +7468,8 @@ var plat;
                  * element's nodename (e.g. `<plat-foreach plat-context="..."></plat-foreach>`), but will maintain whatever element type
                  * is used otherwise (e.g. `<tr plat-control="plat-foreach" plat-context="..."></tr>`).
                  */
-                this.replaceWith = 'any';
+                _this.replaceWith = 'any';
+                return _this;
             }
             TemplateControl.evaluateExpression = function (expression, control, aliases) {
                 if (isEmpty(expression)) {
@@ -7870,12 +7823,12 @@ var plat;
             TemplateControl.prototype.evaluateExpression = function (expression, context) {
                 return TemplateControl.evaluateExpression(expression, this, context);
             };
-            /**
-             * An object for quickly retrieving previously accessed resources.
-             */
-            TemplateControl.__resourceCache = {};
             return TemplateControl;
         }(Control));
+        /**
+         * An object for quickly retrieving previously accessed resources.
+         */
+        TemplateControl.__resourceCache = {};
         ui.TemplateControl = TemplateControl;
         /**
          */
@@ -7909,17 +7862,18 @@ var plat;
         var BindControl = (function (_super) {
             __extends(BindControl, _super);
             function BindControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Set to 120, higher than `plat-bind` to ensure that BinControls load
                  * prior to the `plat-bind`.
                  */
-                this.priority = 120;
+                _this.priority = 120;
                 /**
                  * The set of functions added externally that listens
                  * for property changes.
                  */
-                this._listeners = [];
+                _this._listeners = [];
+                return _this;
             }
             /**
              * Adds a listener to be called when the bindable property changes.
@@ -7977,11 +7931,12 @@ var plat;
         var ViewControl = (function (_super) {
             __extends(ViewControl, _super);
             function ViewControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Specifies that this control will have its own context, and it should not inherit a context.
                  */
-                this.hasOwnContext = true;
+                _this.hasOwnContext = true;
+                return _this;
             }
             /**
              * Recursively disposes a ViewControl and its children.
@@ -8169,11 +8124,11 @@ var plat;
             Dom.prototype.whenVisible = function (cb, element) {
                 return whenVisible(cb, element);
             };
-            Dom._inject = {
-                _domEvents: __DomEvents
-            };
             return Dom;
         }());
+        Dom._inject = {
+            _domEvents: __DomEvents
+        };
         ui.Dom = Dom;
         register.injectable(__Dom, Dom);
         /**
@@ -8917,35 +8872,35 @@ var plat;
                     this[key] = this.__resources[key] = bound ? create(control, resource) : resource;
                 }
             };
-            /**
-             * The injectable resource type token.
-             */
-            Resources.INJECTABLE = __INJECTABLE_RESOURCE;
-            /**
-             * The object resource type token. Objects should be literal objects and won't be observed.
-             */
-            Resources.OBJECT = __OBJECT_RESOURCE;
-            /**
-             * The observable resource type token. Observable resources are expected to be
-             * string identifiers and will be observed.
-             */
-            Resources.OBSERVABLE = __OBSERVABLE_RESOURCE;
-            /**
-             * The literal resource type token. Literals will be observed on the resource object,
-             * so if you change `resources.<alias>.value` it will be reflected everywhere it is
-             * observed.
-             */
-            Resources.LITERAL = __LITERAL_RESOURCE;
-            /**
-             * The function resource type token.
-             */
-            Resources.FUNCTION = __FUNCTION_RESOURCE;
-            /**
-             * An object consisting of keyed arrays containing functions for removing observation listeners.
-             */
-            Resources.__observableResourceRemoveListeners = {};
             return Resources;
         }());
+        /**
+         * The injectable resource type token.
+         */
+        Resources.INJECTABLE = __INJECTABLE_RESOURCE;
+        /**
+         * The object resource type token. Objects should be literal objects and won't be observed.
+         */
+        Resources.OBJECT = __OBJECT_RESOURCE;
+        /**
+         * The observable resource type token. Observable resources are expected to be
+         * string identifiers and will be observed.
+         */
+        Resources.OBSERVABLE = __OBSERVABLE_RESOURCE;
+        /**
+         * The literal resource type token. Literals will be observed on the resource object,
+         * so if you change `resources.<alias>.value` it will be reflected everywhere it is
+         * observed.
+         */
+        Resources.LITERAL = __LITERAL_RESOURCE;
+        /**
+         * The function resource type token.
+         */
+        Resources.FUNCTION = __FUNCTION_RESOURCE;
+        /**
+         * An object consisting of keyed arrays containing functions for removing observation listeners.
+         */
+        Resources.__observableResourceRemoveListeners = {};
         ui.Resources = Resources;
         /**
          */
@@ -10395,105 +10350,105 @@ var plat;
                 ev.preventDefault();
                 return false;
             };
-            DomEvents._inject = {
-                _document: __Document,
-                _compat: __Compat
-            };
-            /**
-             * A configuration object for all DOM events.
-             */
-            DomEvents.config = {
-                /**
-                 */
-                intervals: {
-                    /**
-                     */
-                    tapInterval: 300,
-                    /**
-                     */
-                    dblTapInterval: 300,
-                    /**
-                     */
-                    holdInterval: 400,
-                    /**
-                     */
-                    dblTapZoomDelay: 0,
-                    /**
-                     */
-                    delayedClickInterval: 400
-                },
-                /**
-                 */
-                distances: {
-                    /**
-                     */
-                    minScrollDistance: 3,
-                    /**
-                     */
-                    maxDblTapDistance: 10
-                },
-                /**
-                 */
-                velocities: {
-                    /**
-                     */
-                    minSwipeVelocity: 0.645
-                },
-                /**
-                 */
-                styleConfig: [{
-                        /**
-                         */
-                        className: 'plat-gesture',
-                        /**
-                         */
-                        styles: [
-                            '-moz-user-select: none',
-                            '-khtml-user-select: none',
-                            '-webkit-touch-callout: none',
-                            '-webkit-user-select: none',
-                            '-webkit-user-drag: none',
-                            '-webkit-tap-highlight-color: transparent',
-                            '-webkit-overflow-scrolling: touch',
-                            '-ms-user-select: none',
-                            '-ms-touch-action: manipulation',
-                            'touch-action: manipulation'
-                        ]
-                    }, {
-                        /**
-                         */
-                        className: 'plat-no-touch-action',
-                        /**
-                         */
-                        styles: [
-                            '-ms-touch-action: none',
-                            'touch-action: none'
-                        ]
-                    }]
-            };
-            /**
-             * An object containing the event types for all of the
-             * supported gestures.
-             */
-            DomEvents.gestures = {
-                $tap: __tap,
-                $dbltap: __dbltap,
-                $hold: __hold,
-                $release: __release,
-                $swipe: __swipe,
-                $swipeleft: __swipeleft,
-                $swiperight: __swiperight,
-                $swipeup: __swipeup,
-                $swipedown: __swipedown,
-                $track: __track,
-                $trackleft: __trackleft,
-                $trackright: __trackright,
-                $trackup: __trackup,
-                $trackdown: __trackdown,
-                $trackend: __trackend
-            };
             return DomEvents;
         }());
+        DomEvents._inject = {
+            _document: __Document,
+            _compat: __Compat
+        };
+        /**
+         * A configuration object for all DOM events.
+         */
+        DomEvents.config = {
+            /**
+             */
+            intervals: {
+                /**
+                 */
+                tapInterval: 300,
+                /**
+                 */
+                dblTapInterval: 300,
+                /**
+                 */
+                holdInterval: 400,
+                /**
+                 */
+                dblTapZoomDelay: 0,
+                /**
+                 */
+                delayedClickInterval: 400
+            },
+            /**
+             */
+            distances: {
+                /**
+                 */
+                minScrollDistance: 3,
+                /**
+                 */
+                maxDblTapDistance: 10
+            },
+            /**
+             */
+            velocities: {
+                /**
+                 */
+                minSwipeVelocity: 0.645
+            },
+            /**
+             */
+            styleConfig: [{
+                    /**
+                     */
+                    className: 'plat-gesture',
+                    /**
+                     */
+                    styles: [
+                        '-moz-user-select: none',
+                        '-khtml-user-select: none',
+                        '-webkit-touch-callout: none',
+                        '-webkit-user-select: none',
+                        '-webkit-user-drag: none',
+                        '-webkit-tap-highlight-color: transparent',
+                        '-webkit-overflow-scrolling: touch',
+                        '-ms-user-select: none',
+                        '-ms-touch-action: manipulation',
+                        'touch-action: manipulation'
+                    ]
+                }, {
+                    /**
+                     */
+                    className: 'plat-no-touch-action',
+                    /**
+                     */
+                    styles: [
+                        '-ms-touch-action: none',
+                        'touch-action: none'
+                    ]
+                }]
+        };
+        /**
+         * An object containing the event types for all of the
+         * supported gestures.
+         */
+        DomEvents.gestures = {
+            $tap: __tap,
+            $dbltap: __dbltap,
+            $hold: __hold,
+            $release: __release,
+            $swipe: __swipe,
+            $swipeleft: __swipeleft,
+            $swiperight: __swiperight,
+            $swipeup: __swipeup,
+            $swipedown: __swipedown,
+            $track: __track,
+            $trackleft: __trackleft,
+            $trackright: __trackright,
+            $trackup: __trackup,
+            $trackdown: __trackdown,
+            $trackend: __trackend
+        };
         ui.DomEvents = DomEvents;
         register.injectable(__DomEvents, DomEvents);
         /**
@@ -10543,14 +10498,15 @@ var plat;
         var CustomDomEvent = (function (_super) {
             __extends(CustomDomEvent, _super);
             function CustomDomEvent(element, event) {
-                _super.call(this);
+                var _this = _super.call(this) || this;
                 /**
                  * The number of listeners added for this event on this element.
                  */
-                this.count = 0;
-                this.element = element;
-                this.event = event;
-                this.count++;
+                _this.count = 0;
+                _this.element = element;
+                _this.event = event;
+                _this.count++;
+                return _this;
             }
             /**
              * Triggers its event on its element.
@@ -11001,13 +10957,13 @@ var plat;
                     }
                     return elements;
                 };
-                Animator._inject = {
-                    _compat: __Compat,
-                    _Promise: __Promise,
-                    _document: __Document
-                };
                 return Animator;
             }());
+            Animator._inject = {
+                _compat: __Compat,
+                _Promise: __Promise,
+                _document: __Document
+            };
             animations.Animator = Animator;
             register.injectable(__Animator, Animator);
             /**
@@ -11019,24 +10975,25 @@ var plat;
             var AnimationPromise = (function (_super) {
                 __extends(AnimationPromise, _super);
                 function AnimationPromise(resolveFunction, promise) {
-                    _super.call(this, resolveFunction);
+                    var _this = _super.call(this, resolveFunction) || this;
                     /**
                      * Reference to the IPromise injectable.
                      */
-                    this._Promise = acquire(__Promise);
+                    _this._Promise = acquire(__Promise);
                     /**
                      * The state of the animation. 0 prior to start, 1 if started, and
                      * 2 if canceled.
                      */
-                    this.__animationState = 0;
+                    _this.__animationState = 0;
                     /**
                      * An Array of animation instances linked to this promise.
                      */
-                    this.__animationInstances = [];
+                    _this.__animationInstances = [];
                     if (!isNull(promise)) {
-                        this.__animationInstances = promise.__animationInstances;
-                        this.__animationState = promise.__animationState;
+                        _this.__animationInstances = promise.__animationInstances;
+                        _this.__animationState = promise.__animationState;
                     }
+                    return _this;
                 }
                 AnimationPromise.prototype.initialize = function (instances) {
                     if (isEmpty(this.__animationInstances)) {
@@ -11231,16 +11188,16 @@ var plat;
                     promise.initialize(this);
                     return promise;
                 };
-                BaseAnimation._inject = {
-                    _window: __Window,
-                    _compat: __Compat,
-                    _log: __Log,
-                    _Promise: __Promise,
-                    dom: __Dom,
-                    utils: __Utils
-                };
                 return BaseAnimation;
             }());
+            BaseAnimation._inject = {
+                _window: __Window,
+                _compat: __Compat,
+                _log: __Log,
+                _Promise: __Promise,
+                dom: __Dom,
+                utils: __Utils
+            };
             animations.BaseAnimation = BaseAnimation;
             /**
              * A class representing a single CSS animation for a single element.
@@ -11248,11 +11205,12 @@ var plat;
             var CssAnimation = (function (_super) {
                 __extends(CssAnimation, _super);
                 function CssAnimation() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * A set of browser compatible CSS animation events capable of being listened to.
                      */
-                    this._animationEvents = this._compat.animationEvents;
+                    _this._animationEvents = _this._compat.animationEvents;
+                    return _this;
                 }
                 /**
                  * A function to listen to the start of an animation event.
@@ -11299,15 +11257,16 @@ var plat;
             var SimpleCssAnimation = (function (_super) {
                 __extends(SimpleCssAnimation, _super);
                 function SimpleCssAnimation() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the animated element.
                      */
-                    this.className = __SimpleAnimation;
+                    _this.className = __SimpleAnimation;
                     /**
                      * A function for stopping a potential callback in the animation chain.
                      */
-                    this._cancelAnimation = noop;
+                    _this._cancelAnimation = noop;
+                    return _this;
                 }
                 /**
                  * Adds the class to initialize the animation.
@@ -11409,11 +11368,12 @@ var plat;
             var FadeIn = (function (_super) {
                 __extends(FadeIn, _super);
                 function FadeIn() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the element fading in.
                      */
-                    this.className = __FadeIn;
+                    _this.className = __FadeIn;
+                    return _this;
                 }
                 return FadeIn;
             }(SimpleCssAnimation));
@@ -11425,11 +11385,12 @@ var plat;
             var FadeOut = (function (_super) {
                 __extends(FadeOut, _super);
                 function FadeOut() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the element fading out.
                      */
-                    this.className = __FadeOut;
+                    _this.className = __FadeOut;
+                    return _this;
                 }
                 return FadeOut;
             }(SimpleCssAnimation));
@@ -11441,11 +11402,12 @@ var plat;
             var Enter = (function (_super) {
                 __extends(Enter, _super);
                 function Enter() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the entering element.
                      */
-                    this.className = __Enter;
+                    _this.className = __Enter;
+                    return _this;
                 }
                 return Enter;
             }(SimpleCssAnimation));
@@ -11457,11 +11419,12 @@ var plat;
             var Leave = (function (_super) {
                 __extends(Leave, _super);
                 function Leave() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the leaving element.
                      */
-                    this.className = __Leave;
+                    _this.className = __Leave;
+                    return _this;
                 }
                 return Leave;
             }(SimpleCssAnimation));
@@ -11473,11 +11436,12 @@ var plat;
             var Move = (function (_super) {
                 __extends(Move, _super);
                 function Move() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the leaving element.
                      */
-                    this.className = __Move;
+                    _this.className = __Move;
+                    return _this;
                 }
                 return Move;
             }(SimpleCssAnimation));
@@ -11490,44 +11454,45 @@ var plat;
             var SimpleCssTransition = (function (_super) {
                 __extends(SimpleCssTransition, _super);
                 function SimpleCssTransition() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the animated element.
                      */
-                    this.className = __SimpleTransition;
+                    _this.className = __SimpleTransition;
                     /**
                      * A function for stopping a potential callback in the animation chain.
                      */
-                    this._animationCanceled = noop;
+                    _this._animationCanceled = noop;
                     /**
                      * A regular expression to normalize modified property keys.
                      */
-                    this._normalizeRegex = /-/g;
+                    _this._normalizeRegex = /-/g;
                     /**
                      * A regular expression grab everything that is not a number.
                      */
-                    this._nonNumRegex = /[^\-0-9\.]/g;
+                    _this._nonNumRegex = /[^\-0-9\.]/g;
                     /**
                      * An Object whose keys are the normalized keys of modified properties.
                      */
-                    this._normalizedKeys = {};
+                    _this._normalizedKeys = {};
                     /**
                      * The "transitionend" event handler call count.
                      */
-                    this._transitionCount = 0;
+                    _this._transitionCount = 0;
                     /**
                      * The user defined "transitionend" event handler call count.
                      */
-                    this._count = 0;
+                    _this._count = 0;
                     /**
                      * Denotes whether or not the transition was ever started.
                      */
-                    this._started = false;
+                    _this._started = false;
                     /**
                      * Denotes whether or not the transition changes are being performed
                      * with CSS or with JS through this.options.
                      */
-                    this._usingCss = false;
+                    _this._usingCss = false;
+                    return _this;
                 }
                 /**
                  * Adds the class to enable the transition.
@@ -11736,7 +11701,7 @@ var plat;
             var Viewport = (function (_super) {
                 __extends(Viewport, _super);
                 function Viewport() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 /**
                  * Allows the viewport to initialize its navigator with the current
@@ -11924,18 +11889,18 @@ var plat;
                     }
                     return viewport;
                 };
-                Viewport._inject = {
-                    _Router: __RouterStatic,
-                    _Promise: __Promise,
-                    _Injector: __InjectorStatic,
-                    _ElementManagerFactory: __ElementManagerFactory,
-                    _document: __Document,
-                    _managerCache: __ManagerCache,
-                    _animator: __Animator,
-                    _navigator: __NavigatorInstance
-                };
                 return Viewport;
             }(TemplateControl));
+            Viewport._inject = {
+                _Router: __RouterStatic,
+                _Promise: __Promise,
+                _Injector: __InjectorStatic,
+                _ElementManagerFactory: __ElementManagerFactory,
+                _document: __Document,
+                _managerCache: __ManagerCache,
+                _animator: __Animator,
+                _navigator: __NavigatorInstance
+            };
             controls_1.Viewport = Viewport;
             register.control(__Viewport, Viewport);
             /**
@@ -11948,18 +11913,19 @@ var plat;
                  * The constructor for a Template. Creates the control cache.
                  */
                 function Template() {
-                    _super.call(this);
+                    var _this = _super.call(this) || this;
                     /**
                      * Removes the `<plat-template>` node from the DOM
                      */
-                    this.replaceWith = null;
+                    _this.replaceWith = null;
                     /**
                      * Whether or not this is the first instance of the control,
                      * specifying that it defines the template to copy.
                      */
-                    this.__isFirst = false;
+                    _this.__isFirst = false;
                     var _CacheFactory = acquire(__CacheFactory);
-                    this.__templateControlCache = _CacheFactory.create(__TemplateControlCache);
+                    _this.__templateControlCache = _CacheFactory.create(__TemplateControlCache);
+                    return _this;
                 }
                 /**
                  * Initializes the creation of the template.
@@ -12079,13 +12045,13 @@ var plat;
                     bindableTemplates.cache = control.bindableTemplates.cache;
                     bindableTemplates.templates = control.bindableTemplates.templates;
                 };
-                Template._inject = {
-                    _Promise: __Promise,
-                    _templateCache: __TemplateCache,
-                    _document: __Document
-                };
                 return Template;
             }(TemplateControl));
+            Template._inject = {
+                _Promise: __Promise,
+                _templateCache: __TemplateCache,
+                _document: __Document
+            };
             controls_1.Template = Template;
             register.control(__Template, Template);
             /**
@@ -12095,7 +12061,7 @@ var plat;
             var Ignore = (function (_super) {
                 __extends(Ignore, _super);
                 function Ignore() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 /**
                  * Removes the innerHTML from the DOM and saves it.
@@ -12123,18 +12089,17 @@ var plat;
                  * The constructor for a ForEach. Creates the itemsLoaded promise.
                  */
                 function ForEach() {
-                    var _this = this;
-                    _super.call(this);
+                    var _this = _super.call(this) || this;
                     /**
                      * The load priority of the control (needs to load before a Bind control).
                      */
-                    this.priority = 120;
+                    _this.priority = 120;
                     /**
                      * Used to hold the alias tokens for the built-in foreach aliases. You
                      * can overwrite these with the options for
                      * the ForEach control.
                      */
-                    this._aliases = {
+                    _this._aliases = {
                         index: __forEachAliasOptions.index,
                         even: __forEachAliasOptions.even,
                         odd: __forEachAliasOptions.odd,
@@ -12146,24 +12111,25 @@ var plat;
                      * For the ForEach it should be a
                      * single constant number.
                      */
-                    this._blockLength = 0;
+                    _this._blockLength = 0;
                     /**
                      * A queue representing all current add operations.
                      */
-                    this._addQueue = [];
+                    _this._addQueue = [];
                     /**
                      * The number of items currently in the list or in the process of being added
                      * or removed from the list.
                      */
-                    this._itemLength = 0;
+                    _this._itemLength = 0;
                     /**
                      * Whether or not the Array listener has been set.
                      */
-                    this.__listenerSet = false;
-                    this.itemsLoaded = new this._Promise(function (resolve, reject) {
+                    _this.__listenerSet = false;
+                    _this.itemsLoaded = new _this._Promise(function (resolve, reject) {
                         _this.__resolveFn = resolve;
                         _this.__rejectFn = reject;
                     }).catch(noop);
+                    return _this;
                 }
                 /**
                  * Creates a bindable template with the control element's childNodes (innerHTML).
@@ -12709,12 +12675,12 @@ var plat;
                     }
                     return this._Promise.all(animations);
                 };
-                ForEach._inject = {
-                    _animator: __Animator,
-                    _Promise: __Promise
-                };
                 return ForEach;
             }(TemplateControl));
+            ForEach._inject = {
+                _animator: __Animator,
+                _Promise: __Promise
+            };
             controls_1.ForEach = ForEach;
             register.control(__ForEach, ForEach);
             /**
@@ -12725,15 +12691,16 @@ var plat;
             var Head = (function (_super) {
                 __extends(Head, _super);
                 function Head() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * Rather than be replaced by a 'div', this control wants to be a 'head' element.
                      */
-                    this.replaceWith = __Head;
+                    _this.replaceWith = __Head;
                     /**
                      * A reference to all the structured data elements added to the DOM for this page.
                      */
-                    this._structuredDataElements = [];
+                    _this._structuredDataElements = [];
+                    return _this;
                 }
                 /**
                  * Registers for the navigating event to know when to remove all the elements so they
@@ -12945,7 +12912,7 @@ var plat;
                 Head.prototype.blogPostings = function () {
                     var postings = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
-                        postings[_i - 0] = arguments[_i];
+                        postings[_i] = arguments[_i];
                     }
                     for (var i = 0, length_11 = postings.length; i < length_11; ++i) {
                         this.structuredData(postings[i]);
@@ -13047,7 +13014,7 @@ var plat;
                 Head.prototype._removeElements = function () {
                     var elements = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
-                        elements[_i - 0] = arguments[_i];
+                        elements[_i] = arguments[_i];
                     }
                     var el = this.element, nodes = Array.prototype.slice.call(el.children), length = elements.length, element;
                     for (var i = 0; i < length; ++i) {
@@ -13057,12 +13024,12 @@ var plat;
                         }
                     }
                 };
-                Head._inject = {
-                    _document: __Document,
-                    _browser: __Browser
-                };
                 return Head;
             }(ui.TemplateControl));
+            Head._inject = {
+                _document: __Document,
+                _browser: __Browser
+            };
             controls_1.Head = Head;
             /**
              * A TemplateControl for adding HTML to the
@@ -13071,7 +13038,7 @@ var plat;
             var InnerHtml = (function (_super) {
                 __extends(InnerHtml, _super);
                 function InnerHtml() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 /**
                  * Clears the inner template if one exists.
@@ -13138,11 +13105,11 @@ var plat;
                     }
                     setInnerHtml(this.element, html);
                 };
-                InnerHtml._inject = {
-                    _TemplateControlFactory: __TemplateControlFactory
-                };
                 return InnerHtml;
             }(TemplateControl));
+            InnerHtml._inject = {
+                _TemplateControlFactory: __TemplateControlFactory
+            };
             controls_1.InnerHtml = InnerHtml;
             register.control(__Html, InnerHtml);
             /**
@@ -13155,26 +13122,26 @@ var plat;
                  * The constructor for a Select. Creates the itemsLoaded promise.
                  */
                 function Select() {
-                    var _this = this;
-                    _super.call(this);
+                    var _this = _super.call(this) || this;
                     /**
                      * Replaces the `<plat-select>` node with
                      * a <select> node.
                      */
-                    this.replaceWith = 'select';
+                    _this.replaceWith = 'select';
                     /**
                      * The load priority of the control (needs to load before a Bind control).
                      */
-                    this.priority = 120;
+                    _this.priority = 120;
                     /**
                      * An object that keeps track of unique
                      * optgroups.
                      */
-                    this.groups = {};
-                    this.itemsLoaded = new this._Promise(function (resolve, reject) {
+                    _this.groups = {};
+                    _this.itemsLoaded = new _this._Promise(function (resolve, reject) {
                         _this.__resolveFn = resolve;
                         _this.__rejectFn = reject;
                     }).catch(noop);
+                    return _this;
                 }
                 /**
                  * Creates the bindable option template and grouping
@@ -13207,25 +13174,25 @@ var plat;
                  */
                 Select.prototype.contextChanged = function (newValue, oldValue) {
                     var _this = this;
-                    if (isEmpty(newValue)) {
+                    if (isEmpty(newValue) || !isArray(newValue)) {
                         if (!isEmpty(oldValue)) {
                             this.itemsLoaded.then(function () {
                                 _this._removeItems(_this.controls.length);
+                                _this._observeChange();
                             });
                         }
-                        return;
-                    }
-                    else if (!isArray(newValue)) {
                         return;
                     }
                     var newLength = isArray(newValue) ? newValue.length : 0, oldLength = isArray(oldValue) ? oldValue.length : 0;
                     this._setListener();
                     if (newLength > oldLength) {
-                        this._addItems(newLength - oldLength, oldLength);
+                        this._addItems(newLength - oldLength, oldLength).then(this._observeChange.bind(this));
+                        return;
                     }
                     else if (newLength < oldLength) {
                         this._removeItems(oldLength - newLength);
                     }
+                    this._observeChange();
                 };
                 /**
                  * Observes the new array context and adds
@@ -13411,9 +13378,15 @@ var plat;
                  * Fires the inputChanged event when the select's value changes.
                  */
                 Select.prototype._observeChange = function () {
-                    var element = this.element, newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
-                    this.inputChanged(newLast, this.__lastValue);
-                    this.__lastValue = newLast;
+                    var _this = this;
+                    this.itemsLoaded.then(function () {
+                        var element = _this.element, newLast = element.multiple ? _this._getSelectedValues() : _this._castValue(element.value);
+                        if (newLast === _this.__lastValue) {
+                            return;
+                        }
+                        _this.inputChanged(newLast, _this.__lastValue);
+                        _this.__lastValue = newLast;
+                    });
                 };
                 /**
                  * Getter for select-multiple.
@@ -13669,12 +13642,12 @@ var plat;
                         this._resetSelect();
                     }
                 };
-                Select._inject = {
-                    _Promise: __Promise,
-                    _document: __Document
-                };
                 return Select;
             }(BindControl));
+            Select._inject = {
+                _Promise: __Promise,
+                _document: __Document
+            };
             controls_1.Select = Select;
             register.control(__Select, Select);
             /**
@@ -13688,20 +13661,21 @@ var plat;
                  * used by this control.
                  */
                 function If() {
-                    _super.call(this);
+                    var _this = _super.call(this) || this;
                     /**
                      * The current evaluated condition (whether or not the
                      * control is visible) of the control.
                      */
-                    this.__condition = true;
+                    _this.__condition = true;
                     /**
                      * A boolean value stating whether or not the condition has already
                      * been evaluated.
                      */
-                    this.__firstTime = true;
-                    var _document = this._document;
-                    this.commentNode = _document.createComment(__If + __BOUND_PREFIX + 'placeholder');
-                    this.fragmentStore = _document.createDocumentFragment();
+                    _this.__firstTime = true;
+                    var _document = _this._document;
+                    _this.commentNode = _document.createComment(__If + __BOUND_PREFIX + 'placeholder');
+                    _this.fragmentStore = _document.createDocumentFragment();
+                    return _this;
                 }
                 /**
                  * Checks the options and initializes the
@@ -13859,13 +13833,13 @@ var plat;
                         _this.fragmentStore.insertBefore(element, null);
                     });
                 };
-                If._inject = {
-                    _animator: __Animator,
-                    _Promise: __Promise,
-                    _document: __Document
-                };
                 return If;
             }(TemplateControl));
+            If._inject = {
+                _animator: __Animator,
+                _Promise: __Promise,
+                _document: __Document
+            };
             controls_1.If = If;
             register.control(__If, If);
             /**
@@ -13875,19 +13849,20 @@ var plat;
             var Link = (function (_super) {
                 __extends(Link, _super);
                 function Link() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * Replaces the Link's element with a native anchor tag.
                      */
-                    this.replaceWith = 'a';
+                    _this.replaceWith = 'a';
                     /**
                      * The router associated with this link.
                      */
-                    this._router = this._Router.currentRouter();
+                    _this._router = _this._Router.currentRouter();
                     /**
                      * A property that when set allows for the next click event to process.
                      */
-                    this._allowClick = false;
+                    _this._allowClick = false;
+                    return _this;
                 }
                 /**
                  * Initializes click event.
@@ -14016,14 +13991,14 @@ var plat;
                 Link.prototype.dispose = function () {
                     defer(this._removeClickListener, 3000);
                 };
-                Link._inject = {
-                    _Router: __RouterStatic,
-                    _Injector: __InjectorStatic,
-                    _browser: __Browser,
-                    _window: __Window
-                };
                 return Link;
             }(TemplateControl));
+            Link._inject = {
+                _Router: __RouterStatic,
+                _Injector: __InjectorStatic,
+                _browser: __Browser,
+                _window: __Window
+            };
             controls_1.Link = Link;
             register.control(__Link, Link);
         })(controls = ui.controls || (ui.controls = {}));
@@ -14103,14 +14078,14 @@ var plat;
                     length = newLength;
                 }
             };
-            Compiler._inject = {
-                _ElementManagerFactory: __ElementManagerFactory,
-                _TextManagerFactory: __TextManagerFactory,
-                _CommentManagerFactory: __CommentManagerFactory,
-                _managerCache: __ManagerCache
-            };
             return Compiler;
         }());
+        Compiler._inject = {
+            _ElementManagerFactory: __ElementManagerFactory,
+            _TextManagerFactory: __TextManagerFactory,
+            _CommentManagerFactory: __CommentManagerFactory,
+            _managerCache: __ManagerCache
+        };
         processing.Compiler = Compiler;
         register.injectable(__Compiler, Compiler);
         /**
@@ -14420,26 +14395,27 @@ var plat;
         var ElementManager = (function (_super) {
             __extends(ElementManager, _super);
             function ElementManager() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The child managers for this manager.
                  */
-                this.children = [];
+                _this.children = [];
                 /**
                  * Specifies the type for this NodeManager.
                  * It's value is "element".
                  */
-                this.type = 'element';
+                _this.type = 'element';
                 /**
                  * Specifies whether or not this manager has a TemplateControl which has a
                  * replaceWith property set to null or empty string.
                  */
-                this.replace = false;
+                _this.replace = false;
                 /**
                  * Indicates whether the TemplateControl for this manager has its own context
                  * or inherits it from a parent.
                  */
-                this.hasOwnContext = false;
+                _this.hasOwnContext = false;
+                return _this;
             }
             /**
              * Determines if the associated Element has controls that need to be instantiated or Attr nodes
@@ -15303,18 +15279,18 @@ var plat;
                     });
                 });
             };
-            ElementManager._inject = {
-                _Promise: __Promise,
-                _ContextManager: __ContextManagerStatic,
-                _compiler: __Compiler,
-                _CommentManagerFactory: __CommentManagerFactory,
-                _ControlFactory: __ControlFactory,
-                _TemplateControlFactory: __TemplateControlFactory,
-                _BindableTemplatesFactory: __BindableTemplatesFactory,
-                _log: __Log
-            };
             return ElementManager;
         }(NodeManager));
+        ElementManager._inject = {
+            _Promise: __Promise,
+            _ContextManager: __ContextManagerStatic,
+            _compiler: __Compiler,
+            _CommentManagerFactory: __CommentManagerFactory,
+            _ControlFactory: __ControlFactory,
+            _TemplateControlFactory: __TemplateControlFactory,
+            _BindableTemplatesFactory: __BindableTemplatesFactory,
+            _log: __Log
+        };
         processing.ElementManager = ElementManager;
         /**
          */
@@ -15343,12 +15319,13 @@ var plat;
         var TextManager = (function (_super) {
             __extends(TextManager, _super);
             function TextManager() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Specifies the type for this NodeManager.
                  * It's value is "text".
                  */
-                this.type = 'text';
+                _this.type = 'text';
+                return _this;
             }
             /**
              * Determines if a text node has markup, and creates a TextManager if it does.
@@ -15454,12 +15431,13 @@ var plat;
         var CommentManager = (function (_super) {
             __extends(CommentManager, _super);
             function CommentManager() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Specifies the type for this NodeManager.
                  * It's value is "comment".
                  */
-                this.type = 'comment';
+                _this.type = 'comment';
+                return _this;
             }
             /**
              * Creates a new CommentManager for the given Comment node.
@@ -15820,18 +15798,18 @@ var plat;
                 }
                 return this._router.generate(view, parameters, query);
             };
-            Navigator._inject = {
-                _Promise: __Promise,
-                _Injector: __InjectorStatic,
-                _browserConfig: __BrowserConfig,
-                _browser: __Browser,
-                _EventManager: __EventManagerStatic,
-                _window: __Window,
-                _log: __Log,
-                _history: __History
-            };
             return Navigator;
         }());
+        Navigator._inject = {
+            _Promise: __Promise,
+            _Injector: __InjectorStatic,
+            _browserConfig: __BrowserConfig,
+            _browser: __Browser,
+            _EventManager: __EventManagerStatic,
+            _window: __Window,
+            _log: __Log,
+            _history: __History
+        };
         routing.Navigator = Navigator;
         register.injectable(__NavigatorInstance, Navigator, null, __INSTANCE);
         /**
@@ -15967,11 +15945,12 @@ var plat;
         var StaticSegment = (function (_super) {
             __extends(StaticSegment, _super);
             function StaticSegment() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a static segment.
                  */
-                this.type = __STATIC_SEGMENT_TYPE;
+                _this.type = __STATIC_SEGMENT_TYPE;
+                return _this;
             }
             /**
              * Initializes the segment.
@@ -16005,11 +15984,12 @@ var plat;
         var VariableSegment = (function (_super) {
             __extends(VariableSegment, _super);
             function VariableSegment() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a variable segment.
                  */
-                this.type = __VARIABLE_SEGMENT_TYPE;
+                _this.type = __VARIABLE_SEGMENT_TYPE;
+                return _this;
             }
             /**
              * Generates a new segment, using the input parameters.
@@ -16031,22 +16011,23 @@ var plat;
         var SplatSegment = (function (_super) {
             __extends(SplatSegment, _super);
             function SplatSegment() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a splat segment.
                  */
-                this.type = __SPLAT_SEGMENT_TYPE;
+                _this.type = __SPLAT_SEGMENT_TYPE;
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                this.regex = '(.+)';
+                _this.regex = '(.+)';
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                this._specification = {
+                _this._specification = {
                     invalidCharacters: '',
                     repeat: true
                 };
+                return _this;
             }
             return SplatSegment;
         }(VariableSegment));
@@ -16059,22 +16040,23 @@ var plat;
         var DynamicSegment = (function (_super) {
             __extends(DynamicSegment, _super);
             function DynamicSegment() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a dynamic segment.
                  */
-                this.type = __DYNAMIC_SEGMENT_TYPE;
+                _this.type = __DYNAMIC_SEGMENT_TYPE;
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                this.regex = '([^/]+)';
+                _this.regex = '([^/]+)';
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                this._specification = {
+                _this._specification = {
                     invalidCharacters: '/',
                     repeat: true
                 };
+                return _this;
             }
             return DynamicSegment;
         }(VariableSegment));
@@ -16506,13 +16488,13 @@ var plat;
             RouteRecognizer.prototype._isDynamic = function (state) {
                 return state.regex.source.slice(-5) === '(.+)$';
             };
-            RouteRecognizer._inject = {
-                _BaseSegmentFactory: __BaseSegmentFactory,
-                _State: __StateStatic,
-                _rootState: __StateInstance
-            };
             return RouteRecognizer;
         }());
+        RouteRecognizer._inject = {
+            _BaseSegmentFactory: __BaseSegmentFactory,
+            _State: __StateStatic,
+            _rootState: __StateInstance
+        };
         routing.RouteRecognizer = RouteRecognizer;
         register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
         ;
@@ -17173,17 +17155,17 @@ var plat;
                     child._clearInfo();
                 }, this.children);
             };
-            Router._inject = {
-                _Promise: __Promise,
-                _Injector: __InjectorStatic,
-                _EventManager: __EventManagerStatic,
-                _browser: __Browser,
-                _browserConfig: __BrowserConfig,
-                _recognizer: __RouteRecognizerInstance,
-                _childRecognizer: __RouteRecognizerInstance
-            };
             return Router;
         }());
+        Router._inject = {
+            _Promise: __Promise,
+            _Injector: __InjectorStatic,
+            _EventManager: __EventManagerStatic,
+            _browser: __Browser,
+            _browserConfig: __BrowserConfig,
+            _recognizer: __RouteRecognizerInstance,
+            _childRecognizer: __RouteRecognizerInstance
+        };
         routing.Router = Router;
         register.injectable(__Router, Router, null, __INSTANCE);
         /**
@@ -17206,7 +17188,7 @@ var plat;
         var Name = (function (_super) {
             __extends(Name, _super);
             function Name() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             /**
              * Defines the property specified by the attribute value as the INamedElement
@@ -17281,11 +17263,12 @@ var plat;
         var SimpleEventControl = (function (_super) {
             __extends(SimpleEventControl, _super);
             function SimpleEventControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * An array of the aliases used in the expression.
                  */
-                this._aliases = [];
+                _this._aliases = [];
+                return _this;
             }
             /**
              * Kicks off finding and setting the listener.
@@ -17450,12 +17433,12 @@ var plat;
                 this._listener = listenerStr;
                 this._aliases = aliases;
             };
-            SimpleEventControl._inject = {
-                _parser: __Parser,
-                _regex: __Regex
-            };
             return SimpleEventControl;
         }(AttributeControl));
+        SimpleEventControl._inject = {
+            _parser: __Parser,
+            _regex: __Regex
+        };
         controls.SimpleEventControl = SimpleEventControl;
         /**
          * A SimpleEventControl for the '$tap' event.
@@ -17463,11 +17446,12 @@ var plat;
         var Tap = (function (_super) {
             __extends(Tap, _super);
             function Tap() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __tap;
+                _this.event = __tap;
+                return _this;
             }
             return Tap;
         }(SimpleEventControl));
@@ -17478,11 +17462,12 @@ var plat;
         var Blur = (function (_super) {
             __extends(Blur, _super);
             function Blur() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'blur';
+                _this.event = 'blur';
+                return _this;
             }
             return Blur;
         }(SimpleEventControl));
@@ -17493,11 +17478,12 @@ var plat;
         var Change = (function (_super) {
             __extends(Change, _super);
             function Change() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'change';
+                _this.event = 'change';
+                return _this;
             }
             return Change;
         }(SimpleEventControl));
@@ -17508,11 +17494,12 @@ var plat;
         var Copy = (function (_super) {
             __extends(Copy, _super);
             function Copy() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'copy';
+                _this.event = 'copy';
+                return _this;
             }
             return Copy;
         }(SimpleEventControl));
@@ -17523,11 +17510,12 @@ var plat;
         var Cut = (function (_super) {
             __extends(Cut, _super);
             function Cut() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'cut';
+                _this.event = 'cut';
+                return _this;
             }
             return Cut;
         }(SimpleEventControl));
@@ -17538,11 +17526,12 @@ var plat;
         var Paste = (function (_super) {
             __extends(Paste, _super);
             function Paste() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'paste';
+                _this.event = 'paste';
+                return _this;
             }
             return Paste;
         }(SimpleEventControl));
@@ -17553,11 +17542,12 @@ var plat;
         var DblTap = (function (_super) {
             __extends(DblTap, _super);
             function DblTap() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __dbltap;
+                _this.event = __dbltap;
+                return _this;
             }
             return DblTap;
         }(SimpleEventControl));
@@ -17568,11 +17558,12 @@ var plat;
         var Focus = (function (_super) {
             __extends(Focus, _super);
             function Focus() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'focus';
+                _this.event = 'focus';
+                return _this;
             }
             return Focus;
         }(SimpleEventControl));
@@ -17583,11 +17574,12 @@ var plat;
         var TouchStart = (function (_super) {
             __extends(TouchStart, _super);
             function TouchStart() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __touchstart;
+                _this.event = __touchstart;
+                return _this;
             }
             return TouchStart;
         }(SimpleEventControl));
@@ -17598,11 +17590,12 @@ var plat;
         var TouchEnd = (function (_super) {
             __extends(TouchEnd, _super);
             function TouchEnd() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __touchend;
+                _this.event = __touchend;
+                return _this;
             }
             return TouchEnd;
         }(SimpleEventControl));
@@ -17613,11 +17606,12 @@ var plat;
         var TouchMove = (function (_super) {
             __extends(TouchMove, _super);
             function TouchMove() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __touchmove;
+                _this.event = __touchmove;
+                return _this;
             }
             return TouchMove;
         }(SimpleEventControl));
@@ -17628,11 +17622,12 @@ var plat;
         var TouchCancel = (function (_super) {
             __extends(TouchCancel, _super);
             function TouchCancel() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __touchcancel;
+                _this.event = __touchcancel;
+                return _this;
             }
             return TouchCancel;
         }(SimpleEventControl));
@@ -17643,11 +17638,12 @@ var plat;
         var Hold = (function (_super) {
             __extends(Hold, _super);
             function Hold() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __hold;
+                _this.event = __hold;
+                return _this;
             }
             return Hold;
         }(SimpleEventControl));
@@ -17658,11 +17654,12 @@ var plat;
         var Release = (function (_super) {
             __extends(Release, _super);
             function Release() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __release;
+                _this.event = __release;
+                return _this;
             }
             return Release;
         }(SimpleEventControl));
@@ -17673,11 +17670,12 @@ var plat;
         var Swipe = (function (_super) {
             __extends(Swipe, _super);
             function Swipe() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __swipe;
+                _this.event = __swipe;
+                return _this;
             }
             return Swipe;
         }(SimpleEventControl));
@@ -17688,11 +17686,12 @@ var plat;
         var SwipeLeft = (function (_super) {
             __extends(SwipeLeft, _super);
             function SwipeLeft() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __swipeleft;
+                _this.event = __swipeleft;
+                return _this;
             }
             return SwipeLeft;
         }(SimpleEventControl));
@@ -17703,11 +17702,12 @@ var plat;
         var SwipeRight = (function (_super) {
             __extends(SwipeRight, _super);
             function SwipeRight() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __swiperight;
+                _this.event = __swiperight;
+                return _this;
             }
             return SwipeRight;
         }(SimpleEventControl));
@@ -17718,11 +17718,12 @@ var plat;
         var SwipeUp = (function (_super) {
             __extends(SwipeUp, _super);
             function SwipeUp() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __swipeup;
+                _this.event = __swipeup;
+                return _this;
             }
             return SwipeUp;
         }(SimpleEventControl));
@@ -17733,11 +17734,12 @@ var plat;
         var SwipeDown = (function (_super) {
             __extends(SwipeDown, _super);
             function SwipeDown() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __swipedown;
+                _this.event = __swipedown;
+                return _this;
             }
             return SwipeDown;
         }(SimpleEventControl));
@@ -17748,11 +17750,12 @@ var plat;
         var Track = (function (_super) {
             __extends(Track, _super);
             function Track() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __track;
+                _this.event = __track;
+                return _this;
             }
             return Track;
         }(SimpleEventControl));
@@ -17763,11 +17766,12 @@ var plat;
         var TrackLeft = (function (_super) {
             __extends(TrackLeft, _super);
             function TrackLeft() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __trackleft;
+                _this.event = __trackleft;
+                return _this;
             }
             return TrackLeft;
         }(SimpleEventControl));
@@ -17778,11 +17782,12 @@ var plat;
         var TrackRight = (function (_super) {
             __extends(TrackRight, _super);
             function TrackRight() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __trackright;
+                _this.event = __trackright;
+                return _this;
             }
             return TrackRight;
         }(SimpleEventControl));
@@ -17793,11 +17798,12 @@ var plat;
         var TrackUp = (function (_super) {
             __extends(TrackUp, _super);
             function TrackUp() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __trackup;
+                _this.event = __trackup;
+                return _this;
             }
             return TrackUp;
         }(SimpleEventControl));
@@ -17808,11 +17814,12 @@ var plat;
         var TrackDown = (function (_super) {
             __extends(TrackDown, _super);
             function TrackDown() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __trackdown;
+                _this.event = __trackdown;
+                return _this;
             }
             return TrackDown;
         }(SimpleEventControl));
@@ -17823,11 +17830,12 @@ var plat;
         var TrackEnd = (function (_super) {
             __extends(TrackEnd, _super);
             function TrackEnd() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = __trackend;
+                _this.event = __trackend;
+                return _this;
             }
             return TrackEnd;
         }(SimpleEventControl));
@@ -17838,11 +17846,12 @@ var plat;
         var Submit = (function (_super) {
             __extends(Submit, _super);
             function Submit() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'submit';
+                _this.event = 'submit';
+                return _this;
             }
             /**
              * Prevents the default submit action unless
@@ -17866,11 +17875,12 @@ var plat;
         var React = (function (_super) {
             __extends(React, _super);
             function React() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'input';
+                _this.event = 'input';
+                return _this;
             }
             /**
              * Adds any and all necessary event listeners.
@@ -17925,11 +17935,11 @@ var plat;
                 this.addEventListener(element, 'cut', postponedEventListener, false);
                 this.addEventListener(element, 'paste', postponedEventListener, false);
             };
-            React._inject = {
-                _compat: __Compat
-            };
             return React;
         }(SimpleEventControl));
+        React._inject = {
+            _compat: __Compat
+        };
         controls.React = React;
         register.control(__Tap, Tap);
         register.control(__Blur, Blur);
@@ -18063,11 +18073,12 @@ var plat;
         var KeyCodeEventControl = (function (_super) {
             __extends(KeyCodeEventControl, _super);
             function KeyCodeEventControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Holds the key mappings to filter for in a KeyboardEvent.
                  */
-                this.keyCodes = {};
+                _this.keyCodes = {};
+                return _this;
             }
             /**
              * Checks if the IKeyboardEventInput is an expression object
@@ -18156,11 +18167,12 @@ var plat;
         var KeyDown = (function (_super) {
             __extends(KeyDown, _super);
             function KeyDown() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'keydown';
+                _this.event = 'keydown';
+                return _this;
             }
             return KeyDown;
         }(KeyCodeEventControl));
@@ -18172,11 +18184,12 @@ var plat;
         var KeyPress = (function (_super) {
             __extends(KeyPress, _super);
             function KeyPress() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'keydown';
+                _this.event = 'keydown';
+                return _this;
             }
             /**
              * Filters only 'printing keys' (a-z, A-Z, 0-9, and special characters).
@@ -18209,11 +18222,12 @@ var plat;
         var KeyUp = (function (_super) {
             __extends(KeyUp, _super);
             function KeyUp() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'keyup';
+                _this.event = 'keyup';
+                return _this;
             }
             return KeyUp;
         }(KeyCodeEventControl));
@@ -18224,11 +18238,12 @@ var plat;
         var CharPress = (function (_super) {
             __extends(CharPress, _super);
             function CharPress() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                this.event = 'keypress';
+                _this.event = 'keypress';
+                return _this;
             }
             /**
              * Parses the proper method args and finds any char code filters.
@@ -18312,15 +18327,16 @@ var plat;
         var SetAttributeControl = (function (_super) {
             __extends(SetAttributeControl, _super);
             function SetAttributeControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated element.
                  */
-                this.property = '';
+                _this.property = '';
                 /**
                  * The function to stop listening for the delayed attribute set.
                  */
-                this._stopSetter = noop;
+                _this._stopSetter = noop;
+                return _this;
             }
             /**
              * Sets the corresponding attribute {property} value and
@@ -18391,11 +18407,12 @@ var plat;
         var Checked = (function (_super) {
             __extends(Checked, _super);
             function Checked() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = 'checked';
+                _this.property = 'checked';
+                return _this;
             }
             return Checked;
         }(SetAttributeControl));
@@ -18406,11 +18423,12 @@ var plat;
         var Disabled = (function (_super) {
             __extends(Disabled, _super);
             function Disabled() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = 'disabled';
+                _this.property = 'disabled';
+                return _this;
             }
             return Disabled;
         }(SetAttributeControl));
@@ -18421,11 +18439,12 @@ var plat;
         var Selected = (function (_super) {
             __extends(Selected, _super);
             function Selected() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = 'selected';
+                _this.property = 'selected';
+                return _this;
             }
             return Selected;
         }(SetAttributeControl));
@@ -18436,11 +18455,12 @@ var plat;
         var ReadOnly = (function (_super) {
             __extends(ReadOnly, _super);
             function ReadOnly() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = 'readonly';
+                _this.property = 'readonly';
+                return _this;
             }
             return ReadOnly;
         }(SetAttributeControl));
@@ -18451,23 +18471,24 @@ var plat;
         var Visible = (function (_super) {
             __extends(Visible, _super);
             function Visible() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated element.
                  */
-                this.property = 'display';
+                _this.property = 'display';
                 /**
                  * The value to associate with the property.
                  */
-                this.value = 'none';
+                _this.value = 'none';
                 /**
                  * The importance to set on the property.
                  */
-                this.importance = 'important';
+                _this.importance = 'important';
                 /**
                  * The initial value of the property to be set.
                  */
-                this._initialValue = '';
+                _this._initialValue = '';
+                return _this;
             }
             /**
              * Hides the element.
@@ -18534,32 +18555,33 @@ var plat;
         var Style = (function (_super) {
             __extends(Style, _super);
             function Style() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = 'style';
+                _this.property = 'style';
                 /**
                  * A regular expression for separating style properties from style values in
                  * individual style declarations.
                  */
-                this._styleRegex = /(.*?):(.*)/;
+                _this._styleRegex = /(.*?):(.*)/;
                 /**
                  * A regular expression for temporarily finding and removing url declarations in the style attribute.
                  */
-                this._urlRegex = /url\([^\)]*\)/gi;
+                _this._urlRegex = /url\([^\)]*\)/gi;
                 /**
                  * The temporary replace value of urls found in the style attribute.
                  */
-                this._urlReplace = '[PLAT-STYLE-URL]';
+                _this._urlReplace = '[PLAT-STYLE-URL]';
                 /**
                  * An object storing all the added styles.
                  */
-                this.__addedStyles = [];
+                _this.__addedStyles = [];
                 /**
                  * An object storing all the old style values.
                  */
-                this.__oldStyles = {};
+                _this.__oldStyles = {};
+                return _this;
             }
             /**
              * Sets the evaluated styles on the element.
@@ -18629,7 +18651,7 @@ var plat;
         var ElementPropertyControl = (function (_super) {
             __extends(ElementPropertyControl, _super);
             function ElementPropertyControl() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             /**
              * The function for setting the corresponding
@@ -18653,11 +18675,12 @@ var plat;
         var Href = (function (_super) {
             __extends(Href, _super);
             function Href() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Used to set the element's href property.
                  */
-                this.property = 'href';
+                _this.property = 'href';
+                return _this;
             }
             return Href;
         }(ElementPropertyControl));
@@ -18668,11 +18691,12 @@ var plat;
         var Src = (function (_super) {
             __extends(Src, _super);
             function Src() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Used to set the element's src property.
                  */
-                this.property = 'src';
+                _this.property = 'src';
+                return _this;
             }
             /**
              * The function for setting the corresponding
@@ -18687,11 +18711,11 @@ var plat;
                     element[elementProperty] = this._browser.urlUtils(expression);
                 }
             };
-            Src._inject = {
-                _browser: __Browser
-            };
             return Src;
         }(ElementPropertyControl));
+        Src._inject = {
+            _browser: __Browser
+        };
         controls.Src = Src;
         register.control(__Href, Href);
         register.control(__Src, Src);
@@ -18701,39 +18725,40 @@ var plat;
         var Bind = (function (_super) {
             __extends(Bind, _super);
             function Bind() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The priority of Bind is set high to precede
                  * other controls that may be listening to the same
                  * event.
                  */
-                this.priority = 100;
+                _this.priority = 100;
                 /**
                  * Whether or not Bind is being used in conjunction
                  * with a TemplateControl that implements the
                  * interface ISupportTwoWayBinding.
                  */
-                this._supportsTwoWayBinding = false;
+                _this._supportsTwoWayBinding = false;
                 /**
                  * A regular expression used to determine if the value is in HTML5 date format YYYY-MM-DD.
                  */
-                this._dateRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])/;
+                _this._dateRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])/;
                 /**
                  * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
                  */
-                this._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
+                _this._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
                 /**
                  * Whether or not the File API is supported.
                  */
-                this.__fileSupported = acquire(__Compat).fileSupported;
+                _this.__fileSupported = acquire(__Compat).fileSupported;
                 /**
                  * Used to grab a filename from input[type="file"].
                  */
-                this.__fileNameRegex = acquire(__Regex).fileNameRegex;
+                _this.__fileNameRegex = acquire(__Regex).fileNameRegex;
                 /**
                  * Used to denote that a property change happened from within this control.
                  */
-                this.__isSelf = false;
+                _this.__isSelf = false;
+                return _this;
             }
             /**
              * Determines the type of Element being bound to
@@ -18977,7 +19002,7 @@ var plat;
                     size: undefined,
                     msDetachStream: noop,
                     msClose: noop,
-                    slice: function () { return {}; }
+                    slice: function () { return ({}); }
                 };
             };
             /**
@@ -18990,7 +19015,7 @@ var plat;
                 }
                 // this case should never be hit since ie9 does not support multi-file uploads, 
                 // but kept in here for now for consistency's sake 
-                var filelist = element.value.split(/,|;/g), length = filelist.length, files = [], fileValue, blobSlice = function () { return {}; };
+                var filelist = element.value.split(/,|;/g), length = filelist.length, files = [], fileValue, blobSlice = function () { return ({}); };
                 for (var i = 0; i < length; ++i) {
                     fileValue = filelist[i];
                     files.push({
@@ -19685,14 +19710,14 @@ var plat;
                     return 'boolean';
                 }
             };
-            Bind._inject = {
-                _parser: __Parser,
-                _ContextManager: __ContextManagerStatic,
-                _compat: __Compat,
-                _document: __Document
-            };
             return Bind;
         }(AttributeControl));
+        Bind._inject = {
+            _parser: __Parser,
+            _ContextManager: __ContextManagerStatic,
+            _compat: __Compat,
+            _document: __Document
+        };
         controls.Bind = Bind;
         register.control(__Bind, Bind);
         /**
@@ -19701,24 +19726,25 @@ var plat;
         var ObservableAttributeControl = (function (_super) {
             __extends(ObservableAttributeControl, _super);
             function ObservableAttributeControl() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = '';
+                _this.property = '';
                 /**
                  * This control needs to load before its templateControl
                  */
-                this.priority = 200;
+                _this.priority = 200;
                 /**
                  * The set of functions added by the Template Control that listens
                  * for property changes.
                  */
-                this._listeners = [];
+                _this._listeners = [];
                 /**
                  * The _addListener function bound to this control.
                  */
-                this._boundAddListener = this._addListener.bind(this);
+                _this._boundAddListener = _this._addListener.bind(_this);
+                return _this;
             }
             /**
              * Sets the initial value of the property on
@@ -19807,11 +19833,11 @@ var plat;
                 }
                 this._removeListener = this.observeExpression(this._setProperty, this.attributes[this.attribute]);
             };
-            ObservableAttributeControl._inject = {
-                _ContextManager: __ContextManagerStatic
-            };
             return ObservableAttributeControl;
         }(AttributeControl));
+        ObservableAttributeControl._inject = {
+            _ContextManager: __ContextManagerStatic
+        };
         controls.ObservableAttributeControl = ObservableAttributeControl;
         /**
          * An ObservableAttributeControl that sets 'options' as the
@@ -19820,11 +19846,12 @@ var plat;
         var Options = (function (_super) {
             __extends(Options, _super);
             function Options() {
-                _super.apply(this, arguments);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                this.property = 'options';
+                _this.property = 'options';
+                return _this;
             }
             return Options;
         }(ObservableAttributeControl));
@@ -20049,12 +20076,12 @@ var plat;
         App.prototype.exit = function () {
             this.dispatchEvent(__shutdown);
         };
-        /**
-         * The instance of the registered IApp.
-         */
-        App.app = null;
         return App;
     }());
+    /**
+     * The instance of the registered IApp.
+     */
+    App.app = null;
     plat_1.App = App;
     /**
      */
