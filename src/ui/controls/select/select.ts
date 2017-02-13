@@ -349,8 +349,7 @@ module plat.ui.controls {
                 if (!isEmpty(oldValue)) {
                     this.itemsLoaded.then((): void => {
                         this._removeItems(this.controls.length);
-                        this._observeChange();
-                    });
+                    }).then(this._observeChange.bind(this));
                 }
                 return;
             }
@@ -361,13 +360,12 @@ module plat.ui.controls {
             this._setListener();
 
             if (newLength > oldLength) {
-                this._addItems(newLength - oldLength, oldLength).then(this._observeChange.bind(this));
-                return;
+                this._addItems(newLength - oldLength, oldLength);
             } else if (newLength < oldLength) {
                 this._removeItems(oldLength - newLength);
             }
 
-            this._observeChange();
+            this.itemsLoaded.then(this._observeChange.bind(this));
         }
 
         /**
@@ -635,17 +633,15 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _observeChange(): void {
-            this.itemsLoaded.then(() => {
-                let element = this.element,
-                    newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+            let element = this.element,
+                newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
 
-                if (newLast === this.__lastValue) {
-                    return;
-                }
+            if (newLast === this.__lastValue) {
+                return;
+            }
 
-                this.inputChanged(newLast, this.__lastValue);
-                this.__lastValue = newLast;
-            });
+            this.inputChanged(newLast, this.__lastValue);
+            this.__lastValue = newLast;
         }
 
         /**
