@@ -681,7 +681,7 @@ module plat.events {
         (<any>EventManager)._document = _document;
         (<any>EventManager)._window = _window;
         (<any>EventManager)._dom = _dom;
-        return EventManager;
+        return <any>EventManager;
     }
 
     register.injectable(__EventManagerStatic, IEventManagerStatic, [

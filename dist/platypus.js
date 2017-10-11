@@ -1,9 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /* tslint:disable */
 /**
  * PlatypusTS v0.23.5 (https://platypi.io)
@@ -466,6 +471,7 @@ var plat;
         if (!isNull(obj)) {
             /* tslint:disable:no-unused-expression */
             delete obj[property];
+            /* tslint:enable:no-unused-expression */
         }
         return obj;
     }
@@ -1107,7 +1113,7 @@ var plat;
          * 'injected' it will create a new instance of your component and pass in the dependencies
          * to the constructor.
          */
-        var Injector = (function () {
+        var Injector = /** @class */ (function () {
             /**
              * The constructor for an injector. Converts any non-string dependencies to strings to support mocking Injectors during runtime.
              * @param {string} name The name of the injected type.
@@ -1523,7 +1529,7 @@ var plat;
          * Handles all logging/debugging for the framework. All logs will be bubbled up to the
          * App.error event to allow for easy debugging.
          */
-        var Log = (function () {
+        var Log = /** @class */ (function () {
             function Log() {
                 /**
                  * The ERROR log level
@@ -1619,7 +1625,7 @@ var plat;
      * A class containing boolean values signifying browser
      * and/or platform compatibilities.
      */
-    var Compat = (function () {
+    var Compat = /** @class */ (function () {
         /**
          * Define everything.
          */
@@ -1791,19 +1797,19 @@ var plat;
             this.platCss = display === 'none' || visibility === 'hidden';
             head.removeChild(element);
         };
+        Compat._inject = {
+            _window: __Window,
+            _history: __History,
+            _document: __Document
+        };
         return Compat;
     }());
-    Compat._inject = {
-        _window: __Window,
-        _history: __History,
-        _document: __Document
-    };
     plat_1.Compat = Compat;
     register.injectable(__Compat, Compat);
     /**
      * An extensible class defining common utilities and helper functions.
      */
-    var Utils = (function () {
+    var Utils = /** @class */ (function () {
         function Utils() {
         }
         /**
@@ -2124,7 +2130,7 @@ var plat;
         /**
          * A class for keeping track of commonly used regular expressions.
          */
-        var Regex = (function () {
+        var Regex = /** @class */ (function () {
             function Regex() {
                 /**
                  * A regular expression for finding markup in a string.
@@ -2281,7 +2287,7 @@ var plat;
          * A class that is responsible for taking in a JavaScript expression string and
          * finding all of its tokens (i.e. delimiters, operators, etc).
          */
-        var Tokenizer = (function () {
+        var Tokenizer = /** @class */ (function () {
             function Tokenizer() {
                 /**
                  * The previous character during tokenization.
@@ -2384,6 +2390,7 @@ var plat;
                             default:
                                 index = this.__handleOtherOperator(index, char);
                         }
+                        // semicolon throw error 
                     }
                     else if (char === ';') {
                         this._throwError('Unexpected semicolon');
@@ -2919,18 +2926,18 @@ var plat;
                 }
                 return atLeastOne;
             };
+            Tokenizer._inject = {
+                _log: __Log
+            };
             return Tokenizer;
         }());
-        Tokenizer._inject = {
-            _log: __Log
-        };
         expressions.Tokenizer = Tokenizer;
         register.injectable(__Tokenizer, Tokenizer);
         /**
          * A class for parsing JavaScript expression strings and creating
          * IParsedExpressions.
          */
-        var Parser = (function () {
+        var Parser = /** @class */ (function () {
             function Parser() {
                 /**
                  * A single expression's token representation created by a Tokenizer.
@@ -3023,6 +3030,7 @@ var plat;
                                 if (args < 0) {
                                     codeArray.push('[]');
                                     tempIdentifiers.push('.');
+                                    // handle array literal 
                                 }
                                 else if (args > 0) {
                                     codeArray.push(this.__convertArrayLiteral(args));
@@ -3033,6 +3041,7 @@ var plat;
                                 }
                                 break;
                         }
+                        // check if its an operator 
                     }
                     else if (isOperator(token)) {
                         // check if string literal 
@@ -3057,11 +3066,13 @@ var plat;
                                     break;
                             }
                         }
+                        // its either function, object, or primitive 
                     }
                     else {
                         // potential function or object to index into 
                         if (args < 0) {
                             codeArray.push(this.__convertFunction(index, token, useLocalContext));
+                            // primitive 
                         }
                         else {
                             codeArray.push(this.__convertPrimitive(index, token, args));
@@ -3316,6 +3327,7 @@ var plat;
                         if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
                             tempIdentifiers[lastIndex] += '.' + identifierFnName;
                             identifiers.push(tempIdentifiers.pop());
+                            // check fn name is not null, pushed an identifier, and the context is not an array literal 
                         }
                         else if (!(identifierFnName === '' ||
                             !pushedIdentifier ||
@@ -3480,12 +3492,12 @@ var plat;
                     return context[token];
                 }
             };
+            Parser._inject = {
+                _tokenizer: __Tokenizer,
+                _log: __Log
+            };
             return Parser;
         }());
-        Parser._inject = {
-            _tokenizer: __Tokenizer,
-            _log: __Log
-        };
         expressions.Parser = Parser;
         register.injectable(__Parser, Parser);
     })(expressions = plat_1.expressions || (plat_1.expressions = {}));
@@ -3504,7 +3516,7 @@ var plat;
         /**
          * The class that handles all interaction with the browser.
          */
-        var Browser = (function () {
+        var Browser = /** @class */ (function () {
             /**
              * The constructor for a Browser. Assigns a uid and subscribes to the 'beforeLoad' event.
              */
@@ -3749,27 +3761,27 @@ var plat;
                 }
                 return url.slice(0, -1);
             };
+            Browser._inject = {
+                _EventManager: __EventManagerStatic,
+                _compat: __Compat,
+                _regex: __Regex,
+                _window: __Window,
+                _location: __Location,
+                _history: __History,
+                _dom: __Dom
+            };
+            /**
+             * The IBrowserConfig injectable object.
+             */
+            Browser.config = {
+                HASH: 'hash',
+                STATE: 'state',
+                routingType: 'hash',
+                hashPrefix: '!',
+                baseUrl: ''
+            };
             return Browser;
         }());
-        Browser._inject = {
-            _EventManager: __EventManagerStatic,
-            _compat: __Compat,
-            _regex: __Regex,
-            _window: __Window,
-            _location: __Location,
-            _history: __History,
-            _dom: __Dom
-        };
-        /**
-         * The IBrowserConfig injectable object.
-         */
-        Browser.config = {
-            HASH: 'hash',
-            STATE: 'state',
-            routingType: 'hash',
-            hashPrefix: '!',
-            baseUrl: ''
-        };
         web.Browser = Browser;
         register.injectable(__Browser, Browser);
         /**
@@ -3783,7 +3795,7 @@ var plat;
          * Deals with obtaining detailed information about an
          * associated URL.
          */
-        var UrlUtils = (function () {
+        var UrlUtils = /** @class */ (function () {
             /**
              * The constructor for a UrlUtils instance.
              * Handles parsing the initial URL and obtain the base URL if necessary.
@@ -3877,16 +3889,16 @@ var plat;
             UrlUtils.prototype.toString = function () {
                 return this.href;
             };
+            UrlUtils._inject = {
+                _EventManager: __EventManagerStatic,
+                _document: __Document,
+                _window: __Window,
+                _compat: __Compat,
+                _regex: __Regex,
+                _browserConfig: __BrowserConfig
+            };
             return UrlUtils;
         }());
-        UrlUtils._inject = {
-            _EventManager: __EventManagerStatic,
-            _document: __Document,
-            _window: __Window,
-            _compat: __Compat,
-            _regex: __Regex,
-            _browserConfig: __BrowserConfig
-        };
         web.UrlUtils = UrlUtils;
         register.injectable(__UrlUtilsInstance, UrlUtils, null, __INSTANCE);
     })(web = plat_1.web || (plat_1.web = {}));
@@ -3910,7 +3922,7 @@ var plat;
         /**
          * Takes in a generic type corresponding to the fullfilled success type.
          */
-        var Promise = (function () {
+        var Promise = /** @class */ (function () {
             /**
              * An ES6 implementation of the Promise API. Useful for asynchronous programming.
              * Takes in 2 generic types corresponding to the fullfilled success and error types.
@@ -4193,21 +4205,21 @@ var plat;
             Promise.prototype.toString = function () {
                 return '[object Promise]';
             };
+            /**
+             * The configuration for creating asynchronous promise flushing.
+             */
+            Promise.config = {
+                /**
+                 */
+                async: function (callback, arg) {
+                    var length = __promiseQueue.push([callback, arg]);
+                    if (length === 1) {
+                        scheduleFlush();
+                    }
+                }
+            };
             return Promise;
         }());
-        /**
-         * The configuration for creating asynchronous promise flushing.
-         */
-        Promise.config = {
-            /**
-             */
-            async: function (callback, arg) {
-                var length = __promiseQueue.push([callback, arg]);
-                if (length === 1) {
-                    scheduleFlush();
-                }
-            }
-        };
         async.Promise = Promise;
         var State;
         (function (State) {
@@ -4268,7 +4280,7 @@ var plat;
          * sending AJAX requests to a server. This class does not support
          * synchronous requests.
          */
-        var HttpRequest = (function () {
+        var HttpRequest = /** @class */ (function () {
             /**
              * The constructor for a HttpRequest.
              */
@@ -4620,9 +4632,19 @@ var plat;
                         val = '';
                     }
                     else if (isObject(val)) {
-                        // may throw a fatal error but this is an invalid case 
-                        this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
-                        val = JSON.stringify(val);
+                        if (isDate(val)) {
+                            val = val.toISOString();
+                        }
+                        else if (isFile(val)) {
+                            // cannot parse file this way 
+                            this._log.warn('Invalid File entry with key "' + key + '"');
+                            val = '[object File]';
+                        }
+                        else {
+                            // may throw a fatal error but this is an invalid case 
+                            this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
+                            val = JSON.stringify(val);
+                        }
                     }
                     formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
                 }
@@ -4640,7 +4662,10 @@ var plat;
                         formData.append(key, '');
                     }
                     else if (isObject(val)) {
-                        if (isFile(val)) {
+                        if (isDate(val)) {
+                            formData.append(key, val.toISOString());
+                        }
+                        else if (isFile(val)) {
                             formData.append(key, val, val.name || val.fileName || 'blob');
                         }
                         else {
@@ -4753,20 +4778,20 @@ var plat;
                 }
                 return input;
             };
+            HttpRequest._inject = {
+                _browser: __Browser,
+                _window: __Window,
+                _document: __Document,
+                _config: __HttpConfig,
+                _log: __Log
+            };
             return HttpRequest;
         }());
-        HttpRequest._inject = {
-            _browser: __Browser,
-            _window: __Window,
-            _document: __Document,
-            _config: __HttpConfig,
-            _log: __Log
-        };
         async.HttpRequest = HttpRequest;
         /**
          * A class that forms an Error object with an IAjaxResponse.
          */
-        var AjaxError = (function () {
+        var AjaxError = /** @class */ (function () {
             /**
              * The constructor for an AjaxError.
              * @param {plat.async.IAjaxResponse} response The IAjaxResponse object.
@@ -4801,7 +4826,7 @@ var plat;
          * Describes a type of Promise that fulfills with an IAjaxResponse
          * and can be optionally cancelled.
          */
-        var AjaxPromise = (function (_super) {
+        var AjaxPromise = /** @class */ (function (_super) {
             __extends(AjaxPromise, _super);
             function AjaxPromise(resolveFunction, promise) {
                 var _this = _super.call(this, resolveFunction) || this;
@@ -4855,7 +4880,7 @@ var plat;
          * The instantiated class of the injectable for making
          * AJAX requests.
          */
-        var Http = (function () {
+        var Http = /** @class */ (function () {
             function Http() {
                 /**
                  * Provides value mappings for XMLHttpRequestResponseTypes
@@ -4913,22 +4938,22 @@ var plat;
                 request.initialize(_extend(false, false, {}, options, { responseType: 'json' }));
                 return request.execute();
             };
+            /**
+             * Default Http config
+             */
+            Http.config = {
+                url: null,
+                method: 'GET',
+                responseType: '',
+                transforms: [],
+                headers: {},
+                withCredentials: false,
+                timeout: null,
+                jsonpIdentifier: 'callback',
+                contentType: 'application/json;charset=utf-8'
+            };
             return Http;
         }());
-        /**
-         * Default Http config
-         */
-        Http.config = {
-            url: null,
-            method: 'GET',
-            responseType: '',
-            transforms: [],
-            headers: {},
-            withCredentials: false,
-            timeout: null,
-            jsonpIdentifier: 'callback',
-            contentType: 'application/json;charset=utf-8'
-        };
         async.Http = Http;
         register.injectable(__Http, Http);
         register.injectable(__HttpRequestInstance, HttpRequest, null, __INSTANCE);
@@ -4958,7 +4983,7 @@ var plat;
          * A Cache class, for use with the ICacheFactory injectable.
          * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
          */
-        var Cache = (function () {
+        var Cache = /** @class */ (function () {
             /**
              * The constructor for a Cache.
              * @param {string} id The id to use to retrieve the cache from the ICacheFactory.
@@ -5089,7 +5114,7 @@ var plat;
          * clone a template when you put it in the cache. It will
          * also clone the template when you retrieve it.
          */
-        var TemplateCache = (function (_super) {
+        var TemplateCache = /** @class */ (function (_super) {
             __extends(TemplateCache, _super);
             /**
              * The constructor for a TemplateCache. Creates a new Cache
@@ -5132,18 +5157,18 @@ var plat;
                     return null;
                 });
             };
+            TemplateCache._inject = {
+                _Promise: __Promise,
+                _log: __Log
+            };
             return TemplateCache;
         }(Cache));
-        TemplateCache._inject = {
-            _Promise: __Promise,
-            _log: __Log
-        };
         storage_1.TemplateCache = TemplateCache;
         register.injectable(__TemplateCache, TemplateCache);
         /**
          * A base class for storing data with a designated storage type.
          */
-        var BaseStorage = (function () {
+        var BaseStorage = /** @class */ (function () {
             /**
              * The constructor for a BaseStorage.
              */
@@ -5209,7 +5234,7 @@ var plat;
         /**
          * A class used to wrap HTML5 localStorage into an injectable.
          */
-        var LocalStorage = (function (_super) {
+        var LocalStorage = /** @class */ (function (_super) {
             __extends(LocalStorage, _super);
             function LocalStorage() {
                 return _super.call(this, acquire(__Window).localStorage) || this;
@@ -5221,7 +5246,7 @@ var plat;
         /**
          * A class for wrapping SessionStorage as an injectable.
          */
-        var SessionStorage = (function (_super) {
+        var SessionStorage = /** @class */ (function (_super) {
             __extends(SessionStorage, _super);
             function SessionStorage() {
                 return _super.call(this, acquire(__Window).sessionStorage) || this;
@@ -5320,6 +5345,7 @@ var plat;
             precedence: 9, associativity: 'ltr',
             /* tslint:disable:triple-equals */
             fn: function (context, aliases, a, b) { return a(context, aliases) == b(context, aliases); }
+            /* tslint:enable:triple-equals */
         },
         '===': {
             precedence: 9, associativity: 'ltr',
@@ -5329,6 +5355,7 @@ var plat;
             precedence: 9, associativity: 'ltr',
             /* tslint:disable:triple-equals */
             fn: function (context, aliases, a, b) { return a(context, aliases) != b(context, aliases); }
+            /* tslint:enable:triple-equals */
         },
         '!==': {
             precedence: 9, associativity: 'ltr',
@@ -5474,7 +5501,7 @@ var plat;
          * A class for managing both context inheritance and observable properties on controls and
          * facilitating in data-binding.
          */
-        var ContextManager = (function () {
+        var ContextManager = /** @class */ (function () {
             function ContextManager() {
                 /**
                  * Reference to the Compat injectable.
@@ -6416,20 +6443,20 @@ var plat;
                     previous.push(ident);
                 }
             };
+            /**
+             * A set of functions to be fired when a particular observed array is mutated.
+             */
+            ContextManager.arrayChangeListeners = {};
+            /**
+             * An object for quickly accessing a previously created ContextManager.
+             */
+            ContextManager.__managers = {};
+            /**
+             * An object for storing functions to remove listeners for observed identifiers.
+             */
+            ContextManager.__controls = {};
             return ContextManager;
         }());
-        /**
-         * A set of functions to be fired when a particular observed array is mutated.
-         */
-        ContextManager.arrayChangeListeners = {};
-        /**
-         * An object for quickly accessing a previously created ContextManager.
-         */
-        ContextManager.__managers = {};
-        /**
-         * An object for storing functions to remove listeners for observed identifiers.
-         */
-        ContextManager.__controls = {};
         observable.ContextManager = ContextManager;
         /**
          */
@@ -6455,7 +6482,7 @@ var plat;
          * handling the event it will be logged to the app using Log.debug. Errors will
          * not stop propagation of the event.
          */
-        var DispatchEvent = (function () {
+        var DispatchEvent = /** @class */ (function () {
             function DispatchEvent() {
                 /**
                  * Whether or not preventDefault() was called on the event. Senders of the
@@ -6491,18 +6518,18 @@ var plat;
                     this._EventManager.propagatingEvents[this.name] = false;
                 }
             };
+            DispatchEvent._inject = {
+                _EventManager: __EventManagerStatic,
+                _ContextManager: __ContextManagerStatic
+            };
             return DispatchEvent;
         }());
-        DispatchEvent._inject = {
-            _EventManager: __EventManagerStatic,
-            _ContextManager: __ContextManagerStatic
-        };
         events.DispatchEvent = DispatchEvent;
         register.injectable(__DispatchEventInstance, DispatchEvent, null, __INSTANCE);
         /**
          * Represents a Lifecycle Event. Lifecycle Events are always direct events.
          */
-        var LifecycleEvent = (function (_super) {
+        var LifecycleEvent = /** @class */ (function (_super) {
             __extends(LifecycleEvent, _super);
             function LifecycleEvent() {
                 return _super !== null && _super.apply(this, arguments) || this;
@@ -6540,7 +6567,7 @@ var plat;
         /**
          * Manages dispatching events, handling all propagating events as well as any error handling.
          */
-        var EventManager = (function () {
+        var EventManager = /** @class */ (function () {
             function EventManager() {
             }
             /**
@@ -6778,38 +6805,38 @@ var plat;
                     }
                 }
             };
+            /**
+             * An upward-moving event will start at the sender and move
+             * up the parent chain.
+             */
+            EventManager.UP = 'up';
+            /**
+             * A downward-moving event will start at the sender and move
+             * to its children and beyond.
+             */
+            EventManager.DOWN = 'down';
+            /**
+             * Goes through all listeners for an event name, ignoring order.
+             */
+            EventManager.DIRECT = 'direct';
+            /**
+             * Keeps track of which events are currently propagating.
+             */
+            EventManager.propagatingEvents = {};
+            /**
+             * Holds all the event listeners keyed by uid.
+             */
+            EventManager.__eventsListeners = {};
+            /**
+             * Holds all the event listeners for the application lifefycle events.
+             */
+            EventManager.__lifecycleEventListeners = [];
+            /**
+             * whether or not the event manager has been initialized.
+             */
+            EventManager.__initialized = false;
             return EventManager;
         }());
-        /**
-         * An upward-moving event will start at the sender and move
-         * up the parent chain.
-         */
-        EventManager.UP = 'up';
-        /**
-         * A downward-moving event will start at the sender and move
-         * to its children and beyond.
-         */
-        EventManager.DOWN = 'down';
-        /**
-         * Goes through all listeners for an event name, ignoring order.
-         */
-        EventManager.DIRECT = 'direct';
-        /**
-         * Keeps track of which events are currently propagating.
-         */
-        EventManager.propagatingEvents = {};
-        /**
-         * Holds all the event listeners keyed by uid.
-         */
-        EventManager.__eventsListeners = {};
-        /**
-         * Holds all the event listeners for the application lifefycle events.
-         */
-        EventManager.__lifecycleEventListeners = [];
-        /**
-         * whether or not the event manager has been initialized.
-         */
-        EventManager.__initialized = false;
         events.EventManager = EventManager;
         /**
          */
@@ -6834,7 +6861,7 @@ var plat;
          * internal errors (both fatal and warnings). All error events are
          * direct events.
          */
-        var ErrorEvent = (function (_super) {
+        var ErrorEvent = /** @class */ (function (_super) {
             __extends(ErrorEvent, _super);
             function ErrorEvent() {
                 return _super !== null && _super.apply(this, arguments) || this;
@@ -6874,7 +6901,7 @@ var plat;
      * as well as properties for communicating with other controls. This is the base
      * class for all types of controls.
      */
-    var Control = (function () {
+    var Control = /** @class */ (function () {
         /**
          * The constructor for a control. Any injectables specified during control registration will be
          * passed into the constructor as arguments as long as the control is instantiated with its associated
@@ -7358,12 +7385,12 @@ var plat;
          * all of the memory it is using, including DOM event and property listeners.
          */
         Control.prototype.dispose = function () { };
+        /**
+         * An object containing all controls' registered event listeners.
+         */
+        Control.__eventListeners = {};
         return Control;
     }());
-    /**
-     * An object containing all controls' registered event listeners.
-     */
-    Control.__eventListeners = {};
     plat_1.Control = Control;
     /**
      */
@@ -7389,7 +7416,7 @@ var plat;
      * A type of control that can be used as an attribute but will
      * not be used to add, remove, or modify DOM.
      */
-    var AttributeControl = (function (_super) {
+    var AttributeControl = /** @class */ (function (_super) {
         __extends(AttributeControl, _super);
         function AttributeControl() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -7435,7 +7462,7 @@ var plat;
          * The base control for any control that affects the UI. They provide properties for the control to use
          * to manage its body HTML.
          */
-        var TemplateControl = (function (_super) {
+        var TemplateControl = /** @class */ (function (_super) {
             __extends(TemplateControl, _super);
             function TemplateControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -7739,6 +7766,7 @@ var plat;
             TemplateControl.determineTemplate = function (control, templateUrl) {
                 var templateCache = TemplateControl._templateCache, dom = control.dom, Promise = TemplateControl._Promise;
                 if (!isNull(templateUrl)) {
+                    // do nothing 
                 }
                 else if (!isNull(control.templateUrl)) {
                     templateUrl = control.templateUrl;
@@ -7823,12 +7851,12 @@ var plat;
             TemplateControl.prototype.evaluateExpression = function (expression, context) {
                 return TemplateControl.evaluateExpression(expression, this, context);
             };
+            /**
+             * An object for quickly retrieving previously accessed resources.
+             */
+            TemplateControl.__resourceCache = {};
             return TemplateControl;
         }(Control));
-        /**
-         * An object for quickly retrieving previously accessed resources.
-         */
-        TemplateControl.__resourceCache = {};
         ui.TemplateControl = TemplateControl;
         /**
          */
@@ -7859,7 +7887,7 @@ var plat;
          * An extended TemplateControl that allows for the binding of a value to
          * another listening control (e.g. plat-bind control).
          */
-        var BindControl = (function (_super) {
+        var BindControl = /** @class */ (function (_super) {
             __extends(BindControl, _super);
             function BindControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -7928,7 +7956,7 @@ var plat;
          * It has the ability to initiate, approve, and reject navigation to/from itself. A ViewControl also has the
          * ability to inject a Router and configure sub-navigation.
          */
-        var ViewControl = (function (_super) {
+        var ViewControl = /** @class */ (function (_super) {
             __extends(ViewControl, _super);
             function ViewControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -7980,7 +8008,7 @@ var plat;
          * An extensible class dealing with the creation, deletion, and modification
          * of DOM.
          */
-        var Dom = (function () {
+        var Dom = /** @class */ (function () {
             function Dom() {
                 /**
                  * Reference to the DomEvents injectable.
@@ -8124,11 +8152,11 @@ var plat;
             Dom.prototype.whenVisible = function (cb, element) {
                 return whenVisible(cb, element);
             };
+            Dom._inject = {
+                _domEvents: __DomEvents
+            };
             return Dom;
         }());
-        Dom._inject = {
-            _domEvents: __DomEvents
-        };
         ui.Dom = Dom;
         register.injectable(__Dom, Dom);
         /**
@@ -8139,7 +8167,7 @@ var plat;
          * TemplateControls expects multiple configuration templates in its innerHTML. It can
          * separate those templates and reuse them accordingly.
          */
-        var BindableTemplates = (function () {
+        var BindableTemplates = /** @class */ (function () {
             function BindableTemplates() {
                 /**
                  * Reference to the IResourcesFactory injectable.
@@ -8555,7 +8583,7 @@ var plat;
          * The class that stores the information about an Element's attributes (NamedNodeMap).
          * Methods are implemented to allow you to observe for changes on an attribute.
          */
-        var Attributes = (function () {
+        var Attributes = /** @class */ (function () {
             function Attributes() {
                 /**
                  * The set of functions added externally that listens
@@ -8627,7 +8655,7 @@ var plat;
          * are particularly useful when trying to access properties outside of the
          * current context, as well as reassigning context at any point in an app.
          */
-        var Resources = (function () {
+        var Resources = /** @class */ (function () {
             function Resources() {
                 /**
                  * An object representing all of the currently available resources.
@@ -8872,35 +8900,35 @@ var plat;
                     this[key] = this.__resources[key] = bound ? create(control, resource) : resource;
                 }
             };
+            /**
+             * The injectable resource type token.
+             */
+            Resources.INJECTABLE = __INJECTABLE_RESOURCE;
+            /**
+             * The object resource type token. Objects should be literal objects and won't be observed.
+             */
+            Resources.OBJECT = __OBJECT_RESOURCE;
+            /**
+             * The observable resource type token. Observable resources are expected to be
+             * string identifiers and will be observed.
+             */
+            Resources.OBSERVABLE = __OBSERVABLE_RESOURCE;
+            /**
+             * The literal resource type token. Literals will be observed on the resource object,
+             * so if you change `resources.<alias>.value` it will be reflected everywhere it is
+             * observed.
+             */
+            Resources.LITERAL = __LITERAL_RESOURCE;
+            /**
+             * The function resource type token.
+             */
+            Resources.FUNCTION = __FUNCTION_RESOURCE;
+            /**
+             * An object consisting of keyed arrays containing functions for removing observation listeners.
+             */
+            Resources.__observableResourceRemoveListeners = {};
             return Resources;
         }());
-        /**
-         * The injectable resource type token.
-         */
-        Resources.INJECTABLE = __INJECTABLE_RESOURCE;
-        /**
-         * The object resource type token. Objects should be literal objects and won't be observed.
-         */
-        Resources.OBJECT = __OBJECT_RESOURCE;
-        /**
-         * The observable resource type token. Observable resources are expected to be
-         * string identifiers and will be observed.
-         */
-        Resources.OBSERVABLE = __OBSERVABLE_RESOURCE;
-        /**
-         * The literal resource type token. Literals will be observed on the resource object,
-         * so if you change `resources.<alias>.value` it will be reflected everywhere it is
-         * observed.
-         */
-        Resources.LITERAL = __LITERAL_RESOURCE;
-        /**
-         * The function resource type token.
-         */
-        Resources.FUNCTION = __FUNCTION_RESOURCE;
-        /**
-         * An object consisting of keyed arrays containing functions for removing observation listeners.
-         */
-        Resources.__observableResourceRemoveListeners = {};
         ui.Resources = Resources;
         /**
          */
@@ -8925,7 +8953,7 @@ var plat;
         /**
          * A class for managing DOM event registration and handling.
          */
-        var DomEvents = (function () {
+        var DomEvents = /** @class */ (function () {
             /**
              * Retrieve the type of touch events for this browser and create the default gesture style.
              */
@@ -10350,105 +10378,105 @@ var plat;
                 ev.preventDefault();
                 return false;
             };
+            DomEvents._inject = {
+                _document: __Document,
+                _compat: __Compat
+            };
+            /**
+             * A configuration object for all DOM events.
+             */
+            DomEvents.config = {
+                /**
+                 */
+                intervals: {
+                    /**
+                     */
+                    tapInterval: 300,
+                    /**
+                     */
+                    dblTapInterval: 300,
+                    /**
+                     */
+                    holdInterval: 400,
+                    /**
+                     */
+                    dblTapZoomDelay: 0,
+                    /**
+                     */
+                    delayedClickInterval: 400
+                },
+                /**
+                 */
+                distances: {
+                    /**
+                     */
+                    minScrollDistance: 3,
+                    /**
+                     */
+                    maxDblTapDistance: 10
+                },
+                /**
+                 */
+                velocities: {
+                    /**
+                     */
+                    minSwipeVelocity: 0.645
+                },
+                /**
+                 */
+                styleConfig: [{
+                        /**
+                         */
+                        className: 'plat-gesture',
+                        /**
+                         */
+                        styles: [
+                            '-moz-user-select: none',
+                            '-khtml-user-select: none',
+                            '-webkit-touch-callout: none',
+                            '-webkit-user-select: none',
+                            '-webkit-user-drag: none',
+                            '-webkit-tap-highlight-color: transparent',
+                            '-webkit-overflow-scrolling: touch',
+                            '-ms-user-select: none',
+                            '-ms-touch-action: manipulation',
+                            'touch-action: manipulation'
+                        ]
+                    }, {
+                        /**
+                         */
+                        className: 'plat-no-touch-action',
+                        /**
+                         */
+                        styles: [
+                            '-ms-touch-action: none',
+                            'touch-action: none'
+                        ]
+                    }]
+            };
+            /**
+             * An object containing the event types for all of the
+             * supported gestures.
+             */
+            DomEvents.gestures = {
+                $tap: __tap,
+                $dbltap: __dbltap,
+                $hold: __hold,
+                $release: __release,
+                $swipe: __swipe,
+                $swipeleft: __swipeleft,
+                $swiperight: __swiperight,
+                $swipeup: __swipeup,
+                $swipedown: __swipedown,
+                $track: __track,
+                $trackleft: __trackleft,
+                $trackright: __trackright,
+                $trackup: __trackup,
+                $trackdown: __trackdown,
+                $trackend: __trackend
+            };
             return DomEvents;
         }());
-        DomEvents._inject = {
-            _document: __Document,
-            _compat: __Compat
-        };
-        /**
-         * A configuration object for all DOM events.
-         */
-        DomEvents.config = {
-            /**
-             */
-            intervals: {
-                /**
-                 */
-                tapInterval: 300,
-                /**
-                 */
-                dblTapInterval: 300,
-                /**
-                 */
-                holdInterval: 400,
-                /**
-                 */
-                dblTapZoomDelay: 0,
-                /**
-                 */
-                delayedClickInterval: 400
-            },
-            /**
-             */
-            distances: {
-                /**
-                 */
-                minScrollDistance: 3,
-                /**
-                 */
-                maxDblTapDistance: 10
-            },
-            /**
-             */
-            velocities: {
-                /**
-                 */
-                minSwipeVelocity: 0.645
-            },
-            /**
-             */
-            styleConfig: [{
-                    /**
-                     */
-                    className: 'plat-gesture',
-                    /**
-                     */
-                    styles: [
-                        '-moz-user-select: none',
-                        '-khtml-user-select: none',
-                        '-webkit-touch-callout: none',
-                        '-webkit-user-select: none',
-                        '-webkit-user-drag: none',
-                        '-webkit-tap-highlight-color: transparent',
-                        '-webkit-overflow-scrolling: touch',
-                        '-ms-user-select: none',
-                        '-ms-touch-action: manipulation',
-                        'touch-action: manipulation'
-                    ]
-                }, {
-                    /**
-                     */
-                    className: 'plat-no-touch-action',
-                    /**
-                     */
-                    styles: [
-                        '-ms-touch-action: none',
-                        'touch-action: none'
-                    ]
-                }]
-        };
-        /**
-         * An object containing the event types for all of the
-         * supported gestures.
-         */
-        DomEvents.gestures = {
-            $tap: __tap,
-            $dbltap: __dbltap,
-            $hold: __hold,
-            $release: __release,
-            $swipe: __swipe,
-            $swipeleft: __swipeleft,
-            $swiperight: __swiperight,
-            $swipeup: __swipeup,
-            $swipedown: __swipedown,
-            $track: __track,
-            $trackleft: __trackleft,
-            $trackright: __trackright,
-            $trackup: __trackup,
-            $trackdown: __trackdown,
-            $trackend: __trackend
-        };
         ui.DomEvents = DomEvents;
         register.injectable(__DomEvents, DomEvents);
         /**
@@ -10461,7 +10489,7 @@ var plat;
         /**
          * A class for managing a single custom event.
          */
-        var DomEvent = (function () {
+        var DomEvent = /** @class */ (function () {
             function DomEvent() {
                 /**
                  * Reference to the Document injectable.
@@ -10495,7 +10523,7 @@ var plat;
         /**
          * A specialized class for managing a single custom touch event in DomEvents.
          */
-        var CustomDomEvent = (function (_super) {
+        var CustomDomEvent = /** @class */ (function (_super) {
             __extends(CustomDomEvent, _super);
             function CustomDomEvent(element, event) {
                 var _this = _super.call(this) || this;
@@ -10576,7 +10604,7 @@ var plat;
             /**
              * A class used for animating elements.
              */
-            var Animator = (function () {
+            var Animator = /** @class */ (function () {
                 function Animator() {
                     /**
                      * Objects representing collections of all currently animated elements.
@@ -10957,13 +10985,13 @@ var plat;
                     }
                     return elements;
                 };
+                Animator._inject = {
+                    _compat: __Compat,
+                    _Promise: __Promise,
+                    _document: __Document
+                };
                 return Animator;
             }());
-            Animator._inject = {
-                _compat: __Compat,
-                _Promise: __Promise,
-                _document: __Document
-            };
             animations.Animator = Animator;
             register.injectable(__Animator, Animator);
             /**
@@ -10972,7 +11000,7 @@ var plat;
              * itself, it resolves with a IGetAnimatingThenable for acccessing
              * the IAnimationThenable of the animating parent element.
              */
-            var AnimationPromise = (function (_super) {
+            var AnimationPromise = /** @class */ (function (_super) {
                 __extends(AnimationPromise, _super);
                 function AnimationPromise(resolveFunction, promise) {
                     var _this = _super.call(this, resolveFunction) || this;
@@ -11097,7 +11125,7 @@ var plat;
             /**
              * A class representing a single animation for a single element.
              */
-            var BaseAnimation = (function () {
+            var BaseAnimation = /** @class */ (function () {
                 function BaseAnimation() {
                     /**
                      * An Array of remove functions to dispose of event listeners.
@@ -11188,21 +11216,21 @@ var plat;
                     promise.initialize(this);
                     return promise;
                 };
+                BaseAnimation._inject = {
+                    _window: __Window,
+                    _compat: __Compat,
+                    _log: __Log,
+                    _Promise: __Promise,
+                    dom: __Dom,
+                    utils: __Utils
+                };
                 return BaseAnimation;
             }());
-            BaseAnimation._inject = {
-                _window: __Window,
-                _compat: __Compat,
-                _log: __Log,
-                _Promise: __Promise,
-                dom: __Dom,
-                utils: __Utils
-            };
             animations.BaseAnimation = BaseAnimation;
             /**
              * A class representing a single CSS animation for a single element.
              */
-            var CssAnimation = (function (_super) {
+            var CssAnimation = /** @class */ (function (_super) {
                 __extends(CssAnimation, _super);
                 function CssAnimation() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11254,7 +11282,7 @@ var plat;
              * A simple CSS Animation class that places the 'plat-animation' class on an
              * element, checks for animation properties, and waits for the animation to end.
              */
-            var SimpleCssAnimation = (function (_super) {
+            var SimpleCssAnimation = /** @class */ (function (_super) {
                 __extends(SimpleCssAnimation, _super);
                 function SimpleCssAnimation() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11365,7 +11393,7 @@ var plat;
             /**
              * An animation control that fades in an element as defined by the included CSS.
              */
-            var FadeIn = (function (_super) {
+            var FadeIn = /** @class */ (function (_super) {
                 __extends(FadeIn, _super);
                 function FadeIn() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11382,7 +11410,7 @@ var plat;
             /**
              * An animation control that fades out an element as defined by the included CSS.
              */
-            var FadeOut = (function (_super) {
+            var FadeOut = /** @class */ (function (_super) {
                 __extends(FadeOut, _super);
                 function FadeOut() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11399,7 +11427,7 @@ var plat;
             /**
              * An animation control that causes an element to enter as defined by the included CSS.
              */
-            var Enter = (function (_super) {
+            var Enter = /** @class */ (function (_super) {
                 __extends(Enter, _super);
                 function Enter() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11416,7 +11444,7 @@ var plat;
             /**
              * An animation control that causes an element to leave as defined by the included CSS.
              */
-            var Leave = (function (_super) {
+            var Leave = /** @class */ (function (_super) {
                 __extends(Leave, _super);
                 function Leave() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11433,7 +11461,7 @@ var plat;
             /**
              * An animation control that causes an element to move as defined by the included CSS.
              */
-            var Move = (function (_super) {
+            var Move = /** @class */ (function (_super) {
                 __extends(Move, _super);
                 function Move() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11451,7 +11479,7 @@ var plat;
              * A simple CSS Animation class that places the 'plat-transition' class on an
              * element, checks for transition properties, and waits for the transition to end.
              */
-            var SimpleCssTransition = (function (_super) {
+            var SimpleCssTransition = /** @class */ (function (_super) {
                 __extends(SimpleCssTransition, _super);
                 function SimpleCssTransition() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -11698,7 +11726,7 @@ var plat;
              * It registers with a router and receives route change events. It then instantiates the proper viewcontrol and appends it
              * to the DOM.
              */
-            var Viewport = (function (_super) {
+            var Viewport = /** @class */ (function (_super) {
                 __extends(Viewport, _super);
                 function Viewport() {
                     return _super !== null && _super.apply(this, arguments) || this;
@@ -11889,25 +11917,25 @@ var plat;
                     }
                     return viewport;
                 };
+                Viewport._inject = {
+                    _Router: __RouterStatic,
+                    _Promise: __Promise,
+                    _Injector: __InjectorStatic,
+                    _ElementManagerFactory: __ElementManagerFactory,
+                    _document: __Document,
+                    _managerCache: __ManagerCache,
+                    _animator: __Animator,
+                    _navigator: __NavigatorInstance
+                };
                 return Viewport;
             }(TemplateControl));
-            Viewport._inject = {
-                _Router: __RouterStatic,
-                _Promise: __Promise,
-                _Injector: __InjectorStatic,
-                _ElementManagerFactory: __ElementManagerFactory,
-                _document: __Document,
-                _managerCache: __ManagerCache,
-                _animator: __Animator,
-                _navigator: __NavigatorInstance
-            };
             controls_1.Viewport = Viewport;
             register.control(__Viewport, Viewport);
             /**
              * A TemplateControl for easily reusing a
              * defined HTML template.
              */
-            var Template = (function (_super) {
+            var Template = /** @class */ (function (_super) {
                 __extends(Template, _super);
                 /**
                  * The constructor for a Template. Creates the control cache.
@@ -12045,20 +12073,20 @@ var plat;
                     bindableTemplates.cache = control.bindableTemplates.cache;
                     bindableTemplates.templates = control.bindableTemplates.templates;
                 };
+                Template._inject = {
+                    _Promise: __Promise,
+                    _templateCache: __TemplateCache,
+                    _document: __Document
+                };
                 return Template;
             }(TemplateControl));
-            Template._inject = {
-                _Promise: __Promise,
-                _templateCache: __TemplateCache,
-                _document: __Document
-            };
             controls_1.Template = Template;
             register.control(__Template, Template);
             /**
              * A TemplateControl for inner HTML that contains controls
              * and/or markup and not having it bind or evaluate.
              */
-            var Ignore = (function (_super) {
+            var Ignore = /** @class */ (function (_super) {
                 __extends(Ignore, _super);
                 function Ignore() {
                     return _super !== null && _super.apply(this, arguments) || this;
@@ -12083,7 +12111,7 @@ var plat;
              * A TemplateControl for repeating a block of
              * DOM nodes bound to an array.
              */
-            var ForEach = (function (_super) {
+            var ForEach = /** @class */ (function (_super) {
                 __extends(ForEach, _super);
                 /**
                  * The constructor for a ForEach. Creates the itemsLoaded promise.
@@ -12675,12 +12703,12 @@ var plat;
                     }
                     return this._Promise.all(animations);
                 };
+                ForEach._inject = {
+                    _animator: __Animator,
+                    _Promise: __Promise
+                };
                 return ForEach;
             }(TemplateControl));
-            ForEach._inject = {
-                _animator: __Animator,
-                _Promise: __Promise
-            };
             controls_1.ForEach = ForEach;
             register.control(__ForEach, ForEach);
             /**
@@ -12688,7 +12716,7 @@ var plat;
              * control will not exist unless you register it as a control with the name 'head'. It is static, so you can inject
              * it into other components and get access to its properties.
              */
-            var Head = (function (_super) {
+            var Head = /** @class */ (function (_super) {
                 __extends(Head, _super);
                 function Head() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -13024,18 +13052,18 @@ var plat;
                         }
                     }
                 };
+                Head._inject = {
+                    _document: __Document,
+                    _browser: __Browser
+                };
                 return Head;
             }(ui.TemplateControl));
-            Head._inject = {
-                _document: __Document,
-                _browser: __Browser
-            };
             controls_1.Head = Head;
             /**
              * A TemplateControl for adding HTML to the
              * DOM through bound context strings.
              */
-            var InnerHtml = (function (_super) {
+            var InnerHtml = /** @class */ (function (_super) {
                 __extends(InnerHtml, _super);
                 function InnerHtml() {
                     return _super !== null && _super.apply(this, arguments) || this;
@@ -13105,18 +13133,18 @@ var plat;
                     }
                     setInnerHtml(this.element, html);
                 };
+                InnerHtml._inject = {
+                    _TemplateControlFactory: __TemplateControlFactory
+                };
                 return InnerHtml;
             }(TemplateControl));
-            InnerHtml._inject = {
-                _TemplateControlFactory: __TemplateControlFactory
-            };
             controls_1.InnerHtml = InnerHtml;
             register.control(__Html, InnerHtml);
             /**
              * A BindControl for binding an HTML select element
              * to an Array context.
              */
-            var Select = (function (_super) {
+            var Select = /** @class */ (function (_super) {
                 __extends(Select, _super);
                 /**
                  * The constructor for a Select. Creates the itemsLoaded promise.
@@ -13637,19 +13665,19 @@ var plat;
                         this._resetSelect();
                     }
                 };
+                Select._inject = {
+                    _Promise: __Promise,
+                    _document: __Document
+                };
                 return Select;
             }(BindControl));
-            Select._inject = {
-                _Promise: __Promise,
-                _document: __Document
-            };
             controls_1.Select = Select;
             register.control(__Select, Select);
             /**
              * A TemplateControl conditionally adding or removing
              * a block of nodes to or from the DOM.
              */
-            var If = (function (_super) {
+            var If = /** @class */ (function (_super) {
                 __extends(If, _super);
                 /**
                  * The constructor for a If. Creates the comment node and document fragment storage
@@ -13828,20 +13856,20 @@ var plat;
                         _this.fragmentStore.insertBefore(element, null);
                     });
                 };
+                If._inject = {
+                    _animator: __Animator,
+                    _Promise: __Promise,
+                    _document: __Document
+                };
                 return If;
             }(TemplateControl));
-            If._inject = {
-                _animator: __Animator,
-                _Promise: __Promise,
-                _document: __Document
-            };
             controls_1.If = If;
             register.control(__If, If);
             /**
              * A TemplateControl for adding additonal
              * functionality to a native HTML anchor tag.
              */
-            var Link = (function (_super) {
+            var Link = /** @class */ (function (_super) {
                 __extends(Link, _super);
                 function Link() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -13986,14 +14014,14 @@ var plat;
                 Link.prototype.dispose = function () {
                     defer(this._removeClickListener, 3000);
                 };
+                Link._inject = {
+                    _Router: __RouterStatic,
+                    _Injector: __InjectorStatic,
+                    _browser: __Browser,
+                    _window: __Window
+                };
                 return Link;
             }(TemplateControl));
-            Link._inject = {
-                _Router: __RouterStatic,
-                _Injector: __InjectorStatic,
-                _browser: __Browser,
-                _window: __Window
-            };
             controls_1.Link = Link;
             register.control(__Link, Link);
         })(controls = ui.controls || (ui.controls = {}));
@@ -14006,7 +14034,7 @@ var plat;
         /**
          * Responsible for iterating through the DOM and collecting controls.
          */
-        var Compiler = (function () {
+        var Compiler = /** @class */ (function () {
             function Compiler() {
             }
             Compiler.prototype.compile = function (node, control) {
@@ -14073,20 +14101,20 @@ var plat;
                     length = newLength;
                 }
             };
+            Compiler._inject = {
+                _ElementManagerFactory: __ElementManagerFactory,
+                _TextManagerFactory: __TextManagerFactory,
+                _CommentManagerFactory: __CommentManagerFactory,
+                _managerCache: __ManagerCache
+            };
             return Compiler;
         }());
-        Compiler._inject = {
-            _ElementManagerFactory: __ElementManagerFactory,
-            _TextManagerFactory: __TextManagerFactory,
-            _CommentManagerFactory: __CommentManagerFactory,
-            _managerCache: __ManagerCache
-        };
         processing.Compiler = Compiler;
         register.injectable(__Compiler, Compiler);
         /**
          * Responsible for data binding a data context to a Node.
          */
-        var NodeManager = (function () {
+        var NodeManager = /** @class */ (function () {
             function NodeManager() {
                 /**
                  * Whether or not this NodeManager is a clone.
@@ -14387,7 +14415,7 @@ var plat;
          * element/template. Also provides methods for cloning an
          * ElementManager.
          */
-        var ElementManager = (function (_super) {
+        var ElementManager = /** @class */ (function (_super) {
             __extends(ElementManager, _super);
             function ElementManager() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -15274,18 +15302,18 @@ var plat;
                     });
                 });
             };
+            ElementManager._inject = {
+                _Promise: __Promise,
+                _ContextManager: __ContextManagerStatic,
+                _compiler: __Compiler,
+                _CommentManagerFactory: __CommentManagerFactory,
+                _ControlFactory: __ControlFactory,
+                _TemplateControlFactory: __TemplateControlFactory,
+                _BindableTemplatesFactory: __BindableTemplatesFactory,
+                _log: __Log
+            };
             return ElementManager;
         }(NodeManager));
-        ElementManager._inject = {
-            _Promise: __Promise,
-            _ContextManager: __ContextManagerStatic,
-            _compiler: __Compiler,
-            _CommentManagerFactory: __CommentManagerFactory,
-            _ControlFactory: __ControlFactory,
-            _TemplateControlFactory: __TemplateControlFactory,
-            _BindableTemplatesFactory: __BindableTemplatesFactory,
-            _log: __Log
-        };
         processing.ElementManager = ElementManager;
         /**
          */
@@ -15311,7 +15339,7 @@ var plat;
         /**
          * The class responsible for initializing and data-binding values to text nodes.
          */
-        var TextManager = (function (_super) {
+        var TextManager = /** @class */ (function (_super) {
             __extends(TextManager, _super);
             function TextManager() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -15423,7 +15451,7 @@ var plat;
          * A class used to manage Comment nodes. Provides a way to
          * clone a Comment node.
          */
-        var CommentManager = (function (_super) {
+        var CommentManager = /** @class */ (function (_super) {
             __extends(CommentManager, _super);
             function CommentManager() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -15475,7 +15503,7 @@ var plat;
          * Used to facilitate observing expressions on attributes. Has the ability to alert Attributes
          * with changes. Handles dynamic and static attributes (dynamic meaning "class"-like attributes).
          */
-        var AttributeManager = (function () {
+        var AttributeManager = /** @class */ (function () {
             function AttributeManager() {
                 /**
                  * Keeps track of the previous bound values of a "dynamic" attribute.
@@ -15582,7 +15610,7 @@ var plat;
          * Listens for url changes and responds accordingly. Also contains functionality for generating
          * and changing the url.
          */
-        var Navigator = (function () {
+        var Navigator = /** @class */ (function () {
             function Navigator() {
                 /**
                  * A unique id, created during instantiation and found on every Navigator.
@@ -15793,18 +15821,18 @@ var plat;
                 }
                 return this._router.generate(view, parameters, query);
             };
+            Navigator._inject = {
+                _Promise: __Promise,
+                _Injector: __InjectorStatic,
+                _browserConfig: __BrowserConfig,
+                _browser: __Browser,
+                _EventManager: __EventManagerStatic,
+                _window: __Window,
+                _log: __Log,
+                _history: __History
+            };
             return Navigator;
         }());
-        Navigator._inject = {
-            _Promise: __Promise,
-            _Injector: __InjectorStatic,
-            _browserConfig: __BrowserConfig,
-            _browser: __Browser,
-            _EventManager: __EventManagerStatic,
-            _window: __Window,
-            _log: __Log,
-            _history: __History
-        };
         routing.Navigator = Navigator;
         register.injectable(__NavigatorInstance, Navigator, null, __INSTANCE);
         /**
@@ -15823,7 +15851,7 @@ var plat;
          * Stores information about a segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
          */
-        var BaseSegment = (function () {
+        var BaseSegment = /** @class */ (function () {
             function BaseSegment() {
                 /**
                  * Denotes the type of segment for this instance.
@@ -15937,7 +15965,7 @@ var plat;
          * Stores information about a static segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
          */
-        var StaticSegment = (function (_super) {
+        var StaticSegment = /** @class */ (function (_super) {
             __extends(StaticSegment, _super);
             function StaticSegment() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -15976,7 +16004,7 @@ var plat;
          * Stores information about a variable segment (either dynamic or splat), publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
          */
-        var VariableSegment = (function (_super) {
+        var VariableSegment = /** @class */ (function (_super) {
             __extends(VariableSegment, _super);
             function VariableSegment() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -16003,7 +16031,7 @@ var plat;
          * Stores information about a splat segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
          */
-        var SplatSegment = (function (_super) {
+        var SplatSegment = /** @class */ (function (_super) {
             __extends(SplatSegment, _super);
             function SplatSegment() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -16032,7 +16060,7 @@ var plat;
          * Stores information about a dynamic segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
          */
-        var DynamicSegment = (function (_super) {
+        var DynamicSegment = /** @class */ (function (_super) {
             __extends(DynamicSegment, _super);
             function DynamicSegment() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -16064,7 +16092,7 @@ var plat;
          * a root state and then iteratively match next states until you complete the
          * segment or invalidate the segment.
          */
-        var State = (function () {
+        var State = /** @class */ (function () {
             /**
              * The constructor for a State.
              */
@@ -16249,7 +16277,7 @@ var plat;
          * a defined scheme, and it will compile the routes. When you want to match a route, it will
          * find the associated compiled route and link it to the data given with the passed-in route.
          */
-        var RouteRecognizer = (function () {
+        var RouteRecognizer = /** @class */ (function () {
             function RouteRecognizer() {
                 /**
                  * All the named routes for this recognizer.
@@ -16483,13 +16511,13 @@ var plat;
             RouteRecognizer.prototype._isDynamic = function (state) {
                 return state.regex.source.slice(-5) === '(.+)$';
             };
+            RouteRecognizer._inject = {
+                _BaseSegmentFactory: __BaseSegmentFactory,
+                _State: __StateStatic,
+                _rootState: __StateInstance
+            };
             return RouteRecognizer;
         }());
-        RouteRecognizer._inject = {
-            _BaseSegmentFactory: __BaseSegmentFactory,
-            _State: __StateStatic,
-            _rootState: __StateInstance
-        };
         routing.RouteRecognizer = RouteRecognizer;
         register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
         ;
@@ -16502,7 +16530,7 @@ var plat;
          * This is done asynchronously, giving the application the ability to make web service calls
          * to determing
          */
-        var Router = (function () {
+        var Router = /** @class */ (function () {
             /**
              * Instantiates a new router and sets it as the current router.
              */
@@ -17150,17 +17178,17 @@ var plat;
                     child._clearInfo();
                 }, this.children);
             };
+            Router._inject = {
+                _Promise: __Promise,
+                _Injector: __InjectorStatic,
+                _EventManager: __EventManagerStatic,
+                _browser: __Browser,
+                _browserConfig: __BrowserConfig,
+                _recognizer: __RouteRecognizerInstance,
+                _childRecognizer: __RouteRecognizerInstance
+            };
             return Router;
         }());
-        Router._inject = {
-            _Promise: __Promise,
-            _Injector: __InjectorStatic,
-            _EventManager: __EventManagerStatic,
-            _browser: __Browser,
-            _browserConfig: __BrowserConfig,
-            _recognizer: __RouteRecognizerInstance,
-            _childRecognizer: __RouteRecognizerInstance
-        };
         routing.Router = Router;
         register.injectable(__Router, Router, null, __INSTANCE);
         /**
@@ -17180,7 +17208,7 @@ var plat;
          * Allows for assigning a name to an Element or TemplateControl and referencing it
          * from parent controls.
          */
-        var Name = (function (_super) {
+        var Name = /** @class */ (function (_super) {
             __extends(Name, _super);
             function Name() {
                 return _super !== null && _super.apply(this, arguments) || this;
@@ -17255,7 +17283,7 @@ var plat;
         /**
          * An AttributeControl that binds to a specified DOM event handler.
          */
-        var SimpleEventControl = (function (_super) {
+        var SimpleEventControl = /** @class */ (function (_super) {
             __extends(SimpleEventControl, _super);
             function SimpleEventControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17428,17 +17456,17 @@ var plat;
                 this._listener = listenerStr;
                 this._aliases = aliases;
             };
+            SimpleEventControl._inject = {
+                _parser: __Parser,
+                _regex: __Regex
+            };
             return SimpleEventControl;
         }(AttributeControl));
-        SimpleEventControl._inject = {
-            _parser: __Parser,
-            _regex: __Regex
-        };
         controls.SimpleEventControl = SimpleEventControl;
         /**
          * A SimpleEventControl for the '$tap' event.
          */
-        var Tap = (function (_super) {
+        var Tap = /** @class */ (function (_super) {
             __extends(Tap, _super);
             function Tap() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17454,7 +17482,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'blur' event.
          */
-        var Blur = (function (_super) {
+        var Blur = /** @class */ (function (_super) {
             __extends(Blur, _super);
             function Blur() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17470,7 +17498,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'change' event.
          */
-        var Change = (function (_super) {
+        var Change = /** @class */ (function (_super) {
             __extends(Change, _super);
             function Change() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17486,7 +17514,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'copy' event.
          */
-        var Copy = (function (_super) {
+        var Copy = /** @class */ (function (_super) {
             __extends(Copy, _super);
             function Copy() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17502,7 +17530,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'cut' event.
          */
-        var Cut = (function (_super) {
+        var Cut = /** @class */ (function (_super) {
             __extends(Cut, _super);
             function Cut() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17518,7 +17546,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'paste' event.
          */
-        var Paste = (function (_super) {
+        var Paste = /** @class */ (function (_super) {
             __extends(Paste, _super);
             function Paste() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17534,7 +17562,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$dbltap' event.
          */
-        var DblTap = (function (_super) {
+        var DblTap = /** @class */ (function (_super) {
             __extends(DblTap, _super);
             function DblTap() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17550,7 +17578,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'focus' event.
          */
-        var Focus = (function (_super) {
+        var Focus = /** @class */ (function (_super) {
             __extends(Focus, _super);
             function Focus() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17566,7 +17594,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$touchstart' event.
          */
-        var TouchStart = (function (_super) {
+        var TouchStart = /** @class */ (function (_super) {
             __extends(TouchStart, _super);
             function TouchStart() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17582,7 +17610,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$touchend' event.
          */
-        var TouchEnd = (function (_super) {
+        var TouchEnd = /** @class */ (function (_super) {
             __extends(TouchEnd, _super);
             function TouchEnd() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17598,7 +17626,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$touchmove' event.
          */
-        var TouchMove = (function (_super) {
+        var TouchMove = /** @class */ (function (_super) {
             __extends(TouchMove, _super);
             function TouchMove() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17614,7 +17642,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$touchcancel' event.
          */
-        var TouchCancel = (function (_super) {
+        var TouchCancel = /** @class */ (function (_super) {
             __extends(TouchCancel, _super);
             function TouchCancel() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17630,7 +17658,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$hold' event.
          */
-        var Hold = (function (_super) {
+        var Hold = /** @class */ (function (_super) {
             __extends(Hold, _super);
             function Hold() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17646,7 +17674,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$release' event.
          */
-        var Release = (function (_super) {
+        var Release = /** @class */ (function (_super) {
             __extends(Release, _super);
             function Release() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17662,7 +17690,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$swipe' event.
          */
-        var Swipe = (function (_super) {
+        var Swipe = /** @class */ (function (_super) {
             __extends(Swipe, _super);
             function Swipe() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17678,7 +17706,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$swipeleft' event.
          */
-        var SwipeLeft = (function (_super) {
+        var SwipeLeft = /** @class */ (function (_super) {
             __extends(SwipeLeft, _super);
             function SwipeLeft() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17694,7 +17722,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$swiperight' event.
          */
-        var SwipeRight = (function (_super) {
+        var SwipeRight = /** @class */ (function (_super) {
             __extends(SwipeRight, _super);
             function SwipeRight() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17710,7 +17738,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$swipeup' event.
          */
-        var SwipeUp = (function (_super) {
+        var SwipeUp = /** @class */ (function (_super) {
             __extends(SwipeUp, _super);
             function SwipeUp() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17726,7 +17754,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$swipedown' event.
          */
-        var SwipeDown = (function (_super) {
+        var SwipeDown = /** @class */ (function (_super) {
             __extends(SwipeDown, _super);
             function SwipeDown() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17742,7 +17770,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$track' event.
          */
-        var Track = (function (_super) {
+        var Track = /** @class */ (function (_super) {
             __extends(Track, _super);
             function Track() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17758,7 +17786,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$trackleft' event.
          */
-        var TrackLeft = (function (_super) {
+        var TrackLeft = /** @class */ (function (_super) {
             __extends(TrackLeft, _super);
             function TrackLeft() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17774,7 +17802,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$trackright' event.
          */
-        var TrackRight = (function (_super) {
+        var TrackRight = /** @class */ (function (_super) {
             __extends(TrackRight, _super);
             function TrackRight() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17790,7 +17818,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$trackup' event.
          */
-        var TrackUp = (function (_super) {
+        var TrackUp = /** @class */ (function (_super) {
             __extends(TrackUp, _super);
             function TrackUp() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17806,7 +17834,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$trackdown' event.
          */
-        var TrackDown = (function (_super) {
+        var TrackDown = /** @class */ (function (_super) {
             __extends(TrackDown, _super);
             function TrackDown() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17822,7 +17850,7 @@ var plat;
         /**
          * A SimpleEventControl for the '$trackend' event.
          */
-        var TrackEnd = (function (_super) {
+        var TrackEnd = /** @class */ (function (_super) {
             __extends(TrackEnd, _super);
             function TrackEnd() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17838,7 +17866,7 @@ var plat;
         /**
          * A SimpleEventControl for the 'submit' event.
          */
-        var Submit = (function (_super) {
+        var Submit = /** @class */ (function (_super) {
             __extends(Submit, _super);
             function Submit() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17867,7 +17895,7 @@ var plat;
          * 'input' is not an event, it will simulate an 'input' using other events like 'keydown',
          * 'cut', 'paste', etc. Also fires on the 'change' event.
          */
-        var React = (function (_super) {
+        var React = /** @class */ (function (_super) {
             __extends(React, _super);
             function React() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17930,11 +17958,11 @@ var plat;
                 this.addEventListener(element, 'cut', postponedEventListener, false);
                 this.addEventListener(element, 'paste', postponedEventListener, false);
             };
+            React._inject = {
+                _compat: __Compat
+            };
             return React;
         }(SimpleEventControl));
-        React._inject = {
-            _compat: __Compat
-        };
         controls.React = React;
         register.control(__Tap, Tap);
         register.control(__Blur, Blur);
@@ -18065,7 +18093,7 @@ var plat;
         /**
          * Base class used for filtering keys on KeyboardEvents.
          */
-        var KeyCodeEventControl = (function (_super) {
+        var KeyCodeEventControl = /** @class */ (function (_super) {
             __extends(KeyCodeEventControl, _super);
             function KeyCodeEventControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18159,7 +18187,7 @@ var plat;
         /**
          * Used for filtering keys on keydown events. Does not take capitalization into account.
          */
-        var KeyDown = (function (_super) {
+        var KeyDown = /** @class */ (function (_super) {
             __extends(KeyDown, _super);
             function KeyDown() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18176,7 +18204,7 @@ var plat;
          * Used for filtering only printing keys (a-z, A-Z, 0-9, and special characters) on keydown events.
          * Does not take capitalization into account.
          */
-        var KeyPress = (function (_super) {
+        var KeyPress = /** @class */ (function (_super) {
             __extends(KeyPress, _super);
             function KeyPress() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18214,7 +18242,7 @@ var plat;
         /**
          * Used for filtering keys on keyup events. Does not take capitalization into account.
          */
-        var KeyUp = (function (_super) {
+        var KeyUp = /** @class */ (function (_super) {
             __extends(KeyUp, _super);
             function KeyUp() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18230,7 +18258,7 @@ var plat;
         /**
          * Used for filtering keys on keypress events. Takes capitalization into account.
          */
-        var CharPress = (function (_super) {
+        var CharPress = /** @class */ (function (_super) {
             __extends(CharPress, _super);
             function CharPress() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18319,7 +18347,7 @@ var plat;
         /**
          * An AttributeControl that deals with binding to a specified property on its element.
          */
-        var SetAttributeControl = (function (_super) {
+        var SetAttributeControl = /** @class */ (function (_super) {
             __extends(SetAttributeControl, _super);
             function SetAttributeControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18399,7 +18427,7 @@ var plat;
         /**
          * A SetAttributeControl for the 'checked' attribute.
          */
-        var Checked = (function (_super) {
+        var Checked = /** @class */ (function (_super) {
             __extends(Checked, _super);
             function Checked() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18415,7 +18443,7 @@ var plat;
         /**
          * A SetAttributeControl for the 'disabled' attribute.
          */
-        var Disabled = (function (_super) {
+        var Disabled = /** @class */ (function (_super) {
             __extends(Disabled, _super);
             function Disabled() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18431,7 +18459,7 @@ var plat;
         /**
          * A SetAttributeControl for the 'selected' attribute.
          */
-        var Selected = (function (_super) {
+        var Selected = /** @class */ (function (_super) {
             __extends(Selected, _super);
             function Selected() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18447,7 +18475,7 @@ var plat;
         /**
          * A SetAttributeControl for the 'readonly' attribute.
          */
-        var ReadOnly = (function (_super) {
+        var ReadOnly = /** @class */ (function (_super) {
             __extends(ReadOnly, _super);
             function ReadOnly() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18463,7 +18491,7 @@ var plat;
         /**
          * A SetAttributeControl for the 'plat-hide' attribute.
          */
-        var Visible = (function (_super) {
+        var Visible = /** @class */ (function (_super) {
             __extends(Visible, _super);
             function Visible() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18547,7 +18575,7 @@ var plat;
         /**
          * A SetAttributeControl for the 'style' attribute.
          */
-        var Style = (function (_super) {
+        var Style = /** @class */ (function (_super) {
             __extends(Style, _super);
             function Style() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18643,7 +18671,7 @@ var plat;
         /**
          * Base class used for setting the property of an element (e.g. href for anchor elements).
          */
-        var ElementPropertyControl = (function (_super) {
+        var ElementPropertyControl = /** @class */ (function (_super) {
             __extends(ElementPropertyControl, _super);
             function ElementPropertyControl() {
                 return _super !== null && _super.apply(this, arguments) || this;
@@ -18667,7 +18695,7 @@ var plat;
         /**
          * A type of ElementPropertyControl used to set 'href' on an anchor tag.
          */
-        var Href = (function (_super) {
+        var Href = /** @class */ (function (_super) {
             __extends(Href, _super);
             function Href() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18683,7 +18711,7 @@ var plat;
         /**
          * A type of ElementPropertyControl used to set 'src' on an anchor tag.
          */
-        var Src = (function (_super) {
+        var Src = /** @class */ (function (_super) {
             __extends(Src, _super);
             function Src() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18706,18 +18734,18 @@ var plat;
                     element[elementProperty] = this._browser.urlUtils(expression);
                 }
             };
+            Src._inject = {
+                _browser: __Browser
+            };
             return Src;
         }(ElementPropertyControl));
-        Src._inject = {
-            _browser: __Browser
-        };
         controls.Src = Src;
         register.control(__Href, Href);
         register.control(__Src, Src);
         /**
          * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
          */
-        var Bind = (function (_super) {
+        var Bind = /** @class */ (function (_super) {
             __extends(Bind, _super);
             function Bind() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -19705,20 +19733,20 @@ var plat;
                     return 'boolean';
                 }
             };
+            Bind._inject = {
+                _parser: __Parser,
+                _ContextManager: __ContextManagerStatic,
+                _compat: __Compat,
+                _document: __Document
+            };
             return Bind;
         }(AttributeControl));
-        Bind._inject = {
-            _parser: __Parser,
-            _ContextManager: __ContextManagerStatic,
-            _compat: __Compat,
-            _document: __Document
-        };
         controls.Bind = Bind;
         register.control(__Bind, Bind);
         /**
          * An AttributeControl that deals with observing changes for a specified property.
          */
-        var ObservableAttributeControl = (function (_super) {
+        var ObservableAttributeControl = /** @class */ (function (_super) {
             __extends(ObservableAttributeControl, _super);
             function ObservableAttributeControl() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -19828,17 +19856,17 @@ var plat;
                 }
                 this._removeListener = this.observeExpression(this._setProperty, this.attributes[this.attribute]);
             };
+            ObservableAttributeControl._inject = {
+                _ContextManager: __ContextManagerStatic
+            };
             return ObservableAttributeControl;
         }(AttributeControl));
-        ObservableAttributeControl._inject = {
-            _ContextManager: __ContextManagerStatic
-        };
         controls.ObservableAttributeControl = ObservableAttributeControl;
         /**
          * An ObservableAttributeControl that sets 'options' as the
          * associated property.
          */
-        var Options = (function (_super) {
+        var Options = /** @class */ (function (_super) {
             __extends(Options, _super);
             function Options() {
                 var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -19857,7 +19885,7 @@ var plat;
      * Class for every app. This class contains hooks for Application Lifecycle Events
      * as well as error handling.
      */
-    var App = (function () {
+    var App = /** @class */ (function () {
         /**
          * Class for every app. This class contains hooks for Application Lifecycle Management (ALM)
          * as well as error handling and navigation events.
@@ -20071,12 +20099,12 @@ var plat;
         App.prototype.exit = function () {
             this.dispatchEvent(__shutdown);
         };
+        /**
+         * The instance of the registered IApp.
+         */
+        App.app = null;
         return App;
     }());
-    /**
-     * The instance of the registered IApp.
-     */
-    App.app = null;
     plat_1.App = App;
     /**
      */

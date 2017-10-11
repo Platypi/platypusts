@@ -1039,7 +1039,7 @@ module plat.ui {
 
             return this._bindNodeMap(key, nodeMap).then((): DocumentFragment => {
                 let _document = this._document,
-                    template = nodeMap.element;
+                    template: DocumentFragment = <any>nodeMap.element;
 
                 if (disposed) {
                     return _document.createDocumentFragment();
@@ -1229,7 +1229,7 @@ module plat.ui {
 
             control.parent = parent;
             control.controls = [];
-            control.element = <HTMLElement>template;
+            control.element = <any>template;
             control.type = parent.type + __BOUND_PREFIX + key;
             control.root = this._ControlFactory.getRootControl(control);
 
