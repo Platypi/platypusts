@@ -262,7 +262,7 @@ module plat.async {
                 this.jsonpCallback = options.jsonpCallback || uniqueId(__Callback);
             }
 
-            let promise = new AjaxPromise((resolve, reject): void => {
+            let promise = new AjaxPromise<R>((resolve, reject): void => {
                 let _window = <any>this._window,
                     _document = this._document,
                     scriptTag = _document.createElement('script'),
@@ -671,9 +671,17 @@ module plat.async {
                 if (isNull(val)) {
                     val = '';
                 } else if (isObject(val)) {
-                    // may throw a fatal error but this is an invalid case
-                    this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
-                    val = JSON.stringify(val);
+                    if (isDate(val)) {
+                        val = val.toISOString();
+                    } else if (isFile(val)) {
+                        // cannot parse file this way
+                        this._log.warn('Invalid File entry with key "' + key + '"');
+                        val = '[object File]';
+                    } else {
+                        // may throw a fatal error but this is an invalid case
+                        this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
+                        val = JSON.stringify(val);
+                    }
                 }
 
                 formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
@@ -706,7 +714,9 @@ module plat.async {
                 if (isNull(val)) {
                     formData.append(key, '');
                 } else if (isObject(val)) {
-                    if (isFile(val)) {
+                    if (isDate(val)) {
+                        formData.append(key, val.toISOString());
+                    } else if (isFile(val)) {
                         formData.append(key, val, val.name || val.fileName || 'blob');
                     } else {
                         // may throw a fatal error but this is an invalid case

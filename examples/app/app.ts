@@ -7,8 +7,7 @@ module app {
             _browserConfig.baseUrl = 'examples';
 
             router.configure([
-                { pattern: '', view: viewcontrols.Main },
-                { pattern: '/one', view: viewcontrols.One }
+                { pattern: '', view: viewcontrols.Main }
             ]);
 
             router.intercept(() => {
