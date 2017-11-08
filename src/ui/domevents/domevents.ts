@@ -1400,7 +1400,11 @@
 
             if (this._gestureCount.$tap <= 0 ||
                 isNull(touchDownTarget) ||
-                (touchDownTarget !== target && isFunction(touchDownTarget.contains) && !touchDownTarget.contains(target))) {
+                (touchDownTarget !== target &&
+                    isFunction(touchDownTarget.contains) &&
+                    !touchDownTarget.contains(target) &&
+                    isFunction(target.contains) &&
+                    !target.contains(touchDownTarget))) {
                 return;
             }
 
