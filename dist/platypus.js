@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.23.5 (https://platypi.io)
+ * PlatypusTS v0.23.7 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -9523,11 +9523,14 @@ var plat;
              */
             DomEvents.prototype.__handleTap = function (ev) {
                 var _this = this;
+                var target = ev.target, touchDown = this.__lastTouchDown || {}, touchDownTarget = touchDown.target;
                 this.__tapCount++;
-                if (this._gestureCount.$tap <= 0) {
+                if (this._gestureCount.$tap <= 0 ||
+                    isNull(touchDownTarget) ||
+                    (touchDownTarget !== target && isFunction(touchDownTarget.contains) && !touchDownTarget.contains(target))) {
                     return;
                 }
-                var gestures = this._gestures, domEvent = this.__findFirstSubscriber(ev.target, gestures.$tap);
+                var gestures = this._gestures, domEvent = this.__findFirstSubscriber(target, gestures.$tap);
                 if (isNull(domEvent)) {
                     return;
                 }
@@ -9535,14 +9538,14 @@ var plat;
                 // or a mouse is being used 
                 if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                     ev.pointerType === 'mouse' || ev.type === 'mouseup') {
-                    ev._buttons = this.__lastTouchDown._buttons;
+                    ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
                     return;
                 }
                 // defer for tap delay in case of something like desired 
                 // dbltap zoom 
                 this.__cancelDeferredTap = defer(function () {
-                    ev._buttons = _this.__lastTouchDown._buttons;
+                    ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
                     _this.__tapCount = 0;
                     _this.__cancelDeferredTap = noop;
