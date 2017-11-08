@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.23.7 (https://platypi.io)
+ * PlatypusTS v0.23.8 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -9527,7 +9527,11 @@ var plat;
                 this.__tapCount++;
                 if (this._gestureCount.$tap <= 0 ||
                     isNull(touchDownTarget) ||
-                    (touchDownTarget !== target && isFunction(touchDownTarget.contains) && !touchDownTarget.contains(target))) {
+                    (touchDownTarget !== target &&
+                        isFunction(touchDownTarget.contains) &&
+                        !touchDownTarget.contains(target) &&
+                        isFunction(target.contains) &&
+                        !target.contains(touchDownTarget))) {
                     return;
                 }
                 var gestures = this._gestures, domEvent = this.__findFirstSubscriber(target, gestures.$tap);
