@@ -27,31 +27,31 @@ var plat;
     /* tslint:disable:no-unused-variable */
     /*
      */
-    var __prefix = '$', __CONTEXT = 'context', __AppStatic = __prefix + 'AppStatic', __App = __prefix + 'App', __Http = __prefix + 'Http', __HttpRequestInstance = __prefix + 'HttpRequestInstance', __HttpConfig = __prefix + 'HttpConfig', __Promise = __prefix + 'Promise', __Compat = __prefix + 'Compat', __ControlFactory = __prefix + 'ControlFactory', __AttributeControlFactory = __prefix + 'AttributeControlFactory', __Document = __prefix + 'Document', __DispatchEventInstance = __prefix + 'DispatchEventInstance', __ErrorEventStatic = __prefix + 'ErrorEventStatic', __EventManagerStatic = __prefix + 'EventManagerStatic', __LifecycleEventStatic = __prefix + 'LifecycleEventStatic', __LifecycleEventInstance = __prefix + 'LifecycleEventInstance', __Log = __prefix + 'Log', __Parser = __prefix + 'Parser', __Regex = __prefix + 'Regex', __Tokenizer = __prefix + 'Tokenizer', __NavigatorInstance = __prefix + 'NavigatorInstance', __ContextManagerStatic = __prefix + 'ContextManagerStatic', __ContextManagerInstance = __prefix + 'ContextManagerInstance', __Compiler = __prefix + 'Compiler', __CommentManagerFactory = __prefix + 'CommentManagerFactory', __CommentManagerInstance = __prefix + 'CommentManagerInstance', __ElementManagerFactory = __prefix + 'ElementManagerFactory', __ElementManagerInstance = __prefix + 'ElementManagerInstance', __NodeManagerStatic = __prefix + 'NodeManagerStatic', __TextManagerFactory = __prefix + 'TextManagerFactory', __TextManagerInstance = __prefix + 'TextManagerInstance', __CacheFactory = __prefix + 'CacheFactory', __ManagerCache = __prefix + 'ManagerCache', __TemplateCache = __prefix + 'TemplateCache', __Animator = __prefix + 'Animator', __AttributesFactory = __prefix + 'AttributesFactory', __AttributesInstance = __prefix + 'AttributesInstance', __BindableTemplatesFactory = __prefix + 'BindableTemplatesFactory', __Dom = __prefix + 'Dom', __DomEvents = __prefix + 'DomEvents', __IDomEventsConfig = __prefix + 'IDomEventsConfig', __DomEventInstance = __prefix + 'DomEventInstance', __ResourcesFactory = __prefix + 'ResourcesFactory', __ResourcesInstance = __prefix + 'ResourcesInstance', __TemplateControlFactory = __prefix + 'TemplateControlFactory', __TemplateControlInstance = __prefix + 'TemplateControlInstance', __Utils = __prefix + 'Utils', __Browser = __prefix + 'Browser', __BrowserConfig = __prefix + 'BrowserConfig', __Router = __prefix + 'Router', __RouterStatic = __prefix + 'RouterStatic', __UrlUtilsInstance = __prefix + 'UrlUtilsInstance', __Window = __prefix + 'Window', __LocalStorage = __prefix + 'LocalStorage', __SessionStorage = __prefix + 'SessionStorage', __Geolocation = __prefix + 'Geolocation', __BaseSegmentFactory = __prefix + 'BaseSegmentFactory', __BaseSegmentInstance = __prefix + 'BaseSegmentInstance', __StaticSegmentInstance = __prefix + 'StaticSegmentInstance', __VariableSegmentInstance = __prefix + 'VariableSegmentInstance', __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance', __SplatSegmentInstance = __prefix + 'SplatSegmentInstance', __StateStatic = __prefix + 'StateStatic', __StateInstance = __prefix + 'StateInstance', __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance', __InjectorStatic = __prefix + 'InjectorStatic', __History = __prefix + 'History', __Location = __prefix + 'Location',
+    var __prefix = '$', __CONTEXT = 'context', __AppStatic = __prefix + 'AppStatic', __App = __prefix + 'App', __Http = __prefix + 'Http', __HttpRequestInstance = __prefix + 'HttpRequestInstance', __HttpConfig = __prefix + 'HttpConfig', __Promise = __prefix + 'Promise', __Compat = __prefix + 'Compat', __ControlFactory = __prefix + 'ControlFactory', __AttributeControlFactory = __prefix + 'AttributeControlFactory', __Document = __prefix + 'Document', __DispatchEventInstance = __prefix + 'DispatchEventInstance', __ErrorEventStatic = __prefix + 'ErrorEventStatic', __EventManagerStatic = __prefix + 'EventManagerStatic', __LifecycleEventStatic = __prefix + 'LifecycleEventStatic', __LifecycleEventInstance = __prefix + 'LifecycleEventInstance', __Log = __prefix + 'Log', __Parser = __prefix + 'Parser', __Regex = __prefix + 'Regex', __Tokenizer = __prefix + 'Tokenizer', __NavigatorInstance = __prefix + 'NavigatorInstance', __ContextManagerStatic = __prefix + 'ContextManagerStatic', __ContextManagerInstance = __prefix + 'ContextManagerInstance', __Compiler = __prefix + 'Compiler', __CommentManagerFactory = __prefix + 'CommentManagerFactory', __CommentManagerInstance = __prefix + 'CommentManagerInstance', __ElementManagerFactory = __prefix + 'ElementManagerFactory', __ElementManagerInstance = __prefix + 'ElementManagerInstance', __NodeManagerStatic = __prefix + 'NodeManagerStatic', __TextManagerFactory = __prefix + 'TextManagerFactory', __TextManagerInstance = __prefix + 'TextManagerInstance', __CacheFactory = __prefix + 'CacheFactory', __ManagerCache = __prefix + 'ManagerCache', __TemplateCache = __prefix + 'TemplateCache', __Animator = __prefix + 'Animator', __AttributesFactory = __prefix + 'AttributesFactory', __AttributesInstance = __prefix + 'AttributesInstance', __BindableTemplatesFactory = __prefix + 'BindableTemplatesFactory', __Dom = __prefix + 'Dom', __DomEvents = __prefix + 'DomEvents', __IDomEventsConfig = __prefix + 'IDomEventsConfig', __DomEventInstance = __prefix + 'DomEventInstance', __ResourcesFactory = __prefix + 'ResourcesFactory', __ResourcesInstance = __prefix + 'ResourcesInstance', __TemplateControlFactory = __prefix + 'TemplateControlFactory', __TemplateControlInstance = __prefix + 'TemplateControlInstance', __Utils = __prefix + 'Utils', __Browser = __prefix + 'Browser', __BrowserConfig = __prefix + 'BrowserConfig', __Router = __prefix + 'Router', __RouterStatic = __prefix + 'RouterStatic', __UrlUtilsInstance = __prefix + 'UrlUtilsInstance', __Window = __prefix + 'Window', __LocalStorage = __prefix + 'LocalStorage', __SessionStorage = __prefix + 'SessionStorage', __Geolocation = __prefix + 'Geolocation', __BaseSegmentFactory = __prefix + 'BaseSegmentFactory', __BaseSegmentInstance = __prefix + 'BaseSegmentInstance', __StaticSegmentInstance = __prefix + 'StaticSegmentInstance', __VariableSegmentInstance = __prefix + 'VariableSegmentInstance', __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance', __SplatSegmentInstance = __prefix + 'SplatSegmentInstance', __StateStatic = __prefix + 'StateStatic', __StateInstance = __prefix + 'StateInstance', __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance', __InjectorStatic = __prefix + 'InjectorStatic', __History = __prefix + 'History', __Location = __prefix + 'Location', 
     /**
      */
-    __Plat = 'plat-', __Bind = __Plat + 'bind', __Href = __Plat + 'href', __Src = __Plat + 'src', __KeyDown = __Plat + 'keydown', __KeyPress = __Plat + 'keypress', __KeyUp = __Plat + 'keyup', __CharPress = __Plat + 'charpress', __Name = __Plat + 'name', __Options = __Plat + 'options', __Checked = __Plat + 'checked', __Disabled = __Plat + 'disabled', __Selected = __Plat + 'selected', __ReadOnly = __Plat + 'readonly', __Visible = __Plat + 'visible', __Style = __Plat + 'style', __Tap = __Plat + 'tap', __Blur = __Plat + 'blur', __Change = __Plat + 'change', __Copy = __Plat + 'copy', __Cut = __Plat + 'cut', __Paste = __Plat + 'paste', __DblTap = __Plat + 'dbltap', __Focus = __Plat + 'focus', __Submit = __Plat + 'submit', __TouchStart = __Plat + 'touchstart', __TouchEnd = __Plat + 'touchend', __TouchMove = __Plat + 'touchmove', __TouchCancel = __Plat + 'touchcancel', __Hold = __Plat + 'hold', __Release = __Plat + 'release', __Swipe = __Plat + 'swipe', __SwipeLeft = __Plat + 'swipeleft', __SwipeRight = __Plat + 'swiperight', __SwipeUp = __Plat + 'swipeup', __SwipeDown = __Plat + 'swipedown', __Track = __Plat + 'track', __TrackLeft = __Plat + 'trackleft', __TrackRight = __Plat + 'trackright', __TrackUp = __Plat + 'trackup', __TrackDown = __Plat + 'trackdown', __TrackEnd = __Plat + 'trackend', __React = __Plat + 'react', __Link = __Plat + 'link', __ForEach = __Plat + 'foreach', __Html = __Plat + 'html', __If = __Plat + 'if', __Ignore = __Plat + 'ignore', __Select = __Plat + 'select', __Template = __Plat + 'template', __Routeport = __Plat + 'routeport', __Viewport = __Plat + 'viewport', __Control = __Plat + 'control', __ViewControl = __Plat + 'viewcontrol', __Resources = __Plat + 'resources', __Context = __Plat + __CONTEXT, __TemplateContext = __Template + '-' + __CONTEXT, __Callback = __Plat + 'callback', __AttributePrefix = 'data-',
+    __Plat = 'plat-', __Bind = __Plat + 'bind', __Href = __Plat + 'href', __Src = __Plat + 'src', __KeyDown = __Plat + 'keydown', __KeyPress = __Plat + 'keypress', __KeyUp = __Plat + 'keyup', __CharPress = __Plat + 'charpress', __Name = __Plat + 'name', __Options = __Plat + 'options', __Checked = __Plat + 'checked', __Disabled = __Plat + 'disabled', __Selected = __Plat + 'selected', __ReadOnly = __Plat + 'readonly', __Visible = __Plat + 'visible', __Style = __Plat + 'style', __Tap = __Plat + 'tap', __Blur = __Plat + 'blur', __Change = __Plat + 'change', __Copy = __Plat + 'copy', __Cut = __Plat + 'cut', __Paste = __Plat + 'paste', __DblTap = __Plat + 'dbltap', __Focus = __Plat + 'focus', __Submit = __Plat + 'submit', __TouchStart = __Plat + 'touchstart', __TouchEnd = __Plat + 'touchend', __TouchMove = __Plat + 'touchmove', __TouchCancel = __Plat + 'touchcancel', __Hold = __Plat + 'hold', __Release = __Plat + 'release', __Swipe = __Plat + 'swipe', __SwipeLeft = __Plat + 'swipeleft', __SwipeRight = __Plat + 'swiperight', __SwipeUp = __Plat + 'swipeup', __SwipeDown = __Plat + 'swipedown', __Track = __Plat + 'track', __TrackLeft = __Plat + 'trackleft', __TrackRight = __Plat + 'trackright', __TrackUp = __Plat + 'trackup', __TrackDown = __Plat + 'trackdown', __TrackEnd = __Plat + 'trackend', __React = __Plat + 'react', __Link = __Plat + 'link', __ForEach = __Plat + 'foreach', __Html = __Plat + 'html', __If = __Plat + 'if', __Ignore = __Plat + 'ignore', __Select = __Plat + 'select', __Template = __Plat + 'template', __Routeport = __Plat + 'routeport', __Viewport = __Plat + 'viewport', __Control = __Plat + 'control', __ViewControl = __Plat + 'viewcontrol', __Resources = __Plat + 'resources', __Context = __Plat + __CONTEXT, __TemplateContext = __Template + '-' + __CONTEXT, __Callback = __Plat + 'callback', __AttributePrefix = 'data-', 
     /**
      */
-    __TemplateControlCache = '__templateControlCache', __Head = 'head', __Meta = 'meta', __Title = 'title', __Description = 'description', __Author = 'author', __Creator = 'creator', __MetaLink = 'link', __MetaHref = 'href', __MetaName = 'name', __MetaProperty = 'property', __MetaImage = 'image', __MetaVideo = 'video', __MetaType = 'type', __Rel = 'rel', __Url = 'url', __Article = 'article:', __OpenGraph = 'og:', __Twitter = 'twitter:', __Content = 'content',
+    __TemplateControlCache = '__templateControlCache', __Head = 'head', __Meta = 'meta', __Title = 'title', __Description = 'description', __Author = 'author', __Creator = 'creator', __MetaLink = 'link', __MetaHref = 'href', __MetaName = 'name', __MetaProperty = 'property', __MetaImage = 'image', __MetaVideo = 'video', __MetaType = 'type', __Rel = 'rel', __Url = 'url', __Article = 'article:', __OpenGraph = 'og:', __Twitter = 'twitter:', __Content = 'content', 
     /**
      */
-    __ready = 'ready', __suspend = 'suspend', __resume = 'resume', __online = 'online', __offline = 'offline', __error = 'error', __shutdown = 'shutdown', __exiting = 'exiting', __beforeLoad = 'beforeLoad',
+    __ready = 'ready', __suspend = 'suspend', __resume = 'resume', __online = 'online', __offline = 'offline', __error = 'error', __shutdown = 'shutdown', __exiting = 'exiting', __beforeLoad = 'beforeLoad', 
     /**
      */
-    __beforeNavigate = 'beforeNavigate', __navigated = 'navigated', __navigating = 'navigating', __beforeRouteChange = 'beforeRouteChange', __routeChanged = 'routeChanged', __urlChanged = 'urlChanged',
+    __beforeNavigate = 'beforeNavigate', __navigated = 'navigated', __navigating = 'navigating', __beforeRouteChange = 'beforeRouteChange', __routeChanged = 'routeChanged', __urlChanged = 'urlChanged', 
     /**
      */
-    __pause = 'pause', __deviceReady = 'deviceReady', __backButton = 'backbutton', __backClick = 'backclick', __backButtonPressed = 'backButtonPressed',
+    __pause = 'pause', __deviceReady = 'deviceReady', __backButton = 'backbutton', __backClick = 'backclick', __backButtonPressed = 'backButtonPressed', 
     /**
      */
-    __Hide = __Plat + 'hide', __Animating = __Plat + 'animating', __SimpleAnimation = __Plat + 'animation', __SimpleTransition = __Plat + 'transition', __Enter = __Plat + 'enter', __Leave = __Plat + 'leave', __Move = __Plat + 'move', __FadeIn = __Plat + 'fadein', __FadeOut = __Plat + 'fadeout', __NavigatingBack = __Plat + 'back-nav',
+    __Hide = __Plat + 'hide', __Animating = __Plat + 'animating', __SimpleAnimation = __Plat + 'animation', __SimpleTransition = __Plat + 'transition', __Enter = __Plat + 'enter', __Leave = __Plat + 'leave', __Move = __Plat + 'move', __FadeIn = __Plat + 'fadein', __FadeOut = __Plat + 'fadeout', __NavigatingBack = __Plat + 'back-nav', 
     /**
      */
-    __event_prefix = '$', __tap = __event_prefix + 'tap', __dbltap = __event_prefix + 'dbltap', __touchstart = __event_prefix + 'touchstart', __touchend = __event_prefix + 'touchend', __touchmove = __event_prefix + 'touchmove', __touchcancel = __event_prefix + 'touchcancel', __hold = __event_prefix + 'hold', __release = __event_prefix + 'release', __swipe = __event_prefix + 'swipe', __swipeleft = __event_prefix + 'swipeleft', __swiperight = __event_prefix + 'swiperight', __swipeup = __event_prefix + 'swipeup', __swipedown = __event_prefix + 'swipedown', __track = __event_prefix + 'track', __trackleft = __event_prefix + 'trackleft', __trackright = __event_prefix + 'trackright', __trackup = __event_prefix + 'trackup', __trackdown = __event_prefix + 'trackdown', __trackend = __event_prefix + 'trackend',
+    __event_prefix = '$', __tap = __event_prefix + 'tap', __dbltap = __event_prefix + 'dbltap', __touchstart = __event_prefix + 'touchstart', __touchend = __event_prefix + 'touchend', __touchmove = __event_prefix + 'touchmove', __touchcancel = __event_prefix + 'touchcancel', __hold = __event_prefix + 'hold', __release = __event_prefix + 'release', __swipe = __event_prefix + 'swipe', __swipeleft = __event_prefix + 'swipeleft', __swiperight = __event_prefix + 'swiperight', __swipeup = __event_prefix + 'swipeup', __swipedown = __event_prefix + 'swipedown', __track = __event_prefix + 'track', __trackleft = __event_prefix + 'trackleft', __trackright = __event_prefix + 'trackright', __trackup = __event_prefix + 'trackup', __trackdown = __event_prefix + 'trackdown', __trackend = __event_prefix + 'trackend', 
     /**
      */
-    __errorSuffix = 'Error', __platError = 'Plat' + __errorSuffix, __parseError = 'Parsing' + __errorSuffix, __bindError = 'Binding' + __errorSuffix, __compileError = 'Compiling' + __errorSuffix, __nameError = 'PlatName' + __errorSuffix, __navigationError = 'Navigating' + __errorSuffix, __templateError = 'Templating' + __errorSuffix, __contextError = 'Context' + __errorSuffix, __eventError = 'DispatchEvent' + __errorSuffix, __injectableError = 'Injectable' + __errorSuffix, __CompatError = 'Compatibility' + __errorSuffix,
+    __errorSuffix = 'Error', __platError = 'Plat' + __errorSuffix, __parseError = 'Parsing' + __errorSuffix, __bindError = 'Binding' + __errorSuffix, __compileError = 'Compiling' + __errorSuffix, __nameError = 'PlatName' + __errorSuffix, __navigationError = 'Navigating' + __errorSuffix, __templateError = 'Templating' + __errorSuffix, __contextError = 'Context' + __errorSuffix, __eventError = 'DispatchEvent' + __errorSuffix, __injectableError = 'Injectable' + __errorSuffix, __CompatError = 'Compatibility' + __errorSuffix, 
     /**
      */
     __forEachAliasOptions = {
@@ -60,10 +60,10 @@ var plat;
         odd: 'odd',
         first: 'first',
         last: 'last'
-    },
+    }, 
     /**
      */
-    __BASE_SEGMENT_TYPE = 'base', __VARIABLE_SEGMENT_TYPE = 'variable', __STATIC_SEGMENT_TYPE = 'static', __SPLAT_SEGMENT_TYPE = 'splat', __DYNAMIC_SEGMENT_TYPE = 'dynamic',
+    __BASE_SEGMENT_TYPE = 'base', __VARIABLE_SEGMENT_TYPE = 'variable', __STATIC_SEGMENT_TYPE = 'static', __SPLAT_SEGMENT_TYPE = 'splat', __DYNAMIC_SEGMENT_TYPE = 'dynamic', 
     /**
      */
     __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __SELF = '_self', __CONTEXT_RESOURCE = __CONTEXT;
@@ -420,17 +420,17 @@ var plat;
         var index = puid.length, charCode;
         while (index--) {
             charCode = puid[index].charCodeAt(0);
-            // '9'
+            // '9' 
             if (charCode === 57) {
                 puid[index] = 'A';
                 return join();
             }
-            // 'Z'
+            // 'Z' 
             if (charCode === 90) {
                 puid[index] = 'a';
                 return join();
             }
-            // 'z'
+            // 'z' 
             if (charCode === 122) {
                 puid[index] = '0';
             }
@@ -595,7 +595,7 @@ var plat;
         }
     }
     function stringToNode(html) {
-        // ___compat is a global variable in utilsglobal
+        // ___compat is a global variable in utilsglobal 
         ___compat = ___compat || (___compat = plat.acquire(__Compat));
         ___document = ___document || (___document = plat.acquire(__Document));
         var nodeName = __nodeNameRegex.exec(html), element = ___document.createElement('div');
@@ -603,7 +603,7 @@ var plat;
             element = innerHtml(element, html);
             return element.removeChild(element.lastChild);
         }
-        // trim html string
+        // trim html string 
         html = html.trim();
         var mapTag = nodeName[1];
         if (___compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
@@ -1756,8 +1756,8 @@ var plat;
                 _window[prefix + 'CancelRequestAnimationFrame'] ||
                 _window[prefix + 'CancelAnimationFrame'];
             var style = documentElement.style;
-            // handle Android issue where style.transition exists but transition events still need vendor prefix
-            // should only affect version 4.1 but we will handle for < 4.4.
+            // handle Android issue where style.transition exists but transition events still need vendor prefix 
+            // should only affect version 4.1 but we will handle for < 4.4. 
             if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
                 !(isUndefined(style.animation) || isUndefined(style.transition))) {
                 this.animationSupported = true;
@@ -2338,7 +2338,7 @@ var plat;
                 var char, length = input.length, ternary = 0, ternaryFound = false, isSpace = this._isSpace, isAlphaNumeric = this._isAlphaNumeric;
                 for (var index = 0; index < length; index++) {
                     char = input[index];
-                    // space
+                    // space 
                     if (isSpace(char)) {
                         continue;
                     }
@@ -2390,7 +2390,7 @@ var plat;
                             default:
                                 index = this.__handleOtherOperator(index, char);
                         }
-                        // semicolon throw error
+                        // semicolon throw error 
                     }
                     else if (char === ';') {
                         this._throwError('Unexpected semicolon');
@@ -2602,7 +2602,7 @@ var plat;
              */
             Tokenizer.prototype.__handlePeriod = function (index, char) {
                 var outputQueue = this.__outputQueue, operatorStack = this.__operatorStack, topOutputLength = outputQueue.length - 1, previousChar = this.__previousChar, lookAhead;
-                // if output queue is null OR space or operator or ( or , before .
+                // if output queue is null OR space or operator or ( or , before . 
                 if (topOutputLength < 0 ||
                     this._isSpace(previousChar) ||
                     !isNull(OPERATORS[previousChar]) ||
@@ -2647,7 +2647,7 @@ var plat;
                     return this._throwError('Improper object literal');
                 }
                 this._popStackForVal(topOperator, '{', 'Improper object literal');
-                // pop left brace off stack
+                // pop left brace off stack 
                 operatorStack.shift();
                 this.__lastColonChar.pop();
                 this.__lastCommaChar.pop();
@@ -2684,10 +2684,10 @@ var plat;
                     lastArgCountObj.num--;
                 }
                 this._popStackForVal(topOperator, '[', 'Brackets mismatch');
-                // pop left bracket off stack
+                // pop left bracket off stack 
                 operatorStack.shift();
                 this.__lastCommaChar.pop();
-                // check if function on top of stack
+                // check if function on top of stack 
                 this.__outputQueue.push({
                     val: '[]',
                     args: (this.__previousChar === '[') ? -1 : lastArgCountObj.num + 1
@@ -2727,10 +2727,10 @@ var plat;
                     return this._throwError('Parentheses mismatch');
                 }
                 this._popStackForVal(topOperator, '(', 'Parentheses mismatch');
-                // pop left parenthesis off stack
+                // pop left parenthesis off stack 
                 operatorStack.shift();
                 this.__lastCommaChar.pop();
-                // check if function on top of stack
+                // check if function on top of stack 
                 if (!isNull(localArgCountObj) && localArgCountObj.num >= 0) {
                     var localArgNum = localArgCountObj.num;
                     if (this.__previousChar === '(') {
@@ -2758,7 +2758,7 @@ var plat;
                 if (lastCommaArg === '(' || lastCommaArg === '[') {
                     var argCountArray = this.__argCount, length_2 = argCountArray.length;
                     if (length_2 > 0) {
-                        // increment deepest fn count (don't need to increment obj count because we increment with colon)
+                        // increment deepest fn count (don't need to increment obj count because we increment with colon) 
                         argCountArray[length_2 - 1].num++;
                     }
                     else {
@@ -2809,7 +2809,7 @@ var plat;
                         return;
                     }
                     ternary--;
-                    // pop latest colon char off queue
+                    // pop latest colon char off queue 
                     lastColonCharArray.pop();
                     this._popStackForVal(topOperator, '?', 'Ternary mismatch');
                     outputQueue.push(operatorStack.shift());
@@ -3015,7 +3015,7 @@ var plat;
                     tokenObj = tokens[index];
                     token = tokenObj.val;
                     args = tokenObj.args;
-                    // check if its an accessor
+                    // check if its an accessor 
                     if (isAccessor(token)) {
                         switch (token) {
                             case '()':
@@ -3026,11 +3026,11 @@ var plat;
                                 tempIdentifiers.push('.');
                                 break;
                             default:
-                                // handle empty array
+                                // handle empty array 
                                 if (args < 0) {
                                     codeArray.push('[]');
                                     tempIdentifiers.push('.');
-                                    // handle array literal
+                                    // handle array literal 
                                 }
                                 else if (args > 0) {
                                     codeArray.push(this.__convertArrayLiteral(args));
@@ -3041,10 +3041,10 @@ var plat;
                                 }
                                 break;
                         }
-                        // check if its an operator
+                        // check if its an operator 
                     }
                     else if (isOperator(token)) {
-                        // check if string literal
+                        // check if string literal 
                         if (args === 0) {
                             codeArray.push(this.__convertPrimitive(index, token, args));
                         }
@@ -3066,22 +3066,22 @@ var plat;
                                     break;
                             }
                         }
-                        // its either function, object, or primitive
+                        // its either function, object, or primitive 
                     }
                     else {
-                        // potential function or object to index into
+                        // potential function or object to index into 
                         if (args < 0) {
                             codeArray.push(this.__convertFunction(index, token, useLocalContext));
-                            // primitive
+                            // primitive 
                         }
                         else {
                             codeArray.push(this.__convertPrimitive(index, token, args));
                         }
                     }
                 }
-                // move the rest of the tempIdentifiers to the identifiers
+                // move the rest of the tempIdentifiers to the identifiers 
                 this._popRemainingIdentifiers();
-                // make the identifiers array unqiue entries only
+                // make the identifiers array unqiue entries only 
                 this._makeIdentifiersUnique();
                 var parsedExpression = {
                     evaluate: new Function(__CONTEXT, __ALIASES, this.__fnEvalConstant + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
@@ -3089,7 +3089,7 @@ var plat;
                     identifiers: this.__identifiers.slice(0),
                     aliases: Object.keys(this.__aliases)
                 };
-                // reset parser's properties
+                // reset parser's properties 
                 this._resetParser();
                 return parsedExpression;
             };
@@ -3266,7 +3266,7 @@ var plat;
                     codeStr += ',"' + key + '":' + temp;
                     if (tempIdentifiers.length > 1) {
                         tempIdentifier = tempIdentifiers.pop();
-                        // pop the key's tempIdentifier
+                        // pop the key's tempIdentifier 
                         tempIdentifiers.pop();
                         if (tempIdentifier !== '.') {
                             identifiers.push(tempIdentifier);
@@ -3327,7 +3327,7 @@ var plat;
                         if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
                             tempIdentifiers[lastIndex] += '.' + identifierFnName;
                             identifiers.push(tempIdentifiers.pop());
-                            // check fn name is not null, pushed an identifier, and the context is not an array literal
+                            // check fn name is not null, pushed an identifier, and the context is not an array literal 
                         }
                         else if (!(identifierFnName === '' ||
                             !pushedIdentifier ||
@@ -3464,7 +3464,7 @@ var plat;
                         }
                     }
                 }
-                // push identifier for new result of operator
+                // push identifier for new result of operator 
                 tempIdentifiers.push('.');
                 codeArray.push('(' + OPERATORS[token].fn.toString() + ')(context, aliases,' + tempStr.slice(0, tempStr.length - 1) + ')');
             };
@@ -3627,7 +3627,7 @@ var plat;
                     return false;
                 }
                 var urlUtils = this.urlUtils(url), locationUtils = this.urlUtils();
-                // check for protocol:host:port mismatch
+                // check for protocol:host:port mismatch 
                 return urlUtils.protocol !== locationUtils.protocol ||
                     urlUtils.hostname !== locationUtils.hostname ||
                     urlUtils.port !== locationUtils.port;
@@ -3704,7 +3704,7 @@ var plat;
                     _location.href = url;
                     return;
                 }
-                // make sure URL is absolute
+                // make sure URL is absolute 
                 if (!this._regex.fullUrlRegex.test(url) && url[0] !== '/') {
                     url = baseUrl + url;
                 }
@@ -3850,17 +3850,17 @@ var plat;
                 url = url || '';
                 var element = UrlUtils.__urlUtilsElement ||
                     (UrlUtils.__urlUtilsElement = this._document.createElement('a')), _browserConfig = this._browserConfig;
-                // always make local urls relative to start page.
+                // always make local urls relative to start page. 
                 if (url[0] === '/' && url.indexOf('//') !== 0) {
                     url = url.slice(1);
                 }
-                // Always append the baseUrl if this is not a full-url
+                // Always append the baseUrl if this is not a full-url 
                 if (!this._regex.fullUrlRegex.test(url)) {
                     url = _browserConfig.baseUrl + url;
                 }
                 element.setAttribute('href', url);
                 url = element.href;
-                // we need to do this twice for cerain browsers (e.g. win8)
+                // we need to do this twice for cerain browsers (e.g. win8) 
                 element.setAttribute('href', url);
                 url = element.href;
                 this.href = url;
@@ -3909,7 +3909,7 @@ var plat;
     (function (async) {
         var __promiseQueue = [], browserGlobal = (typeof window !== 'undefined') ? window : {}, BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver, scheduleFlush;
         var process = process;
-        // decide what async method to use to triggering processing of queued callbacks:
+        // decide what async method to use to triggering processing of queued callbacks: 
         if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
             scheduleFlush = useNextTick();
         }
@@ -4229,7 +4229,7 @@ var plat;
             State[State["REJECTED"] = 2] = "REJECTED";
         })(State || (State = {}));
         ;
-        // node
+        // node 
         function useNextTick() {
             return function () {
                 process.nextTick(flush);
@@ -4305,7 +4305,7 @@ var plat;
                 }
                 options.url = this._browser.urlUtils(url).toString();
                 var isCrossDomain = options.isCrossDomain || false, xDomain = false;
-                // check if forced cross domain call or cors is not supported (IE9)
+                // check if forced cross domain call or cors is not supported (IE9) 
                 if (isCrossDomain) {
                     xDomain = true;
                 }
@@ -4340,7 +4340,7 @@ var plat;
                     scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
                     var oldValue = _window[jsonpCallback];
                     _window[jsonpCallback] = function (response) {
-                        // clean up
+                        // clean up 
                         if (isFunction(_this.clearTimeout)) {
                             _this.clearTimeout();
                         }
@@ -4351,23 +4351,23 @@ var plat;
                         else {
                             _window[jsonpCallback] = oldValue;
                         }
-                        // call callback
+                        // call callback 
                         resolve({
                             response: response,
-                            // ok
+                            // ok 
                             status: 200
                         });
                     };
                     _document.head.appendChild(scriptTag);
                     var timeout = options.timeout;
                     if (isNumber(timeout) && timeout > 0) {
-                        // we first postpone to avoid always timing out when debugging, though this is not
-                        // a foolproof method.
+                        // we first postpone to avoid always timing out when debugging, though this is not 
+                        // a foolproof method. 
                         _this.clearTimeout = postpone(function () {
                             _this.clearTimeout = defer(function () {
                                 reject(new AjaxError({
                                     response: 'Request timed out in ' + timeout + 'ms for ' + url,
-                                    // request timeout
+                                    // request timeout 
                                     status: 408
                                 }));
                                 _window[jsonpCallback] = noop;
@@ -4393,14 +4393,14 @@ var plat;
                             }
                             catch (e) { }
                         }
-                        // file protocol issue **Needs to be tested more thoroughly**
-                        // ok if response is not empty, Not Found otherwise
+                        // file protocol issue **Needs to be tested more thoroughly** 
+                        // ok if response is not empty, Not Found otherwise 
                         if (!isEmpty(response)) {
                             return true;
                         }
                         return false;
                     }
-                    // 304 is not modified
+                    // 304 is not modified 
                     if ((status_1 >= 200 && status_1 < 300) || status_1 === 304) {
                         return true;
                     }
@@ -4408,7 +4408,7 @@ var plat;
                         return false;
                     }
                 }
-                // else {} TODO: add progress for xhr if we choose to add progress to AjaxPromise
+                // else {} TODO: add progress for xhr if we choose to add progress to AjaxPromise 
             };
             /**
              * The function that initializes and sends the XMLHttpRequest.
@@ -4434,15 +4434,15 @@ var plat;
                         _this._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
                         method = 'GET';
                     }
-                    xhr.open(method.toUpperCase(), url,
-                    // synchronous XHR not supported
+                    xhr.open(method.toUpperCase(), url, 
+                    // synchronous XHR not supported 
                     true, options.user, options.password);
                     var responseType = options.responseType;
                     if (!(_this.__fileSupported || responseType === '' || responseType === 'text')) {
                         responseType = '';
                     }
-                    // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json.
-                    // The only way to do feature detection is with try/catch.
+                    // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json. 
+                    // The only way to do feature detection is with try/catch. 
                     if (responseType === 'json') {
                         try {
                             xhr.responseType = responseType;
@@ -4457,20 +4457,20 @@ var plat;
                         xhr.overrideMimeType(mimeType);
                     }
                     if (isNull(data) || data === '') {
-                        // no data exists so set headers and send request
+                        // no data exists so set headers and send request 
                         _this.__setHeaders();
                         xhr.send();
                     }
                     else {
                         var transforms = options.transforms || [], length_3 = transforms.length, contentType = options.contentType, contentTypeExists = isString(contentType) && !isEmpty(contentType);
                         if (length_3 > 0) {
-                            // if data transforms defined, assume they're going to take care of
-                            // any and all transformations.
+                            // if data transforms defined, assume they're going to take care of 
+                            // any and all transformations. 
                             for (var i = 0; i < length_3; ++i) {
                                 data = transforms[i](data, xhr);
                             }
-                            // if contentType exists, assume they did not set it in
-                            // their headers as well
+                            // if contentType exists, assume they did not set it in 
+                            // their headers as well 
                             if (contentTypeExists) {
                                 xhr.setRequestHeader('Content-Type', contentType);
                             }
@@ -4478,31 +4478,31 @@ var plat;
                             xhr.send(data);
                         }
                         else if (isObject(data)) {
-                            // if isObject and contentType exists we want to transform the data
+                            // if isObject and contentType exists we want to transform the data 
                             if (contentTypeExists) {
                                 var contentTypeLower = contentType.toLowerCase();
                                 if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
-                                    // perform an encoded form transformation
+                                    // perform an encoded form transformation 
                                     data = _this.__serializeFormData();
-                                    // set Content-Type header because we're assuming they didn't set it
-                                    // in their headers object
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object 
                                     xhr.setRequestHeader('Content-Type', contentType);
                                     _this.__setHeaders();
                                     xhr.send(data);
                                 }
                                 else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
-                                    // need to check if File is a supported object
+                                    // need to check if File is a supported object 
                                     if (_this.__fileSupported) {
-                                        // use FormData
+                                        // use FormData 
                                         data = _this.__appendFormData();
-                                        // do not set the Content-Type header due to modern browsers
-                                        // setting special headers for multipart/form-data
+                                        // do not set the Content-Type header due to modern browsers 
+                                        // setting special headers for multipart/form-data 
                                         _this.__setHeaders();
                                         xhr.send(data);
                                     }
                                     else {
-                                        // use iframe trick for older browsers (do not send a request)
-                                        // this case is the reason for this giant, terrible, nested if-else statement
+                                        // use iframe trick for older browsers (do not send a request) 
+                                        // this case is the reason for this giant, terrible, nested if-else statement 
                                         _this.__submitFramedFormData().then(function (response) {
                                             resolve(response);
                                         }, function () {
@@ -4511,24 +4511,24 @@ var plat;
                                     }
                                 }
                                 else {
-                                    // assume stringification is possible
+                                    // assume stringification is possible 
                                     data = JSON.stringify(data);
-                                    // set Content-Type header because we're assuming they didn't set it
-                                    // in their headers object
+                                    // set Content-Type header because we're assuming they didn't set it 
+                                    // in their headers object 
                                     xhr.setRequestHeader('Content-Type', contentType);
                                     _this.__setHeaders();
                                     xhr.send(data);
                                 }
                             }
                             else {
-                                // contentType does not exist so simply set defined headers and send raw data
+                                // contentType does not exist so simply set defined headers and send raw data 
                                 _this.__setHeaders();
                                 xhr.send(data);
                             }
                         }
                         else {
-                            // if contentType exists set Content-Type header because we're assuming they didn't set it
-                            // in their headers object
+                            // if contentType exists set Content-Type header because we're assuming they didn't set it 
+                            // in their headers object 
                             if (contentTypeExists) {
                                 xhr.setRequestHeader('Content-Type', contentType);
                             }
@@ -4538,8 +4538,8 @@ var plat;
                     }
                     var timeout = options.timeout;
                     if (isNumber(timeout) && timeout > 0) {
-                        // we first postpone to avoid always timing out when debugging, though this is not
-                        // a foolproof method.
+                        // we first postpone to avoid always timing out when debugging, though this is not 
+                        // a foolproof method. 
                         _this.clearTimeout = postpone(function () {
                             _this.clearTimeout = defer(function () {
                                 reject(new AjaxError({
@@ -4580,8 +4580,8 @@ var plat;
              */
             HttpRequest.prototype._formatResponse = function (responseType, success) {
                 var xhr = this.xhr, status = xhr.status, response = xhr.response;
-                // need to try, catch instead of boolean short circuit because chrome doesn't like checking
-                // responseText when the responseType is anything other than empty or 'text'
+                // need to try, catch instead of boolean short circuit because chrome doesn't like checking 
+                // responseText when the responseType is anything other than empty or 'text' 
                 if (isNull(response)) {
                     try {
                         response = xhr.responseText;
@@ -4589,8 +4589,8 @@ var plat;
                     catch (e) { }
                 }
                 if (status === 0) {
-                    // file protocol issue **Needs to be tested more thoroughly**
-                    // ok if response empty, Not Found otherwise
+                    // file protocol issue **Needs to be tested more thoroughly** 
+                    // ok if response empty, Not Found otherwise 
                     status = success ? 200 : 404;
                 }
                 xhr.onreadystatechange = null;
@@ -4636,12 +4636,12 @@ var plat;
                             val = val.toISOString();
                         }
                         else if (isFile(val)) {
-                            // cannot parse file this way
+                            // cannot parse file this way 
                             this._log.warn('Invalid File entry with key "' + key + '"');
                             val = '[object File]';
                         }
                         else {
-                            // may throw a fatal error but this is an invalid case
+                            // may throw a fatal error but this is an invalid case 
                             this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
                             val = JSON.stringify(val);
                         }
@@ -4669,7 +4669,7 @@ var plat;
                             formData.append(key, val, val.name || val.fileName || 'blob');
                         }
                         else {
-                            // may throw a fatal error but this is an invalid case
+                            // may throw a fatal error but this is an invalid case 
                             this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
                             formData.append(key, JSON.stringify(val));
                         }
@@ -4730,10 +4730,10 @@ var plat;
                     input.value = '';
                 }
                 else if (isObject(val)) {
-                    // check if val is an pseudo File
+                    // check if val is an pseudo File 
                     if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
                         var fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'), length_4 = fileList.length;
-                        // if no inputs found, stringify the data
+                        // if no inputs found, stringify the data 
                         if (length_4 === 0) {
                             this._log.info('Could not find input[type="file"] with [name="' + key +
                                 '"]. Stringifying data instead.');
@@ -4741,25 +4741,25 @@ var plat;
                         }
                         else if (length_4 === 1) {
                             input = fileList[0];
-                            // swap nodes
+                            // swap nodes 
                             var clone = input.cloneNode(true);
                             input.parentNode.insertBefore(clone, input);
                         }
                         else {
-                            // rare case but may have multiple forms with file inputs
-                            // that have the same name
+                            // rare case but may have multiple forms with file inputs 
+                            // that have the same name 
                             var fileInput = void 0, path = val.path;
                             while (length_4-- > 0) {
                                 fileInput = fileList[length_4];
                                 if (fileInput.value === path) {
                                     input = fileInput;
-                                    // swap nodes
+                                    // swap nodes 
                                     var inputClone = input.cloneNode(true);
                                     input.parentNode.insertBefore(inputClone, input);
                                     break;
                                 }
                             }
-                            // could not find the right file
+                            // could not find the right file 
                             if (length_4 === -1) {
                                 this._log.info('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
                                     val.path + '"]. Stringifying data instead.');
@@ -4768,7 +4768,7 @@ var plat;
                         }
                     }
                     else {
-                        // may throw a fatal error but this is an invalid case
+                        // may throw a fatal error but this is an invalid case 
                         this._log.info('Invalid form entry with key "' + key + '" and value "' + val);
                         input.value = JSON.stringify(val);
                     }
@@ -4820,7 +4820,7 @@ var plat;
             return AjaxError;
         }());
         async.AjaxError = AjaxError;
-        // have to bypass TS flags in order to properly extend Error
+        // have to bypass TS flags in order to properly extend Error 
         AjaxError.prototype = Error.prototype;
         /**
          * Describes a type of Promise that fulfills with an IAjaxResponse
@@ -4974,7 +4974,7 @@ var plat;
          * The keyed collection of all created Caches in the
          * ICacheFactory.
          */
-        var caches = {},
+        var caches = {}, 
         /**
          * Internal storage for all the items stored in each Cache.
          */
@@ -5765,10 +5765,10 @@ var plat;
                     }
                     return noop;
                 }
-                // set observedIdentifier to null
+                // set observedIdentifier to null 
                 this.__observedIdentifier = null;
                 this.__contextObjects[absoluteIdentifier] = context[key];
-                // if observedIdentifier is not null, the primitive is already being watched
+                // if observedIdentifier is not null, the primitive is already being watched 
                 var observedIdentifier = this.__observedIdentifier, isObserved = !isNull(observedIdentifier), removeCallback = noop;
                 if (isObserved) {
                     hasIdentifier = true;
@@ -5801,7 +5801,7 @@ var plat;
                     };
                 }
                 else if (!hasIdentifier) {
-                    // check if value is defined and context manager hasn't seen this identifier
+                    // check if value is defined and context manager hasn't seen this identifier 
                     if (parentIsArray && isLength) {
                         var property = split.pop(), parentContext = this.getContext(split, false);
                         this.__observedIdentifier = null;
@@ -6127,7 +6127,7 @@ var plat;
                 var _this = this;
                 if (isLength === true) {
                     var split = absoluteIdentifier.split('.');
-                    // pop length key
+                    // pop length key 
                     split.pop();
                     var property = split.pop(), context = this.getContext(split, false);
                     if (isObject(context)) {
@@ -6168,7 +6168,7 @@ var plat;
              */
             ContextManager.prototype._overwriteArrayFunction = function (absoluteIdentifier, method) {
                 var callbackObjects = ContextManager.arrayChangeListeners[absoluteIdentifier] || {}, _this = this;
-                // we can't use a fat-arrow function here because we need the array context.
+                // we can't use a fat-arrow function here because we need the array context. 
                 return function observedArrayFn() {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
@@ -6249,7 +6249,7 @@ var plat;
                 if (isNull(callbacks)) {
                     return;
                 }
-                // splice the observed listener
+                // splice the observed listener 
                 var index = callbacks.indexOf(listener);
                 if (index === -1) {
                     return;
@@ -7766,7 +7766,7 @@ var plat;
             TemplateControl.determineTemplate = function (control, templateUrl) {
                 var templateCache = TemplateControl._templateCache, dom = control.dom, Promise = TemplateControl._Promise;
                 if (!isNull(templateUrl)) {
-                    // do nothing
+                    // do nothing 
                 }
                 else if (!isNull(control.templateUrl)) {
                     templateUrl = control.templateUrl;
@@ -9131,7 +9131,7 @@ var plat;
             DomEvents.prototype.initialize = function () {
                 var isActive = this._isActive;
                 if (isActive === true) {
-                    // has already been initialized and was never disposed
+                    // has already been initialized and was never disposed 
                     return;
                 }
                 this.__registerTypes();
@@ -9200,7 +9200,7 @@ var plat;
                     this._inTouch = true;
                 }
                 else if (this._inTouch === true) {
-                    // return immediately if mouse event and currently in a touch
+                    // return immediately if mouse event and currently in a touch 
                     ev.preventDefault();
                     return false;
                 }
@@ -9211,7 +9211,7 @@ var plat;
                 if (isNull(ev)) {
                     return true;
                 }
-                // set last move back to null and hasMoved to false
+                // set last move back to null and hasMoved to false 
                 this.__lastMoveEvent = null;
                 this.__hasMoved = false;
                 var clientX = ev.clientX, clientY = ev.clientY, timeStamp = ev.timeStamp, target = ev.target, gestures = this._gestures;
@@ -9235,7 +9235,7 @@ var plat;
                     this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
                 }
                 var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0;
-                // return if no hold or release events are registered
+                // return if no hold or release events are registered 
                 if (noHolds && noRelease) {
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__registerMove(eventType);
@@ -9262,7 +9262,7 @@ var plat;
                 }
                 else {
                     this.__hasRelease = false;
-                    // has both hold and release events registered
+                    // has both hold and release events registered 
                     domEvent = this.__findFirstSubscriber(ev.target, this._gestures.$hold);
                     if ((domEventFound = !isNull(domEvent))) {
                         subscribeFn = function () {
@@ -9272,7 +9272,7 @@ var plat;
                         };
                     }
                 }
-                // set timeout to fire the subscribeFn
+                // set timeout to fire the subscribeFn 
                 if (domEventFound) {
                     this.__cancelDeferredHold = defer(subscribeFn, holdInterval);
                 }
@@ -9284,12 +9284,12 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch move event object.
              */
             DomEvents.prototype._onTouchMove = function (ev) {
-                // clear hold event
+                // clear hold event 
                 this.__cancelDeferredHold();
                 this.__cancelDeferredHold = noop;
                 var eventType = ev.type;
-                // return immediately if there are multiple touches present, or
-                // if it is a mouse event and currently in a touch
+                // return immediately if there are multiple touches present, or 
+                // if it is a mouse event and currently in a touch 
                 if (this._inTouch === true && eventType === 'mousemove') {
                     return true;
                 }
@@ -9299,13 +9299,13 @@ var plat;
                 }
                 var gestureCount = this._gestureCount, noTracking = gestureCount.$track <= 0, noSwiping = gestureCount.$swipe <= 0, config = DomEvents.config, swipeOrigin = this.__swipeOrigin, x = evt.clientX, y = evt.clientY, minMove = this.__hasMoved ||
                     (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
-                // if minimum distance not met
+                // if minimum distance not met 
                 if (!minMove) {
                     this.__handleMappedEvents(eventType, ev, evt);
                     return true;
                 }
                 this.__hasMoved = true;
-                // if no moving events return
+                // if no moving events return 
                 if (noTracking && noSwiping) {
                     this.__handleMappedEvents(eventType, ev, evt);
                     return true;
@@ -9317,7 +9317,7 @@ var plat;
                 if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
                     ev.preventDefault();
                 }
-                // if tracking events exist
+                // if tracking events exist 
                 if (!noTracking) {
                     this.__handleTrack(evt, ev);
                 }
@@ -9350,18 +9350,18 @@ var plat;
                 }
                 var hasMoved = this.__hasMoved, notMouseUp = eventType !== 'mouseup';
                 if (notMouseUp) {
-                    // all non mouse cases
+                    // all non mouse cases 
                     if (eventType === 'touchend') {
-                        // all to handle a strange issue when touch clicking certain types
-                        // of DOM elements
+                        // all to handle a strange issue when touch clicking certain types 
+                        // of DOM elements 
                         if (hasMoved) {
-                            // we check ev.cancelable in the END case in case of scrolling conditions
+                            // we check ev.cancelable in the END case in case of scrolling conditions 
                             if (ev.cancelable === true) {
                                 ev.preventDefault();
                             }
                         }
                         else if (this._inTouch === true) {
-                            // immediately handle the input depending on type for more native-like experience
+                            // immediately handle the input depending on type for more native-like experience 
                             if (ev.target !== this.__focusedElement) {
                                 if (this.__handleInput(ev.target) && ev.cancelable === true) {
                                     ev.preventDefault();
@@ -9373,7 +9373,7 @@ var plat;
                                 ev.preventDefault();
                             }
                             this.__preventClickFromTouch();
-                            // reset touch count
+                            // reset touch count 
                             this.__touchCount = 0;
                             return true;
                         }
@@ -9382,8 +9382,8 @@ var plat;
                 }
                 else if (!isUndefined(this._inTouch)) {
                     if (!this._inMouse) {
-                        // this is case where touchend fired and now
-                        // mouse end is also being fired
+                        // this is case where touchend fired and now 
+                        // mouse end is also being fired 
                         if (ev.cancelable === true) {
                             ev.preventDefault();
                         }
@@ -9391,7 +9391,7 @@ var plat;
                     }
                     this._inMouse = false;
                 }
-                // check for cancel event
+                // check for cancel event 
                 if (this.__cancelRegex.test(eventType)) {
                     this.__handleCanceled(ev);
                     return true;
@@ -9402,7 +9402,7 @@ var plat;
                 else {
                     this.__touchCount--;
                 }
-                // standardizeEventObject creates touches
+                // standardizeEventObject creates touches 
                 ev = this.__standardizeEventObject(ev);
                 if (isNull(ev)) {
                     return true;
@@ -9410,59 +9410,59 @@ var plat;
                 else if (notMouseUp) {
                     this._inTouch = false;
                 }
-                // additional check for mousedown/touchstart - mouseup/touchend inconsistencies
+                // additional check for mousedown/touchstart - mouseup/touchend inconsistencies 
                 if (this.__touchCount > 0) {
                     this.__touchCount = ev._touches.length;
                 }
                 this.__clearTempStates();
-                // handle release event
+                // handle release event 
                 if (this.__hasRelease) {
                     this.__handleRelease(ev);
                 }
-                // handle swipe events
+                // handle swipe events 
                 this.__handleSwipe();
                 var config = DomEvents.config, intervals = config.intervals, touchEnd = ev.timeStamp, touchDown = this.__lastTouchDown;
-                // if the user moved their finger (for scroll) we handle $trackend and return,
-                // else if they had their finger down too long to be considered a tap, we want to return
+                // if the user moved their finger (for scroll) we handle $trackend and return, 
+                // else if they had their finger down too long to be considered a tap, we want to return 
                 if (hasMoved) {
                     this.__handleTrackEnd(ev);
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__tapCount = 0;
-                    // clear captured target
+                    // clear captured target 
                     this.__capturedTarget = null;
                     return true;
                 }
                 else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__tapCount = 0;
-                    // clear captured target
+                    // clear captured target 
                     this.__capturedTarget = null;
                     return true;
                 }
                 var lastTouchUp = this.__lastTouchUp, x = ev.clientX, y = ev.clientY;
-                // check if can be a double tap event by checking number of taps, distance between taps,
-                // and time between taps
+                // check if can be a double tap event by checking number of taps, distance between taps, 
+                // and time between taps 
                 if (this.__tapCount > 0 &&
                     this.__getDistance(x, lastTouchUp.clientX, y, lastTouchUp.clientY) <= config.distances.maxDblTapDistance &&
                     ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
-                    // handle dbltap events
+                    // handle dbltap events 
                     this.__handleDbltap(ev);
                 }
                 else {
                     this.__tapCount = 0;
                 }
-                // handle tap events
+                // handle tap events 
                 this.__handleTap(ev);
                 this.__handleMappedEvents(eventType, ev, ev);
                 this.__lastTouchUp = ev;
-                // clear captured target
+                // clear captured target 
                 this.__capturedTarget = null;
             };
             /**
              * Clears all temporary states like move and hold events.
              */
             DomEvents.prototype.__clearTempStates = function () {
-                // clear hold event
+                // clear hold event 
                 this.__cancelDeferredHold();
                 this.__cancelDeferredHold = noop;
                 if (this.__detectingMove) {
@@ -9478,10 +9478,10 @@ var plat;
                 this._inTouch = this.__hasRelease = false;
                 this.__pointerHash = {};
                 this.__pointerEvents = [];
-                // clear captured target
+                // clear captured target 
                 this.__capturedTarget = null;
             };
-            // gesture handling methods
+            // gesture handling methods 
             /**
              * A function for handling when gestures are canceled via the Browser.
              * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
@@ -9492,8 +9492,8 @@ var plat;
                 this._inTouch = false;
                 this.__clearTempStates();
                 if (this.__hasMoved) {
-                    // Android 4.4.x fires touchcancel when the finger moves off an element that
-                    // is listening for touch events, so we should handle swipes here in that case.
+                    // Android 4.4.x fires touchcancel when the finger moves off an element that 
+                    // is listening for touch events, so we should handle swipes here in that case. 
                     if (this._android44orBelow) {
                         this.__handleSwipe();
                     }
@@ -9534,16 +9534,16 @@ var plat;
                 if (isNull(domEvent)) {
                     return;
                 }
-                // fire tap event immediately if no dbltap zoom delay
-                // or a mouse is being used
+                // fire tap event immediately if no dbltap zoom delay 
+                // or a mouse is being used 
                 if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                     ev.pointerType === 'mouse' || ev.type === 'mouseup') {
                     ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
                     return;
                 }
-                // defer for tap delay in case of something like desired
-                // dbltap zoom
+                // defer for tap delay in case of something like desired 
+                // dbltap zoom 
                 this.__cancelDeferredTap = defer(function () {
                     ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
@@ -9568,7 +9568,7 @@ var plat;
                 }
                 ev._buttons = this.__lastTouchDown._buttons;
                 domEvent.trigger(ev);
-                // set touch count to -1 to prevent repeated fire on sequential taps
+                // set touch count to -1 to prevent repeated fire on sequential taps 
                 this.__tapCount = -1;
             };
             /**
@@ -9586,7 +9586,7 @@ var plat;
              * A function for handling and firing swipe events.
              */
             DomEvents.prototype.__handleSwipe = function () {
-                // if swiping events exist
+                // if swiping events exist 
                 if (this._gestureCount.$swipe <= 0) {
                     return;
                 }
@@ -9639,7 +9639,7 @@ var plat;
                 }
                 domEvent.trigger(ev);
             };
-            // touch type and element registration
+            // touch type and element registration 
             /**
              * A function for determining the proper touch events.
              */
@@ -9671,7 +9671,7 @@ var plat;
             DomEvents.prototype.__registerTypes = function () {
                 this.__registerType(this._startEvents);
                 this.__registerType(this._endEvents);
-                // dragstart will cause touchend to not fire
+                // dragstart will cause touchend to not fire 
                 this._document.addEventListener('dragstart', this.__preventDefault, false);
             };
             /**
@@ -9820,7 +9820,7 @@ var plat;
                 }
                 else {
                     if (id === 1 && !isEmpty(pointerHash)) {
-                        // this is a mouse movement while mid touch
+                        // this is a mouse movement while mid touch 
                         return;
                     }
                     ev.identifier = ev.pointerId;
@@ -9833,7 +9833,7 @@ var plat;
                     pointerHash[id] = ev;
                 }
             };
-            // event and subscription handling
+            // event and subscription handling 
             /**
              * Searches from the EventTarget up the DOM tree looking for an element with the
              * registered event type.
@@ -9944,8 +9944,8 @@ var plat;
                             ev.preventDefault = preventDefault;
                         }
                         else if (this.__getTouchIndex(touches) >= 0) {
-                            // we want to return null because our point of interest is in touches
-                            // but was not in changedTouches so it is still playing a part on the page
+                            // we want to return null because our point of interest is in touches 
+                            // but was not in changedTouches so it is still playing a part on the page 
                             return null;
                         }
                     }
@@ -10052,7 +10052,7 @@ var plat;
                     y: (ev.clientY - y)
                 };
             };
-            // utility methods
+            // utility methods 
             /**
              * Calculates the distance between two (x, y) coordinate points.
              * @param {number} x1 The x-coordinate of the first point.
@@ -10560,7 +10560,7 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The current touch event object.
              */
             CustomDomEvent.prototype.__extendEventObject = function (customEv, ev) {
-                // not using extend function because this gets called so often for certain events.
+                // not using extend function because this gets called so often for certain events. 
                 var pointerType = ev.pointerType;
                 customEv.clientX = ev.clientX;
                 customEv.clientY = ev.clientY;
@@ -11552,8 +11552,8 @@ var plat;
                                 properties.splice(length, 1);
                             }
                             else if (propLength > 1 && prop === 'all') {
-                                // most likely developer error (extra comma at end of shorthand multi transition declaration)
-                                // so we will splice
+                                // most likely developer error (extra comma at end of shorthand multi transition declaration) 
+                                // so we will splice 
                                 _this._log.debug("Improper transition declaration on class \"" + element.className + "\"");
                                 properties.splice(length, 1);
                             }
@@ -11669,13 +11669,13 @@ var plat;
                     var _this = this;
                     var transitionId = this._animationEvents.$transition, delays = computedStyle[(transitionId + 'Delay')].split(','), properties = this._properties, property, duration, delay, length = properties.length, computedProperty, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, i = 0, count = 0, changed = false, defer = this.utils.defer.bind(this, function (prop, computedProp) {
                         if (_this._animationCanceled === noop) {
-                            // disposal has already occurred
+                            // disposal has already occurred 
                             return;
                         }
                         else if (prop === 'all' || computedStyle[prop] !== computedProp) {
-                            // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
-                            // or
-                            // we know the transition started due to the properties being different
+                            // we can't know if the transition started due to 'all' being set and have to rely on this.options.count 
+                            // or 
+                            // we know the transition started due to the properties being different 
                             changed = true;
                         }
                         if (++count < length || changed) {
@@ -12494,7 +12494,7 @@ var plat;
                         }
                         var newLength = change.object.length, itemCount_1 = currentLength - newLength;
                         if (newLength > currentLength) {
-                            // itemCount will be negative
+                            // itemCount will be negative 
                             addPromise = this._addItems(currentLength, -itemCount_1, 0).then(function () {
                                 var index = addQueue.indexOf(addPromise);
                                 if (index !== -1) {
@@ -13336,8 +13336,8 @@ var plat;
                             return;
                         }
                         element.value = _this.__lastValue = newValue;
-                        // check to make sure the user changed to a valid value
-                        // second boolean argument is an ie fix for inconsistency
+                        // check to make sure the user changed to a valid value 
+                        // second boolean argument is an ie fix for inconsistency 
                         if (element.value !== newValue || element.selectedIndex === -1) {
                             element.selectedIndex = -1;
                         }
@@ -13360,7 +13360,7 @@ var plat;
                                 _this.inputChanged(newLast, _this.__lastValue);
                                 _this.__lastValue = newLast;
                             }
-                            // unselects the options unless a match is found
+                            // unselects the options unless a match is found 
                             while (length-- > 0) {
                                 option = options[length];
                                 if (!nullValue && option.value === '' + newValue) {
@@ -14008,7 +14008,7 @@ var plat;
                         return;
                     }
                     this._allowClick = true;
-                    // force call click to handle delay
+                    // force call click to handle delay 
                     this.element.click();
                 };
                 /**
@@ -14143,10 +14143,10 @@ var plat;
                     if (start !== 0) {
                         parsedExpressions.push(wrapExpression(text.slice(0, start)));
                     }
-                    // incremement with while loop instead of just += 2 for nested object literal case.
+                    // incremement with while loop instead of just += 2 for nested object literal case. 
                     while (text[end++] !== endChar || text[end] === endChar) { }
                     substring = text.slice(start + startLength, end - endLength);
-                    // check for one-time databinding
+                    // check for one-time databinding 
                     if (substring[0] === '=') {
                         expression = _parser.parse(substring.slice(1).trim());
                         expression.oneTime = true;
@@ -14307,7 +14307,7 @@ var plat;
             NodeManager.__getObservationDetails = function (identifier, control) {
                 var _ContextManager = NodeManager._ContextManager, manager, split = identifier.split('.'), absoluteIdentifier = '', isDefined = false;
                 if (identifier[0] === '@') {
-                    // we found an alias
+                    // we found an alias 
                     var resourceObj = void 0, resources = {}, topIdentifier = split.shift(), alias = topIdentifier.slice(1);
                     if (split.length > 0) {
                         absoluteIdentifier = '.' + split.join('.');
@@ -14333,7 +14333,7 @@ var plat;
                     }
                 }
                 else {
-                    // look on the control.context
+                    // look on the control.context 
                     isDefined = !isUndefined(_ContextManager.getContext(control.context, split));
                     if (isDefined || isUndefined(_ContextManager.getContext(control, split))) {
                         manager = _ContextManager.getManager(Control.getRootControl(control));
@@ -14396,7 +14396,7 @@ var plat;
         /**
          */
         function INodeManagerStatic(_regex, _ContextManager, _parser, _TemplateControlFactory, _log) {
-            // NOTE: This is not advised by TypeScript, but we want to do this.
+            // NOTE: This is not advised by TypeScript, but we want to do this. 
             NodeManager._markupRegex = _regex.markupRegex;
             NodeManager._newLineRegex = _regex.newLineRegex;
             NodeManager._ContextManager = _ContextManager;
@@ -14807,12 +14807,12 @@ var plat;
             ElementManager.prototype.clone = function (newNode, parentManager, nodeMap) {
                 var childNodes, clonedManager, replace = this.replace, children = this.children, newControl = !isNull(nodeMap) ? nodeMap.uiControlNode.control : null, newControlExists = !isNull(newControl), startNodeManager, endNodeManager;
                 if (!newControlExists) {
-                    // create new control
+                    // create new control 
                     newControl = ElementManager.cloneUiControl(this.nodeMap, (parentManager.getUiControl() || parentManager.getParentControl()));
                     newControlExists = !isNull(newControl);
                 }
                 if (replace) {
-                    // definitely have newControl
+                    // definitely have newControl 
                     var nodes = newNode.parentNode.childNodes, arrayProto = Array.prototype, startIndex = arrayProto.indexOf.call(nodes, newNode);
                     childNodes = arrayProto.slice.call(nodes, startIndex + 1, startIndex + this.replaceNodeLength);
                     clonedManager = ElementManager.clone(this, parentManager, null, newControl, nodeMap);
@@ -14840,7 +14840,7 @@ var plat;
                 }
                 var length = children.length, childNodeOffset = 0;
                 for (var i = 0; i < length; ++i) {
-                    // clone children
+                    // clone children 
                     childNodeOffset += children[i].clone(childNodes[childNodeOffset], clonedManager);
                 }
                 if (replace) {
@@ -15138,7 +15138,7 @@ var plat;
             ElementManager.prototype._loadControls = function (controls, templateControl) {
                 var length = controls.length, control, load = this._ControlFactory.load, templateControlLoaded = isNull(templateControl), promise, templateControlPriority, i;
                 if (templateControlLoaded) {
-                    // don't need to set templateControlPriority because it will never be checked.
+                    // don't need to set templateControlPriority because it will never be checked. 
                     i = 0;
                 }
                 else {
@@ -15223,8 +15223,8 @@ var plat;
              * template.
              */
             ElementManager.prototype._initializeControl = function (uiControl, template) {
-                var element = this.nodeMap.element,
-                // have to check if null since isNull checks for undefined case
+                var element = this.nodeMap.element, 
+                // have to check if null since isNull checks for undefined case 
                 replaceElement = this.replace, endNode;
                 if (!isNull(template)) {
                     var resourceElement = ElementManager.locateResources(template);
@@ -15552,7 +15552,7 @@ var plat;
                 if (nodeManager.hasMarkup(nodeValue)) {
                     var start = void 0, end = void 0, startLength = __startSymbol.length, endLength = __endSymbol.length, endChar = __endSymbol[endLength - 1];
                     while ((start = nodeValue.indexOf(__startSymbol)) !== -1 && (end = nodeValue.indexOf(__endSymbol)) !== -1) {
-                        // incremement with while loop instead of just += 2 for nested object literal case.
+                        // incremement with while loop instead of just += 2 for nested object literal case. 
                         while (nodeValue[end++] !== endChar || nodeValue[end] === endChar) { }
                         nodeValue = nodeValue.slice(0, start).trim() + ' ' + nodeValue.slice(end).trim();
                     }
@@ -15771,7 +15771,7 @@ var plat;
                     }
                 };
                 this._previousUrl = this._browser.url();
-                // Protect against accidentally calling this method twice.
+                // Protect against accidentally calling this method twice. 
                 EventManager.dispose(this.uid);
                 EventManager.on(this.uid, __backButton, function () {
                     var ev = EventManager.dispatch(__backButtonPressed, _this, EventManager.DIRECT);
@@ -16223,13 +16223,13 @@ var plat;
                 var matches = [], spec, chars;
                 this._someChildren(function (child) {
                     spec = child.specification;
-                    // Check for valid characters first
+                    // Check for valid characters first 
                     chars = spec.validCharacters;
                     if (isString(chars) && chars.indexOf(char) > -1) {
                         matches.push(child);
                         return;
                     }
-                    // Check for no invalid characters
+                    // Check for no invalid characters 
                     chars = spec.invalidCharacters;
                     if (isString(chars) && chars.indexOf(char) === -1) {
                         matches.push(child);
@@ -16780,7 +16780,7 @@ var plat;
                             pattern = routeInfo.delegate.pattern;
                         }
                         else {
-                            // route has not been matched
+                            // route has not been matched 
                             this._previousUrl = childUrl_1;
                             this._previousQuery = queryString;
                             this.currentRouteInfo = routeInfo;
@@ -16809,8 +16809,8 @@ var plat;
                         pattern = routeInfo.delegate.pattern;
                         pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
                         if (!emptyResult || this._isSameRoute(routeInfo)) {
-                            // the pattern for this router is the same as the last pattern so
-                            // only navigate child routers.
+                            // the pattern for this router is the same as the last pattern so 
+                            // only navigate child routers. 
                             this.navigating = true;
                             return this.finishNavigating = this._navigateChildren(routeInfo)
                                 .then(function () {
@@ -17343,7 +17343,7 @@ var plat;
                     if (!isNull(aliases)) {
                         var functionSplit = listenerStr.split('.'), fnObj = aliases[functionSplit[0].slice(1)];
                         if (isObject(fnObj)) {
-                            // shift off alias
+                            // shift off alias 
                             functionSplit.shift();
                             var segment = void 0;
                             while (functionSplit.length > 1) {
@@ -17392,7 +17392,7 @@ var plat;
                         };
                     }
                     var identifier = identifiers[0], split = identifier.split('.'), control = listener.control;
-                    // pop key
+                    // pop key 
                     split.pop();
                     if (split.length > 0) {
                         var seg = void 0;
@@ -17444,7 +17444,7 @@ var plat;
                 else {
                     listenerStr = expression.slice(0, exec.index);
                     if (exec[1] !== '') {
-                        // parse args as an array
+                        // parse args as an array 
                         var argExp = this._parser.parse('[' + exec[1] + ']');
                         aliases = argExp.aliases;
                         this._args = argExp;
@@ -19039,8 +19039,8 @@ var plat;
                 if (this.__fileSupported) {
                     return Array.prototype.slice.call(element.files);
                 }
-                // this case should never be hit since ie9 does not support multi-file uploads,
-                // but kept in here for now for consistency's sake
+                // this case should never be hit since ie9 does not support multi-file uploads, 
+                // but kept in here for now for consistency's sake 
                 var filelist = element.value.split(/,|;/g), length = filelist.length, files = [], fileValue, blobSlice = function () { return ({}); };
                 for (var i = 0; i < length; ++i) {
                     fileValue = filelist[i];
@@ -19306,8 +19306,8 @@ var plat;
                     return;
                 }
                 element.value = newValue;
-                // check to make sure the user changed to a valid value
-                // second boolean argument is an ie fix for inconsistency
+                // check to make sure the user changed to a valid value 
+                // second boolean argument is an ie fix for inconsistency 
                 if (element.value !== newValue || element.selectedIndex === -1) {
                     element.selectedIndex = -1;
                 }
@@ -19328,7 +19328,7 @@ var plat;
                     if (firstTime === true) {
                         this._propertyChanged();
                     }
-                    // unselects the options unless a match is found
+                    // unselects the options unless a match is found 
                     while (length-- > 0) {
                         option = options[length];
                         if (!nullValue && option.value === '' + newValue) {
@@ -19591,7 +19591,7 @@ var plat;
                 if (context[property] === newValue) {
                     return;
                 }
-                // set flag to let setter functions know we changed the property
+                // set flag to let setter functions know we changed the property 
                 this.__isSelf = true;
                 context[property] = newValue;
                 this.__isSelf = false;
