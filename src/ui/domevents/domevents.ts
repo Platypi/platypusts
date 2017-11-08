@@ -1392,14 +1392,20 @@
          * @returns {void}
          */
         private __handleTap(ev: IPointerEvent): void {
+            let target = <ICustomElement>ev.target,
+                touchDown = this.__lastTouchDown || {},
+                touchDownTarget = <ICustomElement>touchDown.target;
+
             this.__tapCount++;
 
-            if (this._gestureCount.$tap <= 0) {
+            if (this._gestureCount.$tap <= 0 ||
+                isNull(touchDownTarget) ||
+                (touchDownTarget !== target && isFunction(touchDownTarget.contains) && !touchDownTarget.contains(target))) {
                 return;
             }
 
             let gestures = this._gestures,
-                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, gestures.$tap);
+                domEvent = this.__findFirstSubscriber(target, gestures.$tap);
 
             if (isNull(domEvent)) {
                 return;
@@ -1409,7 +1415,7 @@
             // or a mouse is being used
             if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
                 ev.pointerType === 'mouse' || ev.type === 'mouseup') {
-                ev._buttons = this.__lastTouchDown._buttons;
+                ev._buttons = touchDown._buttons;
                 domEvent.trigger(ev);
                 return;
             }
@@ -1417,7 +1423,7 @@
             // defer for tap delay in case of something like desired
             // dbltap zoom
             this.__cancelDeferredTap = defer((): void => {
-                ev._buttons = this.__lastTouchDown._buttons;
+                ev._buttons = touchDown._buttons;
                 domEvent.trigger(ev);
                 this.__tapCount = 0;
                 this.__cancelDeferredTap = noop;
