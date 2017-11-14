@@ -8991,6 +8991,10 @@ export declare module ui {
               */
             fragmentStore: DocumentFragment;
             /**
+              * Whether or not to animate adding and removing of element.
+              */
+            protected _animate: boolean;
+            /**
               * The current evaluated condition (whether or not the
               * control is visible) of the control.
               */
@@ -9004,6 +9008,10 @@ export declare module ui {
               * A function to stop listening to changes on the options object.
               */
             private __removeListener;
+            /**
+              * A function to not fire the animation frame callback
+              */
+            private __cancelFrame;
             /**
               * A promise that resolves when the leave animation is finished.
               */
@@ -9051,6 +9059,10 @@ export declare module ui {
               */
             protected _addItem(): async.IThenable<void>;
             /**
+              * Adds the template to the DOM.
+              */
+            protected _elementEntrance(): async.IThenable<void>;
+            /**
               * Animates the template as it enters the DOM.
               */
             protected _animateEntrance(): animations.IAnimationThenable<void>;
@@ -9058,6 +9070,10 @@ export declare module ui {
               * Removes the conditional nodes from the DOM.
               */
             protected _removeItem(): async.IThenable<void>;
+            /**
+              * Removes the template from the DOM.
+              */
+            protected _elementLeave(): async.IThenable<void>;
             /**
               * Animates the template as it leaves the DOM.
               */
@@ -9067,6 +9083,10 @@ export declare module ui {
           * The available options for the If control.
           */
         interface IIfOptions {
+            /**
+              * Will allow for animations if set to true.
+              */
+            animate?: boolean;
             /**
               * A boolean expression to bind to whether or not the conditional
               * nodes are present on the DOM.

@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.23.8 (https://platypi.io)
+  * PlatypusTS v0.24.0 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -9003,6 +9003,10 @@ declare module plat {
                   */
                 fragmentStore: DocumentFragment;
                 /**
+                  * Whether or not to animate adding and removing of element.
+                  */
+                protected _animate: boolean;
+                /**
                   * The current evaluated condition (whether or not the
                   * control is visible) of the control.
                   */
@@ -9016,6 +9020,10 @@ declare module plat {
                   * A function to stop listening to changes on the options object.
                   */
                 private __removeListener;
+                /**
+                  * A function to not fire the animation frame callback
+                  */
+                private __cancelFrame;
                 /**
                   * A promise that resolves when the leave animation is finished.
                   */
@@ -9063,6 +9071,10 @@ declare module plat {
                   */
                 protected _addItem(): async.IThenable<void>;
                 /**
+                  * Adds the template to the DOM.
+                  */
+                protected _elementEntrance(): async.IThenable<void>;
+                /**
                   * Animates the template as it enters the DOM.
                   */
                 protected _animateEntrance(): animations.IAnimationThenable<void>;
@@ -9070,6 +9082,10 @@ declare module plat {
                   * Removes the conditional nodes from the DOM.
                   */
                 protected _removeItem(): async.IThenable<void>;
+                /**
+                  * Removes the template from the DOM.
+                  */
+                protected _elementLeave(): async.IThenable<void>;
                 /**
                   * Animates the template as it leaves the DOM.
                   */
@@ -9079,6 +9095,10 @@ declare module plat {
               * The available options for the If control.
               */
             interface IIfOptions {
+                /**
+                  * Will allow for animations if set to true.
+                  */
+                animate?: boolean;
                 /**
                   * A boolean expression to bind to whether or not the conditional
                   * nodes are present on the DOM.
