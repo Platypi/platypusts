@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.23.8 (https://platypi.io)
+ * PlatypusTS v0.24.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -11756,12 +11756,9 @@ var plat;
                  */
                 Viewport.prototype.loaded = function () {
                     var _this = this;
-                    if (isObject(this.options)) {
-                        var animate = this.options.value.animate === true;
-                        if (animate) {
-                            this.dom.addClass(this.element, __Viewport + '-animate');
-                        }
-                        this._animate = animate;
+                    var animate = this._animate = isObject(this.options) && this.options.value.animate === true;
+                    if (animate) {
+                        this.dom.addClass(this.element, __Viewport + '-animate');
                     }
                     this._Promise.resolve(this._router.finishNavigating).then(function () {
                         _this._router.register(_this);
@@ -12194,7 +12191,7 @@ var plat;
                  * Observes the Array context for changes and adds initial items to the DOM.
                  */
                 ForEach.prototype.loaded = function () {
-                    var options = this.options, animating = this._animate = !isUndefined(options) && options.value.animate === true, context = this.context;
+                    var options = this.options, animating = this._animate = isObject(options) && options.value.animate === true, context = this.context;
                     this._container = this.element;
                     if (animating) {
                         this._animationQueue = [];
@@ -13693,6 +13690,10 @@ var plat;
                 function If() {
                     var _this = _super.call(this) || this;
                     /**
+                     * Whether or not to animate adding and removing of element.
+                     */
+                    _this._animate = false;
+                    /**
                      * The current evaluated condition (whether or not the
                      * control is visible) of the control.
                      */
@@ -13730,7 +13731,11 @@ var plat;
                  * the options for changes.
                  */
                 If.prototype.loaded = function () {
-                    if (isNull(this.options)) {
+                    var options = this.options;
+                    if (isObject(options)) {
+                        this._animate = options.value.animate === true;
+                    }
+                    else {
                         this._log.warn('No condition specified in ' + __Options + ' for ' + this.type + '.');
                         this.options = {
                             value: {
@@ -13751,6 +13756,10 @@ var plat;
                         this.__removeListener();
                         this.__removeListener = null;
                     }
+                    if (isFunction(this.__cancelFrame)) {
+                        this.__cancelFrame();
+                        this.__cancelFrame = null;
+                    }
                     this.commentNode = null;
                     this.fragmentStore = null;
                 };
@@ -13766,7 +13775,7 @@ var plat;
                         return this._Promise.resolve(null);
                     }
                     else if (value) {
-                        if (isNull(this.__leaveAnimation)) {
+                        if (!this._animate || isNull(this.__leaveAnimation)) {
                             promise = this._addItem();
                         }
                         else {
@@ -13777,7 +13786,7 @@ var plat;
                         }
                     }
                     else {
-                        if (isNull(this.__enterAnimation)) {
+                        if (!this._animate || isNull(this.__enterAnimation)) {
                             promise = this._removeItem();
                         }
                         else {
@@ -13803,24 +13812,52 @@ var plat;
                         return this.__initialBind = this.bindableTemplates.bind('template').then(function (template) {
                             _this.__initialBind = null;
                             var element = _this.element;
-                            if (element.parentNode === _this.fragmentStore) {
+                            if (element.parentNode === _this.fragmentStore || isNull(element.parentNode)) {
                                 element.insertBefore(template, null);
-                                return _this._animateEntrance();
+                                if (_this._animate) {
+                                    return _this._animateEntrance();
+                                }
+                                return _this._elementEntrance();
                             }
-                            _this.__enterAnimation = _this._animator.animate(element, __Enter);
+                            else if (_this._animate) {
+                                _this.__enterAnimation = _this._animator.animate(element, __Enter).then(function () {
+                                    _this.__enterAnimation = null;
+                                });
+                                element.insertBefore(template, null);
+                                return _this.__enterAnimation;
+                            }
                             element.insertBefore(template, null);
-                            return _this.__enterAnimation;
-                        }).then(function () {
-                            _this.__enterAnimation = null;
                         });
                     }
-                    if (isPromise(this.__initialBind)) {
+                    else if (isPromise(this.__initialBind)) {
                         return this.__initialBind = this.__initialBind.then(function () {
                             _this.__initialBind = null;
-                            return _this._animateEntrance();
+                            if (_this._animate) {
+                                return _this._animateEntrance();
+                            }
+                            return _this._elementEntrance();
                         });
                     }
-                    return this._animateEntrance();
+                    else if (this._animate) {
+                        return this._animateEntrance();
+                    }
+                    return this._elementEntrance();
+                };
+                /**
+                 * Adds the template to the DOM.
+                 */
+                If.prototype._elementEntrance = function () {
+                    var _this = this;
+                    var commentNode = this.commentNode, parentNode = commentNode.parentNode;
+                    if (!isNode(parentNode)) {
+                        return this._Promise.resolve();
+                    }
+                    return new this._Promise(function (resolve) {
+                        _this.__cancelFrame = requestAnimationFrameGlobal(function () {
+                            parentNode.insertBefore(_this.element, commentNode);
+                            resolve();
+                        });
+                    });
                 };
                 /**
                  * Animates the template as it enters the DOM.
@@ -13843,10 +13880,33 @@ var plat;
                     if (isPromise(this.__initialBind)) {
                         return this.__initialBind = this.__initialBind.then(function () {
                             _this.__initialBind = null;
-                            return _this._animateLeave();
+                            if (_this._animate) {
+                                return _this._animateLeave();
+                            }
+                            return _this._elementLeave();
                         });
                     }
-                    return this._animateLeave();
+                    else if (this._animate) {
+                        return this._animateLeave();
+                    }
+                    return this._elementLeave();
+                };
+                /**
+                 * Removes the template from the DOM.
+                 */
+                If.prototype._elementLeave = function () {
+                    var _this = this;
+                    var element = this.element, parent = element.parentElement, nextSibling = element.nextSibling;
+                    if (!isNode(parent)) {
+                        return this._Promise.resolve();
+                    }
+                    return new this._Promise(function (resolve) {
+                        _this.__cancelFrame = requestAnimationFrameGlobal(function () {
+                            parent.insertBefore(_this.commentNode, nextSibling);
+                            _this.fragmentStore.insertBefore(element, null);
+                            resolve();
+                        });
+                    });
                 };
                 /**
                  * Animates the template as it leaves the DOM.

@@ -325,7 +325,7 @@ module plat.ui.controls {
          */
         loaded(): void {
             let options: observable.IObservableProperty<IForEachOptions> = this.options,
-                animating: boolean = this._animate = !isUndefined(options) && options.value.animate === true,
+                animating: boolean = this._animate = isObject(options) && options.value.animate === true,
                 context = this.context;
 
             this._container = this.element;
