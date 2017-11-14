@@ -260,13 +260,9 @@ module plat.ui.controls {
          * @returns {void}
          */
         loaded(): void {
-            if (isObject(this.options)) {
-                let animate = this.options.value.animate === true;
-                if (animate) {
-                    this.dom.addClass(this.element, __Viewport + '-animate');
-                }
-
-                this._animate = animate;
+            let animate = this._animate = isObject(this.options) && this.options.value.animate === true;
+            if (animate) {
+                this.dom.addClass(this.element, __Viewport + '-animate');
             }
 
             this._Promise.resolve(this._router.finishNavigating).then((): void => {
