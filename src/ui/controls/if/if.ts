@@ -166,30 +166,30 @@ module plat.ui.controls {
         private __cancelFrame: IRemoveListener;
 
         /**
-         * @name __leaveAnimation
+         * @name __leavePromise
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
          *
-         * @type {plat.ui.animations.IAnimationThenable<any>}
+         * @type {plat.ui.animations.IAnimationThenable<any>|plat.async.IThenable<any>}
          *
          * @description
-         * A promise that resolves when the leave animation is finished.
+         * A promise that resolves when the leave is finished.
          */
-        private __leaveAnimation: animations.IAnimationThenable<any>;
+        private __leavePromise: animations.IAnimationThenable<any>|plat.async.IThenable<any>;
 
         /**
-         * @name __enterAnimation
+         * @name __enterPromise
          * @memberof plat.ui.controls.If
          * @kind property
          * @access private
          *
-         * @type {plat.ui.animations.IAnimationThenable<any>}
+         * @type {plat.ui.animations.IAnimationThenable<any>|plat.async.IThenable<any>}
          *
          * @description
-         * A promise that resolves when the entrance animation is finished.
+         * A promise that resolves when the entrance is finished.
          */
-        private __enterAnimation: animations.IAnimationThenable<any>;
+        private __enterPromise: animations.IAnimationThenable<any>|plat.async.IThenable<any>;
 
         /**
          * @name __initialBind
@@ -272,7 +272,7 @@ module plat.ui.controls {
          * defined, kicks off the evaluation, and observes
          * the options for changes.
          *
-         * @returns {void}
+         * @returns {plat.async.IThenable<void>} A promise that resolves when the proper action is complete
          */
         loaded(): async.IThenable<void> {
             let options = this.options;
@@ -333,32 +333,36 @@ module plat.ui.controls {
          * whether or not to add or remove
          * the node from the DOM.
          *
-         * @returns {void}
+         * @returns {plat.async.IThenable<void>} A Promise that resolves when the boolean based action is complete
          */
         protected _setter(options: IIfOptions): async.IThenable<void> {
             let value = !!options.condition,
-                promise: async.IThenable<void>;
+                actionPromise: animations.IAnimationThenable<any>|async.IThenable<any>,
+                next: () => async.IThenable<any>,
+                promise: animations.IAnimationThenable<any>|async.IThenable<any>;
 
-            if (value === this.__condition && !this.__firstTime) {
+            if (value === this.__condition && (!value || !this.__firstTime)) {
                 return this._Promise.resolve(null);
             } else if (value) {
-                if (!this._animate || isNull(this.__leaveAnimation)) {
-                    promise = this._addItem();
-                } else {
-                    promise = <any>this.__leaveAnimation.cancel().then((): async.IThenable<void> => {
-                        this.__leaveAnimation = null;
-                        return this._addItem();
-                    });
-                }
+                actionPromise = this.__leavePromise;
+                next = (): async.IThenable<void> => {
+                    this.__leavePromise = null;
+                    return this._addItem();
+                };
             } else {
-                if (!this._animate || isNull(this.__enterAnimation)) {
-                    promise = this._removeItem();
-                } else {
-                    promise = this.__enterAnimation.cancel().then((): void => {
-                        this.__enterAnimation = null;
-                        return <any>this._removeItem();
-                    });
-                }
+                actionPromise = this.__enterPromise;
+                next = (): async.IThenable<void> => {
+                    this.__enterPromise = null;
+                    return this._removeItem();
+                };
+            }
+
+            if (isNull(actionPromise)) {
+                promise = next();
+            } else if (this._animate && isFunction((<animations.IAnimationThenable<any>>actionPromise).cancel)) {
+                promise = (<animations.IAnimationThenable<any>>actionPromise).cancel().then(next);
+            } else {
+                promise = (<async.IThenable<any>>actionPromise).then(next);
             }
 
             this.__condition = value;
@@ -397,12 +401,12 @@ module plat.ui.controls {
 
                         return this._elementEntrance();
                     } else if (this._animate) {
-                        this.__enterAnimation = this._animator.animate(element, __Enter).then((): void => {
-                            this.__enterAnimation = null;
+                        this.__enterPromise = this._animator.animate(element, __Enter).then((): void => {
+                            this.__enterPromise = null;
                         });
 
                         element.insertBefore(template, null);
-                        return this.__enterAnimation;
+                        return this.__enterPromise;
                     }
 
                     element.insertBefore(template, null);
@@ -442,12 +446,14 @@ module plat.ui.controls {
                 return this._Promise.resolve();
             }
 
-            return new this._Promise((resolve) => {
+            this.__enterPromise = new this._Promise((resolve) => {
                 this.__cancelFrame = requestAnimationFrameGlobal(() => {
                     parentNode.insertBefore(this.element, commentNode);
                     resolve();
                 });
             });
+
+            return this.__enterPromise;
         }
 
         /**
@@ -469,9 +475,11 @@ module plat.ui.controls {
                 return this._animator.resolve().then(noop);
             }
 
-            return this.__enterAnimation = this._animator.enter(this.element, __Enter, <Element>parentNode, commentNode).then((): void => {
-                this.__enterAnimation = null;
+            this.__enterPromise = this._animator.enter(this.element, __Enter, <Element>parentNode, commentNode).then((): void => {
+                this.__enterPromise = null;
             });
+
+            return <animations.IAnimationThenable<void>>this.__enterPromise;
         }
 
         /**
@@ -522,13 +530,18 @@ module plat.ui.controls {
                 return this._Promise.resolve();
             }
 
-            return new this._Promise((resolve) => {
+            this.__leavePromise = new this._Promise((resolve) => {
                 this.__cancelFrame = requestAnimationFrameGlobal(() => {
-                    parent.insertBefore(this.commentNode, nextSibling);
+                    if (!isNode(this.commentNode.parentNode)) {
+                        parent.insertBefore(this.commentNode, nextSibling);
+                    }
+
                     this.fragmentStore.insertBefore(element, null);
                     resolve();
                 });
             });
+
+            return this.__leavePromise;
         }
 
         /**
@@ -551,11 +564,16 @@ module plat.ui.controls {
                 return this._animator.resolve().then(noop);
             }
 
-            return this.__leaveAnimation = this._animator.leave(element, __Leave).then((): void => {
-                this.__leaveAnimation = null;
-                parent.insertBefore(this.commentNode, nextSibling);
+            this.__leavePromise = this._animator.leave(element, __Leave).then((): void => {
+                this.__leavePromise = null;
+                if (!isNode(this.commentNode.parentNode)) {
+                    parent.insertBefore(this.commentNode, nextSibling);
+                }
+
                 this.fragmentStore.insertBefore(element, null);
             });
+
+            return <animations.IAnimationThenable<void>>this.__leavePromise;
         }
     }
 
