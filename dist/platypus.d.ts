@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.24.0 (https://platypi.io)
+  * PlatypusTS v0.24.1 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -9025,13 +9025,13 @@ declare module plat {
                   */
                 private __cancelFrame;
                 /**
-                  * A promise that resolves when the leave animation is finished.
+                  * A promise that resolves when the leave is finished.
                   */
-                private __leaveAnimation;
+                private __leavePromise;
                 /**
-                  * A promise that resolves when the entrance animation is finished.
+                  * A promise that resolves when the entrance is finished.
                   */
-                private __enterAnimation;
+                private __enterPromise;
                 /**
                   * A promise that resolves when the template has been bound.
                   */

@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.24.0 (https://platypi.io)
+ * PlatypusTS v0.24.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13770,31 +13770,32 @@ var plat;
                  */
                 If.prototype._setter = function (options) {
                     var _this = this;
-                    var value = !!options.condition, promise;
-                    if (value === this.__condition && !this.__firstTime) {
+                    var value = !!options.condition, actionPromise, next, promise;
+                    if (value === this.__condition && (!value || !this.__firstTime)) {
                         return this._Promise.resolve(null);
                     }
                     else if (value) {
-                        if (!this._animate || isNull(this.__leaveAnimation)) {
-                            promise = this._addItem();
-                        }
-                        else {
-                            promise = this.__leaveAnimation.cancel().then(function () {
-                                _this.__leaveAnimation = null;
-                                return _this._addItem();
-                            });
-                        }
+                        actionPromise = this.__leavePromise;
+                        next = function () {
+                            _this.__leavePromise = null;
+                            return _this._addItem();
+                        };
                     }
                     else {
-                        if (!this._animate || isNull(this.__enterAnimation)) {
-                            promise = this._removeItem();
-                        }
-                        else {
-                            promise = this.__enterAnimation.cancel().then(function () {
-                                _this.__enterAnimation = null;
-                                return _this._removeItem();
-                            });
-                        }
+                        actionPromise = this.__enterPromise;
+                        next = function () {
+                            _this.__enterPromise = null;
+                            return _this._removeItem();
+                        };
+                    }
+                    if (isNull(actionPromise)) {
+                        promise = next();
+                    }
+                    else if (this._animate && isFunction(actionPromise.cancel)) {
+                        promise = actionPromise.cancel().then(next);
+                    }
+                    else {
+                        promise = actionPromise.then(next);
                     }
                     this.__condition = value;
                     return promise;
@@ -13820,11 +13821,11 @@ var plat;
                                 return _this._elementEntrance();
                             }
                             else if (_this._animate) {
-                                _this.__enterAnimation = _this._animator.animate(element, __Enter).then(function () {
-                                    _this.__enterAnimation = null;
+                                _this.__enterPromise = _this._animator.animate(element, __Enter).then(function () {
+                                    _this.__enterPromise = null;
                                 });
                                 element.insertBefore(template, null);
-                                return _this.__enterAnimation;
+                                return _this.__enterPromise;
                             }
                             element.insertBefore(template, null);
                         });
@@ -13852,12 +13853,13 @@ var plat;
                     if (!isNode(parentNode)) {
                         return this._Promise.resolve();
                     }
-                    return new this._Promise(function (resolve) {
+                    this.__enterPromise = new this._Promise(function (resolve) {
                         _this.__cancelFrame = requestAnimationFrameGlobal(function () {
                             parentNode.insertBefore(_this.element, commentNode);
                             resolve();
                         });
                     });
+                    return this.__enterPromise;
                 };
                 /**
                  * Animates the template as it enters the DOM.
@@ -13868,9 +13870,10 @@ var plat;
                     if (!isNode(parentNode)) {
                         return this._animator.resolve().then(noop);
                     }
-                    return this.__enterAnimation = this._animator.enter(this.element, __Enter, parentNode, commentNode).then(function () {
-                        _this.__enterAnimation = null;
+                    this.__enterPromise = this._animator.enter(this.element, __Enter, parentNode, commentNode).then(function () {
+                        _this.__enterPromise = null;
                     });
+                    return this.__enterPromise;
                 };
                 /**
                  * Removes the conditional nodes from the DOM.
@@ -13900,13 +13903,16 @@ var plat;
                     if (!isNode(parent)) {
                         return this._Promise.resolve();
                     }
-                    return new this._Promise(function (resolve) {
+                    this.__leavePromise = new this._Promise(function (resolve) {
                         _this.__cancelFrame = requestAnimationFrameGlobal(function () {
-                            parent.insertBefore(_this.commentNode, nextSibling);
+                            if (!isNode(_this.commentNode.parentNode)) {
+                                parent.insertBefore(_this.commentNode, nextSibling);
+                            }
                             _this.fragmentStore.insertBefore(element, null);
                             resolve();
                         });
                     });
+                    return this.__leavePromise;
                 };
                 /**
                  * Animates the template as it leaves the DOM.
@@ -13917,11 +13923,14 @@ var plat;
                     if (!isNode(parent)) {
                         return this._animator.resolve().then(noop);
                     }
-                    return this.__leaveAnimation = this._animator.leave(element, __Leave).then(function () {
-                        _this.__leaveAnimation = null;
-                        parent.insertBefore(_this.commentNode, nextSibling);
+                    this.__leavePromise = this._animator.leave(element, __Leave).then(function () {
+                        _this.__leavePromise = null;
+                        if (!isNode(_this.commentNode.parentNode)) {
+                            parent.insertBefore(_this.commentNode, nextSibling);
+                        }
                         _this.fragmentStore.insertBefore(element, null);
                     });
+                    return this.__leavePromise;
                 };
                 If._inject = {
                     _animator: __Animator,
