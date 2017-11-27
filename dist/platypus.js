@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.24.1 (https://platypi.io)
+ * PlatypusTS v0.24.2 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -13771,7 +13771,7 @@ var plat;
                 If.prototype._setter = function (options) {
                     var _this = this;
                     var value = !!options.condition, actionPromise, next, promise;
-                    if (value === this.__condition && (!value || !this.__firstTime)) {
+                    if (value === this.__condition && !this.__firstTime) {
                         return this._Promise.resolve(null);
                     }
                     else if (value) {
