@@ -341,7 +341,7 @@ module plat.ui.controls {
                 next: () => async.IThenable<any>,
                 promise: animations.IAnimationThenable<any>|async.IThenable<any>;
 
-            if (value === this.__condition && (!value || !this.__firstTime)) {
+            if (value === this.__condition && !this.__firstTime) {
                 return this._Promise.resolve(null);
             } else if (value) {
                 actionPromise = this.__leavePromise;
