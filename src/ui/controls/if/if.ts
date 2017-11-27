@@ -140,6 +140,19 @@ module plat.ui.controls {
         private __firstTime: boolean = true;
 
         /**
+         * @name __isBound
+         * @memberof plat.ui.controls.If
+         * @kind property
+         * @access private
+         *
+         * @type {boolean}
+         *
+         * @description
+         * A boolean value stating whether or not the template has been bound
+         */
+        private __isBound: boolean = false;
+
+        /**
          * @name __removeListener
          * @memberof plat.ui.controls.If
          * @kind property
@@ -365,6 +378,7 @@ module plat.ui.controls {
                 promise = (<async.IThenable<any>>actionPromise).then(next);
             }
 
+            this.__firstTime = false;
             this.__condition = value;
 
             return promise;
@@ -382,12 +396,13 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _addItem(): async.IThenable<void> {
-            if (!(this.__firstTime || isNode(this.commentNode.parentNode))) {
+            let isBound = this.__isBound;
+            if (isBound && !isNode(this.commentNode.parentNode)) {
                 return this._Promise.resolve(null);
             }
 
-            if (this.__firstTime) {
-                this.__firstTime = false;
+            if (!isBound) {
+                this.__isBound = true;
 
                 return this.__initialBind = this.bindableTemplates.bind('template').then((template): async.IThenable<void> => {
                     this.__initialBind = null;
@@ -411,7 +426,7 @@ module plat.ui.controls {
 
                     element.insertBefore(template, null);
                 });
-            } else if (isPromise(this.__initialBind)) {
+            } else if (!isNull(this.__initialBind)) {
                 return this.__initialBind = this.__initialBind.then((): async.IThenable<void> => {
                     this.__initialBind = null;
                     if (this._animate) {
@@ -451,6 +466,8 @@ module plat.ui.controls {
                     parentNode.insertBefore(this.element, commentNode);
                     resolve();
                 });
+            }).then(() => {
+                this.__enterPromise = null;
             });
 
             return this.__enterPromise;
@@ -494,7 +511,7 @@ module plat.ui.controls {
          * @returns {async.IThenable<void>} A Promise that resolves when the item has been removed
          */
         protected _removeItem(): async.IThenable<void> {
-            if (isPromise(this.__initialBind)) {
+            if (!isNull(this.__initialBind)) {
                 return this.__initialBind = this.__initialBind.then((): async.IThenable<void> => {
                     this.__initialBind = null;
                     if (this._animate) {
@@ -522,23 +539,24 @@ module plat.ui.controls {
          * @returns {async.IThenable<void>} A Promise that resolves when the element has been removed from the DOM
          */
         protected _elementLeave(): async.IThenable<void> {
-            let element = this.element,
-                parent = element.parentElement,
-                nextSibling = element.nextSibling;
-
-            if (!isNode(parent)) {
-                return this._Promise.resolve();
-            }
-
             this.__leavePromise = new this._Promise((resolve) => {
                 this.__cancelFrame = requestAnimationFrameGlobal(() => {
-                    if (!isNode(this.commentNode.parentNode)) {
+                    let element = this.element,
+                        parent = element.parentNode,
+                        nextSibling = element.nextSibling;
+
+                    if (!isNode(parent)) {
+                        resolve();
+                        return;
+                    } else if (!isNode(this.commentNode.parentNode)) {
                         parent.insertBefore(this.commentNode, nextSibling);
                     }
 
                     this.fragmentStore.insertBefore(element, null);
                     resolve();
                 });
+            }).then(() => {
+                this.__leavePromise = null;
             });
 
             return this.__leavePromise;
@@ -556,16 +574,14 @@ module plat.ui.controls {
          * @returns {plat.animations.IAnimationThenable<void>} A promise that resolves when the template is done animating
          */
         protected _animateLeave(): animations.IAnimationThenable<void> {
-            let element = this.element,
-                parent = element.parentElement,
-                nextSibling = element.nextSibling;
-
-            if (!isNode(parent)) {
-                return this._animator.resolve().then(noop);
-            }
+            let element = this.element;
 
             this.__leavePromise = this._animator.leave(element, __Leave).then((): void => {
+                let parent = element.parentNode,
+                    nextSibling = element.nextSibling;
+
                 this.__leavePromise = null;
+
                 if (!isNode(this.commentNode.parentNode)) {
                     parent.insertBefore(this.commentNode, nextSibling);
                 }

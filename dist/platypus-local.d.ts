@@ -9005,6 +9005,10 @@ export declare module ui {
               */
             private __firstTime;
             /**
+              * A boolean value stating whether or not the template has been bound
+              */
+            private __isBound;
+            /**
               * A function to stop listening to changes on the options object.
               */
             private __removeListener;
@@ -9013,13 +9017,13 @@ export declare module ui {
               */
             private __cancelFrame;
             /**
-              * A promise that resolves when the leave animation is finished.
+              * A promise that resolves when the leave is finished.
               */
-            private __leaveAnimation;
+            private __leavePromise;
             /**
-              * A promise that resolves when the entrance animation is finished.
+              * A promise that resolves when the entrance is finished.
               */
-            private __enterAnimation;
+            private __enterPromise;
             /**
               * A promise that resolves when the template has been bound.
               */
