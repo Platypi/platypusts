@@ -9005,6 +9005,10 @@ export declare module ui {
               */
             private __firstTime;
             /**
+              * A boolean value stating whether or not the template has been bound
+              */
+            private __isBound;
+            /**
               * A function to stop listening to changes on the options object.
               */
             private __removeListener;
