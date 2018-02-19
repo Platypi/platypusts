@@ -20,7 +20,7 @@
         });
 
         it('should test initialize', () => {
-            var spy = spyOn(control, '_determineType');
+            var spy = spyOn(control, <any>'_determineType');
 
             control.initialize();
 
@@ -152,7 +152,7 @@
         });
 
         it('should test contextChanged', () => {
-            var spy = spyOn(control, '_watchExpression');
+            var spy = spyOn(control, <any>'_watchExpression');
 
             control.contextChanged();
 

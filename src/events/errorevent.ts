@@ -76,7 +76,7 @@
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
         static dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E> {
-            let event: ErrorEvent<E> = acquire(ErrorEvent);
+            let event: ErrorEvent<E> = acquire<ErrorEvent<E>>(ErrorEvent);
 
             event.initialize(name, sender, null, error);
             event.logLevel = logLevel;

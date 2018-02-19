@@ -1775,7 +1775,7 @@ module plat.observable {
          *
          * @returns {any} The narrowed down context.
          */
-        getContext(rootContext: any, split: Array<string>): void;
+        getContext(rootContext: any, split: Array<string>): any;
 
         /**
          * @name defineProperty
