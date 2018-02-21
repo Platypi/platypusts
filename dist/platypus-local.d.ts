@@ -3277,7 +3277,7 @@ export declare module observable {
           * @param {Array<string>} split The string array containing properties used to index into
           * the rootContext.
           */
-        getContext(rootContext: any, split: Array<string>): void;
+        getContext(rootContext: any, split: Array<string>): any;
         /**
           * Defines an object property with the associated value. Useful for unobserving objects.
           * @param {any} obj The object on which to define the property.
