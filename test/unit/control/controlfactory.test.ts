@@ -14,7 +14,7 @@ module tests.controlFactory {
                 root = ControlFactory.getRootControl(control);
 
             expect(isNull).toBeNull();
-            expect(root).toBe(control);
+            expect(root).toBe(<any>control);
 
             control.parent = <any>{};
             (<any>control).root = control;
@@ -22,7 +22,7 @@ module tests.controlFactory {
             root = null;
             root = ControlFactory.getRootControl(control);
 
-            expect(root).toBe(control);
+            expect(root).toBe(<any>control);
         });
 
         it('should test loaded', (done: Function) => {

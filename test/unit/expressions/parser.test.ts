@@ -561,7 +561,7 @@ module tests.expressions.parser {
                 var spy: jasmine.Spy;
 
                 if (test.hasOwnProperty('watch')) {
-                    spy = spyOn(context, test.watch);
+                    spy = spyOn(context, <any>test.watch);
 
                     if (test.callThrough) {
                         spy.and.callThrough();

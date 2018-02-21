@@ -273,12 +273,12 @@ module test.routing.router {
                     query.title = post.title;
                     post.title = value;
                 }).and.callThrough(),
-                    spy2 = jasmine.createSpy('checkPost', (value: number, query: typeof post) => {
+                    spy2 = jasmine.createSpy('checkPost', (value: string, query: typeof post) => {
                         expect(query.title).toBe(value);
                         expect(post.title).not.toBe(query.title);
                         expect(post.title).toBe('My different post');
                     }).and.callThrough(),
-                    spy3 = jasmine.createSpy('checkPost2', (value: number, query: typeof post) => {
+                    spy3 = jasmine.createSpy('checkPost2', (value: string, query: typeof post) => {
                         expect((<any>query).title2).toBeUndefined();
                     }).and.callThrough();
 
