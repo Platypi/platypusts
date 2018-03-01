@@ -14,7 +14,7 @@ module plat.ui.controls {
      */
     export class InnerHtml extends TemplateControl {
         protected static _inject: any = {
-            _TemplateControlFactory: __TemplateControlFactory
+            _TemplateControlFactory: __TemplateControlFactory,
         };
 
         /**
@@ -28,7 +28,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.ui.controls.IInnerHtmlOptions|options} for the {@link plat.ui.controls.InnerHtml|InnerHtml} control.
          */
-        options: observable.IObservableProperty<IInnerHtmlOptions>;
+        public options: observable.IObservableProperty<IInnerHtmlOptions>;
 
         /**
          * @name controls
@@ -41,7 +41,7 @@ module plat.ui.controls {
          * @description
          * The child controls of the control. All will be of type {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        controls: Array<TemplateControl>;
+        public controls: TemplateControl[];
 
         /**
          * @name _TemplateControlFactory
@@ -80,7 +80,7 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        setTemplate(): void {
+        public setTemplate(): void {
             this.dom.clearNode(this.element);
         }
 
@@ -95,8 +95,8 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
-            let options = this.options;
+        public loaded(): void {
+            const options = this.options;
             if (!isObject(options)) {
                 return;
             }
@@ -123,18 +123,19 @@ module plat.ui.controls {
             if (newValue === oldValue) {
                 return;
             } else if (!isObject(newValue)) {
-                this._log.debug('plat-options for ' + this.type + ' must be an object.');
+                this._log.debug(`plat-options for ${this.type} must be an object.`);
+
                 return;
             }
 
-            let html = newValue.html;
+            const html = newValue.html;
             if (html === this._html) {
                 return;
             }
 
             this._html = html;
 
-            let htmlIsString = isString(html);
+            const htmlIsString = isString(html);
             if (isNull(html) || (htmlIsString && html.trim() === '')) {
                 if (this.controls.length > 0) {
                     this._TemplateControlFactory.dispose(this.controls[0]);
@@ -144,10 +145,11 @@ module plat.ui.controls {
 
                 return;
             } else if (!htmlIsString) {
-                this._log.debug('Trying to bind a non-string value to ' + this.type + '.');
+                this._log.debug(`Trying to bind a non-string value to ${this.type}.`);
+
                 return;
             } else if (newValue.compile === true) {
-                let hasControl = this.controls.length > 0;
+                const hasControl = this.controls.length > 0;
                 this.bindableTemplates.once(html).then((template) => {
                     if (hasControl) {
                         this._TemplateControlFactory.dispose(this.controls[0]);
@@ -157,6 +159,7 @@ module plat.ui.controls {
 
                     this.element.insertBefore(template, null);
                 });
+
                 return;
             }
 

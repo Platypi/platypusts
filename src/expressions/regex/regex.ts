@@ -1,4 +1,4 @@
-﻿module plat.expressions {
+module plat.expressions {
     'use strict';
 
     /**
@@ -21,7 +21,7 @@
          * @description
          * A regular expression for finding markup in a string.
          */
-        markupRegex: RegExp = new RegExp(__startSymbol + '[\\S\\s]*' + __endSymbol);
+        public markupRegex: RegExp = new RegExp(`${__startSymbol}[\\S\\s]*${__endSymbol}`);
 
         /**
          * @name argumentRegex
@@ -38,7 +38,7 @@
          * // outputs ["('foo', 'bar', 'baz')", "'foo', 'bar', 'baz'"]
          * exec("myFunction('foo', 'bar', 'baz')");
          */
-        argumentRegex: RegExp = /\((.*)\)/;
+        public argumentRegex: RegExp = /\((.*)\)/;
 
         /**
          * @name initialUrlRegex
@@ -56,7 +56,7 @@
          * // outputs ['/index.html']
          * exec('http://localhost:8080/index.html');
          */
-        initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
+        public initialUrlRegex: RegExp = /\/[^\/]*\.(?:html|htm)/;
 
         /**
          * @name protocolRegex
@@ -67,9 +67,9 @@
          * @type {RegExp}
          *
          * @description
-         * Finds a protocol delimeter in a string (e.g. ://).
+         * Finds a protocol delimiter in a string (e.g. ://).
          */
-        protocolRegex: RegExp = /:\/\//;
+        public protocolRegex: RegExp = /:\/\//;
 
         /**
          * @name invalidVariableRegex
@@ -82,7 +82,7 @@
          * @description
          * Looks for any invalid variable syntax.
          */
-        invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
+        public invalidVariableRegex: RegExp = /[^a-zA-Z0-9@_$]/;
 
         /**
          * @name fileNameRegex
@@ -95,7 +95,7 @@
          * @description
          * Grabs the file name from a file path.
          */
-        fileNameRegex: RegExp = /.*(?:\/|\\)/;
+        public fileNameRegex: RegExp = /.*(?:\/|\\)/;
 
         /**
          * @name shiftedKeyRegex
@@ -108,7 +108,7 @@
          * @description
          * Determines if a character is correlated with a shifted key code.
          */
-        shiftedKeyRegex: RegExp = /[A-Z!@#$%^&*()_+}{":?><|~]/;
+        public shiftedKeyRegex: RegExp = /[A-Z!@#$%^&*()_+}{":?><|~]/;
 
         /**
          * @name fullUrlRegex
@@ -121,7 +121,7 @@
          * @description
          * Determines if a url is relative or absolute.
          */
-        fullUrlRegex: RegExp = /^(?:[a-z0-9\-]+:)(?:\/\/)?|(?:\/\/)/i;
+        public fullUrlRegex: RegExp = /^(?:[a-z0-9\-]+:)(?:\/\/)?|(?:\/\/)/i;
 
         /**
          * @name validateEmail
@@ -134,7 +134,7 @@
          * @description
          * Determines if an email address is valid.
          */
-        validateEmail: RegExp = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
+        public validateEmail: RegExp = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
             '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
             '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
 
@@ -149,7 +149,7 @@
          * @description
          * Determines if a telephone number is valid.
          */
-        validateTelephone: RegExp = /^\+?[0-9\.\(\)\s-]*$/;
+        public validateTelephone: RegExp = /^\+?[0-9\.\(\)\s-]*$/;
 
         /**
          * @name splatSegmentRegex
@@ -162,7 +162,7 @@
          * @description
          * A regular expression for matching dynamic segments in a route.
          */
-        dynamicSegmentsRegex: RegExp = /^:([^\/]+)$/;
+        public dynamicSegmentsRegex: RegExp = /^:([^\/]+)$/;
 
         /**
          * @name splatSegmentRegex
@@ -175,7 +175,7 @@
          * @description
          * A regular expression for matching splat segments in a route.
          */
-        splatSegmentRegex: RegExp = /^\*([^\/]+)$/;
+        public splatSegmentRegex: RegExp = /^\*([^\/]+)$/;
 
         /**
          * @name newLineRegex
@@ -289,9 +289,9 @@
          * @type {RegExp}
          *
          * @description
-         * Finds delimeters for spinal-case, snake_case, and dot.case.
+         * Finds delimiters for spinal-case, snake_case, and dot.case.
          * useful for converting to camelCase. Also can turn a string
-         * into camelCase with space as a delimeter.
+         * into camelCase with space as a delimiter.
          *
          * @example
          * // outputs ['-o', '-', 'o']

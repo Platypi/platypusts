@@ -12,7 +12,7 @@ module plat.expressions {
      */
     export class Tokenizer {
         protected static _inject: any = {
-            _log: __Log
+            _log: __Log,
         };
 
         /**
@@ -63,7 +63,7 @@ module plat.expressions {
          * @description
          * A regular expression for determining if a potential variable is valid syntax.
          */
-        private __variableRegex: RegExp = (<expressions.Regex>acquire(__Regex)).invalidVariableRegex;
+        private __variableRegex: RegExp = (<Regex>acquire(__Regex)).invalidVariableRegex;
         /**
          * @name __outputQueue
          * @memberof plat.expressions.Tokenizer
@@ -75,7 +75,7 @@ module plat.expressions {
          * @description
          * A queue used for determining the output of the tokenization.
          */
-        private __outputQueue: Array<IToken> = [];
+        private __outputQueue: IToken[] = [];
         /**
          * @name __operatorStack
          * @memberof plat.expressions.Tokenizer
@@ -88,7 +88,7 @@ module plat.expressions {
          * A stack used for determining operator precedence and aiding with the evaluation
          * operands.
          */
-        private __operatorStack: Array<IToken> = [];
+        private __operatorStack: IToken[] = [];
         /**
          * @name __argCount
          * @memberof plat.expressions.Tokenizer
@@ -100,7 +100,7 @@ module plat.expressions {
          * @description
          * A collection used for determining argument count for certain operations.
          */
-        private __argCount: Array<any> = [];
+        private __argCount: any[] = [];
         /**
          * @name __objArgCount
          * @memberof plat.expressions.Tokenizer
@@ -112,7 +112,7 @@ module plat.expressions {
          * @description
          * A collection used for determining argument count for certain object literal operations.
          */
-        private __objArgCount: Array<number> = [];
+        private __objArgCount: number[] = [];
         /**
          * @name __lastColonChar
          * @memberof plat.expressions.Tokenizer
@@ -125,7 +125,7 @@ module plat.expressions {
          * The last character encountered while in an operation dealing with the colon operator.
          * Needs to be an array due to the possibility of nested colon operations.
          */
-        private __lastColonChar: Array<string> = [];
+        private __lastColonChar: string[] = [];
         /**
          * @name __lastCommaChar
          * @memberof plat.expressions.Tokenizer
@@ -138,7 +138,7 @@ module plat.expressions {
          * The last character encountered while in an operation dealing with commas.
          * Needs to be an array due to the possibility of nested comma operations.
          */
-        private __lastCommaChar: Array<string> = [];
+        private __lastCommaChar: string[] = [];
 
         /**
          * @name createTokens
@@ -155,28 +155,28 @@ module plat.expressions {
          * @returns {Array<plat.expressions.IToken>} The tokenized collection of
          * {@link plat.expressions.IToken|ITokens}.
          */
-        createTokens(input: string): Array<IToken> {
+        public createTokens(input: string): IToken[] {
             if (isNull(input)) {
                 return [];
             }
 
             this._input = input;
 
-            let char: string,
-                length = input.length,
-                ternary = 0,
-                ternaryFound = false,
-                isSpace = this._isSpace,
-                isAlphaNumeric = this._isAlphaNumeric;
+            const length = input.length;
+            const isSpace = this._isSpace;
+            const isAlphaNumeric = this._isAlphaNumeric;
+            let char: string;
+            let ternary = 0;
+            let ternaryFound = false;
 
-            for (var index = 0; index < length; index++) {
+            for (let index = 0; index < length; index += 1) {
                 char = input[index];
 
                 // space
                 if (isSpace(char)) {
                     continue;
                 } else if (isAlphaNumeric(char)) {
-                    index = this.__handleAplhaNumeric(index, char);
+                    index = this.__handleAlphaNumeric(index, char);
                 } else if (isDelimiter(char)) {
                     switch (char) {
                         case '.':
@@ -207,12 +207,13 @@ module plat.expressions {
                         case '"':
                             index = this.__handleStringLiteral(index, char);
                             break;
+                        default:
                     }
                 } else if (isOperator(char)) {
                     switch (char) {
                         case '?':
                             ternaryFound = true;
-                            ternary++;
+                            ternary += 1;
                             this.__handleQuestion(char);
                             break;
                         case ':':
@@ -224,7 +225,6 @@ module plat.expressions {
                     // semicolon throw error
                 } else if (char === ';') {
                     this._throwError('Unexpected semicolon');
-                    return [];
                 }
 
                 this.__previousChar = char;
@@ -232,14 +232,12 @@ module plat.expressions {
 
             if (ternaryFound && (ternary > 0)) {
                 this._throwError('Improper ternary expression');
-                return [];
             } else if (this.__objArgCount.length > 0) {
                 this._throwError('Improper object literal');
-                return [];
             }
 
             this.__popRemainingOperators();
-            let output = this.__outputQueue;
+            const output = this.__outputQueue;
             this._resetTokenizer();
 
             return output;
@@ -283,17 +281,21 @@ module plat.expressions {
          * @returns {string} The grouped characters.
          */
         protected _lookAhead(char: string, index: number, isNumberLike: boolean): string {
-            let ch: string,
-                input = this._input,
-                maxLength = input.length;
+            const input = this._input;
+            const maxLength = input.length;
+            let ch: string;
 
-            while (++index < maxLength) {
+            index += 1;
+            while (index < maxLength) {
                 ch = input[index];
+
                 if (this._checkType(ch, isNumberLike)) {
                     char += ch;
                 } else {
                     break;
                 }
+
+                index += 1;
             }
 
             return char;
@@ -315,12 +317,14 @@ module plat.expressions {
          * @returns {string} The completed current operator.
          */
         protected _lookAheadForOperatorFn(char: string, index: number): string {
-            let ch: string,
-                fn = char,
-                input = this._input,
-                maxLength = input.length;
+            const input = this._input;
+            const maxLength = input.length;
+            let ch: string;
+            let fn = char;
 
-            while (++index < maxLength) {
+            index += 1;
+
+            while (index < maxLength) {
                 ch = input[index];
                 fn += ch;
 
@@ -329,6 +333,8 @@ module plat.expressions {
                 } else {
                     break;
                 }
+
+                index += 1;
             }
 
             return char;
@@ -353,13 +359,18 @@ module plat.expressions {
          * the first character and end character being looked ahead for.
          */
         protected _lookAheadForDelimiter(endChar: string, index: number): string {
-            let char = '',
-                ch: string,
-                input = this._input,
-                maxLength = input.length;
+            const input = this._input;
+            const maxLength = input.length;
+            let char = '';
+            let ch: string;
 
-            while ((++index < maxLength) && (ch = input[index]) !== endChar) {
+            index += 1;
+            ch = input[index];
+
+            while (index < maxLength && ch !== endChar) {
                 char += ch;
+                index += 1;
+                ch = input[index];
             }
 
             return char;
@@ -383,14 +394,14 @@ module plat.expressions {
          * @returns {void}
          */
         protected _popStackForVal(topOperator: IToken, char: string, error: string): void {
-            let outputQueue = this.__outputQueue,
-                operatorStack = this.__operatorStack;
+            const outputQueue = this.__outputQueue;
+            const operatorStack = this.__operatorStack;
 
             while (topOperator.val !== char) {
                 outputQueue.push(operatorStack.shift());
                 topOperator = operatorStack[0];
                 if (operatorStack.length === 0) {
-                    return this._throwError(error);
+                    this._throwError(error);
                 }
             }
         }
@@ -443,6 +454,7 @@ module plat.expressions {
             } else if (obj.val === '') {
                 return char !== '';
             }
+
             return char.indexOf(obj.val) === -1;
         }
 
@@ -482,7 +494,7 @@ module plat.expressions {
          * @returns {void}
          */
         protected _throwError(error: string): void {
-            this._log.error(new Error(error + ' in ' + this._input));
+            this._log.error(new Error(`${error} in ${this._input}`));
         }
 
         /**
@@ -499,7 +511,7 @@ module plat.expressions {
          * @returns {boolean} Whether or not the character is numeric.
          */
         protected _isNumeric(char: string): boolean {
-            return ('0' <= char && char <= '9');
+            return (char >= '0' && char <= '9');
         }
 
         /**
@@ -538,12 +550,12 @@ module plat.expressions {
          * @returns {boolean} Whether or not the character is alphanumeric.
          */
         protected _isAlphaNumeric(char: string): boolean {
-            return ('a' <= char && char <= 'z' ||
-                'A' <= char && char <= 'Z' ||
-                '0' <= char && char <= '9' ||
-                '@' === char ||
-                '_' === char ||
-                '$' === char);
+            return (char >= 'a' && char <= 'z' ||
+                char >= 'A' && char <= 'Z' ||
+                char >= '0' && char <= '9' ||
+                char === '@' ||
+                char === '_' ||
+                char === '$');
         }
 
         /**
@@ -565,7 +577,7 @@ module plat.expressions {
         }
 
         /**
-         * @name __handleAplhaNumeric
+         * @name __handleAlphaNumeric
          * @memberof plat.expressions.Tokenizer
          * @kind function
          * @access private
@@ -578,9 +590,9 @@ module plat.expressions {
          *
          * @returns {number} The new index to pick up tokenization from.
          */
-        private __handleAplhaNumeric(index: number, char: string): number {
-            let isNumberLike = this._isNumeric(char),
-                lookAhead = this._lookAhead(char, index, isNumberLike);
+        private __handleAlphaNumeric(index: number, char: string): number {
+            const isNumberLike = this._isNumeric(char);
+            const lookAhead = this._lookAhead(char, index, isNumberLike);
 
             this.__outputQueue.push(isNumberLike ? ({ val: Number(lookAhead), args: 0 }) :
                 <IToken>({ val: lookAhead, args: -1 }));
@@ -603,11 +615,11 @@ module plat.expressions {
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handlePeriod(index: number, char: string): number {
-            let outputQueue = this.__outputQueue,
-                operatorStack = this.__operatorStack,
-                topOutputLength = outputQueue.length - 1,
-                previousChar = this.__previousChar,
-                lookAhead: string;
+            const outputQueue = this.__outputQueue;
+            const operatorStack = this.__operatorStack;
+            const topOutputLength = outputQueue.length - 1;
+            const previousChar = this.__previousChar;
+            let lookAhead: string;
 
             // if output queue is null OR space or operator or ( or , before .
             if (topOutputLength < 0 ||
@@ -665,12 +677,12 @@ module plat.expressions {
          * @returns {void}
          */
         private __handleRightBrace(char: string): void {
-            let operatorStack = this.__operatorStack,
-                topOperator = operatorStack[0],
-                lastArgCount = this.__objArgCount.pop();
+            const operatorStack = this.__operatorStack;
+            const topOperator = operatorStack[0];
+            const lastArgCount = this.__objArgCount.pop();
 
             if (isNull(topOperator)) {
-                return this._throwError('Improper object literal');
+                this._throwError('Improper object literal');
             }
 
             this._popStackForVal(topOperator, '{', 'Improper object literal');
@@ -697,8 +709,8 @@ module plat.expressions {
          * @returns {void}
          */
         private __handleLeftBracket(char: string): void {
-            let previousChar = this.__previousChar,
-                operatorStack = this.__operatorStack;
+            const previousChar = this.__previousChar;
+            const operatorStack = this.__operatorStack;
 
             if (this._isValEqual(operatorStack[0], '.')) {
                 this.__outputQueue.push(operatorStack.shift());
@@ -710,7 +722,7 @@ module plat.expressions {
                 num: 0,
                 isArray: !(previousChar === ']' ||
                     previousChar === ')' ||
-                    this._isAlphaNumeric(previousChar))
+                    this._isAlphaNumeric(previousChar)),
             });
 
             this.__lastCommaChar.push(char);
@@ -729,16 +741,16 @@ module plat.expressions {
          * @returns {void}
          */
         private __handleRightBracket(char: string): void {
-            let operatorStack = this.__operatorStack,
-                topOperator = operatorStack[0],
-                lastArgCountObj = this.__argCount.pop();
+            const operatorStack = this.__operatorStack;
+            const topOperator = operatorStack[0];
+            const lastArgCountObj = this.__argCount.pop();
 
             if (isNull(topOperator) || isNull(lastArgCountObj)) {
-                return this._throwError('Brackets mismatch');
+                this._throwError('Brackets mismatch');
             }
 
             if (!lastArgCountObj.isArray) {
-                lastArgCountObj.num--;
+                lastArgCountObj.num -= 1;
             }
 
             this._popStackForVal(topOperator, '[', 'Brackets mismatch');
@@ -750,7 +762,7 @@ module plat.expressions {
             // check if function on top of stack
             this.__outputQueue.push({
                 val: '[]',
-                args: (this.__previousChar === '[') ? -1 : lastArgCountObj.num + 1
+                args: (this.__previousChar === '[') ? -1 : (<number>lastArgCountObj.num) + 1,
             });
         }
         /**
@@ -767,14 +779,14 @@ module plat.expressions {
          * @returns {void}
          */
         private __handleLeftParenthesis(char: string): void {
-            let previousChar = this.__previousChar,
-                operatorStack = this.__operatorStack,
-                args: number;
+            const previousChar = this.__previousChar;
+            const operatorStack = this.__operatorStack;
+            let args: number;
 
             if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
-                let outputQueue = this.__outputQueue,
-                    topOutput = outputQueue[outputQueue.length - 1],
-                    val = isNull(topOutput) ? undefined : topOutput.val;
+                const outputQueue = this.__outputQueue;
+                const topOutput = outputQueue[outputQueue.length - 1];
+                const val = isNull(topOutput) ? undefined : topOutput.val;
 
                 if (val === '[]') {
                     operatorStack.unshift(outputQueue.pop());
@@ -806,12 +818,12 @@ module plat.expressions {
          * @returns {void}
          */
         private __handleRightParenthesis(char: string): void {
-            let operatorStack = this.__operatorStack,
-                topOperator = operatorStack[0],
-                localArgCountObj = this.__argCount.pop();
+            const operatorStack = this.__operatorStack;
+            const topOperator = operatorStack[0];
+            const localArgCountObj = this.__argCount.pop();
 
             if (isNull(topOperator)) {
-                return this._throwError('Parentheses mismatch');
+                this._throwError('Parentheses mismatch');
             }
 
             this._popStackForVal(topOperator, '(', 'Parentheses mismatch');
@@ -823,18 +835,19 @@ module plat.expressions {
 
             // check if function on top of stack
             if (!isNull(localArgCountObj) && localArgCountObj.num >= 0) {
-                let localArgNum = localArgCountObj.num;
+                const localArgNum: number = localArgCountObj.num;
+
                 if (this.__previousChar === '(') {
                     if (this.__removeFnFromStack(localArgNum)) {
                         this.__outputQueue.push({
                             val: '()',
-                            args: 0
+                            args: 0,
                         });
                     }
                 } else if (this.__removeFnFromStack(localArgNum + 1)) {
                     this.__outputQueue.push({
                         val: '()',
-                        args: (localArgNum + 1)
+                        args: (localArgNum + 1),
                     });
                 }
             }
@@ -853,24 +866,24 @@ module plat.expressions {
          * @returns {void}
          */
         private __handleComma(char: string): void {
-            let lastCommaArray = this.__lastCommaChar,
-                lastCommaArg = lastCommaArray[lastCommaArray.length - 1];
+            const lastCommaArray = this.__lastCommaChar;
+            const lastCommaArg = lastCommaArray[lastCommaArray.length - 1];
 
             if (lastCommaArg === '(' || lastCommaArg === '[') {
-                let argCountArray = this.__argCount,
-                    length = argCountArray.length;
+                const argCountArray = this.__argCount;
+                const length = argCountArray.length;
 
                 if (length > 0) {
                     // increment deepest fn count (don't need to increment obj count because we increment with colon)
-                    argCountArray[length - 1].num++;
+                    argCountArray[length - 1].num += 1;
                 } else {
-                    return this._throwError('Mismatch with ' + lastCommaArg);
+                    this._throwError(`Mismatch with ${lastCommaArg}`);
                 }
             }
 
-            let topOperator = this.__operatorStack[0];
+            const topOperator = this.__operatorStack[0];
             if (isNull(topOperator)) {
-                return this._throwError('Unexpected comma');
+                this._throwError('Unexpected comma');
             }
 
             this._popStackForVal(topOperator, lastCommaArg, 'Unexpected comma');
@@ -890,9 +903,9 @@ module plat.expressions {
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handleStringLiteral(index: number, char: string): number {
-            let lookAhead = this._lookAheadForDelimiter(char, index),
-                operatorStack = this.__operatorStack,
-                topOperator = operatorStack[0];
+            const lookAhead = this._lookAheadForDelimiter(char, index);
+            const operatorStack = this.__operatorStack;
+            const topOperator = operatorStack[0];
 
             if (!isNull(topOperator) && (topOperator.val === '[' || (topOperator.val === '(' && topOperator.args >= 0))) {
                 operatorStack.unshift({ val: lookAhead, args: 0 });
@@ -936,20 +949,19 @@ module plat.expressions {
          * @returns {number} The potentially modified ternary counter.
          */
         private __handleColon(char: string, ternary: number): number {
-            let lastColonCharArray = this.__lastColonChar,
-                lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1],
-                outputQueue = this.__outputQueue;
+            const lastColonCharArray = this.__lastColonChar;
+            const lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1];
+            const outputQueue = this.__outputQueue;
 
             if (lastColonCharacter === '?') {
-                let operatorStack = this.__operatorStack,
-                    topOperator = operatorStack[0];
+                const operatorStack = this.__operatorStack;
+                const topOperator = operatorStack[0];
 
                 if (isNull(topOperator)) {
                     this._throwError('Ternary mismatch');
-                    return;
                 }
 
-                ternary--;
+                ternary -= 1;
                 // pop latest colon char off queue
                 lastColonCharArray.pop();
 
@@ -958,20 +970,18 @@ module plat.expressions {
                 outputQueue.push(operatorStack.shift());
                 operatorStack.unshift({ val: char, args: -2 });
             } else if (lastColonCharacter === '{') {
-                let objArgCount = this.__objArgCount,
-                    outputLast = outputQueue.length - 1;
+                const objArgCount = this.__objArgCount;
+                const outputLast = outputQueue.length - 1;
 
-                objArgCount[objArgCount.length - 1]++;
+                objArgCount[objArgCount.length - 1] += 1;
 
                 if (outputLast < 0) {
                     this._throwError('Unexpected colon');
-                    return;
                 }
 
                 outputQueue[outputLast].args = 1;
             } else {
                 this._throwError('Unexpected colon');
-                return;
             }
 
             return ternary;
@@ -991,7 +1001,7 @@ module plat.expressions {
          * @returns {number} The new index to pick up tokenization from.
          */
         private __handleOtherOperator(index: number, char: string): number {
-            let lookAhead = this._lookAheadForOperatorFn(char, index);
+            const lookAhead = this._lookAheadForOperatorFn(char, index);
             this.__determinePrecedence(lookAhead);
 
             return index + lookAhead.length - 1;
@@ -1009,16 +1019,16 @@ module plat.expressions {
          * @returns {void}
          */
         private __popRemainingOperators(): void {
-            let outputQueue = this.__outputQueue,
-                operatorStack = this.__operatorStack,
-                topOperator: IToken,
-                topOperatorVal: any;
+            const outputQueue = this.__outputQueue;
+            const operatorStack = this.__operatorStack;
+            let topOperator: IToken;
+            let topOperatorVal: any;
 
             while (operatorStack.length > 0) {
                 topOperator = operatorStack.shift();
                 topOperatorVal = topOperator.val;
                 if (topOperatorVal === '(' || topOperatorVal === ')') {
-                    return this._throwError('Parentheses mismatch');
+                    this._throwError('Parentheses mismatch');
                 }
 
                 outputQueue.push(topOperator);
@@ -1045,7 +1055,7 @@ module plat.expressions {
                 case '+':
                 case '-':
                     if (this.__outputQueue.length === 0 || isOperator(this.__previousChar)) {
-                        return OPERATORS['u' + operator];
+                        return OPERATORS[`u${operator}`];
                     }
                 default:
                     return OPERATORS[operator];
@@ -1066,16 +1076,17 @@ module plat.expressions {
          * @returns {void}
          */
         private __determinePrecedence(operator: string): void {
-            let operatorFn = this.__determineOperator(operator),
-                operatorPrecedence = operatorFn.precedence,
-                isLtR = operatorFn.associativity === 'ltr',
-                operatorStack = this.__operatorStack,
-                outputQueue = this.__outputQueue,
-                firstArrayOperator: ITokenDetails,
-                firstArrayVal: any;
+            const operatorFn = this.__determineOperator(operator);
+            const operatorPrecedence = operatorFn.precedence;
+            const isLtR = operatorFn.associativity === 'ltr';
+            const operatorStack = this.__operatorStack;
+            const outputQueue = this.__outputQueue;
+            let firstArrayOperator: ITokenDetails;
+            let firstArrayVal: any;
 
             if (operatorStack.length === 0) {
                 operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+
                 return;
             }
 
@@ -1093,6 +1104,7 @@ module plat.expressions {
                     outputQueue.push(operatorStack.shift());
                 } else {
                     operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+
                     return;
                 }
             } while (operatorStack.length > 0);
@@ -1115,13 +1127,13 @@ module plat.expressions {
          * @returns {boolean} Whether or not the function had at least one argument.
          */
         private __removeFnFromStack(argCount: number): boolean {
-            let outputQueue = this.__outputQueue,
-                operatorStack = this.__operatorStack,
-                topOperator = operatorStack[0],
-                isValEqual = this._isValEqual,
-                isValUnequal = this._isValUnequal,
-                fnToken: IToken,
-                atLeastOne = false;
+            const outputQueue = this.__outputQueue;
+            const operatorStack = this.__operatorStack;
+            let topOperator = operatorStack[0];
+            const isValEqual = this._isValEqual;
+            const isValUnequal = this._isValUnequal;
+            let fnToken: IToken;
+            let atLeastOne = false;
 
             while (!isNull(topOperator) &&
                 isValUnequal(topOperator, '([') &&

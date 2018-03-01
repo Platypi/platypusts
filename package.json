@@ -27,7 +27,8 @@
     "load-grunt-tasks": "latest",
     "lodash": "latest",
     "rimraf": "latest",
-    "tsconfig-lint": "latest",
+    "tslint": "^5.9.1",
+    "tslint-microsoft-contrib": "^5.0.3",
     "typescript": "latest"
   },
   "scripts": {
@@ -43,7 +44,7 @@
     "deploy": "grunt",
     "examples": "npm start",
     "karma": "karma start karma.conf.js",
-    "lint": "tsconfig-lint -u",
+    "lint": "tslint --fix --force -p tsconfig.json -c tslint.json",
     "start": "concurrent -r \"npm run watch:examples\" \"npm run server:examples\"",
     "server:examples": "http-server -p 3000",
     "test": "npm run build:test && npm run karma",

@@ -60,7 +60,7 @@ module plat.ui {
          * @description
          * The injectable resource type token.
          */
-        static INJECTABLE: string = __INJECTABLE_RESOURCE;
+        public static INJECTABLE: string = __INJECTABLE_RESOURCE;
 
         /**
          * @name OBJECT
@@ -74,7 +74,7 @@ module plat.ui {
          * @description
          * The object resource type token. Objects should be literal objects and won't be observed.
          */
-        static OBJECT: string = __OBJECT_RESOURCE;
+        public static OBJECT: string = __OBJECT_RESOURCE;
 
         /**
          * @name OBSERVABLE
@@ -89,7 +89,7 @@ module plat.ui {
          * The observable resource type token. Observable resources are expected to be
          * string identifiers and will be observed.
          */
-        static OBSERVABLE: string = __OBSERVABLE_RESOURCE;
+        public static OBSERVABLE: string = __OBSERVABLE_RESOURCE;
 
         /**
          * @name LITERAL
@@ -105,7 +105,7 @@ module plat.ui {
          * so if you change `resources.<alias>.value` it will be reflected everywhere it is
          * observed.
          */
-        static LITERAL: string = __LITERAL_RESOURCE;
+        public static LITERAL: string = __LITERAL_RESOURCE;
 
         /**
          * @name FUNCTION
@@ -119,7 +119,7 @@ module plat.ui {
          * @description
          * The function resource type token.
          */
-        static FUNCTION: string = __FUNCTION_RESOURCE;
+        public static FUNCTION: string = __FUNCTION_RESOURCE;
 
         /**
          * @name _ContextManager
@@ -202,7 +202,7 @@ module plat.ui {
          * @description
          * An object consisting of keyed arrays containing functions for removing observation listeners.
          */
-        private static __observableResourceRemoveListeners: IObject<Array<IRemoveListener>> = {};
+        private static __observableResourceRemoveListeners: IObject<IRemoveListener[]> = {};
 
         /**
          * @name __resources
@@ -259,7 +259,7 @@ module plat.ui {
          *
          * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
          */
-        static create(control: TemplateControl, resource: IResource): IResource {
+        public static create(control: TemplateControl, resource: IResource): IResource {
             if (isNull(resource)) {
                 return resource;
             }
@@ -268,7 +268,7 @@ module plat.ui {
 
             switch (resource.type.toLowerCase()) {
                 case __INJECTABLE_RESOURCE:
-                    let injector = injectableInjectors[resource.value];
+                    const injector = injectableInjectors[resource.value];
                     if (!isNull(injector)) {
                         resource.value = injector.inject();
                     }
@@ -291,12 +291,13 @@ module plat.ui {
                         if (isFunction(value)) {
                             resource.value = value.bind(control);
                         } else {
-                            Resources._log.warn('Attempted to create a "function" ' +
-                                'type Resource, but the function ' + value + 'cannot be found on your control.');
+                            Resources._log.warn(
+                                `Attempted to create a "function" type Resource, but the function ${value} cannot be found on your control.`
+                            );
                             resource.value = noop;
                         }
                     }
-                    break;
+                default:
             }
 
             return resource;
@@ -317,16 +318,16 @@ module plat.ui {
          *
          * @returns {void}
          */
-        static addControlResources(control: TemplateControl): void {
+        public static addControlResources(control: TemplateControl): void {
             control.resources.add({
                 context: {
                     value: control.context,
-                    type: __OBSERVABLE_RESOURCE
+                    type: __OBSERVABLE_RESOURCE,
                 },
                 control: {
                     value: control,
-                    type: __OBJECT_RESOURCE
-                }
+                    type: __OBJECT_RESOURCE,
+                },
             });
 
             if (control.hasOwnContext) {
@@ -351,20 +352,20 @@ module plat.ui {
          *
          * @returns {void}
          */
-        static bindResources(resourcesInstance: Resources): void;
-        static bindResources(resourcesInstance: Resources): void {
-            let resources = resourcesInstance.__resources;
+        public static bindResources(resourcesInstance: Resources): void;
+        public static bindResources(resourcesInstance: Resources): void {
+            const resources = resourcesInstance.__resources;
             if (isNull(resources)) {
                 return;
             }
 
-            let control = resourcesInstance.__controlInstance,
-                aliases = Object.keys(resources),
-                controlResources = Resources.__controlResources,
-                length = aliases.length,
-                alias: string;
+            const control = resourcesInstance.__controlInstance;
+            const aliases = Object.keys(resources);
+            const controlResources = Resources.__controlResources;
+            const length = aliases.length;
+            let alias: string;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 alias = aliases[i];
 
                 if (controlResources[alias] === true) {
@@ -396,20 +397,20 @@ module plat.ui {
          *
          * @returns {void}
          */
-        static dispose(control: TemplateControl, persist?: boolean): void {
-            let resources = <Resources>control.resources;
+        public static dispose(control: TemplateControl, persist?: boolean): void {
+            const resources = control.resources;
 
             if (isNull(resources)) {
                 return;
             }
 
-            let keys = Object.keys(resources.__resources),
-                key: string,
-                length = keys.length,
-                define = Resources._ContextManager.defineProperty,
-                resource: IResource;
+            const keys = Object.keys(resources.__resources);
+            const length = keys.length;
+            const define = Resources._ContextManager.defineProperty;
+            let key: string;
+            let resource: IResource;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 key = keys[i];
                 resource = (<any>resources)[key];
 
@@ -436,19 +437,19 @@ module plat.ui {
          *
          * @returns {plat.IObject<plat.ui.IResource>} The resources created using the input element.
          */
-        static parseElement(element: Element): IObject<IResource> {
-            let children: Array<Element> = Array.prototype.slice.call((<HTMLElement>element).children),
-                child: Element,
-                _regex = Resources._regex,
-                whiteSpaceRegex = _regex.whiteSpaceRegex,
-                quotationRegex = _regex.quotationRegex,
-                resources: IObject<IResource> = {},
-                resource: IResource,
-                types = Resources.__resourceTypes,
-                attrs: NamedNodeMap,
-                attr: Attr,
-                nodeName: string,
-                text: string;
+        public static parseElement(element: Element): IObject<IResource> {
+            const children: Element[] = Array.prototype.slice.call((<HTMLElement>element).children);
+            const _regex = Resources._regex;
+            const whiteSpaceRegex = _regex.whiteSpaceRegex;
+            const quotationRegex = _regex.quotationRegex;
+            const resources: IObject<IResource> = {};
+            const types = Resources.__resourceTypes;
+            let child: Element;
+            let resource: IResource;
+            let attrs: NamedNodeMap;
+            let attr: Attr;
+            let nodeName: string;
+            let text: string;
 
             while (children.length > 0) {
                 child = children.pop();
@@ -459,7 +460,7 @@ module plat.ui {
                 }
 
                 attrs = child.attributes;
-                resource = <IResource>{};
+                resource = <any>{};
 
                 attr = attrs.getNamedItem(__ALIAS);
                 if (isNull(attr)) {
@@ -493,7 +494,7 @@ module plat.ui {
          *
          * @returns {plat.ui.Resources} A new {@link plat.ui.Resources|Resources} instance.
          */
-        static getInstance(): Resources {
+        public static getInstance(): Resources {
             return new Resources();
         }
 
@@ -513,9 +514,9 @@ module plat.ui {
          * @returns {void}
          */
         protected static _observeResource(control: TemplateControl, resource: IResource): void {
-            let value = resource.value,
-                uid = control.uid,
-                removeListeners = Resources.__observableResourceRemoveListeners[uid];
+            const uid = control.uid;
+            let value = resource.value;
+            let removeListeners = Resources.__observableResourceRemoveListeners[uid];
 
             if (isNull(removeListeners)) {
                 removeListeners = Resources.__observableResourceRemoveListeners[uid] = [];
@@ -527,7 +528,7 @@ module plat.ui {
                 } else {
                     resource.initialValue = value;
                 }
-                let listener = control.observeExpression((newValue): void => {
+                const listener = control.observeExpression((newValue): void => {
                     resource.value = newValue;
                 }, value);
                 resource.value = control.evaluateExpression(value);
@@ -554,13 +555,13 @@ module plat.ui {
                 return;
             }
 
-            let uid = control.uid,
-                removeListeners = Resources.__observableResourceRemoveListeners[uid];
+            const uid = control.uid;
+            const removeListeners = Resources.__observableResourceRemoveListeners[uid];
 
             if (isArray(removeListeners)) {
-                let length = removeListeners.length;
+                const length = removeListeners.length;
 
-                for (let i = 0; i < length; ++i) {
+                for (let i = 0; i < length; i += 1) {
                     removeListeners[i]();
                 }
             }
@@ -588,13 +589,13 @@ module plat.ui {
                 root: {
                     value: control,
                     type: __OBJECT_RESOURCE,
-                    alias: __ROOT_RESOURCE
+                    alias: __ROOT_RESOURCE,
                 },
                 rootContext: {
                     value: control.context,
                     type: __OBSERVABLE_RESOURCE,
-                    alias: __ROOT_CONTEXT_RESOURCE
-                }
+                    alias: __ROOT_CONTEXT_RESOURCE,
+                },
             });
         }
 
@@ -603,40 +604,6 @@ module plat.ui {
          * @memberof plat.ui.Resources
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Initializes this {@link plat.ui.Resources|Resources} instance.
-         *
-         * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
-         * @param {Element} element? An optional element used to create initial {@link plat.ui.IResource|IResource} objects.
-         *
-         * @returns {void}
-         */
-        initialize(control: TemplateControl, element?: Element): void;
-        /**
-         * @name initialize
-         * @memberof plat.ui.Resources
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Initializes this {@link plat.ui.Resources|Resources} instance.
-         *
-         * @param {plat.ui.TemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
-         * @param {IObject<IResource>} resources? An optional object used to populate initial
-         * {@link plat.ui.IResource|IResource} objects.
-         *
-         * @returns {void}
-         */
-        initialize(control: TemplateControl, resources?: IObject<IResource>): void;
-        /**
-         * @name initialize
-         * @memberof plat.ui.Resources
-         * @kind function
-         * @access public
-         * @variation 2
          *
          * @description
          * Initializes this {@link plat.ui.Resources|Resources} instance.
@@ -647,27 +614,26 @@ module plat.ui {
          *
          * @returns {void}
          */
-        initialize(control: TemplateControl, resources?: Resources): void;
-        initialize(controlInstance: TemplateControl, resources?: any): void {
+        public initialize(controlInstance: TemplateControl, resources?: Element | IObject<IResource> | Resources): void {
             this.__controlInstance = controlInstance;
 
             if (isNull(resources)) {
                 return;
             } else if (isNode(resources)) {
-                resources = Resources.parseElement(resources);
-            } else if (isObject(resources.resources)) {
-                resources = resources.resources;
+                resources = Resources.parseElement(<Element>resources);
+            } else if (isObject((<Resources>resources).resources)) {
+                resources = (<Resources>resources).resources;
             }
 
-            this.__resources = resources;
+            this.__resources = <IObject<IResource>>resources;
 
-            let keys = Object.keys(resources),
-                key: string,
-                length = keys.length;
+            const keys = Object.keys(resources);
+            let key: string;
+            const length = keys.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 key = keys[i];
-                (<any>this)[key] = resources[key];
+                (<any>this)[key] = (<IObject<IResource>>resources)[key];
             }
         }
 
@@ -676,36 +642,9 @@ module plat.ui {
          * @memberof plat.ui.Resources
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
-         * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
-         *
-         * @param resources An {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} used to add
-         * resources, keyed by their alias.
-         *
-         * @returns {void}
-         *
-         * @example
-         * control.resources.add({
-         *     myAlias: {
-         *         type: 'observable',
-         *         value: {
-         *             hello: 'Hello World!'
-         *         }
-         *     }
-         * });
-         */
-        add(resources: IObject<IResource>): void;
-        /**
-         * @name add
-         * @memberof plat.ui.Resources
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+         * Used for programmatically adding {@link plat.ui.IResource|IResource} objects.
          *
          * @param {Element} element An Element containing resource element children.
          *
@@ -720,25 +659,24 @@ module plat.ui {
          *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
          *     </plat-resources>
          */
-        add(element: Element): void;
-        add(resources: any): void {
+        public add(resources: IObject<IResource> | Element): void {
             if (isNull(resources)) {
                 return;
             } else if (isNode(resources)) {
-                resources = Resources.parseElement(resources);
+                resources = Resources.parseElement(<Element>resources);
             }
 
-            let keys = Object.keys(resources),
-                length = keys.length,
-                resource: IResource,
-                control = this.__controlInstance,
-                bound = this.__bound,
-                key: string,
-                create = Resources.create;
+            const keys = Object.keys(resources);
+            const length = keys.length;
+            const control = this.__controlInstance;
+            const bound = this.__bound;
+            const create = Resources.create;
+            let resource: IResource;
+            let key: string;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 key = keys[i];
-                resource = resources[key];
+                resource = (<IObject<IResource>>resources)[key];
                 resource.alias = key;
 
                 (<any>this)[key] = this.__resources[key] = bound ? create(control, resource) : resource;
@@ -756,20 +694,23 @@ module plat.ui {
         (<any>Resources)._ContextManager = _ContextManager;
         (<any>Resources)._regex = _regex;
         (<any>Resources)._log = _log;
-        let controlResources: IObject<boolean> = {},
-            resourceTypes: IObject<boolean> = {};
+        const controlResources: IObject<boolean> = {};
+        const resourceTypes: IObject<boolean> = {};
 
-        controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] = controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
-        resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] = resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
+        controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] =
+            controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
+        resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] =
+            resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
         (<any>Resources).__controlResources = controlResources;
         (<any>Resources).__resourceTypes = resourceTypes;
+
         return Resources;
     }
 
     register.injectable(__ResourcesFactory, IResourcesFactory, [
         __ContextManagerStatic,
         __Regex,
-        __Log
+        __Log,
     ], __FACTORY);
 
     register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);

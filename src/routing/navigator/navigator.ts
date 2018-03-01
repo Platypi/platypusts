@@ -1,4 +1,4 @@
-﻿module plat.routing {
+module plat.routing {
     'use strict';
 
     /**
@@ -20,7 +20,7 @@
             _EventManager: __EventManagerStatic,
             _window: __Window,
             _log: __Log,
-            _history: __History
+            _history: __History,
         };
 
         /**
@@ -49,7 +49,7 @@
          * @description
          * A unique id, created during instantiation and found on every {@link plat.routing.Navigator|Navigator}.
          */
-        uid: string = uniqueId(__Plat);
+        public uid: string = uniqueId(__Plat);
 
         /**
          * @name isRoot
@@ -63,7 +63,7 @@
          * @description
          * States whether or not the Navigator is the root Navigator.
          */
-        isRoot: boolean = false;
+        public isRoot: boolean = false;
 
         /**
          * @name _Promise
@@ -259,7 +259,7 @@
          *
          * @returns {void}
          */
-        initialize(router: Router): void {
+        public initialize(router: Router): void {
             this._router = router;
 
             if (isObject(router) && router.isRoot && !isObject(Navigator._root)) {
@@ -281,13 +281,13 @@
          * @param {any} view The view to which the Navigator should navigate.
          * @param {plat.routing.INavigateOptions} options used to generate the url and perform navigation.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
+         * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        navigate(view: any, options?: INavigateOptions): async.IThenable<void> {
+        public navigate(view: any, options?: INavigateOptions): async.Promise<void> {
             options = isObject(options) ? options : {};
             let url: string;
 
-            return this.finishNavigating().then((): async.IThenable<void> => {
+            return this.finishNavigating().then((): async.Promise<void> => {
                 if (options.isUrl) {
                     url = view;
                 } else {
@@ -295,7 +295,7 @@
                 }
 
                 if (!isString(url)) {
-                    let error = new Error('Cannot serialize url from input parameters, check your view reference.');
+                    const error = new Error('Cannot serialize url from input parameters, check your view reference.');
                     this._log.error(error);
                 }
 
@@ -312,10 +312,10 @@
          * @description
          * Returns a promise that resolves when all navigation has finished.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
+         * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        finishNavigating(): async.IThenable<void> {
-            let router = Navigator._root._router;
+        public finishNavigating(): async.Promise<void> {
+            const router = Navigator._root._router;
 
             if (router.navigating) {
                 return router.finishNavigating.catch(noop);
@@ -333,9 +333,9 @@
          * @description
          * Tells the router to go back with the given options.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
+         * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        goBack(options?: IBackNavigateOptions): async.IThenable<void> {
+        public goBack(options?: IBackNavigateOptions): async.Promise<void> {
             options = isObject(options) ? options : {};
 
             let length = Number(options.length);
@@ -347,8 +347,9 @@
                 return Navigator._root.goBack(options);
             }
 
-            return this.finishNavigating().then((): async.IThenable<void> => {
+            return this.finishNavigating().then((): async.Promise<void> => {
                 this._backNavigate = true;
+
                 return this._goBack(length);
             });
         }
@@ -364,7 +365,7 @@
          *
          * @returns {boolean} Whether or not the current navigation is a backward navigation.
          */
-        isBackNavigation(): boolean {
+        public isBackNavigation(): boolean {
             if (!this.isRoot) {
                 return Navigator._root.isBackNavigation();
             }
@@ -383,7 +384,7 @@
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this._removeUrlListener();
             deleteProperty(this, 'router');
         }
@@ -397,9 +398,9 @@
          * @description
          * Internal method for navigating to the specified url.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
+         * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        protected _navigate(url: string, replace?: boolean): async.IThenable<void> {
+        protected _navigate(url: string, replace?: boolean): async.Promise<void> {
             if (!this.isRoot) {
                 return Navigator._root._navigate(url, replace);
             }
@@ -408,8 +409,8 @@
                 this._resolveNavigate = resolve;
                 this._rejectNavigate = reject;
 
-                let current = this._browser.url(),
-                    next = this._browser.url(url, replace);
+                const current = this._browser.url();
+                const next = this._browser.url(url, replace);
 
                 if (current === next) {
                     this._resolveNavigate();
@@ -426,9 +427,9 @@
          * @description
          * Internal method for going back a certain length in history
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the navigation has finished.
+         * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        protected _goBack(length: number): async.IThenable<void> {
+        protected _goBack(length: number): async.Promise<void> {
             return new this._Promise<void>((resolve, reject): void => {
                 this._resolveNavigate = resolve;
                 this._rejectNavigate = reject;
@@ -453,40 +454,40 @@
                 return;
             }
 
-            let EventManager = this._EventManager,
-                previousUrl: string,
-                headControl: ui.controls.Head = acquire(__Head),
-                headExists = isObject(headControl) && isFunction(headControl.navigated),
-                onFailedNavigaton: (e: any) => void = (e: any): void => {
-                    this._previousUrl = previousUrl;
+            const EventManager = this._EventManager;
+            let previousUrl: string;
+            const headControl: ui.controls.Head = acquire(__Head);
+            const headExists = isObject(headControl) && isFunction(headControl.navigated);
+            const onFailedNavigation: (e: any) => void = (e: any): void => {
+                this._previousUrl = previousUrl;
 
-                    let _history = this._history,
-                        state: IHistoryState = _history.state;
+                const _history = this._history;
+                const state: IHistoryState = _history.state;
 
-                    this._ignoreOnce = true;
-                    if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
-                        _history.go(-1);
-                    } else {
-                        _history.go(1);
-                    }
+                this._ignoreOnce = true;
+                if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
+                    _history.go(-1);
+                } else {
+                    _history.go(1);
+                }
 
-                    this._backNavigate = false;
+                this._backNavigate = false;
 
-                    if (isFunction(this._rejectNavigate)) {
-                        this._rejectNavigate(e);
-                    }
+                if (isFunction(this._rejectNavigate)) {
+                    this._rejectNavigate(e);
+                }
 
-                    if (!isEmpty(e)) {
-                        this._log.warn(e);
-                    }
-                };
+                if (!isEmpty(e)) {
+                    this._log.warn(e);
+                }
+            };
 
             this._previousUrl = this._browser.url();
 
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton, (): void => {
-                let ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
+                const ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
                 if (ev.defaultPrevented) {
                     return;
                 }
@@ -511,14 +512,16 @@
                 ev = EventManager.dispatch(__beforeNavigate, this, EventManager.DIRECT, [utils]);
 
                 if (ev.defaultPrevented) {
-                    onFailedNavigaton(new Error('Navigation prevented during ' + __beforeNavigate + ' event'));
+                    onFailedNavigation(new Error(`Navigation prevented during ${__beforeNavigate} event`));
+
                     return;
                 }
 
                 this.finishNavigating()
-                    .then((): async.IThenable<void> => {
+                    .then((): async.Promise<void> => {
 
                         EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
+
                         return this._router.navigate(utils.pathname, utils.query);
                     }).then((): void => {
                         this._previousUrl = utils.pathname;
@@ -533,7 +536,7 @@
                         }
 
                         EventManager.dispatch(__navigated, this, EventManager.DIRECT, [utils]);
-                    }, onFailedNavigaton);
+                    }, onFailedNavigation);
             });
         }
 

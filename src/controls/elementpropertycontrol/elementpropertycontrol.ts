@@ -24,10 +24,10 @@ module plat.controls {
          *
          * @returns {void}
          */
-        setter(): void {
-            let element = this.element,
-                elementProperty = this.property,
-                expression = this.attributes[this.attribute];
+        public setter(): void {
+            const element = this.element;
+            const elementProperty = this.property;
+            const expression = this.attributes[this.attribute];
 
             if (isEmpty(expression) || isNull(element)) {
                 return;
@@ -62,7 +62,7 @@ module plat.controls {
          * @description
          * Used to set the element's href property.
          */
-        property: string = 'href';
+        public property: string = 'href';
     }
 
     /**
@@ -77,7 +77,7 @@ module plat.controls {
      */
     export class Src extends ElementPropertyControl {
         protected static _inject: any = {
-            _browser: __Browser
+            _browser: __Browser,
         };
 
         /**
@@ -92,7 +92,7 @@ module plat.controls {
          * @description
          * Used to set the element's src property.
          */
-        property: string = 'src';
+        public property: string = 'src';
 
         /**
          * @name _browser
@@ -119,10 +119,10 @@ module plat.controls {
          *
          * @returns {void}
          */
-        setter(): void {
-            let element = this.element,
-                elementProperty = this.property,
-                expression = this.attributes[this.attribute];
+        public setter(): void {
+            const element = this.element;
+            const elementProperty = this.property;
+            const expression = this.attributes[this.attribute];
 
             if (isEmpty(expression) || isNull(element)) {
                 return;

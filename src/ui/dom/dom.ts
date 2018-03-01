@@ -12,7 +12,7 @@ module plat.ui {
      */
     export class Dom {
         protected static _inject: any = {
-            _domEvents: __DomEvents
+            _domEvents: __DomEvents,
         };
 
         /**
@@ -26,71 +26,13 @@ module plat.ui {
          * @description
          * Reference to the {@link plat.ui.DomEvents|DomEvents} injectable.
          */
-        protected _domEvents: ui.DomEvents = acquire(__DomEvents);
+        protected _domEvents: DomEvents = acquire(__DomEvents);
 
         /**
          * @name addEventListener
          * @memberof plat.ui.Dom
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Adds an event listener of the specified type to the specified element.
-         *
-         * @param {Node} element The element to add the event listener to.
-         * @param {string} type The type of event to listen to.
-         * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-         * of event propagation.
-         *
-         * @returns {plat.IRemoveListener} A function for removing the added event listener.
-         */
-        addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Adds an event listener of the specified type to the specified element.
-         *
-         * @param {Window} element The window object.
-         * @param {string} type The type of event to listen to.
-         * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-         * of event propagation.
-         *
-         * @returns {plat.IRemoveListener} A function for removing the added event listener.
-         */
-        addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Adds an event listener of the specified type to the specified element.
-         *
-         * @param {Node} element The element to add the event listener to.
-         * @param {string} type The type of event to listen to.
-         * @param {EventListener} listener The listener to fire when the event occurs.
-         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-         * of event propagation.
-         *
-         * @returns {plat.IRemoveListener} A function for removing the added event listener.
-         */
-        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-        /**
-         * @name addEventListener
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Adds an event listener of the specified type to the specified element.
@@ -103,8 +45,8 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function for removing the added event listener.
          */
-        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-        addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
+        public addEventListener(element: Window | Node, type: string,
+            listener: IGestureListener | EventListener, useCapture?: boolean): IRemoveListener {
             return this._domEvents.addEventListener(element, type, listener, useCapture);
         }
 
@@ -113,55 +55,6 @@ module plat.ui {
          * @memberof plat.ui.Dom
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Takes a Node Array and creates a DocumentFragment and adds the nodes to the Fragment.
-         *
-         * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
-         *
-         * @returns {DocumentFragment} A DocumentFragment.
-         */
-        appendChildren(nodeList: Array<Node>): DocumentFragment;
-        /**
-         * @name appendChildren
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes a NodeList and creates a DocumentFragment and adds the NodeList to the Fragment.
-         *
-         * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
-         *
-         * @returns {DocumentFragment} A DocumentFragment.
-         */
-        appendChildren(nodeList: NodeList): DocumentFragment;
-        /**
-         * @name appendChildren
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes a Node Array and either adds it to the passed in Node,
-         * or creates a DocumentFragment and adds the nodes to the
-         * Fragment.
-         *
-         * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
-         * @param {Node} root? An optional Node to append the nodeList.
-         *
-         * @returns {Node} The root Node or a DocumentFragment.
-         */
-        appendChildren(nodeList: Array<Node>, root?: Node): Node;
-        /**
-         * @name appendChildren
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Takes a NodeList and either adds it to the passed in Node,
@@ -173,8 +66,7 @@ module plat.ui {
          *
          * @returns {Node} The root Node or a DocumentFragment.
          */
-        appendChildren(nodeList: NodeList, root?: Node): Node;
-        appendChildren(nodeList: any, root?: Node): any {
+        public appendChildren(nodeList: Node[] | NodeList, root?: Node): Node {
             return appendChildren(nodeList, root);
         }
 
@@ -183,55 +75,6 @@ module plat.ui {
          * @memberof plat.ui.Dom
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Takes a Node Array, clones them, and creates a DocumentFragment and adds the nodes to the Fragment.
-         *
-         * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
-         *
-         * @returns {DocumentFragment} A DocumentFragment.
-         */
-        cloneChildren(nodeList: Array<Node>): DocumentFragment;
-        /**
-         * @name cloneChildren
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes a NodeList, clones it, and creates a DocumentFragment and adds the NodeList to the Fragment.
-         *
-         * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
-         *
-         * @returns {DocumentFragment} A DocumentFragment.
-         */
-        cloneChildren(nodeList: NodeList): DocumentFragment;
-        /**
-         * @name cloneChildren
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes a Node Array, clones the nodes, and either adds it to the passed in Node,
-         * or creates a DocumentFragment and adds the nodes to the
-         * Fragment.
-         *
-         * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
-         * @param {Node} root? An optional Node to append the nodeList.
-         *
-         * @returns {Node} The root Node or a DocumentFragment.
-         */
-        cloneChildren(nodeList: Array<Node>, root?: Node): Node;
-        /**
-         * @name cloneChildren
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Takes a NodeList, clones the nodes, and either adds it to the passed in Node,
@@ -243,8 +86,7 @@ module plat.ui {
          *
          * @returns {Node} The root Node or a DocumentFragment.
          */
-        cloneChildren(nodeList: NodeList, root?: Node): Node;
-        cloneChildren(nodeList: any, root?: Node): any {
+        public cloneChildren(nodeList: Node[] | NodeList, root?: Node): Node {
             return appendChildren(nodeList, root, true);
         }
 
@@ -261,8 +103,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        clearNode(node: Node): void {
-            return clearNode(node);
+        public clearNode(node: Node): void {
+            clearNode(node);
         }
 
         /**
@@ -270,23 +112,6 @@ module plat.ui {
          * @memberof plat.ui.Dom
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Removes all the Nodes in the Array from the parent Node.
-         *
-         * @param {Array<Node>} nodeList The Node Array to remove from the parent Node.
-         * @param {Node} parent? The parent Node used to remove the nodeList.
-         *
-         * @returns {void}
-         */
-        clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
-        /**
-         * @name clearNodeBlock
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * Removes all the Nodes in the NodeList from the parent Node.
@@ -296,9 +121,9 @@ module plat.ui {
          *
          * @returns {void}
          */
-        clearNodeBlock(nodeList: NodeList, parent?: Node): void;
-        clearNodeBlock(nodeList: any, parent?: Node): void {
-            return clearNodeBlock(nodeList, parent);
+        public clearNodeBlock(nodeList: Node[] | NodeList, parent?: Node): void;
+        public clearNodeBlock(nodeList: any, parent?: Node): void {
+            clearNodeBlock(nodeList, parent);
         }
 
         /**
@@ -317,7 +142,7 @@ module plat.ui {
          *
          * @returns {Node} The same node passed in, with innerHTML set.
          */
-        setInnerHtml(node: Node, html: string): Node {
+        public setInnerHtml(node: Node, html: string): Node {
             return setInnerHtml(node, html);
         }
 
@@ -326,58 +151,6 @@ module plat.ui {
          * @memberof plat.ui.Dom
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Inserts a list of Nodes before the designated end Node.
-         *
-         * @param {Node} parent The parent node into which to insert nodes.
-         * @param {Array<Node>} nodes The Node Array to insert into the parent.
-         * @param {Node} endNode? An optional endNode to use to insert nodes.
-         *
-         * @returns {Array<Node>} An Array copy of the nodes.
-         */
-        insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
-        /**
-         * @name insertBefore
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Inserts a list of Nodes before the designated end Node.
-         *
-         * @param {Node} parent The parent node into which to insert nodes.
-         * @param {NodeList} nodes The NodeList to insert into the parent.
-         * @param {Node} endNode? An optional endNode to use to insert nodes.
-         *
-         * @returns {Array<Node>} An Array copy of the nodes.
-         */
-        insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
-        /**
-         * @name insertBefore
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Inserts a DocumentFragment before the designated end Node.
-         *
-         * @param {Node} parent The parent node into which to insert nodes.
-         * @param {DocumentFragment} fragment The DocumentFragment to insert into the parent.
-         * @param {Node} endNode? An optional endNode to use to insert nodes.
-         *
-         * @returns {Array<Node>} An Array copy of the fragment's childNodes.
-         */
-        insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
-        /**
-         * @name insertBefore
-         * @memberof plat.ui.Dom
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Inserts a Node before the designated end Node.
@@ -388,8 +161,7 @@ module plat.ui {
          *
          * @returns {Array<Node>} An Array copy of the fragment's childNodes.
          */
-        insertBefore(parent: Node, node: Node, endNode?: Node): Array<Node>;
-        insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
+        public insertBefore(parent: Node, nodes: Node[] | NodeList | DocumentFragment | Node, endNode?: Node): Node[] {
             return insertBefore(parent, nodes, endNode);
         }
 
@@ -408,7 +180,7 @@ module plat.ui {
          * @returns {Array<Node>} A Node Array that represents the childNodes of the
          * given node.
          */
-        replace(node: Node): Array<Node> {
+        public replace(node: Node): Node[] {
             return replace(node);
         }
 
@@ -429,7 +201,7 @@ module plat.ui {
          *
          * @returns {HTMLElement} The replaced element (newElement).
          */
-        replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
+        public replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
         /**
          * @name replaceWith
          * @memberof plat.ui.Dom
@@ -447,7 +219,7 @@ module plat.ui {
          *
          * @returns {Element} The replaced element (newElement).
          */
-        replaceWith(node: Node, newElement: Element): Element;
+        public replaceWith(node: Node, newElement: Element): Element;
         /**
          * @name replaceWith
          * @memberof plat.ui.Dom
@@ -465,8 +237,8 @@ module plat.ui {
          *
          * @returns {Node} The replaced element (newElement).
          */
-        replaceWith(node: Node, newNode: Node): Node;
-        replaceWith(node: any, newNode: any): any {
+        public replaceWith(node: Node, newNode: Node): Node;
+        public replaceWith(node: any, newNode: any): any {
             return replaceWith(node, newNode);
         }
 
@@ -484,7 +256,7 @@ module plat.ui {
          *
          * @returns {DocumentFragment} The serialized DOM.
          */
-        serializeHtml(html: string): DocumentFragment {
+        public serializeHtml(html: string): DocumentFragment {
             return serializeHtml(html);
         }
 
@@ -504,8 +276,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        removeBetween(startNode: Node, endNode?: Node): void {
-            return removeBetween(startNode, endNode);
+        public removeBetween(startNode: Node, endNode?: Node): void {
+            removeBetween(startNode, endNode);
         }
 
         /**
@@ -525,8 +297,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        removeAll(startNode: Node, endNode?: Node): void {
-            return removeAll(startNode, endNode);
+        public removeAll(startNode: Node, endNode?: Node): void {
+            removeAll(startNode, endNode);
         }
 
         /**
@@ -543,8 +315,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        addClass(element: Element, className: string): void {
-            return addClass(<HTMLElement>element, className);
+        public addClass(element: Element, className: string): void {
+            addClass(<HTMLElement>element, className);
         }
 
         /**
@@ -561,8 +333,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        removeClass(element: Element, className: string): void {
-            return removeClass(<HTMLElement>element, className);
+        public removeClass(element: Element, className: string): void {
+            removeClass(<HTMLElement>element, className);
         }
 
         /**
@@ -579,8 +351,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        toggleClass(element: Element, className: string): void {
-            return toggleClass(<HTMLElement>element, className);
+        public toggleClass(element: Element, className: string): void {
+            toggleClass(<HTMLElement>element, className);
         }
 
         /**
@@ -598,8 +370,8 @@ module plat.ui {
          *
          * @returns {void}
          */
-        replaceClass(element: Element, oldClass: string, newClass: string): void {
-            return replaceClass(<HTMLElement>element, oldClass, newClass);
+        public replaceClass(element: Element, oldClass: string, newClass: string): void {
+            replaceClass(<HTMLElement>element, oldClass, newClass);
         }
 
         /**
@@ -617,7 +389,7 @@ module plat.ui {
          * @returns {boolean} Whether or not the element has the class name or all of the class names
          * specified in the className argument.
          */
-        hasClass(element: Element, className: string): boolean {
+        public hasClass(element: Element, className: string): boolean {
             return hasClass(<HTMLElement>element, className);
         }
 
@@ -633,10 +405,10 @@ module plat.ui {
          *
          * @param {string} templateUrl The url where the HTML template is stored.
          *
-         * @returns {plat.async.IThenable<DocumentFragment>} A thenable that will resolve with the template, serialized as a
+         * @returns {plat.async.Promise<DocumentFragment>} A thenable that will resolve with the template, serialized as a
          * DocumentFragment.
          */
-        getTemplate(templateUrl: string): async.IThenable<DocumentFragment> {
+        public getTemplate(templateUrl: string): async.Promise<DocumentFragment> {
             return getTemplate(templateUrl);
         }
 
@@ -654,7 +426,7 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for the element to be placed in the DOM.
          */
-        whenPresent(cb: () => void, element: Element): IRemoveListener {
+        public whenPresent(cb: () => void, element: Element): IRemoveListener {
             return whenPresent(cb, element);
         }
 
@@ -672,7 +444,7 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for the element to become visible.
          */
-        whenVisible(cb: () => void, element: Element): IRemoveListener {
+        public whenVisible(cb: () => void, element: Element): IRemoveListener {
             return whenVisible(cb, element);
         }
     }

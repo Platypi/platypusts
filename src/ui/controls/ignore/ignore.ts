@@ -5,11 +5,11 @@ module plat.ui.controls {
      * @name Ignore
      * @memberof plat.ui.controls
      * @kind class
-     * 
+     *
      * @extends {plat.ui.TemplateControl}
-     * 
+     *
      * @description
-     * A {@link plat.ui.TemplateControl|TemplateControl} for inner HTML that contains controls  
+     * A {@link plat.ui.TemplateControl|TemplateControl} for inner HTML that contains controls
      * and/or markup and not having it bind or evaluate.
      */
     export class Ignore extends TemplateControl {
@@ -18,13 +18,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Ignore
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Removes the innerHTML from the DOM and saves it.
-         * 
+         *
          * @returns {void}
          */
-        setTemplate(): void {
+        public setTemplate(): void {
             this.innerTemplate = <DocumentFragment>appendChildren(this.element.childNodes);
         }
 
@@ -33,13 +33,13 @@ module plat.ui.controls {
          * @memberof plat.ui.controls.Ignore
          * @kind function
          * @access public
-         * 
+         *
          * @description
          * Places the saved innerHTML back into the DOM.
-         * 
+         *
          * @returns {void}
          */
-        loaded(): void {
+        public loaded(): void {
             this.element.appendChild(this.innerTemplate.cloneNode(true));
         }
     }

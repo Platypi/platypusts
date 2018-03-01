@@ -71,7 +71,7 @@ module plat.storage {
          *
          * @returns {void}
          */
-        clear(): void {
+        public clear(): void {
             this._storage.clear();
         }
 
@@ -88,7 +88,7 @@ module plat.storage {
          *
          * @returns {string} The item retrieved from storage.
          */
-        getItem(key: string): string {
+        public getItem(key: string): string {
             return this._storage.getItem(key);
         }
 
@@ -107,7 +107,7 @@ module plat.storage {
          *
          * @returns {string} The key at the given index.
          */
-        key(index: number): string {
+        public key(index: number): string {
             return this._storage.key(index);
         }
 
@@ -125,7 +125,7 @@ module plat.storage {
          *
          * @returns {void}
          */
-        removeItem(key: string): void {
+        public removeItem(key: string): void {
             this._storage.removeItem(key);
         }
 
@@ -143,7 +143,7 @@ module plat.storage {
          *
          * @returns {void}
          */
-        setItem(key: string, data: string): void {
+        public setItem(key: string, data: string): void {
             this._storage.setItem(key, data);
             this[key] = this.getItem(key);
         }

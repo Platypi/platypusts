@@ -1,4 +1,4 @@
-﻿module plat.ui.animations {
+module plat.ui.animations {
     'use strict';
 
     /**
@@ -13,7 +13,7 @@
         protected static _inject: any = {
             _compat: __Compat,
             _Promise: __Promise,
-            _document: __Document
+            _document: __Document,
         };
 
         /**
@@ -73,61 +73,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Creates the defined animation denoted by the key but does not start the animation.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the
-         * previous animation is finished and a promise that resolves when the current animation is finished.
-         */
-        create(element: Element, key: string, options?: any): IAnimationCreation;
-        /**
-         * @name create
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Creates the defined animation denoted by the key but does not start the animation.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the
-         * previous animation is finished and a promise that resolves when the current animation is finished.
-         */
-        create(element: DocumentFragment, key: string, options?: any): IAnimationCreation;
-        /**
-         * @name create
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Creates the defined animation denoted by the key but does not start the animation.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the
-         * previous animation is finished and a promise that resolves when the current animation is finished.
-         */
-        create(elements: NodeList, key: string, options?: any): IAnimationCreation;
-        /**
-         * @name create
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Creates the defined animation denoted by the key but does not start the animation.
@@ -140,10 +85,9 @@
          * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the
          * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        create(elements: Array<Node>, key: string, options?: any): IAnimationCreation;
-        create(elements: any, key: string, options?: any): IAnimationCreation {
+        public create(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimationCreation {
             return this._create(elements, key, options, {
-                key: null
+                key: null,
             });
         }
 
@@ -152,61 +96,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Animates the element with the defined animation denoted by the key. Similar to `create` but
-         * immediately begins the animation.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        animate(element: Element, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name animate
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Animates the element with the defined animation denoted by the key. Similar to `create` but
-         * immediately begins the animation.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        animate(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name animate
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Animates the element with the defined animation denoted by the key. Similar to `create` but
-         * immediately begins the animation.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        animate(elements: NodeList, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name animate
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Animates the element with the defined animation denoted by the key. Similar to `create` but
@@ -219,10 +108,9 @@
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        animate(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-        animate(elements: any, key: string, options?: any): IAnimatingThenable {
+        public animate(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
             return this._animate(elements, key, options, {
-                key: null
+                key: null,
             });
         }
 
@@ -231,73 +119,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Adds the element to the DOM and animates it with the defined animation denoted by the key.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {Element} parent The parent element used for adding the element to the DOM.
-         * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-         * just before itself using the insertBefore function. If this argument is specified, the parent argument
-         * is ignored.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the element is
-         * added to the DOM and the animation is finished.
-         */
-        enter(element: Element, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        /**
-         * @name enter
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {Element} parent The parent element used for adding the elements to the DOM.
-         * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-         * just before itself using the insertBefore function. If this argument is specified, the parent argument
-         * is ignored.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are
-         * added to the DOM and the animation is finished.
-         */
-        enter(element: DocumentFragment, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        /**
-         * @name enter
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {Element} parent The parent element used for adding the elements to the DOM.
-         * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-         * just before itself using the insertBefore function. If this argument is specified, the parent argument
-         * is ignored.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are
-         * added to the DOM and the animation is finished.
-         */
-        enter(elements: NodeList, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        /**
-         * @name enter
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
@@ -314,12 +135,12 @@
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are
          * added to the DOM and the animation is finished.
          */
-        enter(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        enter(elements: any, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
+        public enter(elements: Element | DocumentFragment | NodeList | Node[],
+            key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'enter',
                 parent: parent,
-                refChild: refChild
+                refChild: refChild,
             });
         }
 
@@ -328,64 +149,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Animates the element with the defined animation denoted by the key and removes it from the DOM when
-         * the animation is finished.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished
-         * and the element is removed from the DOM.
-         */
-        leave(element: Element, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name leave
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
-         * the animation is finished.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished
-         * and the elements are removed from the DOM.
-         */
-        leave(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name leave
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
-         * the animation is finished.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished
-         * and the elements are removed from the DOM.
-         */
-        leave(elements: NodeList, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name leave
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
@@ -399,10 +162,9 @@
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished
          * and the elements are removed from the DOM.
          */
-        leave(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-        leave(elements: any, key: string, options?: any): IAnimatingThenable {
+        public leave(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
             return this._animate(elements, key, options, {
-                key: 'leave'
+                key: 'leave',
             });
         }
 
@@ -411,79 +173,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Removes the element from the DOM based on the parent argument, initializes it, adds it back to the
-         * DOM using either the refChild or the parent, and animates it with the defined animation denoted by the key.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
-         * refChild is not specified.
-         * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-         * just before itself using the insertBefore function. If this argument is specified, the parent argument
-         * is ignored during DOM insertion.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the element is moved and the
-         * animation is finished.
-         */
-        move(element: Element, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        /**
-         * @name move
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
-         * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
-         * refChild is not specified.
-         * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-         * just before itself using the insertBefore function. If this argument is specified, the parent argument
-         * is ignored during DOM insertion.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are moved and the
-         * animation is finished.
-         */
-        move(element: DocumentFragment, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        /**
-         * @name move
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
-         * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
-         * refChild is not specified.
-         * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-         * just before itself using the insertBefore function. If this argument is specified, the parent argument
-         * is ignored during DOM insertion.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are moved and the
-         * animation is finished.
-         */
-        move(elements: NodeList, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        /**
-         * @name move
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
@@ -502,12 +191,12 @@
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are moved and the
          * animation is finished.
          */
-        move(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-        move(elements: any, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
+        public move(elements: Element | DocumentFragment | NodeList | Node[],
+            key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'move',
                 parent: parent,
-                refChild: refChild
+                refChild: refChild,
             });
         }
 
@@ -516,61 +205,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Shows the element just after initialization by removing the `plat-hide` attribute and animates them
-         * with the defined animation denoted by the key.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        show(element: Element, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name show
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
-         * with the defined animation denoted by the key.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        show(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name show
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
-         * with the defined animation denoted by the key.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        show(elements: NodeList, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name show
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
@@ -583,10 +217,9 @@
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        show(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-        show(elements: any, key: string, options?: any): IAnimatingThenable {
+        public show(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
             return this._animate(elements, key, options, {
-                key: 'show'
+                key: 'show',
             });
         }
 
@@ -595,61 +228,6 @@
          * @memberof plat.ui.animations.Animator
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Animates the element with the defined animation denoted by the key and hides them by adding the
-         * `plat-hide` attribute after the animation is finished.
-         *
-         * @param {Element} element The Element to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        hide(element: Element, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name hide
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Animates the elements with the defined animation denoted by the key and hides them by adding the
-         * `plat-hide` attribute after the animation is finished.
-         *
-         * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        hide(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name hide
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Animates the elements with the defined animation denoted by the key and hides them by adding the
-         * `plat-hide` attribute after the animation is finished.
-         *
-         * @param {NodeList} elements The list of Nodes to be animated.
-         * @param {string} key The identifier specifying the type of animation.
-         * @param {any} options? Specified options for the animation.
-         *
-         * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
-         */
-        hide(elements: NodeList, key: string, options?: any): IAnimatingThenable;
-        /**
-         * @name hide
-         * @memberof plat.ui.animations.Animator
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Animates the elements with the defined animation denoted by the key and hides them by adding the
@@ -662,10 +240,9 @@
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        hide(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-        hide(elements: any, key: string, options?: any): IAnimatingThenable {
+        public hide(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
             return this._animate(elements, key, options, {
-                key: 'hide'
+                key: 'hide',
             });
         }
 
@@ -680,21 +257,61 @@
          *
          * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves after all the input promises resolve.
          */
-        all(promises: Array<IAnimationThenable<any>>): IAnimationThenable<void> {
-            let length = promises.length,
-                args = <Array<IAnimationEssentials>>[],
-                animationPromise = new AnimationPromise((resolve): void => {
-                    this._Promise.all(promises).then((): void => {
-                        resolve();
-                    });
+        public all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>, T5 |
+                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 |
+                IAnimationThenable<T8>, T9 | IAnimationThenable<T9>, T10 | IAnimationThenable<T10>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+        public all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>, T5 |
+                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>, T9 | IAnimationThenable<T9>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        public all<T1, T2, T3, T4, T5, T6, T7, T8>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>, T5 |
+                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+        public all<T1, T2, T3, T4, T5, T6, T7>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 |
+                IAnimationThenable <T4>, T5 |
+                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+        public all<T1, T2, T3, T4, T5, T6>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 |
+                IAnimationThenable <T4>, T5 |
+                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>]
+        ): Promise<[T1, T2, T3, T4, T5, T6]>;
+        public all<T1, T2, T3, T4, T5>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 |
+                IAnimationThenable <T4>, T5 | IAnimationThenable<T5>]
+        ): Promise<[T1, T2, T3, T4, T5]>;
+        public all<T1, T2, T3, T4>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>]
+        ): Promise<[T1, T2, T3, T4]>;
+        public all<T1, T2, T3>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>]
+        ): Promise<[T1, T2, T3]>;
+        public all<T1, T2>(
+            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>]
+        ): Promise<[T1, T2]>;
+        public all<T1>(
+            values: [T1 | IAnimationThenable<T1>]
+        ): Promise<[T1]>;
+        public all<TAll>(promises: (TAll | IAnimationThenable<TAll>)[]): Promise<TAll[]> {
+            const length = promises.length;
+            let args = <IAnimationEssentials[]>[];
+            const animationPromise = new AnimationPromise((resolve): void => {
+                this._Promise.all(<any>promises).then((): void => {
+                    resolve();
                 });
+            });
 
-            for (let i = 0; i < length; ++i) {
-                args = args.concat(promises[i].getInstances());
+            for (let i = 0; i < length; i += 1) {
+                args = args.concat((<IAnimationThenable<TAll>>promises[i]).getInstances());
             }
 
             animationPromise.initialize(args);
-            return animationPromise.then(noop);
+
+            return <any>animationPromise.then(noop);
         }
 
         /**
@@ -709,14 +326,15 @@
          * @returns {plat.ui.animations.IAnimatingThenable} The immediately resolved
          * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
          */
-        resolve(): IAnimatingThenable {
-            let animationPromise = new AnimationPromise((resolve): void => {
-                resolve(<IGetAnimatingThenable>(): IAnimationThenable<void> => {
+        public resolve(): IAnimatingThenable {
+            // tslint:disable-next-line
+            const animationPromise = new AnimationPromise((resolve): void => {
+                resolve((): IAnimationThenable<void> => {
                     return <IAnimationThenable<void>><any>animationPromise;
                 });
             });
 
-            return animationPromise;
+            return <any>animationPromise;
         }
 
         /**
@@ -738,8 +356,8 @@
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the current animation is finished.
          */
         protected _animate(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable {
-            let animation = this._create(elements, key, options, functionality),
-                current = animation.current;
+            const animation = this._create(elements, key, options, functionality);
+            const current = animation.current;
 
             animation.previous.then((): void => {
                 requestAnimationFrameGlobal((): void => {
@@ -771,86 +389,101 @@
          * previous animation is finished and a promise that resolves when the current animation is finished.
          */
         protected _create(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimationCreation {
-            let animationInjector = animationInjectors[key],
-                animationInstances: Array<BaseAnimation> = [],
-                elementNodes: Array<Element> = [],
-                immediateResolve: IAnimationThenable<any>;
+            let animationInjector = animationInjectors[key];
+            const animationInstances: BaseAnimation[] = [];
+            const elementNodes: Element[] = [];
+            let immediateResolve: IAnimationThenable<any>;
 
             if (!this._compat.animationSupported || isUndefined(animationInjector)) {
                 animationInjector = jsAnimationInjectors[key];
+
                 if (isUndefined(animationInjector)) {
                     elements = this.__constructAnimatableElements(elements, <any>{ inject: noop }, elementNodes, animationInstances);
                     this._handlePreInitFunctionality(elements, elementNodes, functionality);
                     this._handlePostInitFunctionality(elements, elementNodes, functionality);
                     this._handleEndFunctionality(elements, elementNodes, functionality);
                     immediateResolve = this.resolve();
-                    return { previous: immediateResolve, current: immediateResolve };
+
+                    return {
+                        previous: <any>immediateResolve,
+                        current: <any>immediateResolve,
+                    };
                 }
             }
 
             elements = this.__constructAnimatableElements(elements, animationInjector, elementNodes, animationInstances);
 
-            let length = elementNodes.length;
+            const length = elementNodes.length;
             if (length === 0) {
                 this._handlePreInitFunctionality(elements, elementNodes, functionality);
                 this._handlePostInitFunctionality(elements, elementNodes, functionality);
                 this._handleEndFunctionality(elements, elementNodes, functionality);
                 immediateResolve = this.resolve();
-                return { previous: immediateResolve, current: immediateResolve };
+
+                return {
+                    previous: <any>immediateResolve,
+                    current: <any>immediateResolve,
+                };
             }
 
             this._handlePreInitFunctionality(elements, elementNodes, functionality);
 
-            let id = uniqueId('animation_'),
-                previousAnimations = this.__setAnimationId(id, elementNodes),
-                previousPromise: async.IThenable<void>,
-                animationPromise = new AnimationPromise((resolve: any): void => {
-                    let _Promise = this._Promise;
-                    previousPromise = _Promise.all(previousAnimations).then((): void => {
-                        let animationPromises: Array<IAnimationThenable<any>> = [];
+            const id = uniqueId('animation_');
+            const previousAnimations = this.__setAnimationId(id, elementNodes);
+            let previousPromise: async.Promise<void>;
+            const animationPromise = new AnimationPromise((resolve: any): void => {
+                const _Promise = this._Promise;
 
-                        for (let i = 0; i < length; ++i) {
-                            animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
-                        }
+                previousPromise = _Promise.all(<any>previousAnimations).then((): void => {
+                    const animationPromises: IAnimationThenable<any>[] = [];
 
-                        this._handlePostInitFunctionality(elements, elementNodes, functionality);
+                    for (let i = 0; i < length; i += 1) {
+                        animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
+                    }
 
-                        let animationsFinished = _Promise.all(animationPromises),
-                            animatingParentId = this.__isParentAnimating(elementNodes),
-                            animatedElement = this.__generateAnimatedElement(id, elementNodes, animationPromise);
+                    this._handlePostInitFunctionality(elements, elementNodes, functionality);
 
-                        if (!isNull(animatingParentId)) {
-                            this._handleEndFunctionality(elements, elementNodes, functionality);
-                            animatedElement.animationEnd(true);
+                    const animationsFinished = _Promise.all(<any>animationPromises);
+                    const animatingParentId = this.__isParentAnimating(elementNodes);
+                    const animatedElement = this.__generateAnimatedElement(id, elementNodes, animationPromise);
 
-                            let parent = this._animatedElements[animatingParentId],
-                                resolvedPromise = isPromise(parent.promise) ?
-                                    (): IAnimationThenable<any> => {
-                                        return parent.promise;
-                                    } : (): IAnimationThenable<any> => {
-                                        return animationPromise;
-                                    };
+                    if (!isNull(animatingParentId)) {
+                        this._handleEndFunctionality(elements, elementNodes, functionality);
+                        animatedElement.animationEnd(true);
 
-                            animationsFinished.then((): void => {
-                                resolve(resolvedPromise);
-                            });
-                        }
+                        const parent = this._animatedElements[animatingParentId];
+                        const resolvedPromise = isPromise(parent.promise) ?
+                            (): IAnimationThenable<any> => {
+                                return parent.promise;
+                            } : (): IAnimationThenable<any> => {
+                                return <any>animationPromise;
+                            };
 
-                        this.__stopChildAnimations(elementNodes);
-
-                        animatedElement.promise = animationPromise;
                         animationsFinished.then((): void => {
-                            this._handleEndFunctionality(elements, elementNodes, functionality);
-                            animatedElement.animationEnd();
-                            resolve((): IAnimationThenable<any> => {
-                                return animationPromise;
-                            });
+                            resolve(resolvedPromise);
+                        });
+                    }
+
+                    this.__stopChildAnimations(elementNodes);
+
+                    animatedElement.promise = <any>animationPromise;
+                    animationsFinished.then((): void => {
+                        this._handleEndFunctionality(elements, elementNodes, functionality);
+                        animatedElement.animationEnd();
+
+                        resolve((): IAnimationThenable<any> => {
+                            return <any>animationPromise;
                         });
                     });
                 });
+            });
 
             animationPromise.initialize(animationInstances);
-            return { previous: previousPromise, current: animationPromise };
+
+            return {
+                previous: <any>previousPromise,
+                current: <any>animationPromise,
+            };
         }
 
         /**
@@ -868,15 +501,14 @@
          *
          * @returns {void}
          */
-        protected _handlePreInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void {
+        protected _handlePreInitFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void {
             switch (functionality.key) {
                 case 'move':
-                    for (let i = 0; i < length; ++i) {
+                    for (let i = 0; i < length; i += 1) {
                         removeNode(nodes[i]);
                     }
                     break;
                 default:
-                    break;
             }
         }
 
@@ -895,14 +527,16 @@
          *
          * @returns {void}
          */
-        protected _handlePostInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void {
-            let length: number,
-                i: number;
+        protected _handlePostInitFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void {
+            let length: number;
+            let i: number;
+
             switch (functionality.key) {
                 case 'enter':
                 case 'move':
-                    let refChild = functionality.refChild,
-                        parent: Element;
+                    let refChild = functionality.refChild;
+                    let parent: Element;
+
                     if (isNode(refChild)) {
                         parent = <Element>refChild.parentNode;
                     } else {
@@ -915,18 +549,17 @@
                     }
 
                     length = nodes.length;
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         parent.insertBefore(nodes[i], refChild);
                     }
                     break;
                 case 'show':
                     length = elementNodes.length;
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         elementNodes[i].removeAttribute(__Hide);
                     }
                     break;
                 default:
-                    break;
             }
         }
 
@@ -945,24 +578,24 @@
          *
          * @returns {void}
          */
-        protected _handleEndFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void {
-            let length: number,
-                i: number;
+        protected _handleEndFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void {
+            let length: number;
+            let i: number;
+
             switch (functionality.key) {
                 case 'leave':
                     length = nodes.length;
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         removeNode(nodes[i]);
                     }
                     break;
                 case 'hide':
                     length = elementNodes.length;
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         elementNodes[i].setAttribute(__Hide, '');
                     }
                     break;
                 default:
-                    break;
             }
         }
 
@@ -981,15 +614,15 @@
          * @returns {Array<plat.ui.animations.IAnimationThenable<any>>} An Array of promises representing all current animations on
          * the elements trying to be animated.
          */
-        private __setAnimationId(id: string, elements: Array<Element>): Array<IAnimationThenable<any>> {
-            let animatedElements = this._animatedElements,
-                animatedElement: IAnimatedElement,
-                _plat: ICustomElementProperty,
-                promises = <Array<IAnimationThenable<any>>>[],
-                length = elements.length,
-                element: Element;
+        private __setAnimationId(id: string, elements: Element[]): IAnimationThenable<any>[] {
+            const animatedElements = this._animatedElements;
+            let animatedElement: IAnimatedElement;
+            let _plat: ICustomElementProperty;
+            const promises = <IAnimationThenable<any>[]>[];
+            const length = elements.length;
+            let element: Element;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 element = elements[i];
                 _plat = (<ICustomElement>element).__plat;
 
@@ -1028,39 +661,45 @@
          *
          * @returns {plat.ui.animations.IAnimatedElement} The object representing the newly animated collection of elements.
          */
-        private __generateAnimatedElement(id: string, elements: Array<Element>, animationPromise: AnimationPromise): IAnimatedElement {
-            let animatedElements = this._animatedElements,
-                removeListener = (cancel?: boolean): void => {
-                    let _plat: ICustomElementProperty,
-                        element: ICustomElement,
-                        length = elements.length,
-                        animationId: string;
+        private __generateAnimatedElement(id: string, elements: Element[], animationPromise: AnimationPromise): IAnimatedElement {
+            const animatedElements = this._animatedElements;
+            const removeListener = (cancel?: boolean): void => {
+                let _plat: ICustomElementProperty;
+                let element: ICustomElement;
+                const length = elements.length;
+                let animationId: string;
 
-                    if (cancel === true) {
-                        animationPromise.cancel();
-                        deleteProperty(animatedElements, id);
-                        return;
-                    }
-
-                    for (let i = 0; i < length; ++i) {
-                        element = <ICustomElement>elements[i];
-                        _plat = element.__plat || {};
-                        animationId = _plat.animation;
-                        if (isUndefined(animationId) || animationId !== id) {
-                            continue;
-                        }
-                        removeClass(<HTMLElement>element, __Animating);
-                        deleteProperty(_plat, 'animation');
-                        if (isEmpty(_plat)) {
-                            deleteProperty(element, '__plat');
-                        }
-                    }
-
+                if (cancel === true) {
+                    animationPromise.cancel();
                     deleteProperty(animatedElements, id);
-                };
+
+                    return;
+                }
+
+                for (let i = 0; i < length; i += 1) {
+                    element = <ICustomElement>elements[i];
+                    _plat = element.__plat;
+
+                    if (!isObject(_plat)) {
+                        _plat = <any>{};
+                    }
+
+                    animationId = _plat.animation;
+                    if (isUndefined(animationId) || animationId !== id) {
+                        continue;
+                    }
+                    removeClass(<HTMLElement>element, __Animating);
+                    deleteProperty(_plat, 'animation');
+                    if (isEmpty(_plat)) {
+                        deleteProperty(element, '__plat');
+                    }
+                }
+
+                deleteProperty(animatedElements, id);
+            };
 
             return animatedElements[id] = {
-                animationEnd: removeListener
+                animationEnd: removeListener,
             };
         }
 
@@ -1077,15 +716,19 @@
          *
          * @returns {string} The animating parent's ID if one exists.
          */
-        private __isParentAnimating(elements: Array<Element>): string {
-            let animationId: string,
-                element: Node = elements[0];
+        private __isParentAnimating(elements: Element[]): string {
+            let animationId: string;
+            let element: Node = elements[0];
 
             while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
                 if (hasClass(<HTMLElement>element, __Animating)) {
                     let _plat = (<ICustomElement>element).__plat;
 
-                    animationId = (_plat || <ICustomElementProperty>{}).animation;
+                    if (!isObject(_plat)) {
+                        _plat = <any>{};
+                    }
+
+                    animationId = _plat.animation;
                     if (isString(animationId)) {
                         if (!isNull(this._animatedElements[animationId])) {
                             return animationId;
@@ -1114,25 +757,36 @@
          *
          * @returns {void}
          */
-        private __stopChildAnimations(elements: Array<Element>): void {
-            let animatingElements = this._animatedElements,
-                slice = Array.prototype.slice,
-                customAnimationElements: Array<ICustomElement>,
-                animatedElement: IAnimatedElement,
-                _plat: ICustomElementProperty,
-                id: string;
+        private __stopChildAnimations(elements: Element[]): void {
+            const animatingElements = this._animatedElements;
+            const slice = Array.prototype.slice;
+            let customAnimationElements: ICustomElement[];
+            let animatedElement: IAnimatedElement;
+            let _plat: ICustomElementProperty;
+            let id: string;
+            const length = elements.length;
 
-            for (let i = 0; i < elements.length; ++i) {
-                customAnimationElements = slice.call(elements[i].querySelectorAll('.' + __Animating));
+            for (let i = 0; i < length; i += 1) {
+                customAnimationElements = slice.call(elements[i].querySelectorAll(`.${__Animating}`));
 
                 while (customAnimationElements.length > 0) {
-                    _plat = customAnimationElements.pop().__plat || <ICustomElementProperty>{};
+                    _plat = customAnimationElements.pop().__plat;
+
+                    if (!isObject(_plat)) {
+                        _plat = <any>{};
+                    }
+
                     id = _plat.animation;
                     if (isNull(id)) {
                         continue;
                     }
 
-                    animatedElement = animatingElements[id] || <IAnimatedElement>{};
+                    animatedElement = animatingElements[id];
+
+                    if (!isObject(animatedElement)) {
+                        animatedElement = <any>{};
+                    }
+
                     if (isFunction(animatedElement.animationEnd)) {
                         animatedElement.animationEnd(true);
                     }
@@ -1159,7 +813,7 @@
          * @returns {Array<Node>} The Array of all nodes.
          */
         private __constructAnimatableElements(elements: any, animationInjector: dependency.Injector<BaseAnimation>,
-            elementNodes: Array<Element>, animationInstances: Array<BaseAnimation>): Array<Node> {
+            elementNodes: Element[], animationInstances: BaseAnimation[]): Node[] {
             if (!isArray(elements)) {
                 if (isDocumentFragment(elements)) {
                     elements = Array.prototype.slice.call(elements.childNodes);
@@ -1172,10 +826,10 @@
                 }
             }
 
-            let length = elements.length,
-                element: Node;
+            const length = elements.length;
+            let element: Node;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 element = elements[i];
                 if (isNode(element) && element.nodeType === Node.ELEMENT_NODE) {
                     elementNodes.push(<Element>element);
@@ -1245,9 +899,22 @@
      * @kind interface
      *
      * @description
-     * Describes an object representing a currenlty animated element.
+     * Describes an object representing a currently animated element.
      */
     export interface IAnimatedElement {
+        /**
+         * @name promise
+         * @memberof plat.ui.animations.IAnimatedElement
+         * @kind property
+         * @access public
+         *
+         * @type {plat.ui.animations.IAnimationThenable<any>}
+         *
+         * @description
+         * A promise representing an element's current state of animation.
+         */
+        promise?: IAnimationThenable<any>;
+
         /**
          * @name animationEnd
          * @memberof plat.ui.animations.IAnimatedElement
@@ -1261,20 +928,7 @@
          *
          * @returns {void}
          */
-        animationEnd: (cancel?: boolean) => void;
-
-        /**
-         * @name promise
-         * @memberof plat.ui.animations.IAnimatedElement
-         * @kind property
-         * @access public
-         *
-         * @type {plat.ui.animations.IAnimationThenable<any>}
-         *
-         * @description
-         * A promise representing an element's current state of animation.
-         */
-        promise?: IAnimationThenable<any>;
+        animationEnd(cancel?: boolean): void;
     }
 
     /**
@@ -1285,21 +939,7 @@
      * @description
      * Describes a function used to obtain an animating parent element's animation thenable.
      */
-    export interface IGetAnimatingThenable {
-        /**
-         * @name getter
-         * @memberof plat.ui.animations.IGetAnimatingThenable
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * The method signature for {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable}.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<void>}
-         */
-        (): IAnimationThenable<void>;
-    }
+    export type IGetAnimatingThenable = () => IAnimationThenable<void>;
 
     /**
      * @name AnimationPromise
@@ -1312,7 +952,7 @@
      * @description
      * Describes a type of {@link plat.async.Promise|Promise} that can be optionally cancelled.
      * Further, in the case where it may have a parent that is animating (which will cause it to immediately cancel and fulfill
-     * itself, it resolves with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for acccessing
+     * itself, it resolves with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for accessing
      * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
     export class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
@@ -1354,41 +994,23 @@
          * @description
          * An Array of animation instances linked to this promise.
          */
-        private __animationInstances: Array<IAnimationEssentials> = [];
+        private __animationInstances: IAnimationEssentials[] = [];
 
         /**
          * @name constructor
          * @memberof plat.ui.animations.AnimationPromise
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
          * The constructor method for the {@link plat.async.AjaxPromise}.
          *
          * @param {(resolve: (value?: plat.ui.animations.IParentAnimationFn) => any) => void} resolveFunction A resolve function
          * that only allows for a resolve of void and no reject.
+         * @param {any} promise? The promise object to allow for cancelling the {@link plat.ui.animations.AnimationPromise}.
          *
          * @returns {plat.ui.animations.AnimationPromise}
          */
-        constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void);
-        /**
-         * @name constructor
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * The constructor method for the {@link plat.async.AjaxPromise}.
-         *
-         * @param {(resolve: (value?: plat.ui.animations.IParentAnimationFn) => any) => void} resolveFunction A resolve function
-         * that only allows for a resolve of void and no reject.
-         * @param {any} promise The promise object to allow for cancelling the {@link plat.ui.animations.AnimationPromise}.
-         *
-         * @returns {plat.ui.animations.AnimationPromise}
-         */
-        constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise: any);
         constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise?: any) {
             super(resolveFunction);
             if (!isNull(promise)) {
@@ -1402,23 +1024,6 @@
          * @memberof plat.ui.animations.AnimationPromise
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
-         *
-         * @param {plat.ui.animations.IAnimationEssentials} instance The animation instance or animation
-         * promises for this promise.
-         *
-         * @returns {void}
-         */
-        initialize(instance: IAnimationEssentials): void;
-        /**
-         * @name initialize
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
@@ -1428,13 +1033,12 @@
          *
          * @returns {void}
          */
-        initialize(instances: Array<IAnimationEssentials>): void;
-        initialize(instances: any): void {
+        public initialize(instances: IAnimationEssentials | IAnimationEssentials[]): void {
             if (isEmpty(this.__animationInstances)) {
                 if (isArray(instances)) {
-                    this.__animationInstances = instances;
+                    this.__animationInstances = <IAnimationEssentials[]>instances;
                 } else if (isObject(instances)) {
-                    this.__animationInstances = [instances];
+                    this.__animationInstances = [<IAnimationEssentials>instances];
                 }
             }
         }
@@ -1451,7 +1055,7 @@
          * @returns {Array<plat.ui.animations.IAnimationEssentials>} instances The animation instances or
          * animation promises for this promise.
          */
-        getInstances(): Array<IAnimationEssentials> {
+        public getInstances(): IAnimationEssentials[] {
             return this.__animationInstances;
         }
 
@@ -1466,16 +1070,16 @@
          *
          * @returns {void}
          */
-        start(): void {
+        public start(): void {
             if (this.__animationState > 0) {
                 return;
             }
 
-            let animationInstances = this.__animationInstances,
-                animationInstance: IAnimationEssentials,
-                length = animationInstances.length;
+            const animationInstances = this.__animationInstances;
+            let animationInstance: IAnimationEssentials;
+            const length = animationInstances.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 animationInstance = animationInstances[i];
                 if (isFunction(animationInstance.start)) {
                     animationInstance.start();
@@ -1494,20 +1098,20 @@
          * @description
          * Fires the pause method on the animation instance.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation instance
          * indicates that the animation has been paused.
          */
-        pause(): async.IThenable<void> {
+        public pause(): async.Promise<void> {
             if (this.__animationState !== 1) {
                 return this._Promise.resolve();
             }
 
-            let animationInstances = this.__animationInstances,
-                pausePromises: Array<async.IThenable<void>> = [],
-                animationInstance: IAnimationEssentials,
-                length = animationInstances.length;
+            const animationInstances = this.__animationInstances;
+            const pausePromises: async.Promise<void>[] = [];
+            let animationInstance: IAnimationEssentials;
+            const length = animationInstances.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 animationInstance = animationInstances[i];
                 if (isFunction(animationInstance.pause)) {
                     pausePromises.push(animationInstance.pause());
@@ -1526,20 +1130,20 @@
          * @description
          * Fires the resume method on the animation instance.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation instance
          * indicates that the animation has resumed.
          */
-        resume(): async.IThenable<void> {
+        public resume(): async.Promise<void> {
             if (this.__animationState !== 1) {
                 return this._Promise.resolve();
             }
 
-            let animationInstances = this.__animationInstances,
-                resumePromises: Array<async.IThenable<void>> = [],
-                animationInstance: IAnimationEssentials,
-                length = animationInstances.length;
+            const animationInstances = this.__animationInstances;
+            const resumePromises: async.Promise<void>[] = [];
+            let animationInstance: IAnimationEssentials;
+            const length = animationInstances.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 animationInstance = animationInstances[i];
                 if (isFunction(animationInstance.resume)) {
                     resumePromises.push(animationInstance.resume());
@@ -1560,16 +1164,16 @@
          *
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
-        cancel(): IAnimatingThenable {
+        public cancel(): AnimationPromise {
             if (this.__animationState === 2) {
-                return this;
+                return <any>this;
             }
 
-            let animationInstances = this.__animationInstances,
-                animationInstance: IAnimationEssentials,
-                length = animationInstances.length;
+            const animationInstances = this.__animationInstances;
+            let animationInstance: IAnimationEssentials;
+            const length = animationInstances.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 animationInstance = animationInstances[i];
                 if (isFunction(animationInstance.cancel)) {
                     animationInstance.cancel();
@@ -1581,7 +1185,7 @@
 
             this.__animationState = 2;
 
-            return this;
+            return <any>this;
         }
 
         /**
@@ -1595,7 +1199,7 @@
          *
          * @returns {boolean} Whether or not this promise has been canceled.
          */
-        isCanceled(): boolean {
+        public isCanceled(): boolean {
             return this.__animationState === 2;
         }
 
@@ -1604,7 +1208,6 @@
          * @memberof plat.ui.animations.AnimationPromise
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
          * Takes in two methods, called when/if the promise fulfills.
@@ -1612,54 +1215,15 @@
          * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the
          * next then method in the promise chain.
          *
-         * @param {(success: plat.ui.animations.IGetAnimatingThenable) => U} onFulfilled A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>}
-         */
-        then<U>(onFulfilled: (success?: IGetAnimatingThenable) => U): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.ui.animations.IAnimationThenable<U>} onFulfilled
+         * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.Promise<U>} onFulfilled
          * A method called when/if the promise fulfills.
          * If undefined the next onFulfilled method in the promise chain will be called.
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>}
          */
-        then<U>(onFulfilled: (success?: IGetAnimatingThenable) => IAnimationThenable<U>): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.IThenable<U>} onFulfilled
-         * A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>}
-         */
-        then<U>(onFulfilled: (success?: IGetAnimatingThenable) => async.IThenable<U>): IAnimationThenable<U>;
-        then<U>(onFulfilled: (success?: IGetAnimatingThenable) => any): IAnimationThenable<U> {
-            return <IAnimationThenable<U>><any>super.then<U>(onFulfilled);
+        public then<U>(onFulfilled?: (value: any) => U | IAnimatingThenable,
+        onRejected?: (error: any) => U | IAnimatingThenable | void): AnimationPromise {
+            return <AnimationPromise><any>super.then<U>(<any>onFulfilled);
         }
 
         /**
@@ -1667,25 +1231,6 @@
          * @memberof plat.ui.animations.AnimationPromise
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-        /**
-         * @name catch
-         * @memberof plat.ui.animations.AnimationPromise
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
@@ -1697,9 +1242,8 @@
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
-        catch<U>(onRejected: (error: any) => any): IAnimationThenable<U> {
-            return <IAnimationThenable<U>><any>super.catch<U>(onRejected);
+        public catch<U>(onRejected?: (error: any) => U | IAnimatingThenable): AnimationPromise {
+            return <AnimationPromise><any>super.catch<U>(<any>onRejected);
         }
     }
 
@@ -1708,7 +1252,7 @@
      * @memberof plat.ui.animations
      * @kind interface
      *
-     * @extends {plat.async.IThenable<R>}
+     * @extends {plat.async.Promise<R>}
      *
      * @description
      * Describes a chaining function that fulfills when the previous link is complete and is
@@ -1716,7 +1260,7 @@
      *
      * @typeparam {any} R The return type of the thenable.
      */
-    export interface IAnimationThenable<R> extends async.IThenable<R>, IAnimationEssentials {
+    export interface IAnimationThenable<R> extends async.Promise<R>, IAnimationEssentials {
         /**
          * @name initialize
          * @memberof plat.ui.animations.IAnimationThenable
@@ -1744,7 +1288,7 @@
          * @returns {Array<plat.ui.animations.IAnimationEssentials>} instances The animation instances or
          * animation promises for this promise.
          */
-        getInstances(): Array<IAnimationEssentials>;
+        getInstances(): IAnimationEssentials[];
 
         /**
          * @name start
@@ -1768,10 +1312,10 @@
          * @description
          * Fires the pause method on the animation instance.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation instance
          * indicates that the animation has been paused.
          */
-        pause(): async.IThenable<void>;
+        pause(): async.Promise<void>;
 
         /**
          * @name resume
@@ -1782,10 +1326,10 @@
          * @description
          * Fires the resume method on the animation instance.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation instance
          * indicates that the animation has resumed.
          */
-        resume(): async.IThenable<void>;
+        resume(): async.Promise<void>;
 
         /**
          * @name cancel
@@ -1798,7 +1342,7 @@
          *
          * @returns {plat.ui.animations.AnimationPromise} This promise instance.
          */
-        cancel(): IAnimationThenable<R>;
+        cancel(): AnimationPromise;
 
         /**
          * @name isCanceled
@@ -1818,107 +1362,27 @@
          * @memberof plat.ui.animations.IAnimationThenable
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          *
          * @typeparam {any} U The return type of the returned promise.
          *
-         * @param {(success: R) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected? A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => IAnimationThenable<U>,
-            onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.IAnimationThenable
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills.
+         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
          * If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: any) => U} onRejected? A method called when/if the promise rejects.
          * If undefined the next onRejected method in the promise chain will be called.
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => U): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.IAnimationThenable
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected? A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.ui.animations.IAnimationThenable
-         * @kind function
-         * @access public
-         * @variation 3
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected? A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAnimationThenable<U>;
+        then<U>(onFulfilled?: (value: R) => U | async.Promise<U>,
+        onRejected?: (error: any) => U | async.Promise<U> | void): IAnimationThenable<U>;
 
-        /**
-         * @name catch
-         * @memberof plat.ui.animations.IAnimationThenable
-         * @kind function
-         * @access public
-         * @variation 0
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
         /**
          * @name catch
          * @memberof plat.ui.animations.AnimationPromise
          * @kind function
          * @access public
-         * @variation 1
          *
          * @description
          * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
@@ -1930,7 +1394,7 @@
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+        catch<U>(onRejected: (error: any) => async.Promise<U> | U): IAnimationThenable<U>;
     }
 
     /**
@@ -1944,7 +1408,7 @@
      * Describes a type of {@link plat.async.IPromise|IPromise} that resolves when an animation is
      * finished. It can be optionally cancelled. Further, in the case where it may have
      * a parent that is animating (which will cause it to immediately cancel and fulfill itself, it resolves
-     * with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for acccessing
+     * with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for accessing
      * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
     export interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> { }
@@ -1965,12 +1429,12 @@
          * @kind property
          * @access public
          *
-         * @type {plat.async.IThenable<void>}
+         * @type {plat.async.Promise<void>}
          *
          * @description
          * A promise that resolves when a potential previous animation is done.
          */
-        previous: async.IThenable<void>;
+        previous: async.Promise<void>;
 
         /**
          * @name current
@@ -2017,10 +1481,10 @@
          * @description
          * Fires the pause method on the animation instances.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation instance
          * indicates that the animation has been paused.
          */
-        pause(): async.IThenable<void>;
+        pause(): async.Promise<void>;
 
         /**
          * @name resume
@@ -2031,10 +1495,10 @@
          * @description
          * Fires the resume method on the animation instances.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation instance
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation instance
          * indicates that the animation has resumed.
          */
-        resume(): async.IThenable<void>;
+        resume(): async.Promise<void>;
 
         /**
          * @name cancel

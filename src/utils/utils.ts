@@ -21,7 +21,7 @@ module plat {
          *
          * @returns {void}
          */
-        noop(): void { }
+        public noop(): void { }
 
         /**
          * @name extend
@@ -41,7 +41,7 @@ module plat {
          *
          * @returns {any} The extended destination object.
          */
-        extend(destination: any, ...sources: any[]): any {
+        public extend(destination: any, ...sources: any[]): any {
             return _extend.apply(null, [false, false, destination].concat(sources));
         }
 
@@ -63,7 +63,7 @@ module plat {
          *
          * @returns {any} The extended destination object.
          */
-        deepExtend(destination: any, ...sources: any[]): any {
+        public deepExtend(destination: any, ...sources: any[]): any {
             return _extend.apply(null, [true, false, destination].concat(sources));
         }
 
@@ -85,7 +85,7 @@ module plat {
          *
          * @returns {T} The cloned object.
          */
-        clone<T>(obj: T, deep?: boolean): T {
+        public clone<T>(obj: T, deep?: boolean): T {
             return _clone(obj, deep);
         }
 
@@ -102,7 +102,7 @@ module plat {
          *
          * @returns {boolean} True if obj is an object, false otherwise.
          */
-        isObject(obj: any): boolean {
+        public isObject(obj: any): boolean {
             return isObject(obj);
         }
 
@@ -119,7 +119,7 @@ module plat {
          *
          * @returns {boolean} True if obj is the window, false otherwise.
          */
-        isWindow(obj: any): boolean {
+        public isWindow(obj: any): boolean {
             return isWindow(obj);
         }
 
@@ -136,7 +136,7 @@ module plat {
          *
          * @returns {boolean} True if obj is the document, false otherwise.
          */
-        isDocument(obj: any): boolean {
+        public isDocument(obj: any): boolean {
             return isDocument(obj);
         }
 
@@ -153,7 +153,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a Node, false otherwise.
          */
-        isNode(obj: any): boolean {
+        public isNode(obj: any): boolean {
             return isNode(obj);
         }
 
@@ -170,7 +170,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a DocumentFragment, false otherwise.
          */
-        isDocumentFragment(obj: any): boolean {
+        public isDocumentFragment(obj: any): boolean {
             return isDocumentFragment(obj);
         }
 
@@ -187,7 +187,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a string, false otherwise.
          */
-        isString(obj: any): boolean {
+        public isString(obj: any): boolean {
             return isString(obj);
         }
 
@@ -204,7 +204,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a RegExp object, false otherwise.
          */
-        isRegExp(obj: any): boolean {
+        public isRegExp(obj: any): boolean {
             return isRegExp(obj);
         }
 
@@ -221,7 +221,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a Promise object, false otherwise.
          */
-        isPromise(obj: any): boolean {
+        public isPromise(obj: any): boolean {
             return isPromise(obj);
         }
 
@@ -240,7 +240,7 @@ module plat {
          * @returns {boolean} True if the object isEmpty (or null/undefined),
          * false otherwise.
          */
-        isEmpty(obj: any): boolean {
+        public isEmpty(obj: any): boolean {
             return isEmpty(obj);
         }
 
@@ -257,7 +257,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a boolean, false otherwise.
          */
-        isBoolean(obj: any): boolean {
+        public isBoolean(obj: any): boolean {
             return isBoolean(obj);
         }
 
@@ -274,7 +274,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a number, false otherwise.
          */
-        isNumber(obj: any): boolean {
+        public isNumber(obj: any): boolean {
             return isNumber(obj);
         }
 
@@ -291,7 +291,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a File, false otherwise.
          */
-        isFile(obj: any): boolean {
+        public isFile(obj: any): boolean {
             return isFile(obj);
         }
 
@@ -308,7 +308,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a function, false otherwise.
          */
-        isFunction(obj: any): boolean {
+        public isFunction(obj: any): boolean {
             return isFunction(obj);
         }
 
@@ -325,7 +325,7 @@ module plat {
          *
          * @returns {boolean} True if obj is null or undefined, false otherwise.
          */
-        isNull(obj: any): boolean {
+        public isNull(obj: any): boolean {
             return isNull(obj);
         }
 
@@ -342,7 +342,7 @@ module plat {
          *
          * @returns {boolean} True if obj is undefined, false otherwise.
          */
-        isUndefined(obj: any): boolean {
+        public isUndefined(obj: any): boolean {
             return isUndefined(obj);
         }
 
@@ -359,7 +359,7 @@ module plat {
          *
          * @returns {boolean} True if obj is an Array, false otherwise.
          */
-        isArray(obj: any): boolean {
+        public isArray(obj: any): boolean {
             return isArray(obj);
         }
 
@@ -377,7 +377,7 @@ module plat {
          * @returns {boolean} True if obj has array-like qualities (i.e. it is an
          * Array, string, arguments, or NodeList), false otherwise.
          */
-        isArrayLike(obj: any): boolean {
+        public isArrayLike(obj: any): boolean {
             return isArrayLike(obj);
         }
 
@@ -394,7 +394,7 @@ module plat {
          *
          * @returns {boolean} True if obj is a Date object, false otherwise.
          */
-        isDate(obj: any): boolean {
+        public isDate(obj: any): boolean {
             return isDate(obj);
         }
 
@@ -418,7 +418,7 @@ module plat {
          *
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        filter<T>(iterator: IListIterator<T, boolean>, array: Array<T>, context?: any): Array<T>;
+        public filter<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): T[];
         /**
          * @name filter
          * @memberof plat.Utils
@@ -439,8 +439,8 @@ module plat {
          *
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): Array<T>;
-        filter(iterator: (value: any, key: any, obj: any) => boolean, obj: any, context?: any): Array<any> {
+        public filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): T[];
+        public filter(iterator: (value: any, key: any, obj: any) => boolean, obj: any, context?: any): any[] {
             return filter(iterator, obj, context);
         }
 
@@ -455,12 +455,12 @@ module plat {
          *
          * @typeparam {any} T The type of objects contained in the input Array.
          *
-         * @param {Object} properties An object containing key/value pairs to match with obj's values.
+         * @param {Object} properties An object containing key/value pairs to match with object's values.
          * @param {Array<T>} array The list used for searching for properties.
          *
          * @returns {Array<T>} The matched values in obj.
          */
-        where<T>(properties: Object, array: Array<T>): Array<T> {
+        public where<T>(properties: Object, array: T[]): T[] {
             return where(properties, array);
         }
 
@@ -483,7 +483,7 @@ module plat {
          *
          * @returns {Array<T>} The array.
          */
-        forEach<T>(iterator: IListIterator<T, void>, array: Array<T>, context?: any): Array<T>;
+        public forEach<T>(iterator: IListIterator<T, void>, array: T[], context?: any): T[];
         /**
          * @name forEach
          * @memberof plat.Utils
@@ -503,8 +503,8 @@ module plat {
          *
          * @returns {any} The input Object.
          */
-        forEach<T>(iterator: IObjectIterator<T, void>, obj: IObject<T>, context?: any): IObject<T>;
-        forEach(iterator: (value: any, key: any, obj: any) => void, obj: any, context?: any): any {
+        public forEach<T>(iterator: IObjectIterator<T, void>, obj: IObject<T>, context?: any): IObject<T>;
+        public forEach(iterator: (value: any, key: any, obj: any) => void, obj: any, context?: any): any {
             return forEach(iterator, obj, context);
         }
 
@@ -529,7 +529,7 @@ module plat {
          *
          * @returns {Array<R>} The accumulated transformed values from the iterator.
          */
-        map<T, R>(iterator: IListIterator<T, R>, array: Array<T>, context?: any): Array<R>;
+        public map<T, R>(iterator: IListIterator<T, R>, array: T[], context?: any): R[];
         /**
          * @name map
          * @memberof plat.Utils
@@ -551,8 +551,8 @@ module plat {
          *
          * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
-        map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): Array<R>;
-        map(iterator: (value: any, key: any, obj: any) => any, obj: any, context?: any): Array<any> {
+        public map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): R[];
+        public map(iterator: (value: any, key: any, obj: any) => any, obj: any, context?: any): any[] {
             return map<any, any>(iterator, obj, context);
         }
 
@@ -571,13 +571,13 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * @typeparam {any} R The type of objects contained in the transformed output Array.
          *
-         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {plat.IListIterator<T, plat.async.Promise<R>>} iterator The transformation function.
          * @param {Array<T>} array An array.
          * @param {any} context? An optional context to bind to the iterator.
          *
-         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        mapAsync<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): async.IThenable<Array<R>>;
+        public mapAsync<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[], context?: any): async.Promise<R[]>;
         /**
          * @name mapAsync
          * @memberof plat.Utils
@@ -593,15 +593,15 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Object.
          * @typeparam {any} R The type of objects contained in the transformed output Array.
          *
-         * @param {plat.IObjectIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {plat.IObjectIterator<T, plat.async.Promise<R>>} iterator The transformation function.
          * @param {plat.IObject<T>} obj An Object.
          * @param {any} context? An optional context to bind to the iterator.
          *
-         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): plat.async.IThenable<Array<R>>;
-        mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any,
-            context?: any): plat.async.IThenable<Array<R>> {
+        public mapAsync<T, R>(iterator: IObjectIterator<T, async.Promise<R>>, obj: IObject<T>, context?: any): async.Promise<R[]>;
+        public mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => async.Promise<R>, obj: any,
+            context?: any): async.Promise<R[]> {
             return mapAsync(iterator, obj, context);
         }
 
@@ -619,14 +619,14 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * @typeparam {any} R The type of objects contained in the transformed output Array.
          *
-         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {plat.IListIterator<T, plat.async.Promise<R>>} iterator The transformation function.
          * @param {Array<T>} array An Array.
          * @param {any} context? An optional context to bind to the iterator.
          *
-         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>,
-            context?: any): plat.async.IThenable<Array<R>> {
+        public mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[],
+            context?: any): async.Promise<R[]> {
             return mapAsyncInOrder(iterator, array, context);
         }
 
@@ -644,14 +644,14 @@ module plat {
          * @typeparam {any} T The type of objects contained in the input Array.
          * @typeparam {any} R The type of objects contained in the transformed output Array.
          *
-         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {plat.IListIterator<T, plat.async.Promise<R>>} iterator The transformation function.
          * @param {Array<T>} array An Array.
          * @param {any} context? An optional context to bind to the iterator.
          *
-         * @returns {plat.async.IThenable<Array<R>>} The accumulated transformed values from the iterator.
+         * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>,
-            context?: any): plat.async.IThenable<Array<R>> {
+        public mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[],
+            context?: any): async.Promise<R[]> {
             return mapAsyncInDescendingOrder(iterator, array, context);
         }
 
@@ -672,7 +672,7 @@ module plat {
          *
          * @returns {Array<U>} An array of 'plucked' values from obj.
          */
-        pluck<T extends {}>(key: string, array: Array<T>): Array<any> {
+        public pluck<T extends {}>(key: string, array: T[]): any[] {
             return pluck<T, any>(key, array);
         }
 
@@ -695,7 +695,7 @@ module plat {
          *
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        some<T>(iterator: IListIterator<T, boolean>, array: Array<T>, context?: any): boolean;
+        public some<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): boolean;
         /**
          * @name some
          * @memberof plat.Utils
@@ -715,8 +715,8 @@ module plat {
          *
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        some<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): boolean;
-        some(iterator: (value: any, key: any, obj: any) => boolean, obj: any, context?: any): boolean {
+        public some<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): boolean;
+        public some(iterator: (value: any, key: any, obj: any) => boolean, obj: any, context?: any): boolean {
             return some(iterator, obj, context);
         }
 
@@ -736,7 +736,7 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener {
+        public postpone(method: (...args: any[]) => void, args?: any[], context?: any): IRemoveListener {
             return defer(method, 0, args, context);
         }
 
@@ -757,7 +757,7 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener {
+        public defer(method: (...args: any[]) => void, timeout: number, args?: any[], context?: any): IRemoveListener {
             return defer(method, timeout, args, context);
         }
 
@@ -778,7 +778,7 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        setInterval(method: (...args: any[]) => void, interval: number, args?: Array<any>, context?: any): IRemoveListener {
+        public setInterval(method: (...args: any[]) => void, interval: number, args?: any[], context?: any): IRemoveListener {
             return setIntervalGlobal(method, interval, args, context);
         }
 
@@ -796,7 +796,7 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will cancel the frame request when called.
          */
-        requestAnimationFrame(method: FrameRequestCallback, context?: any): IRemoveListener {
+        public requestAnimationFrame(method: FrameRequestCallback, context?: any): IRemoveListener {
             return requestAnimationFrameGlobal(method, context);
         }
 
@@ -807,14 +807,14 @@ module plat {
          * @access public
          *
          * @description
-         * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
+         * Takes in a prefix and returns a unique identifier string with the prefix prepended. If no prefix
          * is specified, none will be prepended.
          *
-         * @param {string} prefix? A string prefix to prepend tothe unique ID.
+         * @param {string} prefix? A string prefix to prepend to the unique ID.
          *
          * @returns {string} The prefix-prepended unique ID.
          */
-        uniqueId(prefix?: string): string {
+        public uniqueId(prefix?: string): string {
             return uniqueId(prefix);
         }
 
@@ -827,13 +827,13 @@ module plat {
          * @description
          * Takes in a spinal-case, dot.case, or snake_case string and returns
          * a camelCase string. Also can turn a string into camelCase with space
-         * as a delimeter.
+         * as a delimiter.
          *
          * @param {string} str The spinal-case, dot.case, or snake_case string.
          *
          * @returns {string} The camelCase string.
          */
-        camelCase(str: string): string {
+        public camelCase(str: string): string {
             return camelCase(str);
         }
 
@@ -851,7 +851,7 @@ module plat {
          *
          * @returns {string} The delimited string (e.g. snakeCase -> snake_case).
          */
-        delimit(str: string, delimiter: string): string {
+        public delimit(str: string, delimiter: string): string {
             return delimit(str, delimiter);
         }
     }
@@ -868,25 +868,7 @@ module plat {
      * @typeparam {any} T The value passed into the iterator.
      * @typeparam {any} R The return type of the iterator.
      */
-    export interface IListIterator<T, R> {
-        /**
-         * @name iterator
-         * @memberof plat.IListIterator
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * A method signature for {@link plat.IListIterator|IListIterator}.
-         *
-         * @param {T} value The value for an object during an iteration.
-         * @param {number} index The index where the value can be found.
-         * @param {Array<T>} list The array passed into the util method.
-         *
-         * @returns {R} The returned value.
-         */
-        (value: T, index: number, list: Array<T>): R;
-    }
+    export type IListIterator<T, R> = (value: T, index: number, list: T[]) => R;
 
     /**
      * @name IObjectIterator
@@ -899,23 +881,5 @@ module plat {
      * @typeparam {any} T The value passed into the iterator.
      * @typeparam {any} R The return type of the iterator.
      */
-    export interface IObjectIterator<T, R> {
-        /**
-         * @name iterator
-         * @memberof plat.IObjectIterator
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * A method signature for {@link plat.IObjectIterator|IObjectIterator}.
-         *
-         * @param {T} value The value for an object during an iteration.
-         * @param {string} key The key where the value can be found.
-         * @param {plat.IObject<T>} obj The object passed into the util method.
-         *
-         * @returns {R} The returned value.
-         */
-        (value: T, key: string, obj: IObject<T>): R;
-    }
+    export type IObjectIterator<T, R> = (value: T, key: string, obj: IObject<T>) => R;
 }

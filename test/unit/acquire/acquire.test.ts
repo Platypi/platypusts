@@ -1,7 +1,20 @@
-﻿/// <reference path="../../references.d.ts" />
+﻿// tslint:disable
+/// <reference path="../../references.d.ts" />
 
-module tests.acquire {
-    var utils: plat.Utils = plat.acquire(plat.Utils);
+namespace tests.acquire {
+    var utils = plat.acquire(plat.Utils);
+    let [uti, browser, dom, win, doc, compat, urlUtils, Promise, http, log] = plat.acquire([
+        plat.Utils,
+        plat.web.Browser,
+        plat.ui.Dom,
+        plat.Window,
+        plat.Document,
+        plat.Compat,
+        plat.web.UrlUtils,
+        plat.async.IPromise,
+        plat.async.Http,
+        plat.debug.Log
+    ]);
 
     function instanceOf(Constructor: new () => void) {
         return (obj: any) => {

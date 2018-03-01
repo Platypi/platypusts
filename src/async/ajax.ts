@@ -26,7 +26,7 @@ module plat.async {
             _window: __Window,
             _document: __Document,
             _config: __HttpConfig,
-            _log: __Log
+            _log: __Log,
         };
 
         /**
@@ -40,7 +40,7 @@ module plat.async {
          * @description
          * The timeout ID associated with the specified timeout
          */
-        clearTimeout: plat.IRemoveListener;
+        public clearTimeout: IRemoveListener;
 
         /**
          * @name xhr
@@ -53,7 +53,7 @@ module plat.async {
          * @description
          * The created XMLHttpRequest
          */
-        xhr: XMLHttpRequest;
+        public xhr: XMLHttpRequest;
 
         /**
          * @name jsonpCallback
@@ -66,7 +66,7 @@ module plat.async {
          * @description
          * The JSONP callback name
          */
-        jsonpCallback: string;
+        public jsonpCallback: string;
 
         /**
          * @name _log
@@ -170,7 +170,7 @@ module plat.async {
          * @returns {plat.async.HttpRequest}
          */
         constructor() {
-            let compat: plat.Compat = acquire(__Compat);
+            const compat: Compat = acquire(__Compat);
             this.__fileSupported = compat.fileSupported;
         }
 
@@ -187,7 +187,7 @@ module plat.async {
          *
          * @returns {void}
          */
-        initialize(options: IHttpConfig): void {
+        public initialize(options: IHttpConfig): void {
             this.__options = _extend(false, false, {}, this._config, options);
         }
 
@@ -204,9 +204,9 @@ module plat.async {
          *
          * @returns {plat.async.AjaxPromise} A promise that fulfills when the XMLHttpRequest is done.
          */
-        execute<R>(): AjaxPromise<R> {
-            let options = this.__options,
-                url = options.url;
+        public execute<R>(): AjaxPromise<R> {
+            const options = this.__options;
+            const url = options.url;
 
             if (!isString(url) || isEmpty(url.trim())) {
                 return this._invalidOptions();
@@ -214,8 +214,8 @@ module plat.async {
 
             options.url = this._browser.urlUtils(url).toString();
 
-            let isCrossDomain = options.isCrossDomain || false,
-                xDomain = false;
+            const isCrossDomain = options.isCrossDomain || false;
+            let xDomain = false;
 
             // check if forced cross domain call or cors is not supported (IE9)
             if (isCrossDomain) {
@@ -229,7 +229,12 @@ module plat.async {
 
             if (xDomain) {
                 this.xhr = null;
-                this.jsonpCallback = options.jsonpCallback || uniqueId(__JSONP_CALLBACK);
+                this.jsonpCallback = options.jsonpCallback;
+
+                if (isNull(this.jsonpCallback)) {
+                    this.jsonpCallback = uniqueId(__JSONP_CALLBACK);
+                }
+
                 return this.executeJsonp();
             }
 
@@ -249,9 +254,9 @@ module plat.async {
          *
          * @returns {plat.async.AjaxPromise} A promise that fulfills when the JSONP request is done.
          */
-        executeJsonp<R>(): AjaxPromise<R> {
-            let options = this.__options,
-                url = options.url;
+        public executeJsonp<R>(): AjaxPromise<R> {
+            const options = this.__options;
+            const url = options.url;
 
             if (!isString(url) || isEmpty(url.trim())) {
                 return this._invalidOptions();
@@ -259,19 +264,27 @@ module plat.async {
 
             options.url = this._browser.urlUtils(url).toString();
             if (isNull(this.jsonpCallback)) {
-                this.jsonpCallback = options.jsonpCallback || uniqueId(__Callback);
+                this.jsonpCallback = options.jsonpCallback;
+
+                if (isNull(this.jsonpCallback)) {
+                    this.jsonpCallback = uniqueId(__Callback);
+                }
             }
 
-            let promise = new AjaxPromise<R>((resolve, reject): void => {
-                let _window = <any>this._window,
-                    _document = this._document,
-                    scriptTag = _document.createElement('script'),
-                    jsonpCallback = this.jsonpCallback,
-                    jsonpIdentifier = options.jsonpIdentifier || 'callback';
+            const promise = new AjaxPromise<R>((resolve, reject): void => {
+                const _window = <any>this._window;
+                const _document = this._document;
+                const scriptTag = _document.createElement('script');
+                const jsonpCallback = this.jsonpCallback;
+                let jsonpIdentifier = options.jsonpIdentifier;
 
-                scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
+                if (!isString(jsonpIdentifier)) {
+                    jsonpIdentifier = 'callback';
+                }
 
-                let oldValue = _window[jsonpCallback];
+                scriptTag.src = `${url}${((url.indexOf('?') > -1) ? '&' : '?')}${jsonpIdentifier}=${jsonpCallback}`;
+
+                const oldValue = _window[jsonpCallback];
                 _window[jsonpCallback] = (response: any): void => {
                     // clean up
                     if (isFunction(this.clearTimeout)) {
@@ -289,22 +302,22 @@ module plat.async {
                     resolve({
                         response: response,
                         // ok
-                        status: 200
+                        status: 200,
                     });
                 };
 
                 _document.head.appendChild(scriptTag);
 
-                let timeout = options.timeout;
+                const timeout = options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
                     // we first postpone to avoid always timing out when debugging, though this is not
                     // a foolproof method.
                     this.clearTimeout = postpone((): void => {
                         this.clearTimeout = defer((): void => {
                             reject(new AjaxError({
-                                response: 'Request timed out in ' + timeout + 'ms for ' + url,
+                                response: `Request timed out in ${timeout}ms for ${url}`,
                                 // request timeout
-                                status: 408
+                                status: 408,
                             }));
                             _window[jsonpCallback] = noop;
                         }, timeout - 1);
@@ -331,9 +344,9 @@ module plat.async {
          * an error.
          */
         protected _xhrOnReadyStateChange(): boolean {
-            let xhr = this.xhr;
+            const xhr = this.xhr;
             if (xhr.readyState === 4) {
-                let status = xhr.status;
+                const status = xhr.status;
 
                 if (status === 0) {
                     let response = xhr.response;
@@ -376,168 +389,173 @@ module plat.async {
          * {@link plat.async.AjaxError|IAjaxError}.
          */
         protected _sendXhrRequest(): AjaxPromise<any> {
-            let xhr = this.xhr,
-                options = this.__options,
-                method = options.method,
-                url = options.url,
-                promise = new AjaxPromise((resolve, reject): void => {
-                    xhr.onreadystatechange = (): void => {
-                        let success = this._xhrOnReadyStateChange();
+            const xhr = this.xhr;
+            let options = this.__options;
+            let method = options.method;
+            const url = options.url;
+            const promise = new AjaxPromise((resolve, reject): void => {
+                xhr.onreadystatechange = (): void => {
+                    const success = this._xhrOnReadyStateChange();
 
-                        if (isNull(success)) {
-                            return;
-                        }
-
-                        let response = this._formatResponse(options.responseType, success);
-
-                        if (success) {
-                            resolve(response);
-                        } else {
-                            reject(new AjaxError(response));
-                        }
-
-                        this.xhr = options = null;
-                    };
-
-                    if (!isString(method)) {
-                        this._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
-                        method = 'GET';
+                    if (isNull(success)) {
+                        return;
                     }
 
-                    xhr.open(
-                        method.toUpperCase(),
-                        url,
-                    // synchronous XHR not supported
-                        true,
-                        options.user,
-                        options.password
-                        );
+                    const response = this._formatResponse(options.responseType, success);
 
-                    let responseType = options.responseType;
-                    if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
-                        responseType = '';
-                    }
-
-                    // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json.
-                    // The only way to do feature detection is with try/catch.
-                    if (responseType === 'json') {
-                        try {
-                            xhr.responseType = responseType;
-                        } catch (e) {
-                            xhr.responseType = '';
-                        }
-                    }
-
-                    xhr.withCredentials = options.withCredentials;
-
-                    let mimeType = options.overrideMimeType,
-                        data = options.data;
-
-                    if (isString(mimeType) && !isEmpty(mimeType)) {
-                        xhr.overrideMimeType(mimeType);
-                    }
-
-                    if (isNull(data) || data === '') {
-                        // no data exists so set headers and send request
-                        this.__setHeaders();
-                        xhr.send();
+                    if (success) {
+                        resolve(response);
                     } else {
-                        let transforms = options.transforms || [],
-                            length = transforms.length,
-                            contentType = options.contentType,
-                            contentTypeExists = isString(contentType) && !isEmpty(contentType);
+                        reject(new AjaxError(response));
+                    }
 
-                        if (length > 0) {
-                            // if data transforms defined, assume they're going to take care of
-                            // any and all transformations.
-                            for (let i = 0; i < length; ++i) {
-                                data = transforms[i](data, xhr);
-                            }
+                    this.xhr = options = null;
+                };
 
-                            // if contentType exists, assume they did not set it in
-                            // their headers as well
-                            if (contentTypeExists) {
+                if (!isString(method)) {
+                    this._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
+                    method = 'GET';
+                }
+
+                xhr.open(
+                    method.toUpperCase(),
+                    url,
+                // synchronous XHR not supported
+                    true,
+                    options.user,
+                    options.password
+                    );
+
+                let responseType = options.responseType;
+                if (!(this.__fileSupported || responseType === '' || responseType === 'text')) {
+                    responseType = '';
+                }
+
+                // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json.
+                // The only way to do feature detection is with try/catch.
+                if (responseType === 'json') {
+                    try {
+                        xhr.responseType = responseType;
+                    } catch (e) {
+                        xhr.responseType = '';
+                    }
+                }
+
+                xhr.withCredentials = options.withCredentials;
+
+                const mimeType = options.overrideMimeType;
+                let data = options.data;
+
+                if (isString(mimeType) && !isEmpty(mimeType)) {
+                    xhr.overrideMimeType(mimeType);
+                }
+
+                if (isNull(data) || data === '') {
+                    // no data exists so set headers and send request
+                    this.__setHeaders();
+                    xhr.send();
+                } else {
+                    let transforms = options.transforms;
+
+                    if (!isArrayLike(transforms)) {
+                        transforms = [];
+                    }
+
+                    const length = transforms.length;
+                    const contentType = options.contentType;
+                    const contentTypeExists = isString(contentType) && !isEmpty(contentType);
+
+                    if (length > 0) {
+                        // if data transforms defined, assume they're going to take care of
+                        // any and all transformations.
+                        for (let i = 0; i < length; i += 1) {
+                            data = transforms[i](data, xhr);
+                        }
+
+                        // if contentType exists, assume they did not set it in
+                        // their headers as well
+                        if (contentTypeExists) {
+                            xhr.setRequestHeader('Content-Type', contentType);
+                        }
+
+                        this.__setHeaders();
+                        xhr.send(data);
+                    } else if (isObject(data)) {
+                        // if isObject and contentType exists we want to transform the data
+                        if (contentTypeExists) {
+                            const contentTypeLower = contentType.toLowerCase();
+                            if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
+                                // perform an encoded form transformation
+                                data = this.__serializeFormData();
+                                // set Content-Type header because we're assuming they didn't set it
+                                // in their headers object
                                 xhr.setRequestHeader('Content-Type', contentType);
-                            }
-
-                            this.__setHeaders();
-                            xhr.send(data);
-                        } else if (isObject(data)) {
-                            // if isObject and contentType exists we want to transform the data
-                            if (contentTypeExists) {
-                                let contentTypeLower = contentType.toLowerCase();
-                                if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
-                                    // perform an encoded form transformation
-                                    data = this.__serializeFormData();
-                                    // set Content-Type header because we're assuming they didn't set it
-                                    // in their headers object
-                                    xhr.setRequestHeader('Content-Type', contentType);
+                                this.__setHeaders();
+                                xhr.send(data);
+                            } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
+                                // need to check if File is a supported object
+                                if (this.__fileSupported) {
+                                    // use FormData
+                                    data = this.__appendFormData();
+                                    // do not set the Content-Type header due to modern browsers
+                                    // setting special headers for multipart/form-data
                                     this.__setHeaders();
                                     xhr.send(data);
-                                } else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
-                                    // need to check if File is a supported object
-                                    if (this.__fileSupported) {
-                                        // use FormData
-                                        data = this.__appendFormData();
-                                        // do not set the Content-Type header due to modern browsers
-                                        // setting special headers for multipart/form-data
-                                        this.__setHeaders();
-                                        xhr.send(data);
-                                    } else {
-                                        // use iframe trick for older browsers (do not send a request)
-                                        // this case is the reason for this giant, terrible, nested if-else statement
-                                        this.__submitFramedFormData().then((response): void => {
-                                            resolve(response);
-                                        }, (): void => {
-                                                this.xhr = null;
-                                            });
-                                    }
                                 } else {
-                                    // assume stringification is possible
-                                    data = JSON.stringify(data);
-                                    // set Content-Type header because we're assuming they didn't set it
-                                    // in their headers object
-                                    xhr.setRequestHeader('Content-Type', contentType);
-                                    this.__setHeaders();
-                                    xhr.send(data);
+                                    // use iframe trick for older browsers (do not send a request)
+                                    // this case is the reason for this giant, terrible, nested if-else statement
+                                    this.__submitFramedFormData().then((response): void => {
+                                        resolve(response);
+                                    }, (): void => {
+                                            this.xhr = null;
+                                        });
                                 }
                             } else {
-                                // contentType does not exist so simply set defined headers and send raw data
+                                // assume stringification is possible
+                                data = JSON.stringify(data);
+                                // set Content-Type header because we're assuming they didn't set it
+                                // in their headers object
+                                xhr.setRequestHeader('Content-Type', contentType);
                                 this.__setHeaders();
                                 xhr.send(data);
                             }
                         } else {
-                            // if contentType exists set Content-Type header because we're assuming they didn't set it
-                            // in their headers object
-                            if (contentTypeExists) {
-                                xhr.setRequestHeader('Content-Type', contentType);
-                            }
-
+                            // contentType does not exist so simply set defined headers and send raw data
                             this.__setHeaders();
                             xhr.send(data);
                         }
-                    }
+                    } else {
+                        // if contentType exists set Content-Type header because we're assuming they didn't set it
+                        // in their headers object
+                        if (contentTypeExists) {
+                            xhr.setRequestHeader('Content-Type', contentType);
+                        }
 
-                    let timeout = options.timeout;
-                    if (isNumber(timeout) && timeout > 0) {
-                        // we first postpone to avoid always timing out when debugging, though this is not
-                        // a foolproof method.
-                        this.clearTimeout = postpone((): void => {
-                            this.clearTimeout = defer((): void => {
-                                reject(new AjaxError({
-                                    response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
-                                    status: 408,
-                                    getAllResponseHeaders: (): string => { return xhr.getAllResponseHeaders(); },
-                                    xhr: xhr
-                                }));
-
-                                xhr.onreadystatechange = null;
-                                xhr.abort();
-                                this.xhr = null;
-                            }, timeout - 1);
-                        });
+                        this.__setHeaders();
+                        xhr.send(data);
                     }
-                });
+                }
+
+                const timeout = options.timeout;
+                if (isNumber(timeout) && timeout > 0) {
+                    // we first postpone to avoid always timing out when debugging, though this is not
+                    // a foolproof method.
+                    this.clearTimeout = postpone((): void => {
+                        this.clearTimeout = defer((): void => {
+                            reject(new AjaxError({
+                                response: `Request timed out in ${timeout}ms for ${options.url}`,
+                                status: 408,
+                                getAllResponseHeaders: (): string => { return xhr.getAllResponseHeaders(); },
+                                xhr: xhr,
+                            }));
+
+                            xhr.onreadystatechange = null;
+                            xhr.abort();
+                            this.xhr = null;
+                        }, timeout - 1);
+                    });
+                }
+            });
 
             promise.initialize(this);
 
@@ -563,7 +581,7 @@ module plat.async {
                     response: 'Attempting a request without specifying a url',
                     status: null,
                     getAllResponseHeaders: null,
-                    xhr: null
+                    xhr: null,
                 }));
             });
         }
@@ -584,9 +602,9 @@ module plat.async {
          * the requester.
          */
         protected _formatResponse(responseType: string, success: boolean): IAjaxResponse<any> {
-            let xhr = this.xhr,
-                status = xhr.status,
-                response = xhr.response;
+            const xhr = this.xhr;
+            let status = xhr.status;
+            let response = xhr.response;
 
             // need to try, catch instead of boolean short circuit because chrome doesn't like checking
             // responseText when the responseType is anything other than empty or 'text'
@@ -618,7 +636,7 @@ module plat.async {
                 response: response,
                 status: status,
                 getAllResponseHeaders: (): string => { return xhr.getAllResponseHeaders(); },
-                xhr: xhr
+                xhr: xhr,
             };
         }
 
@@ -634,14 +652,19 @@ module plat.async {
          * @returns {void}
          */
         private __setHeaders(): void {
-            let headers = this.__options.headers,
-                keys = Object.keys(headers || {}),
-                xhr = this.xhr,
-                length = keys.length,
-                key: string,
-                i: number;
+            let headers = this.__options.headers;
 
-            for (i = 0; i < length; ++i) {
+            if (!isObject(headers)) {
+                headers = {};
+            }
+
+            const keys = Object.keys(headers);
+            const xhr = this.xhr;
+            const length = keys.length;
+            let key: string;
+            let i: number;
+
+            for (i = 0; i < length; i += 1) {
                 key = keys[i];
                 xhr.setRequestHeader(key, headers[key]);
             }
@@ -659,11 +682,11 @@ module plat.async {
          * @returns {string}
          */
         private __serializeFormData(): string {
-            let data = this.__options.data,
-                keys = Object.keys(data),
-                key: string,
-                val: any,
-                formBuffer: Array<string> = [];
+            const data = this.__options.data;
+            const keys = Object.keys(data);
+            const formBuffer: string[] = [];
+            let key: string;
+            let val: any;
 
             while (keys.length > 0) {
                 key = keys.pop();
@@ -675,16 +698,16 @@ module plat.async {
                         val = val.toISOString();
                     } else if (isFile(val)) {
                         // cannot parse file this way
-                        this._log.warn('Invalid File entry with key "' + key + '"');
+                        this._log.warn(`Invalid File entry with key "${key}"`);
                         val = '[object File]';
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
+                        this._log.warn(`Invalid form entry with key "${key}" and value "${val}"`);
                         val = JSON.stringify(val);
                     }
                 }
 
-                formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
+                formBuffer.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
             }
 
             return formBuffer.join('&').replace(/%20/g, '+');
@@ -702,11 +725,11 @@ module plat.async {
          * @returns {FormData}
          */
         private __appendFormData(): FormData {
-            let data = this.__options.data,
-                formData = new FormData(),
-                keys = Object.keys(data),
-                key: string,
-                val: any;
+            const data = this.__options.data;
+            const formData = new FormData();
+            const keys = Object.keys(data);
+            let key: string;
+            let val: any;
 
             while (keys.length > 0) {
                 key = keys.pop();
@@ -717,10 +740,20 @@ module plat.async {
                     if (isDate(val)) {
                         formData.append(key, val.toISOString());
                     } else if (isFile(val)) {
-                        formData.append(key, val, val.name || val.fileName || 'blob');
+                        let fileName = val.name;
+
+                        if (!isString(fileName)) {
+                            fileName = val.fileName;
+                        }
+
+                        if (!isString(fileName)) {
+                            fileName = 'blob';
+                        }
+
+                        formData.append(key, val, fileName);
                     } else {
                         // may throw a fatal error but this is an invalid case
-                        this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
+                        this._log.warn(`Invalid form entry with key "${key}" and value "${val}"`);
                         formData.append(key, JSON.stringify(val));
                     }
                 } else {
@@ -740,20 +773,20 @@ module plat.async {
          * @description
          * Handles submitting multipart form data using an iframe.
          *
-         * @returns {plat.async.IThenable} A promise that fulfills after the form data is submitted.
+         * @returns {plat.async.Promise} A promise that fulfills after the form data is submitted.
          */
-        private __submitFramedFormData(): IThenable<IAjaxResponse<any>> {
-            let options = this.__options,
-                data = options.data,
-                url = options.url,
-                _document = this._document,
-                $body = _document.body,
-                Promise: IPromise = acquire(__Promise),
-                form = _document.createElement('form'),
-                iframe = _document.createElement('iframe'),
-                iframeName = uniqueId('iframe_target'),
-                keys = Object.keys(data),
-                key: string;
+        private __submitFramedFormData(): Promise<IAjaxResponse<any>> {
+            const options = this.__options;
+            const data = options.data;
+            const url = options.url;
+            const _document = this._document;
+            const $body = _document.body;
+            const Promise: IPromise = acquire(__Promise);
+            const form = _document.createElement('form');
+            const iframe = _document.createElement('iframe');
+            const iframeName = uniqueId('iframe_target');
+            const keys = Object.keys(data);
+            let key: string;
 
             iframe.name = form.target = iframeName;
             iframe.src = 'javascript:false;';
@@ -776,7 +809,7 @@ module plat.async {
                 };
 
                 iframe.onload = (): void => {
-                    let content = iframe.contentDocument.body.innerHTML;
+                    const content = iframe.contentDocument.body.innerHTML;
 
                     $body.removeChild(form);
                     $body.removeChild(iframe);
@@ -784,7 +817,7 @@ module plat.async {
                     resolve({
                         response: content,
                         status: 200,
-                        getAllResponseHeaders: (): string => ''
+                        getAllResponseHeaders: (): string => '',
                     });
 
                     this.xhr = iframe.onload = null;
@@ -808,8 +841,8 @@ module plat.async {
          * @returns {HTMLInputElement}
          */
         private __createInput(key: string, val: any): HTMLInputElement {
-            let _document = this._document,
-                input = <HTMLInputElement>_document.createElement('input');
+            const _document = this._document;
+            let input = _document.createElement('input');
 
             input.type = 'hidden';
             input.name = key;
@@ -819,29 +852,29 @@ module plat.async {
             } else if (isObject(val)) {
                 // check if val is an pseudo File
                 if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
-                    let fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'),
-                        length = fileList.length;
+                    const fileList = _document.querySelectorAll(`input[type="file"][name="${key}"]`);
+                    let length = fileList.length;
                     // if no inputs found, stringify the data
                     if (length === 0) {
-                        this._log.info('Could not find input[type="file"] with [name="' + key +
-                            '"]. Stringifying data instead.');
+                        this._log.info(`Could not find input[type="file"] with [name="${key}"]. Stringifying data instead.`);
                         input.value = JSON.stringify(val);
                     } else if (length === 1) {
                         input = <HTMLInputElement>fileList[0];
                         // swap nodes
-                        let clone = input.cloneNode(true);
+                        const clone = input.cloneNode(true);
                         input.parentNode.insertBefore(clone, input);
                     } else {
                         // rare case but may have multiple forms with file inputs
                         // that have the same name
-                        let fileInput: HTMLInputElement,
-                            path = val.path;
-                        while (length-- > 0) {
+                        let fileInput: HTMLInputElement;
+                        const path = val.path;
+                        while (length > 0) {
+                            length -= 1;
                             fileInput = <HTMLInputElement>fileList[length];
                             if (fileInput.value === path) {
                                 input = fileInput;
                                 // swap nodes
-                                let inputClone = input.cloneNode(true);
+                                const inputClone = input.cloneNode(true);
                                 input.parentNode.insertBefore(inputClone, input);
                                 break;
                             }
@@ -849,14 +882,15 @@ module plat.async {
 
                         // could not find the right file
                         if (length === -1) {
-                            this._log.info('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                val.path + '"]. Stringifying data instead.');
+                            this._log.info(
+                                `Could not find input[type="file"] with [name="${key}"] and [value="${val.path}"]. Stringifying data instead.`
+                            );
                             input.value = JSON.stringify(val);
                         }
                     }
                 } else {
                     // may throw a fatal error but this is an invalid case
-                    this._log.info('Invalid form entry with key "' + key + '" and value "' + val);
+                    this._log.info(`Invalid form entry with key "${key}" and value "${val}"`);
                     input.value = JSON.stringify(val);
                 }
             } else {
@@ -1046,7 +1080,7 @@ module plat.async {
          * An array of data transform functions that fire in order and consecutively
          * pass the returned result from one function to the next.
          */
-        transforms?: Array<IHttpTransformFunction>;
+        transforms?: IHttpTransformFunction[];
 
         /**
          * @name isCrossDomain
@@ -1072,23 +1106,7 @@ module plat.async {
      * @description
      * A function that is used to transform XMLHttpRequest data.
      */
-    export interface IHttpTransformFunction {
-        /**
-         * @name transform
-         * @memberof plat.async.IHttpTransformFunction
-         * @kind function
-         * @access public
-         *
-         * @description
-         * The method signature for {@link plat.async.IHttpTransformFunction|IHttpTransformFunction}.
-         *
-         * @param {any} data The data for the XMLHttpRequest.
-         * @param {XMLHttpRequest} xhr The XMLHttpRequest for the data.
-         *
-         * @returns {any} The transformed data.
-         */
-        (data: any, xhr: XMLHttpRequest): any;
-    }
+    export type IHttpTransformFunction = (data: any, xhr: XMLHttpRequest) => any;
 
     /**
      * @name IJsonpConfig
@@ -1141,7 +1159,7 @@ module plat.async {
          *
          * @description
          * A specified name for the JSONP callback (in case the server has
-         * it hardcoded and/or does not get it from the given url). The
+         * it hard-coded and/or does not get it from the given url). The
          * default is a unique plat id generated separately for
          * each JSONP callback seen as 'plat_callback00' in
          * http://platypi.io/data?callback=plat_callback00.
@@ -1191,19 +1209,6 @@ module plat.async {
         status: number;
 
         /**
-         * @name getAllResponseHeaders
-         * @memberof plat.async.IAjaxResponse
-         * @kind function
-         * @access public
-         *
-         * @description
-         * A method for getting the XHR response headers.
-         *
-         * @returns {void}
-         */
-        getAllResponseHeaders?: () => string;
-
-        /**
          * @name xhr
          * @memberof plat.async.IAjaxResponse
          * @kind property
@@ -1216,6 +1221,19 @@ module plat.async {
          * The XMLHttpRequest object associated with the AJAX call
          */
         xhr?: XMLHttpRequest;
+
+        /**
+         * @name getAllResponseHeaders
+         * @memberof plat.async.IAjaxResponse
+         * @kind function
+         * @access public
+         *
+         * @description
+         * A method for getting the XHR response headers.
+         *
+         * @returns {void}
+         */
+        getAllResponseHeaders?(): string;
     }
 
     /**
@@ -1228,25 +1246,7 @@ module plat.async {
      *
      * @typeparam {any} R The type of the {@link plat.async.IAjaxResponse|IAjaxResponse} object.
      */
-    export interface IAjaxResolveFunction<R> {
-        /**
-         * @name resolver
-         * @memberof plat.async.IAjaxResolveFunction
-         * @kind function
-         * @access public
-         *
-         * @description
-         * The method signature for an {@link plat.async.IAjaxResolveFunction|IAjaxResolveFunction}.
-         *
-         * @param {(value?: plat.async.IAjaxResponse<R>) => any} resolve The function to call when the
-         * AJAX call has successfully fulfilled.
-         * @param {(reason?: plat.async.AjaxError) => any} reject The function to call when the
-         * AJAX call fails.
-         *
-         * @returns {void}
-         */
-        (resolve: (value?: IAjaxResponse<R>) => any, reject: (reason?: AjaxError) => any): void;
-    }
+    export type IAjaxResolveFunction<R> = (resolve: (value?: IAjaxResponse<R>) => any, reject: (reason?: AjaxError) => any) => void;
 
     /**
      * @name AjaxError
@@ -1270,7 +1270,7 @@ module plat.async {
          * @description
          * The name of the Error ('AjaxError')
          */
-        name: string = 'AjaxError';
+        public name: string = 'AjaxError';
 
         /**
          * @name message
@@ -1283,7 +1283,7 @@ module plat.async {
          * @description
          * The Error message
          */
-        message: string;
+        public message: string;
 
         /**
          * @name response
@@ -1296,7 +1296,7 @@ module plat.async {
          * @description
          * The response from the XMLHttpRequest
          */
-        response: any;
+        public response: any;
 
         /**
          * @name status
@@ -1309,7 +1309,7 @@ module plat.async {
          * @description
          * The status code from the XMLHttpRequest
          */
-        status: number;
+        public status: number;
 
         /**
          * @name getAllResponseHeaders
@@ -1322,7 +1322,7 @@ module plat.async {
          *
          * @returns {void}
          */
-        getAllResponseHeaders: () => string;
+        public getAllResponseHeaders: () => string;
 
         /**
          * @name xhr
@@ -1335,7 +1335,7 @@ module plat.async {
          * @description
          * The XMLHttpRequest object associated with the AJAX call
          */
-        xhr: XMLHttpRequest;
+        public xhr: XMLHttpRequest;
 
         /**
          * @name constructor
@@ -1369,15 +1369,15 @@ module plat.async {
          *
          * @returns {string}
          */
-        toString(): string {
-            let response = this.response,
-                responseText = response;
+        public toString(): string {
+            const response = this.response;
+            let responseText = response;
 
             if (isObject(response) && !response.hasOwnProperty('toString')) {
                 responseText = JSON.stringify(response);
             }
 
-            return 'Request failed with status: ' + this.status + ' and response: ' + responseText;
+            return `Request failed with status: ${this.status} and response: ${responseText}`;
         }
     }
 
@@ -1390,7 +1390,7 @@ module plat.async {
      * @kind class
      *
      * @extends {plat.async.Promise}
-     * @implements {plat.async.IAjaxThenable<plat.async.IAjaxResponse<R>>}
+     * @implements {plat.async.AjaxPromise<plat.async.IAjaxResponse<R>>}
      *
      * @description
      * Describes a type of {@link plat.async.Promise|Promise} that fulfills with an {@link plat.async.IAjaxResponse|IAjaxResponse}
@@ -1398,7 +1398,7 @@ module plat.async {
      *
      * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
-    export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxThenable<IAjaxResponse<R>> {
+    export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> {
         /**
          * @name _window
          * @memberof plat.async.AjaxPromise
@@ -1432,22 +1432,6 @@ module plat.async {
          * @memberof plat.async.AjaxPromise
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * The constructor method for the {@link plat.async.AjaxPromise}.
-         *
-         * @param {plat.async.IAjaxResolveFunction} resolveFunction The promise resolve function.
-         *
-         * @returns {plat.async.AjaxPromise}
-         */
-        constructor(resolveFunction: IAjaxResolveFunction<R>);
-        /**
-         * @name constructor
-         * @memberof plat.async.AjaxPromise
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * The constructor method for the {@link plat.async.AjaxPromise}.
@@ -1457,9 +1441,9 @@ module plat.async {
          *
          * @returns {plat.async.AjaxPromise}
          */
-        constructor(resolveFunction: IAjaxResolveFunction<R>, promise: any);
         constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any) {
             super(resolveFunction);
+
             if (!isNull(promise)) {
                 this.__http = promise.__http;
             }
@@ -1479,7 +1463,7 @@ module plat.async {
          *
          * @returns {void}
          */
-        initialize(http: HttpRequest): void {
+        public initialize(http: HttpRequest): void {
             if (isObject(http) && isNull(this.__http)) {
                 this.__http = http;
             }
@@ -1496,10 +1480,10 @@ module plat.async {
          *
          * @returns {void}
          */
-        cancel(): void {
-            let http = this.__http,
-                xhr = http.xhr,
-                jsonpCallback = http.jsonpCallback;
+        public cancel(): void {
+            const http = this.__http;
+            const xhr = http.xhr;
+            const jsonpCallback = http.jsonpCallback;
 
             if (isFunction(http.clearTimeout)) {
                 http.clearTimeout();
@@ -1521,73 +1505,6 @@ module plat.async {
          * @memberof plat.async.AjaxPromise
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if
-         * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: plat.async.AjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IAjaxThenable<U>}
-         */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: AjaxError) => any): IAjaxThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.AjaxPromise
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: plat.async.IAjaxResponse<R>) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if
-         * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: plat.async.AjaxError) => U} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IAjaxThenable<U>}
-         */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: AjaxError) => IThenable<U>): IAjaxThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.AjaxPromise
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: plat.async.AjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IAjaxThenable<U>}
-         */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
-            onRejected?: (error: AjaxError) => any): IAjaxThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.AjaxPromise
-         * @kind function
-         * @access public
-         * @variation 3
          *
          * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
@@ -1600,13 +1517,11 @@ module plat.async {
          * @param {(error: plat.async.AjaxError) => U} onRejected A method called when/if the promise rejects.
          * If undefined the next onRejected method in the promise chain will be called.
          *
-         * @returns {plat.async.IAjaxThenable<U>}
+         * @returns {plat.async.AjaxPromise<U>}
          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: AjaxError) => IThenable<U>): IAjaxThenable<U>;
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
-            onRejected?: (error: AjaxError) => any): IAjaxThenable<U> {
-            return <IAjaxThenable<U>><any>super.then<U>(onFulfilled, onRejected);
+        public then<U>(onFulfilled: (success: IAjaxResponse<R>) => U | Promise<U>,
+            onRejected?: (error: AjaxError) => U | Promise<U> | void): Promise<U> {
+            return <Promise<U>><any>super.then<U>(onFulfilled, onRejected);
         }
 
         /**
@@ -1614,25 +1529,6 @@ module plat.async {
          * @memberof plat.async.AjaxPromise
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
-        /**
-         * @name catch
-         * @memberof plat.async.AjaxPromise
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
@@ -1642,145 +1538,11 @@ module plat.async {
          * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          *
-         * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+         * @returns {plat.async.AjaxPromise<U>} A promise that resolves with the input type parameter U.
          */
-        catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
-        catch<U>(onRejected: (error: any) => any): IAjaxThenable<U> {
-            return <IAjaxThenable<U>><any>super.catch<U>(onRejected);
+        public catch<U>(onRejected: (error: any) => U | IThenable<U> | void): Promise<U> {
+            return <Promise<U>><any>super.catch<U>(<any>onRejected);
         }
-    }
-
-    /**
-     * @name IAjaxThenable
-     * @memberof plat.async
-     * @kind interface
-     *
-     * @extends {plat.async.IThenable}
-     *
-     * @description
-     * Describes a type of {@link plat.async.IThenable|IThenable} that can optionally cancel it's associated AJAX call.
-     *
-     * @typeparam {any} R The return type for the {@link plat.async.IThenable|IThenable}.
-     */
-    export interface IAjaxThenable<R> extends IThenable<R> {
-        /**
-         * @name cancel
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         *
-         * @description
-         * A method to cancel the AJAX call associated with this {@link plat.async.AjaxPromise}.
-         *
-         * @returns {void}
-         */
-        cancel(): void;
-
-        /**
-         * @name then
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         * @variation 0
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: R) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: R) => plat.async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         * @variation 3
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
-         * next then method in the promise chain.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
-         * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAjaxThenable<U>;
-
-        /**
-         * @name catch
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         * @variation 0
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         */
-        catch<U>(onRejected: (error: any) => IThenable<U>): IAjaxThenable<U>;
-        /**
-         * @name catch
-         * @memberof plat.async.IAjaxThenable
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects.
-         * If undefined the next onRejected method in the promise chain will be called.
-         */
-        catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
     }
 
     /**
@@ -1926,7 +1688,7 @@ module plat.async {
          *
          * @description
          * Standard denotation for a multi-part Webform. Associated with
-         * an entype of 'multipart/form-data'.
+         * a content-type of 'multipart/form-data'.
          */
         MULTIPART_FORM: string;
 
@@ -2009,7 +1771,7 @@ module plat.async {
          * @description
          * Default Http config
          */
-        static config: IHttpConfig = {
+        public static config: IHttpConfig = {
             url: null,
             method: 'GET',
             responseType: '',
@@ -2018,7 +1780,7 @@ module plat.async {
             withCredentials: false,
             timeout: null,
             jsonpIdentifier: 'callback',
-            contentType: 'application/json;charset=utf-8'
+            contentType: 'application/json;charset=utf-8',
         };
 
         /**
@@ -2032,13 +1794,13 @@ module plat.async {
          * @description
          * Provides value mappings for XMLHttpRequestResponseTypes
          */
-        responseType: IHttpResponseType = {
+        public responseType: IHttpResponseType = {
             DEFAULT: '',
             ARRAYBUFFER: 'arraybuffer',
             BLOB: 'blob',
             DOCUMENT: 'document',
             JSON: 'json',
-            TEXT: 'text'
+            TEXT: 'text',
         };
 
         /**
@@ -2052,14 +1814,14 @@ module plat.async {
          * @description
          * Provides Content-Type mappings for Http POST requests.
          */
-        contentType: IHttpContentType = {
+        public contentType: IHttpContentType = {
             ENCODED_FORM: 'application/x-www-form-urlencoded;charset=utf-8',
             JSON: 'application/json;charset=utf-8',
             MULTIPART_FORM: 'multipart/form-data',
             OCTET_STREAM: 'application/octet-stream;charset=utf-8',
             XML: 'application/xml;charset=utf-8',
             PLAIN_TEXT: 'text/plain',
-            HTML: 'text/html'
+            HTML: 'text/html',
         };
 
         /**
@@ -2082,9 +1844,10 @@ module plat.async {
          * @returns {plat.async.AjaxPromise} A promise, when fulfilled
          * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
-        ajax<R>(options: IHttpConfig): AjaxPromise<R> {
-            let request: HttpRequest = acquire(__HttpRequestInstance);
+        public ajax<R>(options: IHttpConfig): AjaxPromise<R> {
+            const request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
+
             return request.execute<R>();
         }
 
@@ -2104,9 +1867,10 @@ module plat.async {
          * @returns {plat.async.AjaxPromise} A promise, when fulfilled or rejected, will return an
          * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
-        jsonp<R>(options: IJsonpConfig): AjaxPromise<R> {
-            let request: HttpRequest = acquire(__HttpRequestInstance);
+        public jsonp<R>(options: IJsonpConfig): AjaxPromise<R> {
+            const request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
+
             return request.executeJsonp<R>();
         }
 
@@ -2128,9 +1892,10 @@ module plat.async {
          * will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object, with the response
          * being a parsed JSON object (assuming valid JSON).
          */
-        json<R>(options: IHttpConfig): AjaxPromise<R> {
-            let request: HttpRequest = acquire(__HttpRequestInstance);
+        public json<R>(options: IHttpConfig): AjaxPromise<R> {
+            const request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(_extend(false, false, {}, options, { responseType: 'json' }));
+
             return request.execute<R>();
         }
     }

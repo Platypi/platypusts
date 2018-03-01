@@ -1,4 +1,4 @@
-﻿
+
 /**
  * @name web
  * @memberof plat
@@ -27,7 +27,7 @@ module plat.web {
             _window: __Window,
             _location: __Location,
             _history: __History,
-            _dom: __Dom
+            _dom: __Dom,
         };
 
         /**
@@ -42,12 +42,12 @@ module plat.web {
          * @description
          * The {@link plat.web.IBrowserConfig|IBrowserConfig} injectable object.
          */
-        static config: IBrowserConfig = {
+        public static config: IBrowserConfig = {
             HASH: 'hash',
             STATE: 'state',
             routingType: 'hash',
             hashPrefix: '!',
-            baseUrl: ''
+            baseUrl: '',
         };
 
         /**
@@ -152,7 +152,7 @@ module plat.web {
          * @description
          * Keeps a history stack if using a windows store app.
          */
-        protected _stack: Array<string>;
+        protected _stack: string[];
 
         /**
          * @name uid
@@ -166,7 +166,7 @@ module plat.web {
          * @description
          * A unique string identifier.
          */
-        uid: string = uniqueId(__Plat);
+        public uid: string = uniqueId(__Plat);
 
         /**
          * @name __currentUrl
@@ -251,8 +251,8 @@ module plat.web {
          *
          * @returns {void}
          */
-        initialize(): void {
-            let _compat = this._compat;
+        public initialize(): void {
+            const _compat = this._compat;
 
             this._EventManager.dispose(this.uid);
 
@@ -260,11 +260,11 @@ module plat.web {
 
             acquire(__UrlUtilsInstance);
 
-            let url = this.url(),
-                trimmedUrl = url,
-                changed = this._urlChanged.bind(this),
-                _dom = this._dom,
-                _window = this._window;
+            const url = this.url();
+            const trimmedUrl = url;
+            const changed = this._urlChanged.bind(this);
+            const _dom = this._dom;
+            const _window = this._window;
 
             if (trimmedUrl !== url) {
                 this.url(trimmedUrl, true);
@@ -294,8 +294,8 @@ module plat.web {
          *
          * @returns {string} The current URL or current location.
          */
-        url(url?: string, replace?: boolean): string {
-            let location = this._location;
+        public url(url?: string, replace?: boolean): string {
+            const location = this._location;
 
             if (isString(url) && !this._isLastUrl(url)) {
                 if (!replace && isArray(this._stack)) {
@@ -305,7 +305,11 @@ module plat.web {
                 this._setUrl(url, replace);
             }
 
-            return this.__currentUrl || location.href;
+            if (!isEmpty(this.__currentUrl)) {
+                return this.__currentUrl;
+            }
+
+            return location.href;
         }
 
         /**
@@ -321,7 +325,7 @@ module plat.web {
          *
          * @returns {void}
          */
-        back(length?: number): void {
+        public back(length?: number): void {
             if (!isNumber(length)) {
                 length = 1;
             }
@@ -332,6 +336,7 @@ module plat.web {
                 this._stack = _stack = _stack.slice(0, _stack.length - (length - 1));
                 this.url(_stack.pop());
                 _stack.pop();
+
                 return;
             }
 
@@ -351,7 +356,7 @@ module plat.web {
          *
          * @returns {void}
          */
-        forward(length?: number): void {
+        public forward(length?: number): void {
             if (!isNumber(length)) {
                 length = 1;
             }
@@ -373,14 +378,22 @@ module plat.web {
          *
          * @returns {@link plat.web.UrlUtils|UrlUtils} The new {@link plat.web.UrlUtils|UrlUtils} object.
          */
-        urlUtils(url?: string): UrlUtils {
-            url = url || this.url();
+        public urlUtils(url?: string): UrlUtils {
+            if (!isString(url)) {
+                url = this.url();
+            }
 
-            let _urlUtils: UrlUtils = acquire(__UrlUtilsInstance),
-                _config = Browser.config;
+            const _urlUtils: UrlUtils = acquire(__UrlUtilsInstance);
+            const _config = Browser.config;
+
+            let hashPrefix = _config.hashPrefix;
+
+            if (!isString(hashPrefix)) {
+                hashPrefix = '';
+            }
 
             if (_config.routingType === _config.HASH) {
-                url = url.replace(new RegExp('#' + (_config.hashPrefix || '') + '/?'), '');
+                url = url.replace(new RegExp(`#${hashPrefix}/?`), '');
             }
 
             _urlUtils.initialize(url);
@@ -401,13 +414,13 @@ module plat.web {
          *
          * @returns {boolean} Whether or not the URL argument is cross domain.
          */
-        isCrossDomain(url: string): boolean {
+        public isCrossDomain(url: string): boolean {
             if (!isString(url)) {
                 return false;
             }
 
-            let urlUtils = this.urlUtils(url),
-                locationUtils = this.urlUtils();
+            const urlUtils = this.urlUtils(url);
+            const locationUtils = this.urlUtils();
 
             // check for protocol:host:port mismatch
             return urlUtils.protocol !== locationUtils.protocol ||
@@ -428,9 +441,9 @@ module plat.web {
          *
          * @returns {string} The formatted URL.
          */
-        formatUrl(url: string): string {
-            let config = Browser.config,
-                baseUrl = config.baseUrl;
+        public formatUrl(url: string): string {
+            const config = Browser.config;
+            const baseUrl = config.baseUrl;
 
             if (!isString(url)) {
                 return '';
@@ -440,17 +453,23 @@ module plat.web {
                 return url;
             }
 
-            let isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+            const isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
             if (url[0] === '/') {
                 url = url.slice(1);
             }
 
             if (isLocal) {
                 if (config.routingType === config.HASH) {
-                    let hasProtocol = url.indexOf(this.__protocol + ':') === 0,
-                        prefix = config.hashPrefix || '',
-                        append = '#' + prefix,
-                        hashRegex = new RegExp(append + '|#/');
+                    const hasProtocol = url.indexOf(`${this.__protocol}:`) === 0;
+
+                    let prefix = config.hashPrefix;
+
+                    if (!isString(prefix)) {
+                        prefix = '';
+                    }
+
+                    const append = `#${prefix}`;
+                    const hashRegex = new RegExp(`${append}|#/`);
 
                     if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
                         url += '/';
@@ -458,7 +477,7 @@ module plat.web {
 
                     if (!hashRegex.test(url)) {
                         if (hasProtocol) {
-                            url = url + append + '/';
+                            url = `${url}${append}/`;
                         } else {
                             url = append + ((url[0] !== '/') ? '/' : '') + url;
                         }
@@ -493,9 +512,8 @@ module plat.web {
             }
 
             this.__currentUrl = null;
-            let utils = this.urlUtils(),
-                $config = Browser.config,
-                url = this._trimSlashes(utils.href);
+            const utils = this.urlUtils();
+            const url = this._trimSlashes(utils.href);
 
             if (this.__lastUrl === url) {
                 return;
@@ -503,11 +521,11 @@ module plat.web {
 
             this.__lastUrl = url;
 
-            let $manager = this._EventManager;
+            const _EventManager = this._EventManager;
             postpone(() => {
-                $manager.dispatch(__urlChanged,
+                _EventManager.dispatch(__urlChanged,
                     this,
-                    $manager.DIRECT,
+                    _EventManager.DIRECT,
                     [utils]);
             });
         }
@@ -531,13 +549,14 @@ module plat.web {
         protected _setUrl(url: string, replace?: boolean): void {
             url = this.formatUrl(url);
 
-            let utils = this.urlUtils(url),
-                baseUrl = Browser.config.baseUrl,
-                _history = this._history,
-                _location = this._location;
+            const utils = this.urlUtils(url);
+            const baseUrl = Browser.config.baseUrl;
+            const _history = this._history;
+            const _location = this._location;
 
             if (utils.href.indexOf(baseUrl) === -1) {
                 _location.href = url;
+
                 return;
             }
 
@@ -550,16 +569,16 @@ module plat.web {
                 if (replace) {
                     let state = _history.state;
 
-                    if(!isObject(state)) {
+                    if (!isObject(state)) {
                         state = {};
                     }
 
-                    _history.replaceState(<routing.IHistoryState>{
-                        previousLocation: state.previousLocation
+                    _history.replaceState({
+                        previousLocation: state.previousLocation,
                     }, '', url);
                 } else {
-                    _history.pushState(<routing.IHistoryState>{
-                        previousLocation: this.urlUtils().pathname
+                    _history.pushState({
+                        previousLocation: this.urlUtils().pathname,
                     }, '', url);
                 }
 
@@ -590,7 +609,7 @@ module plat.web {
          * @returns {boolean} Whether or not the url is the last url.
          */
         protected _isLastUrl(url: string): boolean {
-            var last = this.__lastUrl;
+            const last = this.__lastUrl;
 
             if (isString(url)) {
                 if (isEmpty(url)) {

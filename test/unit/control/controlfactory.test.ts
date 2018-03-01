@@ -1,8 +1,9 @@
-﻿/// <reference path="../../references.d.ts" />
+﻿// tslint:disable
+/// <reference path="../../references.d.ts" />
 
 module tests.controlFactory {
-    var ControlFactory = plat.acquire(plat.IControlFactory),
-        control: plat.Control;
+    let ControlFactory: plat.IControlFactory = plat.acquire(plat.IControlFactory);
+    let control: plat.Control;
 
     describe('ControlFactory Tests', () => {
         beforeEach(() => {

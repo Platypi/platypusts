@@ -1,5 +1,6 @@
-﻿module tests.async.promise {
-    var Promise = plat.acquire(plat.async.IPromise);
+﻿// tslint:disable
+module tests.async.promise {
+    var Promise: plat.async.IPromise = plat.acquire(plat.async.IPromise);
 
     describe('Promise Tests', () => {
         it('should test all', (done: Function) => {
@@ -24,8 +25,8 @@
         });
 
         it('should test race', (done: Function) => {
-            var numPromise: plat.async.IThenable<number> = new Promise((resolve) => { setTimeout(() => resolve(2), 0, 0); }),
-                promise: plat.async.IThenable<any> = new Promise((resolve) => { setTimeout(resolve, 0, 4); }),
+            var numPromise: plat.async.Promise<number> = new Promise((resolve) => { setTimeout(() => resolve(2), 0, 0); }),
+                promise: plat.async.Promise<any> = new Promise((resolve) => { setTimeout(resolve, 0, 4); }),
                 result: number;
 
             Promise.race<number>([promise, numPromise]).then((success) => {

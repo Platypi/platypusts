@@ -1,11 +1,18 @@
+// tslint:disable:promise-must-complete
 module plat.async {
     'use strict';
-    let __promiseQueue: Array<any> = [],
-        browserGlobal: any = (typeof window !== 'undefined') ? window : {},
-        BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver,
-        scheduleFlush: () => void;
+    declare const process: any;
 
-    var process: any = process;
+    let __promiseQueue: any[] = [];
+    const browserGlobal: any = (typeof window !== 'undefined') ? window : {};
+
+    let BrowserMutationObserver = browserGlobal.MutationObserver;
+
+    if (!isObject(BrowserMutationObserver)) {
+        BrowserMutationObserver = browserGlobal.WebKitMutationObserver;
+    }
+
+    let scheduleFlush: () => void;
 
     // decide what async method to use to triggering processing of queued callbacks:
     if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
@@ -24,7 +31,7 @@ module plat.async {
      * @implements {plat.async.IThenable}
      *
      * @description
-     * Takes in a generic type corresponding to the fullfilled success type.
+     * Takes in a generic type corresponding to the fulfilled success type.
      *
      * @typeparam {any} R The return type of the promise.
      */
@@ -41,18 +48,18 @@ module plat.async {
          * @description
          * The configuration for creating asynchronous promise flushing.
          */
-        static config: { async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => void; } = {
+        public static config: { async(callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>): void } = {
             /**
              * Handles asynchronous flushing of callbacks. If the callback queue is of
              * length 1, then we need to schedule a flush. Afterward, any additional
              * callbacks added to the queue will be flushed accordingly.
              */
             async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>): void => {
-                let length = __promiseQueue.push([callback, arg]);
+                const length = __promiseQueue.push([callback, arg]);
                 if (length === 1) {
                     scheduleFlush();
                 }
-            }
+            },
         };
 
         /**
@@ -66,7 +73,7 @@ module plat.async {
          * @description
          * Holds all the subscriber promises
          */
-        private __subscribers: Array<any>;
+        private __subscribers: any[];
 
         /**
          * @name __state
@@ -100,30 +107,6 @@ module plat.async {
          * @kind function
          * @access public
          * @static
-         * @variation 0
-         *
-         * @description
-         * Returns a promise that fulfills when every item in the array is fulfilled.
-         * Casts arguments to promises if necessary. The result argument of the
-         * returned promise is an array containing the fulfillment result arguments
-         * in-order. The rejection argument is the rejection argument of the
-         * first-rejected promise.
-         *
-         * @typeparam {any} R The return type of the promises.
-         *
-         * @param {Array<plat.async.IThenable<R>>} promises An array of promises, although every argument is potentially
-         * cast to a promise meaning not every item in the array needs to be a promise.
-         *
-         * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
-         */
-        static all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
-        /**
-         * @name all
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
          *
          * @description
          * Returns a promise that fulfills when every item in the array is fulfilled.
@@ -138,16 +121,50 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
          */
-        static all<R>(promises: Array<R>): IThenable<Array<R>>;
-        static all(promises: Array<any>): IThenable<Array<any>> {
-            if (!isArray(promises)) {
-                return Promise.all([promises]);
+        public static all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
+                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+        public static all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
+                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        public static all<T1, T2, T3, T4, T5, T6, T7, T8>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
+                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+        public static all<T1, T2, T3, T4, T5, T6, T7>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
+                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+        public static all<T1, T2, T3, T4, T5, T6>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
+                IThenable<T5>, T6 | IThenable<T6>]
+        ): Promise<[T1, T2, T3, T4, T5, T6]>;
+        public static all<T1, T2, T3, T4, T5>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 | IThenable<T5>]
+        ): Promise<[T1, T2, T3, T4, T5]>;
+        public static all<T1, T2, T3, T4>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>]
+        ): Promise<[T1, T2, T3, T4]>;
+        public static all<T1, T2, T3>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]
+        ): Promise<[T1, T2, T3]>;
+        public static all<T1, T2>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>]
+        ): Promise<[T1, T2]>;
+        public static all<T1>(
+            values: (T1 | IThenable<T1>)[]
+        ): Promise<[T1]>;
+        public static all<TAll>(values: (TAll | IThenable<TAll>)[]): Promise<TAll[]> {
+            if (!isArray(values)) {
+                return Promise.all([<any>values]);
             }
 
-            return new Promise<Array<any>>((resolve: (value?: Array<any>) => void, reject: (reason?: any) => void): void => {
-                let results: Array<any> = [],
-                    remaining = promises.length,
-                    promise: Promise<any>;
+            return new Promise<any[]>((resolve: (value?: any[]) => void, reject: (reason?: any) => void): void => {
+                const results: any[] = [];
+                let remaining = (<any[]>values).length;
+                let promise: Promise<any>;
 
                 if (remaining === 0) {
                     resolve(<any>[]);
@@ -157,15 +174,17 @@ module plat.async {
                     return (value: any): void => resolveAll(index, value);
                 }
 
-                function resolveAll(index: number, value: any): void {
+                function resolveAll(index: number, value: any): any {
                     results[index] = value;
-                    if (--remaining === 0) {
+                    remaining -= 1;
+
+                    if (remaining === 0) {
                         resolve(<any>results);
                     }
                 }
 
-                for (let i = 0; i < promises.length; i++) {
-                    promise = promises[i];
+                for (let i = 0; i < (<IThenable<any>[]>values).length; i += 1) {
+                    promise = (<Promise<any>[]>values)[i];
 
                     if (isPromise(promise)) {
                         promise.then(resolver(i), reject);
@@ -182,27 +201,6 @@ module plat.async {
          * @kind function
          * @access public
          * @static
-         * @variation 0
-         *
-         * @description
-         * Returns a promise that fulfills as soon as any of the promises fulfill,
-         * or rejects as soon as any of the promises reject (whichever happens first).
-         *
-         * @typeparam {any} R The return type of the input promises.
-         *
-         * @param {Array<plat.async.IThenable<R>>} promises An Array of promises to 'race'.
-         *
-         * @returns {plat.async.IThenable<R>} A promise that fulfills when one of the input
-         * promises fulfilled.
-         */
-        static race<R>(promises: Array<IThenable<R>>): IThenable<R>;
-        /**
-         * @name race
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
          *
          * @description
          * Returns a promise that fulfills as soon as any of the promises fulfill,
@@ -216,19 +214,18 @@ module plat.async {
          * @returns {plat.async.IThenable<R>} A promise that fulfills when one of the input
          * promises fulfilled.
          */
-        static race<R>(promises: Array<R>): IThenable<R>;
-        static race(promises: Array<any>): IThenable<any> {
+        public static race<R>(promises: (R | IThenable<R>)[]): Promise<R> {
             if (!isArray(promises)) {
-                return Promise.race([promises]);
+                return Promise.race([<any>promises]);
             }
 
             return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any): void => {
                 let promise: Promise<any>;
 
-                for (let i = 0; i < promises.length; i++) {
-                    promise = promises[i];
+                for (let i = 0; i < (<IThenable<R>[]>promises).length; i += 1) {
+                    promise = (<Promise<R>[]>promises)[i];
 
-                    if (promise && typeof promise.then === 'function') {
+                    if (isObject(promise) && typeof promise.then === 'function') {
                         promise.then(resolve, reject);
                     } else {
                         resolve(<any>promise);
@@ -245,19 +242,6 @@ module plat.async {
          * @static
          *
          * @description
-         * Returns a promise that resolves immediately.
-         *
-         * @returns {plat.async.IThenable<void>} A promise that will resolve.
-         */
-        static resolve(): IThenable<void>;
-        /**
-         * @name resolve
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
          * Returns a promise that resolves with the input value.
          *
          * @typeparam {any} R The value with which to resolve the promise.
@@ -266,10 +250,9 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
          */
-        static resolve<R>(value: R): IThenable<R>;
-        static resolve<R>(value?: R): IThenable<R> {
+        public static resolve<R>(value?: R | IThenable<R>): Promise<R> {
             return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any): void => {
-                resolve(value);
+                resolve(<R>value);
             });
         }
 
@@ -287,8 +270,8 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
          */
-        static reject(error?: any): IThenable<any> {
-            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any): void => {
+        public static reject<R>(error?: any): Promise<R> {
+            return new Promise<R>((resolve: (value: any) => any, reject: (error: any) => any): void => {
                 reject(error);
             });
         }
@@ -344,12 +327,12 @@ module plat.async {
          *
          * @returns {void}
          */
-        private static __invokeCallback(settled: State, promise: any, callback: (response: any) => void, detail: any): void {
-            let hasCallback = isFunction(callback),
-                value: any,
-                error: Error,
-                succeeded: boolean,
-                failed: boolean;
+        private static __invokeCallback(settled: State, promise: any, callback: (response: any) => any, detail: any): void {
+            const hasCallback = isFunction(callback);
+            let value: any;
+            let error: Error;
+            let succeeded: boolean;
+            let failed: boolean;
 
             if (hasCallback) {
                 try {
@@ -393,14 +376,14 @@ module plat.async {
          * @returns {void}
          */
         private static __publish(promise: Promise<any>, settled: State): void {
-            let subscribers = promise.__subscribers,
-                detail = promise.__detail,
-                child: any,
-                callback: () => void;
+            const subscribers = promise.__subscribers;
+            const detail = promise.__detail;
+            let child: any;
+            let callback: () => void;
 
             for (let i = 0; i < subscribers.length; i += 3) {
                 child = subscribers[i];
-                callback = subscribers[i + settled];
+                callback = subscribers[i + <number>settled];
 
                 Promise.__invokeCallback(settled, child, callback, detail);
             }
@@ -543,6 +526,7 @@ module plat.async {
 
             if (promise === value) {
                 Promise.__reject(promise, new TypeError('A promises callback cannot return the same promise.'));
+
                 return true;
             }
 
@@ -574,6 +558,7 @@ module plat.async {
                         return true;
                     }
                     Promise.__reject(promise, error);
+
                     return true;
                 }
             }
@@ -595,19 +580,19 @@ module plat.async {
          *
          * @param {plat.async.Promise<any>} parent The parent promise.
          * @param {plat.async.Promise<any>} value The child promise.
-         * @param {(success: any) => any} onFullfilled The fulfilled method for the child.
+         * @param {(success: any) => any} onfulfilled The fulfilled method for the child.
          * @param {(error: any) => any} onRejected The rejected method for the child.
          *
          * @returns {void}
          */
         private static __subscribe(parent: Promise<any>, child: IThenable<any>,
             onFulfilled: (success: any) => any, onRejected: (error: any) => any): void {
-            let subscribers = parent.__subscribers;
-            let length = subscribers.length;
+            const subscribers = parent.__subscribers;
+            const length = subscribers.length;
 
             subscribers[length] = child;
-            subscribers[length + State.FULFILLED] = onFulfilled;
-            subscribers[length + State.REJECTED] = onRejected;
+            subscribers[length + <number>State.FULFILLED] = onFulfilled;
+            subscribers[length + <number>State.REJECTED] = onRejected;
         }
 
         /**
@@ -618,7 +603,7 @@ module plat.async {
          *
          * @description
          * An ES6 implementation of the Promise API. Useful for asynchronous programming.
-         * Takes in 2 generic types corresponding to the fullfilled success and error types.
+         * Takes in 2 generic types corresponding to the fulfilled success and error types.
          * The error type (U) should extend Error in order to get proper stack tracing.
          *
          * @typeparam {any} R The return type of the promise.
@@ -647,88 +632,27 @@ module plat.async {
          * @memberof plat.async.Promise
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          *
          * @typeparam {any} U The return type of the returned promise.
          *
-         * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
+         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
          * onFulfilled method in the promise chain will be called.
          * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          *
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
          */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @variation 3
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
-        then<U>(onFulfilled: (success: R) => any, onRejected?: (error: any) => any): IThenable<U> {
-            let promise = this;
+        public then<U>(onFulfilled?: (value: R) => U | IThenable<U>, onRejected?: (error: any) => U | IThenable<U> | void): Promise<U> {
+            // tslint:disable-next-line
+            const promise = this;
 
-            let thenPromise = <IThenable<U>>new (<any>this).constructor(noop, this);
+            const thenPromise = <Promise<U>>new (<any>this).constructor(noop, this);
 
-            if (this.__state) {
-                let callbacks = arguments;
+            if (!isNull(this.__state)) {
+                const callbacks = arguments;
                 Promise.config.async((): void => {
                     Promise.__invokeCallback(promise.__state, thenPromise, callbacks[promise.__state - 1], promise.__detail);
                 });
@@ -744,25 +668,6 @@ module plat.async {
          * @memberof plat.async.Promise
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * @name catch
-         * @memberof plat.async.Promise
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
@@ -774,8 +679,7 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
          */
-        catch<U>(onRejected: (error: any) => U): IThenable<U>;
-        catch<U>(onRejected: (error: any) => any): IThenable<U> {
+        public catch<U>(onRejected?: (error: any) => U | IThenable<U>): Promise<U> {
             return this.then(null, onRejected);
         }
 
@@ -790,7 +694,7 @@ module plat.async {
          *
          * @returns {string} `[object Promise]`
          */
-        toString(): string {
+        public toString(): string {
             return '[object Promise]';
         }
     }
@@ -812,126 +716,28 @@ module plat.async {
          * @memberof plat.async.IThenable
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
          * Takes in two methods, called when/if the promise fulfills/rejects.
          *
          * @typeparam {any} U The return type of the returned promise.
          *
-         * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.IThenable
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
+         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
          * onFulfilled method in the promise chain will be called.
          * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          *
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
          */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.IThenable
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * @name then
-         * @memberof plat.async.IThenable
-         * @kind function
-         * @access public
-         * @variation 3
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
-
-        /**
-         * @name catch
-         * @memberof plat.async.IThenable
-         * @kind function
-         * @access public
-         * @variation 0
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-         * @name catch
-         * @memberof plat.async.IThenable
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        catch<U>(onRejected: (error: any) => U): IThenable<U>;
+        then<U>(onFulfilled?: (value: R) => U | IThenable<U>, onRejected?: (error: any) => U | IThenable<U> | void): IThenable<U>;
     }
 
     enum State {
         PENDING = <any>(void 0),
         SEALED = 0,
         FULFILLED = 1,
-        REJECTED = 2
-    };
+        REJECTED = 2,
+    }
 
     // node
     function useNextTick(): () => void {
@@ -941,10 +747,10 @@ module plat.async {
     }
 
     function useMutationObserver(): () => void {
-        let observer = new BrowserMutationObserver(flush),
-            _document = acquire(__Document),
-            _window = acquire(__Window),
-            element = _document.createElement('div');
+        const _document = acquire(__Document);
+        const _window = acquire(__Window);
+        const element = _document.createElement('div');
+        let observer = new BrowserMutationObserver(flush);
 
         observer.observe(element, { attributes: true });
 
@@ -965,16 +771,15 @@ module plat.async {
     }
 
     function flush(): void {
-        let tuple: Array<(response: any) => void>,
-            callback: (response: any) => void,
-            arg: any;
+        let callback: (response: any) => void;
+        let arg: any;
 
-        for (let i = 0; i < __promiseQueue.length; i++) {
-            tuple = __promiseQueue[i];
+        for (const tuple of __promiseQueue) {
             callback = tuple[0];
             arg = tuple[1];
             callback(arg);
         }
+
         __promiseQueue = [];
     }
 
@@ -982,19 +787,7 @@ module plat.async {
      * Describes a function passed into the constructor for a Promise. The function allows you to
      * resolve/reject the Promise.
      */
-    export interface IResolveFunction<R> {
-        /**
-         * A function which allows you to resolve/reject a Promise.
-         *
-         * @param resolve A method for resolving a Promise. If you pass in a 'thenable' argument
-         * (meaning if you pass in a Promise-like object), then the promise will resolve with the
-         * outcome of the object. Else the promise will resolve with the argument.
-         * @param reject A method for rejecting a promise. The argument should be an instancof Error
-         * to assist with debugging. If a method in the constructor for a Promise throws an error,
-         * the promise will reject with the error.
-         */
-        (resolve: (value?: R) => void, reject: (reason?: any) => void): void;
-    }
+    export type IResolveFunction<R> = (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void;
 
     /**
      * The Type for referencing the '_Promise' injectable as a dependency.
@@ -1007,174 +800,12 @@ module plat.async {
             isFunction(_window.Promise.reject)) {
             return _window.Promise;
         }
+
         return Promise;
     }
 
     register.injectable(__Promise, IPromise, [__Window], __CLASS);
 
-    /**
-     * @name IPromise
-     * @memberof plat.async
-     * @kind interface
-     *
-     * @description
-     * The injectable reference for the ES6 Promise implementation.
-     */
-    export interface IPromise {
-        /**
-         * @name constructor
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         *
-         * @description
-         * An ES6 implementation of the Promise API. Useful for asynchronous programming.
-         * Takes in 2 generic types corresponding to the fullfilled success and error types.
-         * The error type (U) should extend Error in order to get proper stack tracing.
-         *
-         * @typeparam {any} R The return type of the promise.
-         *
-         * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
-         *
-         * @returns {plat.async.IThenable<R>} A promise object.
-         */
-        new <R>(resolveFunction: IResolveFunction<R>): IThenable<R>;
-
-        /**
-         * @name all
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 0
-         *
-         * @description
-         * Returns a promise that fulfills when every item in the array is fulfilled.
-         * Casts arguments to promises if necessary. The result argument of the
-         * returned promise is an array containing the fulfillment result arguments
-         * in-order. The rejection argument is the rejection argument of the
-         * first-rejected promise.
-         *
-         * @typeparam {any} R The return type of the promises.
-         *
-         * @param {Array<plat.async.IThenable<R>>} promises An array of promises, although every argument is potentially
-         * cast to a promise meaning not every item in the array needs to be a promise.
-         *
-         * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
-         */
-        all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
-        /**
-         * @name all
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         *
-         * @description
-         * Returns a promise that fulfills when every item in the array is fulfilled.
-         * Casts arguments to promises if necessary. The result argument of the
-         * returned promise is an array containing the fulfillment result arguments
-         * in-order. The rejection argument is the rejection argument of the
-         * first-rejected promise.
-         *
-         * @typeparam {any} R The type of the promises.
-         *
-         * @param {Array<R>} promises An array of objects, if an object is not a promise, it will be cast.
-         *
-         * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
-         */
-        all<R>(promises: Array<R>): IThenable<Array<R>>;
-
-        /**
-         * @name race
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 0
-         *
-         * @description
-         * Returns a promise that fulfills as soon as any of the promises fulfill,
-         * or rejects as soon as any of the promises reject (whichever happens first).
-         *
-         * @typeparam {any} R The return type of the input promises.
-         *
-         * @param {Array<plat.async.IThenable<R>>} promises An Array of promises to 'race'.
-         *
-         * @returns {plat.async.IThenable<R>} A promise that fulfills when one of the input
-         * promises fulfilled.
-         */
-        race<R>(promises: Array<IThenable<R>>): IThenable<R>;
-        /**
-         * @name race
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         *
-         * @description
-         * Returns a promise that fulfills as soon as any of the promises fulfill,
-         * or rejects as soon as any of the promises reject (whichever happens first).
-         *
-         * @typeparam {any} R The type of the input objects.
-         *
-         * @param {Array<R>} promises An Array of anything to 'race'. Objects that aren't promises will
-         * be cast.
-         *
-         * @returns {plat.async.IThenable<R>} A promise that fulfills when one of the input
-         * promises fulfilled.
-         */
-        race<R>(promises: Array<R>): IThenable<R>;
-
-        /**
-         * @name resolve
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 0
-         *
-         * @description
-         * Returns a promise that resolves immediately.
-         *
-         * @returns {plat.async.IThenable<void>} A promise that will resolve.
-         */
-        resolve(): IThenable<void>;
-        /**
-         * @name resolve
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         * @variation 1
-         *
-         * @description
-         * Returns a promise that resolves with the input value.
-         *
-         * @typeparam {any} R The value with which to resolve the promise.
-         *
-         * @param {R} value The value to resolve.
-         *
-         * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
-         */
-        resolve<R>(value: R): IThenable<R>;
-
-        /**
-         * @name reject
-         * @memberof plat.async.IPromise
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * Returns a promise that rejects with the input value.
-         *
-         * @param {any} value The value to reject.
-         *
-         * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
-         */
-        reject(error?: any): IThenable<any>;
-    }
+    export type IPromise = typeof Promise;
 }
+//tslint:enable:promise-must-complete

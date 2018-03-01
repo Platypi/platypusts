@@ -16,7 +16,7 @@ module plat.ui.controls {
         protected static _inject: any = {
             _Promise: __Promise,
             _templateCache: __TemplateCache,
-            _document: __Document
+            _document: __Document,
         };
 
         /**
@@ -69,7 +69,7 @@ module plat.ui.controls {
          * @description
          * Removes the `<plat-template>` node from the DOM
          */
-        replaceWith: string = null;
+        public replaceWith: string = null;
 
         /**
          * @name options
@@ -82,7 +82,7 @@ module plat.ui.controls {
          * @description
          * The evaluated {@link plat.controls.Options|plat-options} object.
          */
-        options: observable.IObservableProperty<ITemplateOptions>;
+        public options: observable.IObservableProperty<ITemplateOptions>;
 
         /**
          * @name _id
@@ -132,12 +132,12 @@ module plat.ui.controls {
          * @kind property
          * @access private
          *
-         * @type {plat.async.IThenable<plat.ui.controls.Template>}
+         * @type {plat.async.Promise<plat.ui.controls.Template>}
          *
          * @description
          * A promise that resolves when the template is retrieved and ready.
          */
-        private __templatePromise: async.IThenable<Template>;
+        private __templatePromise: async.Promise<Template>;
 
         /**
          * @name __templateControlCache
@@ -165,7 +165,7 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            let _CacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
+            const _CacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
             this.__templateControlCache = _CacheFactory.create<any>(__TemplateControlCache);
         }
 
@@ -180,21 +180,34 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        initialize(): void {
-            let optionsObj = this.options || <observable.IObservableProperty<ITemplateOptions>>{},
-                options = optionsObj.value || <ITemplateOptions>{},
-                id = this._id = options.id;
+        public initialize(): void {
+            let optionsObj = this.options;
+
+            if (!isObject(optionsObj)) {
+                optionsObj = <any>{};
+            }
+
+            let options = optionsObj.value;
+
+            if (!isObject(options)) {
+                options = <any>{};
+            }
+
+            const id = this._id = options.id;
 
             if (isNull(id)) {
-                this._log.warn(this.type + ' instantiated without an id option');
+                this._log.warn(`${this.type} instantiated without an id option`);
+
                 return;
             }
 
             this._url = options.templateUrl;
 
-            let templatePromise: async.IThenable<Template> = this.__templateControlCache.read(id);
+            const templatePromise: async.Promise<Template> = this.__templateControlCache.read(id);
+
             if (!isNull(templatePromise)) {
                 this.__templatePromise = templatePromise;
+
                 return;
             }
 
@@ -214,7 +227,7 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
+        public loaded(): void {
             if (!this.__isFirst) {
                 this._waitForTemplateControl(this.__templatePromise);
             }
@@ -231,9 +244,10 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             if (this.__isFirst) {
-                let cache = this.__templateControlCache;
+                const cache = this.__templateControlCache;
+
                 cache.remove(this._id);
                 if (cache.info().size === 0) {
                     cache.dispose();
@@ -255,15 +269,15 @@ module plat.ui.controls {
          * @returns {void}
          */
         protected _initializeTemplate(): void {
-            let id = this._id;
+            const id = this._id;
 
             if (isNull(id)) {
                 return;
             }
 
-            let parentNode = this.endNode.parentNode,
-                url = this._url,
-                template: any;
+            const parentNode = this.endNode.parentNode;
+            const url = this._url;
+            let template: any;
 
             if (!isNull(url)) {
                 template = this._templateCache.read(url);
@@ -275,14 +289,15 @@ module plat.ui.controls {
 
             this.elementNodes = [];
 
-            let controlPromise: async.IThenable<TemplateControl>;
+            let controlPromise: async.Promise<TemplateControl>;
             if (isPromise(template)) {
-                controlPromise = template.catch((error: Error): async.IThenable<DocumentFragment> => {
+                controlPromise = template.catch((error: Error): async.Promise<DocumentFragment> => {
                     if (isNull(error)) {
                         return TemplateControl.determineTemplate(this, url);
                     }
-                }).then((template: DocumentFragment): TemplateControl => {
-                    this.bindableTemplates.add(id, template.cloneNode(true));
+                }).then((fragment: DocumentFragment): TemplateControl => {
+                    this.bindableTemplates.add(id, fragment.cloneNode(true));
+
                     return this;
                 });
             } else {
@@ -305,33 +320,33 @@ module plat.ui.controls {
          * the binding of the bindable template and places it into the
          * DOM.
          *
-         * @param {plat.async.IThenable<plat.ui.controls.Template>} templatePromise The promise
+         * @param {plat.async.Promise<plat.ui.controls.Template>} templatePromise The promise
          * associated with the first instance of the control with this ID.
          *
          * @returns {void}
          */
-        protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
+        protected _waitForTemplateControl(templatePromise: async.Promise<Template>): void {
 
             if (!isPromise(templatePromise)) {
                 return;
             }
 
-            templatePromise.then((templateControl: Template): async.IThenable<DocumentFragment> => {
+            templatePromise.then((templateControl: Template): async.Promise<DocumentFragment> => {
                 if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                    this._log.warn('The specified url: ' + this._url +
-                        ' does not match the original ' + this.type + ' with id: ' +
-                        '"' + this._id + '". The original url will be loaded.');
+                    this._log.warn(
+                    `The specified url: ${this._url} should match ${this.type} with id: "${this._id}". Loading original url.`
+                    );
                 }
 
                 this.__mapBindableTemplates(templateControl);
+
                 return this.bindableTemplates.bind(this._id);
             }).then((clone: DocumentFragment): void => {
-                    let endNode = this.endNode;
+                    const endNode = this.endNode;
                     insertBefore(endNode.parentNode, clone, endNode);
                 }).catch((error: any): void => {
                     postpone((): void => {
-                        this._log.warn('Problem resolving ' + this.type + ' url: ' +
-                            error.response);
+                        this._log.warn(`Problem resolving ${this.type} url: ${error.response}`);
                     });
                 });
         }
@@ -352,7 +367,7 @@ module plat.ui.controls {
          * @returns {void}
          */
         private __mapBindableTemplates(control: Template): void {
-            let bindableTemplates = this.bindableTemplates;
+            const bindableTemplates = this.bindableTemplates;
             bindableTemplates.cache = control.bindableTemplates.cache;
             bindableTemplates.templates = control.bindableTemplates.templates;
         }

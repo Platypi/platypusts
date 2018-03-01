@@ -25,7 +25,7 @@ module plat.processing {
          * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}.
          * It's value is "comment".
          */
-        type: string = 'comment';
+        public type: string = 'comment';
 
         /**
          * @name create
@@ -44,13 +44,13 @@ module plat.processing {
          * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager}
          * responsible for the passed in Comment Node.
          */
-        static create(node: Node, parent: ElementManager): CommentManager {
-            let manager = new CommentManager();
+        public static create(node: Node, parent: ElementManager): CommentManager {
+            const manager = new CommentManager();
 
             manager.initialize({
                 nodes: [{
-                    node: node
-                }]
+                    node: node,
+                }],
             }, parent);
 
             return manager;
@@ -72,8 +72,9 @@ module plat.processing {
          *
          * @returns {number} The number of nodes to advance while node traversal is in progress (returns 1).
          */
-        clone(newNode: Node, parentManager: ElementManager): number {
+        public clone(newNode: Node, parentManager: ElementManager): number {
             CommentManager.create(newNode, parentManager);
+
             return 1;
         }
     }

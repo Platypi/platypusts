@@ -1,4 +1,4 @@
-﻿module plat.ui.animations {
+module plat.ui.animations {
     'use strict';
 
     /**
@@ -25,7 +25,7 @@
          * An optional options object that can denote a pseudo element animation and specify
          * properties to modify during the transition.
          */
-        options: ISimpleCssTransitionOptions;
+        public options: ISimpleCssTransitionOptions;
 
         /**
          * @name className
@@ -38,7 +38,7 @@
          * @description
          * The class name added to the animated element.
          */
-        className: string = __SimpleTransition;
+        public className: string = __SimpleTransition;
 
         /**
          * @name _animationCanceled
@@ -64,7 +64,7 @@
          * @description
          * An Array of all the properties the transition will be affecting.
          */
-        protected _properties: Array<string>;
+        protected _properties: string[];
 
         /**
          * @name _normalizeRegex
@@ -169,7 +169,7 @@
          *
          * @returns {void}
          */
-        initialize(): void {
+        public initialize(): void {
             addClass(this.element, this.className + __INIT_SUFFIX);
         }
 
@@ -184,10 +184,10 @@
          *
          * @returns {void}
          */
-        start(): void {
+        public start(): void {
             this._animationCanceled = requestAnimationFrameGlobal((): void => {
-                let element = this.element,
-                    className = this.className;
+                const element = this.element;
+                const className = this.className;
 
                 if (element.offsetParent === null) {
                     this._animate();
@@ -198,22 +198,28 @@
                 addClass(element, className);
                 this._started = true;
 
-                let utils = this.utils,
-                    transitionId = this._animationEvents.$transition,
-                    options = this.options || <ISimpleCssTransitionOptions>{},
-                    computedStyle = this._window.getComputedStyle(element, options.pseudo),
-                    properties = this._properties = computedStyle[<any>(transitionId + 'Property')].split(','),
-                    durations = computedStyle[<any>(transitionId + 'Duration')].split(','),
-                    length = properties.length,
-                    propLength = length,
-                    noTransition = false,
-                    prop: string;
+                const utils = this.utils;
+                const transitionId = this._animationEvents.$transition;
+                let options = this.options;
 
-                while (length-- > 0) {
+                if (!isObject(options)) {
+                    options = <any>{};
+                }
+
+                const computedStyle = this._window.getComputedStyle(element, options.pseudo);
+                const properties = this._properties = computedStyle[<any>(`${transitionId}Property`)].split(',');
+                const durations = computedStyle[<any>(`${transitionId}Duration`)].split(',');
+                let length = properties.length;
+                const propLength = length;
+                let noTransition = false;
+                let prop: string;
+
+                while (length > 0) {
+                    length -= 1;
                     prop = properties[length];
                     if (prop === '' || prop === 'none') {
                         properties.splice(length, 1);
-                    } else if ( propLength > 1 && prop === 'all') {
+                    } else if (propLength > 1 && prop === 'all') {
                         // most likely developer error (extra comma at end of shorthand multi transition declaration)
                         // so we will splice
                         this._log.debug(`Improper transition declaration on class "${element.className}"`);
@@ -225,7 +231,8 @@
                     noTransition = true;
                 } else {
                     length = durations.length;
-                    while (length-- > 0) {
+                    while (length > 0) {
+                        length -= 1;
                         prop = durations[length];
                         if (!(prop === '' || prop === '0s')) {
                             break;
@@ -241,6 +248,7 @@
                     this._animate();
                     this._dispose();
                     this.end();
+
                     return;
                 }
 
@@ -258,6 +266,7 @@
                     return;
                 } else if (utils.isEmpty(options.properties)) {
                     this.__cssTransition(computedStyle, durations);
+
                     return;
                 }
 
@@ -277,7 +286,7 @@
          *
          * @returns {void}
          */
-        cancel(): void {
+        public cancel(): void {
             this._animationCanceled();
 
             if (!this._started) {
@@ -300,8 +309,8 @@
          * @returns {void}
          */
         protected _dispose(): void {
-            let className = this.className;
-            removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
+            const className = this.className;
+            removeClass(this.element, `${className} ${className}${__INIT_SUFFIX}`);
             this._animationCanceled = noop;
         }
 
@@ -323,7 +332,9 @@
         protected _done(ev: TransitionEvent): void {
             let propertyName = ev.propertyName;
             if (isString(propertyName)) {
-                let count = ++this._transitionCount;
+                this._transitionCount += 1;
+
+                const count = this._transitionCount;
                 propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
 
                 if ((count < this._count) ||
@@ -350,96 +361,51 @@
          * If false, the control should begin cleaning up.
          */
         protected _animate(): boolean {
-            let style: CSSStyleDeclaration = this.element.style || <CSSStyleDeclaration>{},
-                properties = (this.options || <ISimpleCssTransitionOptions>{}).properties || {},
-                keys = Object.keys(properties),
-                length = keys.length,
-                key: any,
-                normalizedKeys = this._normalizedKeys,
-                normalizeRegex = this._normalizeRegex,
-                currentProperty: string,
-                newProperty: string,
-                unchanged = 0;
+            const normalizedKeys = this._normalizedKeys;
+            const normalizeRegex = this._normalizeRegex;
+
+            let options = this.options;
+
+            if (!isObject(options)) {
+                options = <any>{};
+            }
+
+            let properties = this.options.properties;
+
+            if (!isObject(properties)) {
+                properties = <any>{};
+            }
+
+            const keys = Object.keys(properties);
+            const length = keys.length;
+            let key: any;
+            let currentProperty: string;
+            let newProperty: string;
+            let unchanged = 0;
+            let style = this.element.style;
+
+            if (!isObject(style)) {
+                style = <any>{};
+            }
 
             while (keys.length > 0) {
                 key = keys.shift();
                 currentProperty = style[key];
                 newProperty = properties[key];
                 if (!isString(newProperty)) {
-                    unchanged++;
+                    unchanged += 1;
                     continue;
                 }
 
                 style[key] = newProperty;
                 if (currentProperty === style[key]) {
-                    unchanged++;
+                    unchanged += 1;
                 } else {
                     normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
                 }
             }
 
             return unchanged < length;
-        }
-
-        /**
-         * @name _cssTransition
-         * @memberof plat.ui.animations.SimpleCssTransition
-         * @kind function
-         * @access protected
-         *
-         * @description
-         * Handles element transitions that are defined with CSS.
-         *
-         * @param {CSSStyleDeclaration} computedStyle The computed style of the
-         * element.
-         * @param {Array<string>} durations The array of declared transition duration values.
-         *
-         * @returns {void}
-         */
-        private __cssTransition(computedStyle: CSSStyleDeclaration, durations: Array<string>): void {
-            let transitionId = this._animationEvents.$transition,
-                delays = computedStyle[<any>(transitionId + 'Delay')].split(','),
-                properties = this._properties,
-                property: any,
-                duration: string,
-                delay: string,
-                length = properties.length,
-                computedProperty: string,
-                normalizedKeys = this._normalizedKeys,
-                normalizeRegex = this._normalizeRegex,
-                i = 0,
-                count = 0,
-                changed = false,
-                defer = this.utils.defer.bind(this, (prop: any, computedProp: string): void => {
-                    if (this._animationCanceled === noop) {
-                        // disposal has already occurred
-                        return;
-                    } else if (prop === 'all' || computedStyle[prop] !== computedProp) {
-                        // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
-                        // or
-                        // we know the transition started due to the properties being different
-                        changed = true;
-                    }
-
-                    if (++count < length || changed) {
-                        return;
-                    }
-
-                    this._dispose();
-                    this.end();
-                });
-
-            this._usingCss = true;
-            this._count = this._count || length;
-
-            for (; i < length; ++i) {
-                property = properties[i] = properties[i].trim();
-                duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
-                delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
-                normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
-                computedProperty = computedStyle[property];
-                defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
-            }
         }
 
         /**
@@ -457,9 +423,9 @@
          * @returns {number} The millisecond value as a number.
          */
         protected _toMs(duration: string): number {
-            let regex = this._nonNumRegex,
-                units = duration.match(regex)[0],
-                time = Number(duration.replace(regex, ''));
+            const regex = this._nonNumRegex;
+            const units = duration.match(regex)[0];
+            const time = Number(duration.replace(regex, ''));
 
             if (!this.utils.isNumber(time)) {
                 return 0;
@@ -470,6 +436,73 @@
             }
 
             return 0;
+        }
+
+        /**
+         * @name _cssTransition
+         * @memberof plat.ui.animations.SimpleCssTransition
+         * @kind function
+         * @access protected
+         *
+         * @description
+         * Handles element transitions that are defined with CSS.
+         *
+         * @param {CSSStyleDeclaration} computedStyle The computed style of the
+         * element.
+         * @param {Array<string>} durations The array of declared transition duration values.
+         *
+         * @returns {void}
+         */
+        private __cssTransition(computedStyle: CSSStyleDeclaration, durations: string[]): void {
+            const transitionId = this._animationEvents.$transition;
+            const delays = computedStyle[<any>(`${transitionId}Delay`)].split(',');
+            const properties = this._properties;
+            const length = properties.length;
+            const normalizedKeys = this._normalizedKeys;
+            const normalizeRegex = this._normalizeRegex;
+            let i = 0;
+            let count = 0;
+            let changed = false;
+            let computedProperty: string;
+            let property: any;
+            let duration: string;
+            let delay: string;
+
+            const defer = this.utils.defer.bind(this, (prop: any, computedProp: string): void => {
+                if (this._animationCanceled === noop) {
+                    // disposal has already occurred
+                    return;
+                } else if (prop === 'all' || computedStyle[prop] !== computedProp) {
+                    // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
+                    // or
+                    // we know the transition started due to the properties being different
+                    changed = true;
+                }
+
+                count += 1;
+                if (count < length || changed) {
+                    return;
+                }
+
+                this._dispose();
+                this.end();
+            });
+
+            this._usingCss = true;
+
+            if (!isFinite(this._count) || this._count === 0) {
+                this._count = length;
+            }
+
+            for (; i < length; i += 1) {
+                property = properties[i] = properties[i].trim();
+                duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
+                delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
+                normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
+                computedProperty = computedStyle[property];
+
+                defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
+            }
         }
     }
 

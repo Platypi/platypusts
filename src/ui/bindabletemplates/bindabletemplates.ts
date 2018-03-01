@@ -155,21 +155,21 @@ module plat.ui {
          * @description
          * The control containing this {@link plat.ui.BindableTemplates|BindableTemplates} object.
          */
-        control: TemplateControl;
+        public control: TemplateControl;
         /**
          * @name templates
          * @memberof plat.ui.BindableTemplates
          * @kind property
          * @access public
          *
-         * @type {plat.IObject<plat.async.IThenable<DocumentFragment>>}
+         * @type {plat.IObject<plat.async.Promise<DocumentFragment>>}
          *
          * @description
          * Stores promises that resolve to all the compiled templates for this object, ready to be bound to a data context.
          * All created templates are DocumentFragments, allowing an {@link plat.ui.TemplateControl|TemplateControl} to
          * easily insert the template into the DOM (without iterating over childNodes).
          */
-        templates: IObject<async.IThenable<DocumentFragment>> = {};
+        public templates: IObject<async.Promise<DocumentFragment>> = {};
 
         /**
          * @name cache
@@ -183,7 +183,7 @@ module plat.ui {
          * A keyed cache of {@link plat.processing.ElementManager|ElementManagers} that represent the roots of compiled templates
          * created by this instance.
          */
-        cache: IObject<processing.ElementManager> = {};
+        public cache: IObject<processing.ElementManager> = {};
 
         /**
          * @name __compiledControls
@@ -196,7 +196,7 @@ module plat.ui {
          * @description
          * A collection of all the controls created while compiling an added template. Useful during disposal.
          */
-        private __compiledControls: Array<TemplateControl> = [];
+        private __compiledControls: TemplateControl[] = [];
 
         /**
          * @name create
@@ -218,7 +218,7 @@ module plat.ui {
          *
          * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
          */
-        static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates;
+        public static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates;
         /**
          * @name create
          * @memberof plat.ui.BindableTemplates
@@ -239,8 +239,8 @@ module plat.ui {
          *
          * @returns {plat.ui.BindableTemplates} The newly instantiated {@link plat.ui.BindableTemplates|BindableTemplates} object.
          */
-        static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates {
-            let bindableTemplates = new BindableTemplates();
+        public static create(control: TemplateControl, original?: BindableTemplates): BindableTemplates {
+            const bindableTemplates = new BindableTemplates();
             bindableTemplates.control = control;
 
             if (!isNull(original)) {
@@ -266,11 +266,11 @@ module plat.ui {
          *
          * @returns {void}
          */
-        static dispose(control: TemplateControl): void {
+        public static dispose(control: TemplateControl): void {
             if (isNull(control)) {
                 return;
             }
-            let instance = control.bindableTemplates;
+            const instance = control.bindableTemplates;
 
             if (isNull(instance) || !isFunction(instance.dispose)) {
                 return;
@@ -294,12 +294,12 @@ module plat.ui {
          *
          * @returns {boolean} Whether or not the control is a bound control.
          */
-        static isBoundControl(control: TemplateControl): boolean {
+        public static isBoundControl(control: TemplateControl): boolean {
             if (isNull(control)) {
                 return false;
             }
 
-            let parent = control.parent;
+            const parent = control.parent;
             if (isNull(parent)) {
                 return false;
             }
@@ -312,260 +312,6 @@ module plat.ui {
          * @memberof plat.ui.BindableTemplates
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {Element} template An Element representing the DOM template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: Element, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {Element} template An Element representing the DOM template.
-         * @param {number} relativeIdentifier? The identifier number relative to this control's context
-         * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: Element, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {Array<Node>} template A node Array representing the DOM template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: Array<Node>, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 3
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {Array<Node>} template A node Array representing the DOM template.
-         * @param {number} relativeIdentifier? The identifier number relative to this control's context
-         * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: Array<Node>, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 4
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {NodeList} template A NodeList representing the DOM template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: NodeList, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 5
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {NodeList} template A NodeList representing the DOM template.
-         * @param {number} relativeIdentifier? The identifier number relative to this control's context
-         * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: NodeList, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 6
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: DocumentFragment, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 7
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
-         * @param {number} relativeIdentifier? The identifier number relative to this control's context
-         * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: DocumentFragment, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 8
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {Node} template A Node representing the DOM template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: Node, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 9
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {Node} template A Node representing the DOM template.
-         * @param {number} relativeIdentifier? The identifier number relative to this control's context
-         * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: Node, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 10
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {string} template A template string representing the DOM template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
-         * bound, and ready to return.
-         */
-        once(template: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name once
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 11
          *
          * @description
          * Adds a template to this object. The template will be stored with the key,
@@ -579,23 +325,24 @@ module plat.ui {
          * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
          * controls created in the template.
          *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is compiled,
+         * @returns {plat.async.Promise<DocumentFragment>} A promise that resolves when the template is compiled,
          * bound, and ready to return.
          */
-        once(template: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        once(template: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
+        public once(template: Element | Node | DocumentFragment | Node[] | NodeList | string,
+            relativeIdentifier?: string | number,
+            resources?: IObject<IResource>): async.Promise<DocumentFragment> {
             let fragment: DocumentFragment;
             if (isNull(template)) {
                 return this._Promise.resolve(this._document.createDocumentFragment());
             } else if (isString(template)) {
-                fragment = serializeHtml(template);
+                fragment = serializeHtml(<string>template);
             } else if (isDocumentFragment(template)) {
-                fragment = template;
+                fragment = <DocumentFragment>template;
             } else {
                 fragment = this._document.createDocumentFragment();
 
                 if (isNode(template)) {
-                    fragment.appendChild(template);
+                    fragment.appendChild(<Node>template);
                 } else if (isArrayLike(template)) {
                     appendChildren(template, fragment);
                 } else {
@@ -604,16 +351,18 @@ module plat.ui {
             }
 
             if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                this._log.warn(this.control.type + ' cannot bind template with relativeIdentifier: ' + relativeIdentifier +
-                    '. Identifier must be either a string or number');
+                this._log.warn(
+                    `${this.control.type} using relativeIdentifier: ${relativeIdentifier}, need a string or number`
+                );
+
                 return;
             }
 
-            let parent = this.control,
-                controlManager = this._managerCache.read(parent.uid),
-                manager = this._ElementManagerFactory.getInstance(),
-                control = this._createBoundControl('', fragment, relativeIdentifier, resources),
-                nodeMap = this._createNodeMap(control, fragment, relativeIdentifier);
+            const parent = this.control;
+            const controlManager = this._managerCache.read(parent.uid);
+            const manager = this._ElementManagerFactory.getInstance();
+            const control = this._createBoundControl('', fragment, relativeIdentifier, resources);
+            const nodeMap = this._createNodeMap(control, fragment, relativeIdentifier);
 
             parent.controls.push(control);
             controlManager.children = [];
@@ -621,11 +370,11 @@ module plat.ui {
             manager.setUiControlTemplate();
 
             return manager.fulfillAndLoad().then((): DocumentFragment => {
-                let _document = this._document;
+                const _document = this._document;
 
-                control.startNode = <Comment>fragment.insertBefore(_document.createComment(control.type + __START_NODE),
+                control.startNode = fragment.insertBefore(_document.createComment(control.type + __START_NODE),
                     fragment.firstChild);
-                control.endNode = <Comment>fragment.insertBefore(_document.createComment(control.type + __END_NODE),
+                control.endNode = fragment.insertBefore(_document.createComment(control.type + __END_NODE),
                     null);
 
                return fragment;
@@ -637,31 +386,6 @@ module plat.ui {
          * @memberof plat.ui.BindableTemplates
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Method for linking a compiled template to a data context and returning a clone of the template,
-         * with all new {@link plat.Control|Controls} created if the template contains controls. If no data context
-         * is specified, it will be inherited.
-         *
-         * @param {string} key The key used to retrieve the template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound and
-         * ready to return.
-         */
-        bind(key: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-         * @name bind
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * Method for linking a compiled template to a data context and returning a clone of the template,
@@ -674,11 +398,10 @@ module plat.ui {
          * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
          * controls created in the template.
          *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound and
+         * @returns {plat.async.Promise<DocumentFragment>} A promise that resolves when the template is bound and
          * ready to return.
          */
-        bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
+        public bind(key: any, relativeIdentifier?: string | number, resources?: IObject<IResource>): async.Promise<DocumentFragment> {
             return this._bind(key, relativeIdentifier, resources);
         }
 
@@ -687,97 +410,6 @@ module plat.ui {
          * @memberof plat.ui.BindableTemplates
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {string} key The key used to store the template.
-         * @param {Element} template An Element representing the DOM template.
-         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-         *
-         * @returns {void}
-         */
-        add(key: string, template: Element, overwrite?: boolean): void;
-        /**
-         * @name add
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {string} key The key used to store the template.
-         * @param {Array<Node>} template A node Array representing the DOM template.
-         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-         *
-         * @returns {void}
-         */
-        add(key: string, template: Array<Node>, overwrite?: boolean): void;
-        /**
-         * @name add
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 2
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {string} key The key used to store the template.
-         * @param {NodeList} template A NodeList representing the DOM template.
-         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-         *
-         * @returns {void}
-         */
-        add(key: string, template: NodeList, overwrite?: boolean): void;
-        /**
-         * @name add
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 3
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {string} key The key used to store the template.
-         * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
-         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-         *
-         * @returns {void}
-         */
-        add(key: string, template: DocumentFragment, overwrite?: boolean): void;
-        /**
-         * @name add
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 4
-         *
-         * @description
-         * Adds a template to this object. The template will be stored with the key,
-         * and it will be transformed into a DocumentFragment.
-         *
-         * @param {string} key The key used to store the template.
-         * @param {Node} template A Node representing the DOM template.
-         * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-         *
-         * @returns {void}
-         */
-        add(key: string, template: Node, overwrite?: boolean): void;
-        /**
-         * @name add
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 5
          *
          * @description
          * Adds a template to this object. The template will be stored with the key,
@@ -789,14 +421,14 @@ module plat.ui {
          *
          * @returns {void}
          */
-        add(key: string, template: string, overwrite?: boolean): void;
-        add(key: string, template: any, overwrite?: boolean): void {
+        public add(key: string, template: Element | Node[] | NodeList | DocumentFragment | Node | string, overwrite?: boolean): void {
             if (isEmpty(key)) {
-                this._log.debug(this.control.type + ' must use a valid key to add a template to BindableTemplates.');
+                this._log.debug(`${this.control.type} must use a valid key to add a template to BindableTemplates.`);
+
                 return;
             }
 
-            let templatePromise = this.templates[key];
+            const templatePromise = this.templates[key];
 
             if (!isNull(templatePromise) && !overwrite) {
                 return;
@@ -805,17 +437,19 @@ module plat.ui {
             if (isNull(template)) {
                 return;
             } else if (isString(template)) {
-                this._compile(key, serializeHtml(template));
+                this._compile(key, serializeHtml(<string>template));
+
                 return;
             } else if (isDocumentFragment(template)) {
-                this._compile(key, template);
+                this._compile(key, <DocumentFragment>template);
+
                 return;
             }
 
-            let fragment = this._document.createDocumentFragment();
+            const fragment = this._document.createDocumentFragment();
 
             if (isNode(template)) {
-                fragment.appendChild(template);
+                fragment.appendChild(<Node>template);
             } else if (isArrayLike(template)) {
                 appendChildren(template, fragment);
             } else {
@@ -830,33 +464,6 @@ module plat.ui {
          * @memberof plat.ui.BindableTemplates
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Replaces the bound {@link plat.ui.TemplateControl|TemplateControl} in the child control Array
-         * specified by the index with another bound control generated by the template key, relative context
-         * identifier, and resources.
-         *
-         * @param {number} index The index of the bound {@link plat.ui.TemplateControl|TemplateControl}
-         * in the child control Array to replace.
-         * @param {string} key The key used to retrieve the template.
-         * @param {string} relativeIdentifier? The identifier string relative to this control's context
-         * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-         * most efficient way of specifying context, else the framework has to search for the
-         * object.
-         * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
-         * controls created in the template.
-         *
-         * @returns {plat.async.IThenable<Array<Node>>} A promise that resolves after the child control and its element have
-         * been replaced. It resolves with an Array containing the newly added nodes.
-         */
-        replace(index: number, key: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<Array<Node>>;
-        /**
-         * @name replace
-         * @memberof plat.ui.BindableTemplates
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * Replaces the bound {@link plat.ui.TemplateControl|TemplateControl} in the child control Array
@@ -871,26 +478,27 @@ module plat.ui {
          * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
          * controls created in the template.
          *
-         * @returns {plat.async.IThenable<Array<Node>>} A promise that resolves after the child control and its element have
+         * @returns {plat.async.Promise<Array<Node>>} A promise that resolves after the child control and its element have
          * been replaced. It resolves with an Array containing the newly added nodes.
          *
          * @returns {void}
          */
-        replace(index: number, key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<Array<Node>>;
-        replace(index: number, key: string, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<Array<Node>> {
-            let control = <TemplateControl>this.control.controls[index];
+        public replace(index: number, key: string,
+            relativeIdentifier?: number | string, resources?: IObject<IResource>): async.Promise<Node[]> {
+            const control = <TemplateControl>this.control.controls[index];
 
             if (!BindableTemplates.isBoundControl(control)) {
-                this._log.warn('The child control of ' + this.control.type + ' at the specified index: ' + index +
-                    ' is not a bound control and thus cannot be replaced by BindableTemplates.');
+                this._log.warn(`The child control of ${this.control.type} at the specified index: ${index} is not a bound control.`);
+
                 return this._Promise.resolve([]);
             }
 
-            let endNode = control.endNode;
+            const endNode = control.endNode;
             if (!(isNode(endNode) && isNode(endNode.parentNode))) {
-                this._log.warn('The child control of ' + this.control.type + ' at the specified index: ' + index +
-                    ' had either no placeholding comment nodes or its comment nodes had no parent and thus ' +
-                    'cannot be replaced by BindableTemplates.');
+                this._log.warn(
+                    `The child control of ${this.control.type} at the specified index: ${index} needs place-holding comment nodes.`
+                );
+
                 return this._Promise.resolve([]);
             }
 
@@ -908,12 +516,12 @@ module plat.ui {
          *
          * @returns {void}
          */
-        dispose(): void {
-            let dispose = this._TemplateControlFactory.dispose,
-                compiledControls = this.__compiledControls,
-                length = compiledControls.length;
+        public dispose(): void {
+            const dispose = this._TemplateControlFactory.dispose;
+            const compiledControls = this.__compiledControls;
+            const length = compiledControls.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 dispose(compiledControls[i]);
             }
 
@@ -944,28 +552,34 @@ module plat.ui {
          * @param {number} index? An optional index only to be used if the newly bound template is intended to
          * replace an existing {@link plat.Control|Control} in the child controls Array and its element in the DOM.
          *
-         * @returns {plat.async.IThenable<any>} A promise that resolves when the template is bound and
+         * @returns {plat.async.Promise<any>} A promise that resolves when the template is bound and
          * ready to return or after the template and its control have replaced the bound control specified by the index.
          */
-        protected _bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>, index?: number): async.IThenable<any> {
-            let templatePromise = this.templates[key],
-                noIndex = isNull(index);
+        protected _bind(key: any, relativeIdentifier?: any,
+            resources?: IObject<IResource>, index?: number): async.Promise<any> {
+            let templatePromise = this.templates[key];
+            const noIndex = isNull(index);
 
             if (isNull(templatePromise)) {
-                this._log.error(new Error(this.control.type + ' cannot bind template, no template stored with key: ' + key));
+                this._log.error(
+                    new Error(`${this.control.type} cannot bind template, no template stored with key: ${key}`)
+                );
+
                 return;
             }
 
             if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                this._log.warn(this.control.type + ' cannot bind template with relativeIdentifier: ' + relativeIdentifier +
-                    '. Identifier must be either a string or number');
+                this._log.warn(
+                `${this.control.type} trying to bind: ${relativeIdentifier}. Identifier must be either a string or number`
+                );
+
                 return;
             }
 
-            templatePromise = templatePromise.then((result: DocumentFragment): async.IThenable<any> => {
-                let template = <DocumentFragment>result.cloneNode(true),
-                    control = this._createBoundControl(key, template, relativeIdentifier, resources),
-                    nodeMap = this._createNodeMap(control, template, relativeIdentifier);
+            templatePromise = templatePromise.then((result: DocumentFragment): async.Promise<any> => {
+                const template = <DocumentFragment>result.cloneNode(true);
+                const control = this._createBoundControl(key, template, relativeIdentifier, resources);
+                const nodeMap = this._createNodeMap(control, template, relativeIdentifier);
 
                 if (noIndex) {
                     this.control.controls.push(control);
@@ -975,12 +589,12 @@ module plat.ui {
             });
 
             if (!noIndex) {
-                return templatePromise.then((fragment): async.IThenable<any> => {
-                    let childNodes = Array.prototype.slice.call(fragment.childNodes),
-                        oldControl = <TemplateControl>this.control.controls[index],
-                        endNode = oldControl.endNode,
-                        parentNode = endNode.parentNode,
-                        nextSibling = endNode.nextSibling;
+                return templatePromise.then((fragment): async.Promise<any> => {
+                    const childNodes = Array.prototype.slice.call(fragment.childNodes);
+                    const oldControl = <TemplateControl>this.control.controls[index];
+                    const endNode = oldControl.endNode;
+                    const parentNode = endNode.parentNode;
+                    const nextSibling = endNode.nextSibling;
 
                     this._TemplateControlFactory.dispose(oldControl);
                     parentNode.insertBefore(fragment, nextSibling);
@@ -1024,12 +638,12 @@ module plat.ui {
          * @param {string} key The template key.
          * @param {plat.processing.INodeMap} nodeMap The node map to bind.
          *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound.
+         * @returns {plat.async.Promise<DocumentFragment>} A promise that resolves when the template is bound.
          */
-        protected _bindTemplate(key: string, nodeMap: processing.INodeMap): async.IThenable<DocumentFragment> {
-            let control = nodeMap.uiControlNode.control,
-                disposed = false,
-                dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
+        protected _bindTemplate(key: string, nodeMap: processing.INodeMap): async.Promise<DocumentFragment> {
+            const control = nodeMap.uiControlNode.control;
+            let disposed = false;
+            const dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
 
             control.dispose = (): void => {
                 disposed = true;
@@ -1038,22 +652,22 @@ module plat.ui {
             };
 
             return this._bindNodeMap(key, nodeMap).then((): DocumentFragment => {
-                let _document = this._document,
-                    template: DocumentFragment = <any>nodeMap.element;
+                const _document = this._document;
+                const template: DocumentFragment = <any>nodeMap.element;
 
                 if (disposed) {
                     return _document.createDocumentFragment();
                 }
 
-                control.startNode = <Comment>template.insertBefore(_document.createComment(control.type + __START_NODE),
+                control.startNode = template.insertBefore(_document.createComment(control.type + __START_NODE),
                     template.firstChild);
-                control.endNode = <Comment>template.insertBefore(_document.createComment(control.type + __END_NODE),
+                control.endNode = template.insertBefore(_document.createComment(control.type + __END_NODE),
                     null);
 
                 return template;
             }, (error: any): DocumentFragment => {
                 postpone((): void => {
-                    if(isString(error)) {
+                    if (isString(error)) {
                         error = new Error(error);
                     }
                     this._log.error(error);
@@ -1077,16 +691,17 @@ module plat.ui {
          * @param {string} key The template key used to grab the {@link plat.processing.ElementManager|ElementManager}.
          * @param {plat.processing.INodeMap} nodeMap The node map to bind.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the control's
+         * @returns {plat.async.Promise<void>} A promise that resolves when the control's
          * {@link plat.processing.ElementManager|ElementManager} is bound and loaded.
          */
-        protected _bindNodeMap(key: string, nodeMap: processing.INodeMap): async.IThenable<void> {
-            let manager = this.cache[key],
-                child = nodeMap.uiControlNode.control,
-                template = nodeMap.element,
-                _managerCache = this._managerCache;
+        protected _bindNodeMap(key: string, nodeMap: processing.INodeMap): async.Promise<void> {
+            const manager = this.cache[key];
+            const child = nodeMap.uiControlNode.control;
+            const template = nodeMap.element;
+            const _managerCache = this._managerCache;
 
             manager.clone(template, _managerCache.read(this.control.uid), nodeMap);
+
             return _managerCache.read(child.uid).bindAndLoad();
         }
 
@@ -1106,8 +721,8 @@ module plat.ui {
          * @returns {void}
          */
         protected _compile(key: string, template: DocumentFragment): void {
-            let control = this._createBoundControl(key + __COMPILED, template),
-                nodeMap = this._createNodeMap(control, template);
+            const control = this._createBoundControl(key + __COMPILED, template);
+            const nodeMap = this._createNodeMap(control, template);
 
             this.__compiledControls.push(control);
 
@@ -1131,8 +746,8 @@ module plat.ui {
          * @returns {void}
          */
         protected _compileNodeMap(control: TemplateControl, nodeMap: processing.INodeMap, key: string): void {
-            let manager = this._ElementManagerFactory.getInstance(),
-                promises: Array<async.IThenable<void>> = [];
+            const manager = this._ElementManagerFactory.getInstance();
+            const promises: async.Promise<void>[] = [];
 
             manager.isClone = true;
             manager.initialize(nodeMap, null);
@@ -1143,11 +758,11 @@ module plat.ui {
             promises.push(manager.fulfillTemplate());
 
             this.templates[key] = this._Promise.all(promises).then((): DocumentFragment => {
-                let element = nodeMap.element,
-                    clone = <DocumentFragment>element.cloneNode(true),
-                    _document = this._document,
-                    startNode = control.startNode = _document.createComment(control.type + __START_NODE),
-                    endNode = control.endNode = _document.createComment(control.type + __END_NODE);
+                const element = nodeMap.element;
+                const clone = <DocumentFragment>element.cloneNode(true);
+                const _document = this._document;
+                const startNode = control.startNode = _document.createComment(control.type + __START_NODE);
+                const endNode = control.endNode = _document.createComment(control.type + __END_NODE);
 
                 element.insertBefore(startNode, element.firstChild);
                 element.insertBefore(endNode, null);
@@ -1172,7 +787,7 @@ module plat.ui {
          *
          * @returns {plat.processing.INodeMap} The newly created {@link plat.processing.INodeMap|INodeMap}.
          */
-        protected _createNodeMap(uiControl: TemplateControl, template: Node, childContext?: string): processing.INodeMap {
+        protected _createNodeMap(uiControl: TemplateControl, template: Node, childContext?: string | number): processing.INodeMap {
             return {
                 element: <HTMLElement>template,
                 attributes: {},
@@ -1182,8 +797,8 @@ module plat.ui {
                     control: uiControl,
                     nodeName: uiControl.type,
                     expressions: [],
-                    injector: null
-                }
+                    injector: null,
+                },
             };
         }
 
@@ -1204,17 +819,18 @@ module plat.ui {
          *
          * @returns {plat.ui.TemplateControl} The newly created {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string, resources?: IObject<IResource>): TemplateControl {
-            let _TemplateControlFactory = this._TemplateControlFactory,
-                control = _TemplateControlFactory.getInstance(),
-                _ResourcesFactory = this._ResourcesFactory,
-                parent = this.control,
-                compiledManager = this.cache[key],
-                isCompiled = isObject(compiledManager),
-                _resources = _ResourcesFactory.getInstance();
+        protected _createBoundControl(key: string, template: DocumentFragment,
+            childContext?: string | number, resources?: IObject<IResource>): TemplateControl {
+            const _TemplateControlFactory = this._TemplateControlFactory;
+            const control = _TemplateControlFactory.getInstance();
+            const _ResourcesFactory = this._ResourcesFactory;
+            const parent = this.control;
+            const compiledManager = this.cache[key];
+            const isCompiled = isObject(compiledManager);
+            const _resources = _ResourcesFactory.getInstance();
 
             if (isCompiled) {
-                let compiledControl = compiledManager.getUiControl();
+                const compiledControl = compiledManager.getUiControl();
 
                 _resources.initialize(control, compiledControl.resources);
                 _resources.add(resources);
@@ -1234,11 +850,15 @@ module plat.ui {
             control.root = this._ControlFactory.getRootControl(control);
 
             if (isCompiled) {
-                let contextManager = this._ContextManager.getManager(control.root);
-                control.absoluteContextPath = parent.absoluteContextPath || __CONTEXT;
+                const contextManager = this._ContextManager.getManager(control.root);
+                control.absoluteContextPath = parent.absoluteContextPath;
+
+                if (!isString(control.absoluteContextPath)) {
+                    control.absoluteContextPath = __CONTEXT;
+                }
 
                 if (!isNull(childContext)) {
-                    control.absoluteContextPath += '.' + childContext;
+                    control.absoluteContextPath += `.${childContext}`;
                 }
 
                 control.context = contextManager.getContext(control.absoluteContextPath.split('.'), false);

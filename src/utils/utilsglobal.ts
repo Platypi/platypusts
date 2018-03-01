@@ -1,31 +1,30 @@
-﻿/* tslint:disable:no-unused-variable */
-var ___Promise: plat.async.IPromise,
-    ___compat: plat.Compat,
-    __camelCaseRegex: RegExp,
-    __capitalCaseRegex: RegExp,
-    __nativeIsArray = !!Array.isArray;
+let ___Promise: plat.async.IPromise;
+let ___compat: plat.Compat;
+let __camelCaseRegex: RegExp;
+let __capitalCaseRegex: RegExp;
+let __nativeIsArray = typeof Array.isArray === 'function';
 
-const __uids: plat.IObject<Array<string>> = {},
-    __objToString = Object.prototype.toString,
-    __toStringClass = '[object ',
-    __errorClass = __toStringClass + 'Error]',
-    __fileClass = __toStringClass + 'File]',
-    __arrayClass = __toStringClass + 'Array]',
-    __boolClass = __toStringClass + 'Boolean]',
-    __dateClass = __toStringClass + 'Date]',
-    __funcClass = __toStringClass + 'Function]',
-    __numberClass = __toStringClass + 'Number]',
-    __objectClass = __toStringClass + 'Object]',
-    __regexpClass = __toStringClass + 'RegExp]',
-    __stringClass = __toStringClass + 'String]',
-    __promiseClass = __toStringClass + 'Promise]',
-    __objectTypes: any = {
-        'boolean': false,
-        'function': true,
-        'object': true,
-        'number': false,
-        'string': false,
-        'undefined': false
+const __uids: plat.IObject<string[]> = {};
+const __objToString = Object.prototype.toString;
+const __toStringClass = '[object ';
+const __errorClass = `${__toStringClass}Error]`;
+const __fileClass = `${__toStringClass}File]`;
+const __arrayClass = `${__toStringClass}Array]`;
+const __boolClass = `${__toStringClass}Boolean]`;
+const __dateClass = `${__toStringClass}Date]`;
+const __funcClass = `${__toStringClass}Function]`;
+const __numberClass = `${__toStringClass}Number]`;
+const __objectClass = `${__toStringClass}Object]`;
+const __regexpClass = `${__toStringClass}RegExp]`;
+const __stringClass = `${__toStringClass}String]`;
+const __promiseClass = `${__toStringClass}Promise]`;
+const __objectTypes: any = {
+        boolean: false,
+        function: true,
+        object: true,
+        number: false,
+        string: false,
+        undefined: false,
     };
 
 function noop(): void { }
@@ -35,7 +34,7 @@ function _defineProperty(obj: any, key: string, value: any, enumerable?: boolean
         value: value,
         enumerable: enumerable === true,
         configurable: configurable === true,
-        writable: writable === true
+        writable: writable === true,
     });
 }
 
@@ -43,7 +42,7 @@ function _defineGetter(obj: any, key: string, value: any, enumerable?: boolean, 
     Object.defineProperty(obj, key, {
         get: (): any => value,
         enumerable: enumerable === true,
-        configurable: configurable === true
+        configurable: configurable === true,
     });
 }
 
@@ -52,9 +51,9 @@ function _extend(deep: boolean, redefine: any, destination: any, ...sources: any
         return destination;
     }
 
-    let keys: Array<string>,
-        property: any,
-        define: (obj: any, key: string, value: any) => void;
+    let keys: string[];
+    let property: any;
+    let define: (obj: any, key: string, value: any) => void;
 
     if (isFunction(redefine)) {
         define = redefine;
@@ -83,22 +82,34 @@ function _extend(deep: boolean, redefine: any, destination: any, ...sources: any
             property = source[key];
             if (deep) {
                 if (isArray(property)) {
-                    _extend(deep, define, destination[key] || (destination[key] = []), property);
+                    if (!isArray(destination[key])) {
+                        destination[key] = [];
+                    }
+                    _extend(deep, define, destination[key], property);
+
                     return;
                 } else if (isDate(property)) {
                     define(destination, key, new Date(property.getTime()));
+
                     return;
                 } else if (isRegExp(property)) {
                     define(destination, key, new RegExp(property));
+
                     return;
                 } else if (isNode(property)) {
                     define(destination, key, (<Node>property).cloneNode(true));
+
                     return;
                 } else if (isFile(property)) {
                     define(destination, key, property);
+
                     return;
                 } else if (isObject(property)) {
-                    _extend(deep, define, destination[key] || (destination[key] = {}), property);
+                    if (!isObject(destination[key])) {
+                        destination[key] = {};
+                    }
+                    _extend(deep, define, destination[key], property);
+
                     return;
                 }
             }
@@ -124,17 +135,17 @@ function _clone(obj: any, deep?: boolean): any {
         return new obj.constructor((<Error>obj).message);
     }
 
-    let type = {};
+    let destination = {};
 
     if (isArray(obj)) {
-        type = [];
+        destination = [];
     }
 
     if (isBoolean(deep) && deep) {
-        return _extend(true, false, type, obj);
+        return _extend(true, false, destination, obj);
     }
 
-    return _extend(false, false, type, obj);
+    return _extend(false, false, destination, obj);
 }
 
 function isError(obj: any): boolean {
@@ -233,8 +244,8 @@ function isDate(obj: any): boolean {
     return typeof obj === 'object' && __objToString.call(obj) === __dateClass;
 }
 
-function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): Array<T> {
-    let arr: Array<T> = [];
+function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, context?: any): T[] {
+    const arr: T[] = [];
     if (isNull(obj)) {
         return arr;
     }
@@ -243,8 +254,8 @@ function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any
         return obj.filter(iterator, context);
     }
 
-    forEach<T>((value: T, key: any, obj: any): void => {
-        if (iterator(value, key, obj)) {
+    forEach<T>((value: T, key: any, o: any): void => {
+        if (iterator(value, key, o)) {
             arr.push(value);
         }
     }, obj);
@@ -252,33 +263,34 @@ function filter<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any
     return arr;
 }
 
-function where(properties: any, obj: any): Array<any> {
+function where(properties: any, obj: any): any[] {
     return filter((value): boolean => {
         return !some((property, key): boolean => {
-            return (<any>value)[key] !== property;
+            return (value)[key] !== property;
         }, properties);
     }, obj);
 }
 
-function forEach<T>(iterator: (value: T, index: number, obj: any) => void, array: Array<T>, context?: any): Array<T>;
+function forEach<T>(iterator: (value: T, index: number, obj: any) => void, array: T[], context?: any): T[];
 function forEach<T>(iterator: (value: T, key: string, obj: any) => void, obj: any, context?: any): any;
 function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, context?: any): any {
     if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
         return obj;
     }
 
-    let i: number,
-        key: string,
-        length: number;
+    let i: number;
+    let key: string;
+    let length: number;
 
     if (isFunction(obj.forEach)) {
         return obj.forEach(iterator, context);
     } else if (isArrayLike(obj)) {
-        for (i = 0, length = obj.length; i < length; ++i) {
+        length = obj.length;
+        for (i = 0; i < length; i += 1) {
             iterator.call(context, obj[i], i, obj);
         }
     } else {
-        let keys = Object.keys(obj);
+        const keys = Object.keys(obj);
         length = keys.length;
         while (keys.length > 0) {
             key = keys.shift();
@@ -289,8 +301,8 @@ function forEach<T>(iterator: (value: T, key: any, obj: any) => void, obj: any, 
     return obj;
 }
 
-function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, context?: any): Array<R> {
-    let arr: Array<R> = [];
+function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, context?: any): R[] {
+    const arr: R[] = [];
 
     if (isNull(obj)) {
         return arr;
@@ -307,17 +319,24 @@ function map<T, R>(iterator: (value: T, key: any, obj: any) => R, obj: any, cont
     return arr;
 }
 
-function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.IThenable<R>, obj: any,
-    context?: any): plat.async.IThenable<Array<R>> {
-    ___Promise = ___Promise || plat.acquire(__Promise);
+function mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => plat.async.Promise<R>, obj: any,
+    context?: any): plat.async.Promise<R[]> {
+    if (!isObject(___Promise)) {
+        ___Promise = plat.acquire(__Promise);
+    }
 
-    return ___Promise.all(map(iterator, obj, context));
+    const promises = map(iterator, obj, context);
+
+    return ___Promise.all(promises);
 }
 
-function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
-    array: Array<T>, context: any, descending?: boolean): plat.async.IThenable<Array<R>> {
-    ___Promise = ___Promise || plat.acquire(__Promise);
-    let initialValue = ___Promise.resolve<Array<R>>([]);
+function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: T[]) => plat.async.Promise<R>,
+    array: T[], context: any, descending?: boolean): plat.async.Promise<R[]> {
+    if (!isObject(___Promise)) {
+        ___Promise = plat.acquire(__Promise);
+    }
+
+    const initialValue = ___Promise.resolve<R[]>([]);
 
     if (!isArray(array)) {
         return initialValue;
@@ -325,10 +344,10 @@ function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array
 
     iterator = iterator.bind(context);
 
-    let inOrder = (previousValue: plat.async.IThenable<Array<R>>, nextValue: T, nextIndex: number,
-        array: Array<T>): plat.async.IThenable<Array<R>> => {
-        return previousValue.then((items): plat.async.IThenable<Array<R>> => {
-            return iterator(nextValue, nextIndex, array).then((moreItems): Array<R> => {
+    const inOrder = (previousValue: plat.async.Promise<R[]>, nextValue: T, nextIndex: number,
+        arr: T[]): plat.async.Promise<R[]> => {
+        return previousValue.then((items): plat.async.Promise<R[]> => {
+            return iterator(nextValue, nextIndex, arr).then((moreItems): R[] => {
                 return items.concat(moreItems);
             });
         });
@@ -341,17 +360,17 @@ function mapAsyncWithOrder<T, R>(iterator: (value: T, index: number, list: Array
     return array.reduce(inOrder, initialValue);
 }
 
-function mapAsyncInOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
-    array: Array<T>, context?: any): plat.async.IThenable<Array<R>> {
+function mapAsyncInOrder<T, R>(iterator: (value: T, index: number, list: T[]) => plat.async.Promise<R>,
+    array: T[], context?: any): plat.async.Promise<R[]> {
     return mapAsyncWithOrder(iterator, array, context);
 }
 
-function mapAsyncInDescendingOrder<T, R>(iterator: (value: T, index: number, list: Array<T>) => plat.async.IThenable<R>,
-    array: Array<T>, context?: any): plat.async.IThenable<Array<R>> {
+function mapAsyncInDescendingOrder<T, R>(iterator: (value: T, index: number, list: T[]) => plat.async.Promise<R>,
+    array: T[], context?: any): plat.async.Promise<R[]> {
     return mapAsyncWithOrder(iterator, array, context, true);
 }
 
-function pluck<T, U>(key: string, obj: any): Array<U> {
+function pluck<T, U>(key: string, obj: any): U[] {
     return map<T, U>((value): any => (<any>value)[key], obj);
 }
 
@@ -360,22 +379,23 @@ function some<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, 
         return false;
     }
 
-    let i: number,
-        key: string,
-        length: number,
-        ret: boolean;
+    let i: number;
+    let key: string;
+    let length: number;
+    let ret: boolean;
 
     if (isFunction(obj.some)) {
         return obj.some(iterator, context);
     } else if (isArrayLike(obj)) {
-        for (i = 0, length = obj.length; i < length; ++i) {
+        length = obj.length;
+        for (i = 0; i < length; i += 1) {
             ret = iterator.call(context, obj[i], i, obj);
             if (ret === true) {
                 return true;
             }
         }
     } else {
-        let keys = Object.keys(obj);
+        const keys = Object.keys(obj);
         length = keys.length;
         while (keys.length > 0) {
             key = keys.shift();
@@ -389,44 +409,52 @@ function some<T>(iterator: (value: T, key: any, obj: any) => boolean, obj: any, 
     return false;
 }
 
-function postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): plat.IRemoveListener {
+function postpone(method: (...args: any[]) => void, args?: any[], context?: any): plat.IRemoveListener {
     return defer(method, 0, args, context);
 }
 
-function defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): plat.IRemoveListener {
+function defer(method: (...args: any[]) => void, timeout: number, args?: any[], context?: any): plat.IRemoveListener {
     function execDefer(): void {
         method.apply(context, args);
     }
 
-    let timeoutId = setTimeout(execDefer, timeout);
+    const timeoutId = setTimeout(execDefer, timeout);
+
     return (): void => {
         clearTimeout(timeoutId);
     };
 }
 
-function setIntervalGlobal(method: (...args: any[]) => void, interval: number, args?: Array<any>, context?: any): plat.IRemoveListener {
+function setIntervalGlobal(method: (...args: any[]) => void, interval: number, args?: any[], context?: any): plat.IRemoveListener {
     function execInterval(): void {
         method.apply(context, args);
     }
 
-    let intervalId = setInterval(execInterval, interval);
+    const intervalId = setInterval(execInterval, interval);
+
     return (): void => {
         clearInterval(intervalId);
     };
 }
 
 function requestAnimationFrameGlobal(method: FrameRequestCallback, context?: any): plat.IRemoveListener {
-    ___compat = ___compat || (plat.acquire(__Compat));
+    if (!isObject(___compat)) {
+        ___compat = plat.acquire(__Compat);
+    }
 
-    let requestAnimFrame = ___compat.requestAnimationFrame;
+    const requestAnimFrame = ___compat.requestAnimationFrame;
     if (isUndefined(requestAnimFrame)) {
         return postpone((): void => {
             method.call(context, Date.now());
         });
     }
 
-    let animationId = requestAnimFrame(method.bind(context)),
-        cancelAnimFrame = ___compat.cancelAnimationFrame || noop;
+    const animationId = requestAnimFrame(method.bind(context));
+    let cancelAnimFrame = ___compat.cancelAnimationFrame;
+
+    if (!isFunction(cancelAnimFrame)) {
+        cancelAnimFrame = noop;
+    }
 
     return (): void => {
         cancelAnimFrame(animationId);
@@ -444,20 +472,23 @@ function uniqueId(prefix?: string): string {
         puid = __uids[prefix] = ['0', '/'];
     }
 
-    let index = puid.length,
-        charCode: number;
+    let index = puid.length;
+    let charCode: number;
 
-    while (index--) {
+    while (index > 0) {
+        index -= 1;
         charCode = puid[index].charCodeAt(0);
         // '9'
         if (charCode === 57) {
             puid[index] = 'A';
+
             return join();
         }
 
         // 'Z'
         if (charCode === 90) {
             puid[index] = 'a';
+
             return join();
         }
 
@@ -466,6 +497,7 @@ function uniqueId(prefix?: string): string {
             puid[index] = '0';
         } else {
             puid[index] = String.fromCharCode(charCode + 1);
+
             return join();
         }
     }
@@ -485,11 +517,14 @@ function camelCase(str: string): string {
     }
 
     str = str.charAt(0).toLowerCase() + str.slice(1);
-    __camelCaseRegex = __camelCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
+
+    if (!isRegExp(__camelCaseRegex)) {
+        __camelCaseRegex = (<plat.expressions.Regex>plat.acquire(__Regex)).camelCaseRegex;
+    }
 
     return str.replace(__camelCaseRegex,
         (match: string, delimiter?: string, char?: string, index?: number): string => {
-            return index ? char.toUpperCase() : char;
+            return (isNumber(index) && index > 0) ? char.toUpperCase() : char;
         });
 }
 
@@ -500,29 +535,28 @@ function delimit(str: string, delimiter: string): string {
         delimiter = '';
     }
 
-    __capitalCaseRegex = __capitalCaseRegex || (<plat.expressions.Regex>plat.acquire(__Regex)).capitalCaseRegex;
-    return str.replace(__capitalCaseRegex, (match: string, index?: number): string =>
-        index ? delimiter + match.toLowerCase() : match.toLowerCase());
+    if (!isRegExp(__capitalCaseRegex)) {
+        __capitalCaseRegex = (<plat.expressions.Regex>plat.acquire(__Regex)).capitalCaseRegex;
+    }
+
+    return str.replace(__capitalCaseRegex, (match: string, index?: number): string => {
+        return (isNumber(index) && index > 0) ? delimiter + match.toLowerCase() : match.toLowerCase();
+    });
 }
 
-function deleteProperty(obj: any, property: number): any;
-function deleteProperty(obj: any, property: string): any;
-function deleteProperty(obj: any, property: any): any {
+function deleteProperty(obj: any, property: number | string): any {
     if (!isNull(obj)) {
-        /* tslint:disable:no-unused-expression */
         delete obj[property];
-        /* tslint:enable:no-unused-expression */
     }
 
     return obj;
 }
 
-function access(obj: any, property: number): any;
-function access(obj: any, property: string): any;
-function access(obj: any, property: any): any {
+function access(obj: any, property: number | string): any {
     if (isNull(obj)) {
         return obj;
     }
+
     return obj[property];
 }
 
@@ -533,12 +567,12 @@ function deserializeQuery(search: string): plat.IObject<string> {
 
     search = search.replace(/^\?+/, '');
 
-    let split = search.split('&'),
-        query: plat.IObject<string> = {},
-        length = split.length,
-        item: Array<string>;
+    const split = search.split('&');
+    const query: plat.IObject<string> = {};
+    const length = split.length;
+    let item: string[];
 
-    for (let i = 0; i < length; ++i) {
+    for (let i = 0; i < length; i += 1) {
         item = split[i].split('=');
 
         query[item[0]] = item[1];
@@ -551,17 +585,17 @@ function serializeQuery(query: plat.IObject<string>): string {
     let q = '';
 
     q += map((value, key): string => {
-        return key + '=' + value;
+        return `${key}=${value}`;
     }, query).join('&');
 
     if (!isEmpty(q)) {
-        q = '?' + q;
+        q = `?${q}`;
     }
 
     return q;
 }
 
-function booleanReduce(values: Array<boolean>): boolean {
+function booleanReduce(values: boolean[]): boolean {
     if (!isArray(values)) {
         return isBoolean(values) ? <any>values : true;
     }
@@ -570,5 +604,3 @@ function booleanReduce(values: Array<boolean>): boolean {
         return prev && current !== false;
     }, true);
 }
-
-/* tslint:enable:no-unused-variable */

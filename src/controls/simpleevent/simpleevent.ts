@@ -15,7 +15,7 @@ module plat.controls {
     export class SimpleEventControl extends AttributeControl implements ISendEvents {
         protected static _inject: any = {
             _parser: __Parser,
-            _regex: __Regex
+            _regex: __Regex,
         };
 
         /**
@@ -55,7 +55,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string;
+        public event: string;
 
         /**
          * @name attribute
@@ -68,7 +68,7 @@ module plat.controls {
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
-        attribute: string;
+        public attribute: string;
 
         /**
          * @name _listener
@@ -94,7 +94,7 @@ module plat.controls {
          * @description
          * An array of the aliases used in the expression.
          */
-        protected _aliases: Array<string> = [];
+        protected _aliases: string[] = [];
 
         /**
          * @name _args
@@ -120,7 +120,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
+        public loaded(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -141,7 +141,7 @@ module plat.controls {
          * @returns {void}
          */
         protected _setListener(): void {
-            let fn = this.attributes[this.attribute];
+            const fn = this.attributes[this.attribute];
 
             if (isEmpty(this.event) || isEmpty(fn)) {
                 return;
@@ -179,14 +179,14 @@ module plat.controls {
          * @returns {{ fn: () => void; control: any; args: Array<expressions.IParsedExpression>; }}
          * The function to call and the associated arguments, as well as the control context with which to call the function.
          */
-        protected _buildExpression(): { fn: () => void; context: any; args: Array<expressions.IParsedExpression>; } {
-            let parent = this.parent,
-                templateControl = this.templateControl,
-                listenerStr = this._listener,
-                context: any,
-                fn: () => void = noop,
-                aliases: IObject<any>,
-                argContext: any;
+        protected _buildExpression(): { context: any; args: expressions.IParsedExpression[]; fn(): void } {
+            const parent = this.parent;
+            const templateControl = this.templateControl;
+            const listenerStr = this._listener;
+            let context: any;
+            let fn: () => void = noop;
+            let aliases: IObject<any>;
+            let argContext: any;
 
             if (!isNull(templateControl)) {
                 aliases = templateControl.getResources(this._aliases);
@@ -200,8 +200,8 @@ module plat.controls {
 
             if (listenerStr[0] === '@') {
                 if (!isNull(aliases)) {
-                    let functionSplit = listenerStr.split('.'),
-                        fnObj = aliases[functionSplit[0].slice(1)];
+                    const functionSplit = listenerStr.split('.');
+                    let fnObj = aliases[functionSplit[0].slice(1)];
 
                     if (isObject(fnObj)) {
                         // shift off alias
@@ -224,39 +224,40 @@ module plat.controls {
                                 fn = fnObj[segment];
                             }
                         } else {
-                            this._log.warn('Invalid path for function "' + listenerStr + '"');
+                            this._log.warn(`Invalid path for function "${listenerStr}"`);
                         }
                     } else if (isFunction(fnObj)) {
                         fn = fnObj;
                     }
                 }
             } else {
-                let listener = this.findProperty(listenerStr, this.templateControl);
+                const listener = this.findProperty(listenerStr, this.templateControl);
                 if (isNull(listener)) {
-                    this._log.warn('Could not find property ' + listenerStr + ' on any associated control.');
+                    this._log.warn(`Could not find property ${listenerStr} on any associated control.`);
+
                     return {
                         fn: noop,
                         context: <ui.TemplateControl>{},
-                        args: []
+                        args: [],
                     };
                 }
 
-                let parsedExpression = listener.expresssion,
-                    identifiers = parsedExpression.identifiers;
+                const parsedExpression = listener.expression;
+                const identifiers = parsedExpression.identifiers;
 
                 if (identifiers.length > 1) {
-                    this._log.warn('Cannot have more than one identifier in a ' + this.type +
-                        '\'s expression.');
+                    this._log.warn(`Cannot have more than one identifier in a ${this.type}'s expression.`);
+
                     return {
                         fn: noop,
                         context: <ui.TemplateControl>{},
-                        args: []
+                        args: [],
                     };
                 }
 
-                let identifier = identifiers[0],
-                    split = identifier.split('.'),
-                    control: any = listener.control;
+                const identifier = identifiers[0];
+                const split = identifier.split('.');
+                let control: any = listener.control;
 
                 // pop key
                 split.pop();
@@ -279,7 +280,7 @@ module plat.controls {
             return {
                 fn: fn,
                 context: context,
-                args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases)
+                args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases),
             };
         }
 
@@ -297,12 +298,12 @@ module plat.controls {
          * @returns {void}
          */
         protected _onEvent(ev: Event): void {
-            let expression = this._buildExpression(),
-                fn = expression.fn;
+            const expression = this._buildExpression();
+            const fn = expression.fn;
 
             if (!isFunction(fn)) {
-                this._log.warn('Cannot find registered event method ' +
-                    this._listener + ' for control: ' + this.type);
+                this._log.warn(`Cannot find registered event method ${this._listener} for control: ${this.type}`);
+
                 return;
             }
 
@@ -328,9 +329,9 @@ module plat.controls {
                 return;
             }
 
-            let exec = this._regex.argumentRegex.exec(expression),
-                listenerStr: string,
-                aliases: Array<string> = [];
+            const exec = this._regex.argumentRegex.exec(expression);
+            let listenerStr: string;
+            let aliases: string[] = [];
 
             if (isNull(exec)) {
                 listenerStr = expression;
@@ -338,14 +339,14 @@ module plat.controls {
                 listenerStr = expression.slice(0, exec.index);
                 if (exec[1] !== '') {
                     // parse args as an array
-                    let argExp = this._parser.parse('[' + exec[1] + ']');
+                    const argExp = this._parser.parse(`[${exec[1]}]`);
                     aliases = argExp.aliases;
                     this._args = argExp;
                 }
             }
 
             if (listenerStr[0] === '@') {
-                let alias = listenerStr.slice(1).split('.')[0];
+                const alias = listenerStr.slice(1).split('.')[0];
                 if (aliases.indexOf(alias) === -1) {
                     aliases.push(alias);
                 }
@@ -414,7 +415,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __tap;
+        public event: string = __tap;
     }
 
     /**
@@ -439,7 +440,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'blur';
+        public event: string = 'blur';
     }
 
     /**
@@ -464,7 +465,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'change';
+        public event: string = 'change';
     }
 
     /**
@@ -489,7 +490,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'copy';
+        public event: string = 'copy';
     }
 
     /**
@@ -514,7 +515,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'cut';
+        public event: string = 'cut';
     }
 
     /**
@@ -539,7 +540,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'paste';
+        public event: string = 'paste';
     }
 
     /**
@@ -564,7 +565,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __dbltap;
+        public event: string = __dbltap;
     }
 
     /**
@@ -589,7 +590,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'focus';
+        public event: string = 'focus';
     }
 
     /**
@@ -614,7 +615,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __touchstart;
+        public event: string = __touchstart;
     }
 
     /**
@@ -639,7 +640,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __touchend;
+        public event: string = __touchend;
     }
 
     /**
@@ -664,7 +665,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __touchmove;
+        public event: string = __touchmove;
     }
 
     /**
@@ -689,7 +690,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __touchcancel;
+        public event: string = __touchcancel;
     }
 
     /**
@@ -714,7 +715,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __hold;
+        public event: string = __hold;
     }
 
     /**
@@ -739,7 +740,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __release;
+        public event: string = __release;
     }
 
     /**
@@ -764,7 +765,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __swipe;
+        public event: string = __swipe;
     }
 
     /**
@@ -789,7 +790,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __swipeleft;
+        public event: string = __swipeleft;
     }
 
     /**
@@ -814,7 +815,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __swiperight;
+        public event: string = __swiperight;
     }
 
     /**
@@ -839,7 +840,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __swipeup;
+        public event: string = __swipeup;
     }
 
     /**
@@ -864,7 +865,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __swipedown;
+        public event: string = __swipedown;
     }
 
     /**
@@ -889,7 +890,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __track;
+        public event: string = __track;
     }
 
     /**
@@ -914,7 +915,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __trackleft;
+        public event: string = __trackleft;
     }
 
     /**
@@ -939,7 +940,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __trackright;
+        public event: string = __trackright;
     }
 
     /**
@@ -964,7 +965,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __trackup;
+        public event: string = __trackup;
     }
 
     /**
@@ -989,7 +990,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __trackdown;
+        public event: string = __trackdown;
     }
 
     /**
@@ -1014,7 +1015,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = __trackend;
+        public event: string = __trackend;
     }
 
     /**
@@ -1039,7 +1040,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'submit';
+        public event: string = 'submit';
 
         /**
          * @name _onEvent
@@ -1076,7 +1077,7 @@ module plat.controls {
      */
     export class React extends SimpleEventControl {
         protected static _inject: any = {
-            _compat: __Compat
+            _compat: __Compat,
         };
 
         /**
@@ -1104,7 +1105,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'input';
+        public event: string = 'input';
 
         /**
          * @name _addEventListeners
@@ -1118,29 +1119,31 @@ module plat.controls {
          * @returns {void}
          */
         protected _addEventListeners(): void {
-            let element = this.element,
-                _compat = this._compat,
-                composing = false,
-                inputFired = false,
-                input = 'input',
-                timeout: IRemoveListener,
-                eventListener = (ev: Event): void => {
-                    if (composing) {
-                        return;
-                    }
+            const element = this.element;
+            const _compat = this._compat;
+            const input = 'input';
+            let composing = false;
+            let inputFired = false;
+            let timeout: IRemoveListener;
 
-                    this._onEvent(ev);
-                },
-                postponedEventListener = (ev: Event): void => {
-                    if (isFunction(timeout)) {
-                        return;
-                    }
+            const eventListener = (ev: Event): void => {
+                if (composing) {
+                    return;
+                }
 
-                    timeout = postpone((): void => {
-                        eventListener(ev);
-                        timeout = null;
-                    });
-                };
+                this._onEvent(ev);
+            };
+
+            const postponedEventListener = (ev: Event): void => {
+                if (isFunction(timeout)) {
+                    return;
+                }
+
+                timeout = postpone((): void => {
+                    eventListener(ev);
+                    timeout = null;
+                });
+            };
 
             if (isUndefined(_compat.ANDROID)) {
                 this.addEventListener(element, 'compositionstart', (): void => { composing = true; }, false);
@@ -1157,6 +1160,7 @@ module plat.controls {
             this.addEventListener(element, 'change', (ev: Event): void => {
                 if (inputFired) {
                     inputFired = false;
+
                     return;
                 }
                 eventListener(ev);
@@ -1167,8 +1171,8 @@ module plat.controls {
             }
 
             this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
-                let key = ev.keyCode,
-                    codes = KeyCodes;
+                const key = ev.keyCode;
+                const codes = KeyCodes;
 
                 if (key === codes.lwk ||
                     key === codes.rwk ||

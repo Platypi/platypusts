@@ -24,21 +24,22 @@ module plat.storage {
      * The keyed collection of all created {@link plat.storage.Cache|Caches} in the
      * {@link plat.storage.ICacheFactory|ICacheFactory}.
      */
-    let caches: IObject<Cache<any>> = {},
-        /**
-         * @name internalCaches
-         * @memberof plat.storage
-         * @kind property
-         * @access private
-         * @static
-         * @exported false
-         *
-         * @type {any}
-         *
-         * @description
-         * Internal storage for all the items stored in each {@link plat.storage.Cache|Cache}.
-         */
-        internalCaches: any = {};
+    let caches: IObject<Cache<any>> = {};
+
+    /**
+     * @name internalCaches
+     * @memberof plat.storage
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     *
+     * @type {any}
+     *
+     * @description
+     * Internal storage for all the items stored in each {@link plat.storage.Cache|Cache}.
+     */
+    const internalCaches: any = {};
 
     /**
      * @name Cache
@@ -111,7 +112,7 @@ module plat.storage {
          *
          * @returns {plat.storage.Cache<T>} The new cache.
          */
-        static create<T>(uid: string, options?: ICacheOptions): Cache<T> {
+        public static create<T>(uid: string, options?: ICacheOptions): Cache<T> {
             let cache: Cache<T> = caches[uid];
 
             if (isNull(cache)) {
@@ -137,7 +138,7 @@ module plat.storage {
          *
          * @returns {plat.storage.Cache<T>} The cache with the input ID or undefined if it does not exist.
          */
-        static fetch<T>(uid: string): Cache<T> {
+        public static fetch<T>(uid: string): Cache<T> {
             return caches[uid];
         }
 
@@ -153,11 +154,11 @@ module plat.storage {
          *
          * @returns {void}
          */
-        static clear(): void {
-            let keys = Object.keys(caches),
-                length = keys.length;
+        public static clear(): void {
+            const keys = Object.keys(caches);
+            const length = keys.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 caches[keys[i]].clear();
             }
 
@@ -185,7 +186,7 @@ module plat.storage {
 
             if (isNull(options)) {
                 this.__options = {
-                    timeout: 0
+                    timeout: 0,
                 };
             }
 
@@ -204,11 +205,11 @@ module plat.storage {
          *
          * @returns {plat.storage.ICacheInfo} The information about this cache.
          */
-        info(): ICacheInfo {
+        public info(): ICacheInfo {
             return {
                 uid: this.__uid,
                 size: this.__size,
-                options: this.__options
+                options: this.__options,
             };
         }
 
@@ -226,15 +227,15 @@ module plat.storage {
          *
          * @returns {T} The value inserted into an {@link plat.storage.Cache|Cache}.
          */
-        put(key: string, value: T): T {
-            let val = internalCaches[this.__uid][key];
+        public put(key: string, value: T): T {
+            const val = internalCaches[this.__uid][key];
             internalCaches[this.__uid][key] = value;
 
             if (isUndefined(val)) {
-                this.__size++;
+                this.__size += 1;
             }
 
-            let timeout = this.__options.timeout;
+            const timeout = this.__options.timeout;
 
             if (isNumber(timeout) && timeout > 0) {
                 defer(<(key?: string) => void>this.remove, timeout, [key], this);
@@ -256,7 +257,7 @@ module plat.storage {
          *
          * @returns {T} The value found at the associated key. Returns undefined for a cache miss.
          */
-        read(key: string): T {
+        public read(key: string): T {
             return internalCaches[this.__uid][key];
         }
 
@@ -273,9 +274,9 @@ module plat.storage {
          *
          * @returns {void}
          */
-        remove(key: string): void {
+        public remove(key: string): void {
             deleteProperty(internalCaches[this.__uid], key);
-            this.__size--;
+            this.__size -= 1;
         }
 
         /**
@@ -289,7 +290,7 @@ module plat.storage {
          *
          * @returns {void}
          */
-        clear(): void {
+        public clear(): void {
             internalCaches[this.__uid] = {};
             this.__size = 0;
         }
@@ -305,7 +306,7 @@ module plat.storage {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this.clear();
             deleteProperty(caches, this.__uid);
         }

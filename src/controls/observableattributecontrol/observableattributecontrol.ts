@@ -1,4 +1,4 @@
-﻿module plat.controls {
+module plat.controls {
     'use strict';
 
     /**
@@ -13,7 +13,7 @@
      */
     export class ObservableAttributeControl extends AttributeControl {
         protected static _inject: any = {
-            _ContextManager: __ContextManagerStatic
+            _ContextManager: __ContextManagerStatic,
         };
 
         /**
@@ -40,7 +40,7 @@
          * @description
          * The property to set on the associated template control.
          */
-        property: string = '';
+        public property: string = '';
 
         /**
          * @name attribute
@@ -53,7 +53,7 @@
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
-        attribute: string;
+        public attribute: string;
 
         /**
          * @name priority
@@ -66,7 +66,7 @@
          * @description
          * This control needs to load before its templateControl
          */
-        priority: number = 200;
+        public priority: number = 200;
 
         /**
          * @name _listeners
@@ -80,7 +80,7 @@
          * The set of functions added by the Template Control that listens
          * for property changes.
          */
-        protected _listeners: Array<(newValue: any, oldValue: any) => void> = [];
+        protected _listeners: ((newValue: any, oldValue: any) => void)[] = [];
 
         /**
          * @name _removeListener
@@ -120,7 +120,7 @@
          *
          * @returns {void}
          */
-        initialize(): void {
+        public initialize(): void {
             this.attribute = camelCase(this.type);
             this._setProperty(this._getValue());
         }
@@ -136,7 +136,7 @@
          *
          * @returns {void}
          */
-        loaded(): void {
+        public loaded(): void {
             this._observeProperty();
             this._setProperty(this._getValue());
         }
@@ -154,7 +154,7 @@
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             if (isFunction(this._removeListener)) {
                 this._removeListener();
             }
@@ -177,7 +177,7 @@
          * @returns {void}
          */
         protected _setProperty(value: any, oldValue?: any): void {
-            let templateControl = this.templateControl;
+            const templateControl = this.templateControl;
 
             if (isNull(templateControl)) {
                 return;
@@ -185,7 +185,7 @@
 
             this._ContextManager.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
                 value: value,
-                observe: this._boundAddListener
+                observe: this._boundAddListener,
             }, true, true);
 
             this._callListeners(value, oldValue);
@@ -206,10 +206,10 @@
          * @returns {void}
          */
         protected _callListeners(newValue: any, oldValue: any): void {
-            let listeners = this._listeners,
-                length = listeners.length;
+            const listeners = this._listeners;
+            const length = listeners.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 listeners[i](newValue, oldValue);
             }
         }
@@ -226,13 +226,13 @@
          * @param {plat.IPropertyChangedListener} listener The listener added by the Template Control.
          */
         protected _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
-            let listeners = this._listeners;
+            const listeners = this._listeners;
 
             listener = listener.bind(this.templateControl);
             listeners.push(listener);
 
             return (): void => {
-                let index = listeners.indexOf(listener);
+                const index = listeners.indexOf(listener);
                 if (index === -1) {
                     return;
                 }
@@ -303,7 +303,7 @@
          * @description
          * The property to set on the associated template control.
          */
-        property: string = 'options';
+        public property: string = 'options';
     }
 
     register.control(__Options, Options);

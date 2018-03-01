@@ -65,19 +65,19 @@ module tests.storage.cache {
 
             expect(cache.info().size).toBe(0);
 
-            for (i = 0; i < 1000; ++i) {
+            for (i = 0; i < 1000; i += 1) {
                 cache.put('item' + i, 'value ' + i);
             }
 
             expect(cache.info().size).toBe(1000);
 
-            for (i = 0; i < 1000; ++i) {
+            for (i = 0; i < 1000; i += 1) {
                 cache.remove('item' + i);
             }
 
             expect(cache.info().size).toBe(0);
 
-            for (i = 0; i < 1000; ++i) {
+            for (i = 0; i < 1000; i += 1) {
                 cache.put('item' + i, 'value ' + i);
             }
 

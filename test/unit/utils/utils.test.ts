@@ -1,4 +1,5 @@
-﻿/// <reference path="../../references.d.ts" />
+// tslint:disable
+/// <reference path="../../references.d.ts" />
 
 module tests.utils {
     interface IUtilTest {
@@ -8,8 +9,8 @@ module tests.utils {
         expected: any;
     }
 
-    var utils: plat.Utils = plat.acquire(plat.Utils),
-        Promise = plat.acquire(plat.async.IPromise);
+    let utils: plat.Utils = plat.acquire(plat.Utils);
+    let Promise: plat.async.IPromise = plat.acquire(plat.async.IPromise);
 
     function isTrue(obj: any) {
         return obj === true;
@@ -146,7 +147,7 @@ module tests.utils {
             name: 'isEmpty with an object and return true',
             fn: 'isEmpty',
             args: [{}],
-            expected: true
+            expected: true,
         },
         {
             name: 'isEmpty with an object and return false',
@@ -170,7 +171,7 @@ module tests.utils {
             name: 'isBoolean with an object',
             fn: 'isBoolean',
             args: [{}],
-            expected: false
+            expected: false,
         },
         {
             name: 'isNumber with a number',
@@ -224,262 +225,262 @@ module tests.utils {
             name: 'isUndefined with null',
             fn: 'isUndefined',
             args: [null],
-            expected: false
+            expected: false,
         },
         {
             name: 'isArray with an array',
             fn: 'isArray',
             args: [[]],
-            expected: true
+            expected: true,
         },
         {
             name: 'isArray with an object',
             fn: 'isArray',
             args: [{ length: 2 }],
-            expected: false
+            expected: false,
         },
         {
             name: 'isArray with a string',
             fn: 'isArray',
             args: ['not an array'],
-            expected: false
+            expected: false,
         },
         {
             name: 'isArrayLike with an array',
             fn: 'isArrayLike',
             args: [[]],
-            expected: true
+            expected: true,
         },
         {
             name: 'isArrayLike with an object',
             fn: 'isArrayLike',
             args: [{ notLength: 2 }],
-            expected: false
+            expected: false,
         },
         {
             name: 'isArrayLike with a node',
             fn: 'isArrayLike',
             args: [document.createElement('select')],
-            expected: true
+            expected: true,
         },
         {
             name: 'isArrayLike with a string',
             fn: 'isArrayLike',
             args: ['not an array, but array like'],
-            expected: true
+            expected: true,
         },
         {
             name: 'isArrayLike with null',
             fn: 'isArrayLike',
             args: [null],
-            expected: false
+            expected: false,
         },
         {
             name: 'isArrayLike with the window',
             fn: 'isArrayLike',
             args: [window],
-            expected: false
+            expected: false,
         },
         {
             name: 'isArrayLike with a function',
             fn: 'isArrayLike',
             args: [isTrue],
-            expected: false
+            expected: false,
         },
         {
             name: 'some with null',
             fn: 'some',
             args: [isTrue, null],
-            expected: false
+            expected: false,
         },
         {
             name: 'some with an array and return true',
             fn: 'some',
             args: [isTrue, [true, false, true]],
-            expected: true
+            expected: true,
         },
         {
             name: 'some with an array and return false',
             fn: 'some',
             args: [isTrue, [false, false, false]],
-            expected: false
+            expected: false,
         },
         {
             name: 'some with an object and return true',
             fn: 'some',
             args: [isTrue, { foo: true, bar: false, baz: true }],
-            expected: true
+            expected: true,
         },
         {
             name: 'some with an object and return false',
             fn: 'some',
             args: [isTrue, { foo: false, bar: false, baz: false }],
-            expected: false
+            expected: false,
         },
         {
             name: 'some with a string and return true',
             fn: 'some',
             args: [() => true, 'foo'],
-            expected: true
+            expected: true,
         },
         {
             name: 'camelCase with null',
             fn: 'camelCase',
             args: [null],
-            expected: null
+            expected: null,
         },
         {
             name: 'camelCase with first letter capital',
             fn: 'camelCase',
             args: ['Foo bar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'camelCase with both letters capital',
             fn: 'camelCase',
             args: ['Foo Bar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'camelCase with spinal-case',
             fn: 'camelCase',
             args: ['foo-bar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'camelCase with dot.case',
             fn: 'camelCase',
             args: ['foo.bar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'camelCase with snake_case',
             fn: 'camelCase',
             args: ['foo_bar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'camelCase with string',
             fn: 'camelCase',
             args: ['fooBar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'camelCase with string and spaces',
             fn: 'camelCase',
             args: ['foo bar'],
-            expected: 'fooBar'
+            expected: 'fooBar',
         },
         {
             name: 'delimit to spinal',
             fn: 'delimit',
             args: ['fooBarBaz', '-'],
-            expected: 'foo-bar-baz'
+            expected: 'foo-bar-baz',
         },
         {
             name: 'delimit with capital first letter',
             fn: 'delimit',
             args: ['FooBarBaz', '.'],
-            expected: 'foo.bar.baz'
-        }
-    ], toEqualTests: Array<IUtilTest> = [{
+            expected: 'foo.bar.baz',
+        },
+    ], toEqualTests: IUtilTest[] = [{
             name: 'extend with incorrect arguments',
             fn: 'extend',
             args: [{}, true, false, 2, 'a'],
-            expected: {}
+            expected: {},
         },
             {
                 name: 'filter with null',
                 fn: 'filter',
                 args: [isTrue, null],
-                expected: []
+                expected: [],
             },
             {
                 name: 'filter with a number',
                 fn: 'filter',
                 args: [isTrue, 3],
-                expected: []
+                expected: [],
             },
             {
-                name: 'filter with an rray',
+                name: 'filter with an array',
                 fn: 'filter',
                 args: [isTrue, [true, false, true]],
-                expected: [true, true]
+                expected: [true, true],
             },
             {
                 name: 'filter with an object',
                 fn: 'filter',
                 args: [isTrue, { foo: true, bar: false, baz: true }],
-                expected: [true, true]
+                expected: [true, true],
             },
             {
                 name: 'where with an array',
                 fn: 'where',
                 args: [{ foo: 'foo' }, [{ foo: 'foo', bar: 'bar' }, { foo: 'bar', bar: 'foo' }]],
-                expected: [{ foo: 'foo', bar: 'bar' }]
+                expected: [{ foo: 'foo', bar: 'bar' }],
             },
             {
                 name: 'where with an object',
                 fn: 'where',
                 args: [{ foo: 'foo' }, { foo: { foo: 'foo', bar: 'bar' }, bar: { foo: 'bar', bar: 'foo' } }],
-                expected: [{ foo: 'foo', bar: 'bar' }]
+                expected: [{ foo: 'foo', bar: 'bar' }],
             },
             {
                 name: 'map with null',
                 fn: 'map',
                 args: [isTrue, null],
-                expected: []
+                expected: [],
             },
             {
                 name: 'map with an object',
                 fn: 'map',
                 args: [isTrue, { foo: true, bar: false, baz: true }],
-                expected: [true, false, true]
+                expected: [true, false, true],
             },
             {
                 name: 'map with an array',
                 fn: 'map',
                 args: [isTrue, [true, false, true]],
-                expected: [true, false, true]
+                expected: [true, false, true],
             },
             {
                 name: 'pluck with an array',
                 fn: 'pluck',
                 args: ['foo', [{ foo: 'bar', bar: 'foo' }, { foo: 'foo', bar: 'bar' }]],
-                expected: ['bar', 'foo']
+                expected: ['bar', 'foo'],
             },
             {
                 name: 'pluck with an object',
                 fn: 'pluck',
                 args: ['foo', { foo: { foo: 'bar', bar: 'foo' }, bar: { foo: 'foo', bar: 'bar' } }],
-                expected: ['bar', 'foo']
-            }
+                expected: ['bar', 'foo'],
+            },
         ];
 
     describe('Utils Tests', () => {
         toBeTests.forEach((test) => {
             it('should test ' + test.name, () => {
-                var result = (<any>utils)[test.fn].apply(utils, test.args);
+                const result = (<any>utils)[test.fn].apply(utils, test.args);
                 expect(result).toBe(test.expected);
             });
         });
 
         toEqualTests.forEach((test) => {
             it('should test ' + test.name, () => {
-                var result = (<any>utils)[test.fn].apply(utils, test.args);
+                const result = (<any>utils)[test.fn].apply(utils, test.args);
                 expect(result).toEqual(test.expected);
             });
         });
 
         it('should test noop', () => {
-            var spy = spyOn(utils, 'noop');
+            const spy = spyOn(utils, 'noop');
 
             utils.noop();
             expect(spy).toHaveBeenCalled();
         });
 
         it('should test extend with 3 args', () => {
-            var foo = { foo: 'foo' },
+            const foo = { foo: 'foo' },
                 bar = { foo: 'bar', bar: { name: 'bar' } },
                 baz = utils.extend({ baz: 'baz' }, foo, bar);
 
@@ -488,7 +489,7 @@ module tests.utils {
         });
 
         it('should test deep extend', () => {
-            var foo = { foo: 'foo' },
+            const foo = { foo: 'foo' },
                 bar = { foo: 'bar', bar: { name: 'bar' } },
                 baz = utils.deepExtend({ baz: 'baz' }, foo, bar);
 
@@ -498,7 +499,7 @@ module tests.utils {
         });
 
         it('should test clone', () => {
-            var foo = { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
+            const foo = { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
@@ -507,32 +508,32 @@ module tests.utils {
         });
 
         it('should test clone with null', () => {
-            var foo: void = null,
+            const foo: void = null,
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
 
         it('should test clone with a string', () => {
-            var foo = 'foo',
+            const foo = 'foo',
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
 
         it('should test clone with a number', () => {
-            var foo = 'foo',
+            const foo = 'foo',
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
-        
+
         it('should test clone with an array', () => {
-            var foo = [
+            const foo = [
                 { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
                 { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
                 { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
-                { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] }
+                { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
             ],
                 baz = utils.clone(foo, true);
 
@@ -542,7 +543,7 @@ module tests.utils {
         });
 
         it('should test clone with a Date', () => {
-            var foo = new Date(),
+            const foo = new Date(),
                 baz = utils.clone(foo, true);
 
             expect(baz).toEqual(foo);
@@ -550,7 +551,7 @@ module tests.utils {
         });
 
         it('should test clone with a RegExp', () => {
-            var foo = /test/ig,
+            const foo = /test/ig,
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
@@ -560,7 +561,7 @@ module tests.utils {
         });
 
         it('should test clone with a RegExpExecArray', () => {
-            var foo = /test/.exec('test'),
+            const foo = /test/.exec('test'),
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
@@ -568,14 +569,14 @@ module tests.utils {
         });
 
         it('should test clone with nested Date, RegExp, and RegExpArray', () => {
-            var date = new Date(),
+            const date = new Date(),
                 regex = /test/,
                 exec = regex.exec('test'),
                 foo = [
                     { date: date, regex: [regex, exec], exec: exec },
                     { date: date, regex: [regex, exec], exec: exec },
                     { date: date, regex: [regex, exec], exec: exec },
-                    { date: date, regex: [regex, exec], exec: exec }
+                    { date: date, regex: [regex, exec], exec: exec },
                 ],
                 baz = utils.clone(foo, true);
 
@@ -584,7 +585,7 @@ module tests.utils {
         });
 
         it('should test clone with a Node', () => {
-            var foo = document.createElement('div'),
+            const foo = document.createElement('div'),
                 baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
@@ -592,21 +593,21 @@ module tests.utils {
         });
 
         it('should test clone with a Function', () => {
-            var foo = () => { },
+            const foo = () => { },
                 baz = utils.clone(foo);
 
             expect(baz).toBe(foo);
         });
 
         it('should test clone with am Error', () => {
-            var foo = new TypeError('test'),
+            const foo = new TypeError('test'),
                 baz = utils.clone(foo);
-            
+
             expect(baz).toEqual(foo);
         });
 
         it('should test forEach with an array', () => {
-            var spy = spyOn(utils, 'noop');
+            const spy = spyOn(utils, 'noop');
 
             utils.forEach(utils.noop, [true, true, true]);
 
@@ -614,7 +615,7 @@ module tests.utils {
         });
 
         it('should test forEach with an object', () => {
-            var spy = spyOn(utils, 'noop');
+            const spy = spyOn(utils, 'noop');
 
             utils.forEach(utils.noop, { foo: true, bar: true, baz: true });
 
@@ -622,7 +623,7 @@ module tests.utils {
         });
 
         it('should test forEach with null', () => {
-            var spy = spyOn(utils, 'noop');
+            const spy = spyOn(utils, 'noop');
 
             utils.forEach(utils.noop, null);
 
@@ -630,7 +631,7 @@ module tests.utils {
         });
 
         it('should test forEach with a string', () => {
-            var spy = spyOn(utils, 'noop');
+            const spy = spyOn(utils, 'noop');
 
             utils.forEach(utils.noop, <any>'foo');
 
@@ -639,7 +640,7 @@ module tests.utils {
         });
 
         it('should test some with a string and return false', () => {
-            var spy = spyOn(utils, 'noop');
+            const spy = spyOn(utils, 'noop');
 
             expect(utils.some(<any>utils.noop, <any>'foo')).toBe(false);
 
@@ -662,7 +663,7 @@ module tests.utils {
         });
 
         it('should test a cancelled defer', (done: Function) => {
-            var postArg: string;
+            let postArg: string;
 
             utils.defer((arg) => {
                 postArg = arg;
@@ -674,15 +675,15 @@ module tests.utils {
             }, 5);
         });
 
-        it('should test requestAnimationFrame',(done: Function) => {
+        it('should test requestAnimationFrame', (done: Function) => {
             utils.requestAnimationFrame((time) => {
                 expect(time).toBeGreaterThan(0);
                 done();
             });
         });
 
-        it('should test requestAnimationFrame cancelled',(done: Function) => {
-            var t: number;
+        it('should test requestAnimationFrame cancelled', (done: Function) => {
+            let t: number;
             utils.requestAnimationFrame((time) => {
                 t = time;
             })();
@@ -694,20 +695,20 @@ module tests.utils {
         });
 
         it('should test uniqueId with no prefix', () => {
-            var uid = utils.uniqueId();
+            const uid = utils.uniqueId();
 
             expect(uid.length).toBe(2);
         });
 
         it('should test uniqueId with a prefix', () => {
-            var rand = Math.random().toString() + '_',
+            const rand = Math.random().toString() + '_',
                 uid = utils.uniqueId(rand);
 
             expect(uid).toBe(rand + '00');
         });
 
         it('should test mapAsync', (done: Function) => {
-            var array = [1, 2, 3, 4, 5],
+            let array = [1, 2, 3, 4, 5],
                 temp: number;
 
             utils.mapAsync((value, key, obj) => {
@@ -726,12 +727,12 @@ module tests.utils {
         });
 
         it('should test mapAsync with an Object', (done: Function) => {
-            var obj: plat.IObject<number> = {
+            let obj: plat.IObject<number> = {
                 a: 1,
                 b: 2,
                 c: 3,
                 d: 4,
-                e: 5
+                e: 5,
             }, temp: number, keys = Object.keys(obj);
 
             utils.mapAsync(function (value, key, obj) {
@@ -751,7 +752,7 @@ module tests.utils {
         });
 
         it('should test mapAsyncInOrder', (done: Function) => {
-            var array = [1, 2, 3, 4, 5],
+            let array = [1, 2, 3, 4, 5],
                 temp: number;
 
             utils.mapAsyncInOrder(function (value, key, obj) {
@@ -771,8 +772,8 @@ module tests.utils {
         });
 
         it('should test mapAsyncInDescendingOrder', (done: Function) => {
-            var array = [1, 2, 3, 4, 5],
-                temp: number;
+            const array = [1, 2, 3, 4, 5];
+            let temp: number;
 
             utils.mapAsyncInDescendingOrder(function (value, key, obj) {
                 temp = value;

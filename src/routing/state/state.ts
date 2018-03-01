@@ -1,4 +1,4 @@
-﻿module plat.routing {
+module plat.routing {
     'use strict';
 
     /**
@@ -25,7 +25,7 @@
          * @description
          * The possible next states for the current state.
          */
-        nextStates: Array<State>;
+        public nextStates: State[];
 
         /**
          * @name specification
@@ -39,7 +39,7 @@
          * The {@link plat.routing.ICharacterSpecification|specification} for the
          * assigned route segment for this state.
          */
-        specification: ICharacterSpecification;
+        public specification: ICharacterSpecification;
 
         /**
          * @name delegates
@@ -53,7 +53,7 @@
          * The associated {@link plat.routing.IDelegateParameterNames|delegate} objects for this
          * state, with their parameter names.
          */
-        delegates: Array<IDelegateParameterNames>;
+        public delegates: IDelegateParameterNames[];
 
         /**
          * @name regex
@@ -66,7 +66,7 @@
          * @description
          * A regular expression to match this state to a path.
          */
-        regex: RegExp;
+        public regex: RegExp;
 
         /**
          * @name types
@@ -80,7 +80,7 @@
          * The totals for the different segment {@link plat.routing.ISegmentTypeCount|types}
          * for this state.
          */
-        types: ISegmentTypeCount;
+        public types: ISegmentTypeCount;
 
         /**
          * @name compile
@@ -97,7 +97,7 @@
          *
          * @returns {plat.routing.State} The final state reached for the compiled segment.
          */
-        static compile(segment: BaseSegment, state: State): State {
+        public static compile(segment: BaseSegment, state: State): State {
             return segment.reduceCharacters((s, char): State => {
                 return s.add(char);
             }, state);
@@ -118,32 +118,34 @@
          *
          * @returns {plat.routing.IRecognizeResult} The result from the linking.
          */
-        static link(state: State, path: string): IRecognizeResult {
-            let delegates: Array<IDelegateParameterNames> = state.delegates,
-                regex = state.regex,
-                length = delegates.length,
-                matches = path.match(regex),
-                matchIndex = 1,
-                result: IRecognizeResult = [],
-                names: Array<string>,
-                parameters: any,
-                j: number,
-                jLength: number,
-                delegate: IDelegateParameterNames;
+        public static link(state: State, path: string): IRecognizeResult {
+            const delegates: IDelegateParameterNames[] = state.delegates;
+            const regex = state.regex;
+            const length = delegates.length;
+            const matches = path.match(regex);
+            const result: IRecognizeResult = [];
+            let matchIndex = 1;
+            let names: string[];
+            let parameters: any;
+            let j: number;
+            let jLength: number;
+            let delegate: IDelegateParameterNames;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 delegate = delegates[i];
                 names = delegate.names;
                 parameters = {};
+                jLength = names.length;
 
-                for (j = 0, jLength = names.length; j < jLength; ++j) {
-                    parameters[names[j]] = matches[matchIndex++];
+                for (j = 0; j < jLength; j += 1) {
+                    parameters[names[j]] = matches[matchIndex];
+                    matchIndex += 1;
                 }
 
                 result.push({
                     delegate: delegate.delegate,
                     parameters: parameters,
-                    isDynamic: jLength > 0
+                    isDynamic: jLength > 0,
                 });
             }
 
@@ -165,12 +167,12 @@
          *
          * @returns {Array<plat.routing.State>} The matched next states.
          */
-        static recognize(char: string, states: Array<State>): Array<State> {
-            let nextStates: Array<State> = [],
-                length = states.length,
-                state: State;
+        public static recognize(char: string, states: State[]): State[] {
+            let nextStates: State[] = [];
+            const length = states.length;
+            let state: State;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 state = states[i];
 
                 nextStates = nextStates.concat(state.match(char));
@@ -198,19 +200,19 @@
          *
          * @returns {Array<plat.routing.State>} The sorted states.
          */
-        static sort(states: Array<State>): Array<State> {
+        public static sort(states: State[]): State[] {
             if (!isArray(states)) {
                 return states;
             }
 
-            let aTypes: ISegmentTypeCount,
-                aSplats: number,
-                aStatics: number,
-                aDynamics: number,
-                bTypes: ISegmentTypeCount,
-                bSplats: number,
-                bStatics: number,
-                bDynamics: number;
+            let aTypes: ISegmentTypeCount;
+            let aSplats: number;
+            let aStatics: number;
+            let aDynamics: number;
+            let bTypes: ISegmentTypeCount;
+            let bSplats: number;
+            let bStatics: number;
+            let bDynamics: number;
 
             return states.sort((a, b): number => {
                 aTypes = a.types;
@@ -277,7 +279,7 @@
          *
          * @returns {void}
          */
-        initialize(specification?: ICharacterSpecification): void {
+        public initialize(specification?: ICharacterSpecification): void {
             this.specification = specification;
             this.nextStates = [];
         }
@@ -297,7 +299,7 @@
          *
          * @returns {plat.routing.State} A state with the given specification.
          */
-        add(specification: ICharacterSpecification): State {
+        public add(specification: ICharacterSpecification): State {
             let state = this._find(specification);
 
             if (isObject(state)) {
@@ -332,10 +334,10 @@
          *
          * @returns {Array<plat.routing.State>} The matching states.
          */
-        match(char: string): Array<State> {
-            let matches: Array<State> = [],
-                spec: ICharacterSpecification,
-                chars: string;
+        public match(char: string): State[] {
+            const matches: State[] = [];
+            let spec: ICharacterSpecification;
+            let chars: string;
 
             this._someChildren((child): boolean => {
                 spec = child.specification;
@@ -344,6 +346,7 @@
                 chars = spec.validCharacters;
                 if (isString(chars) && chars.indexOf(char) > -1) {
                     matches.push(child);
+
                     return;
                 }
 
@@ -373,10 +376,10 @@
          * @returns {Array<plat.routing.State>} The matching states.
          */
         protected _find(spec: ICharacterSpecification): State {
-            let validChars = spec.validCharacters,
-                invalidChars = spec.invalidCharacters,
-                s: ICharacterSpecification,
-                found: State;
+            const validChars = spec.validCharacters;
+            const invalidChars = spec.invalidCharacters;
+            let s: ICharacterSpecification;
+            let found: State;
 
             this._someChildren((child): boolean => {
                 s = child.specification;
@@ -384,6 +387,7 @@
                 if (s.validCharacters === validChars &&
                     s.invalidCharacters === invalidChars) {
                     found = child;
+
                     return true;
                 }
             });
@@ -396,24 +400,6 @@
          * @memberof plat.routing.State
          * @kind function
          * @access protected
-         * @variation 0
-         *
-         * @description
-         * Iterates through the next states and calls the input callback with each state. Acts like
-         * {@link plat.Utils.some|Utils.some}. If the callback returns true, it will break out of the loop.
-         *
-         * @param {(child: plat.routing.State) => boolean} iterator The function with which to call for each
-         * State. Can return true to break out of the loop
-         *
-         * @returns {boolean} Whether or not the loop was escaped.
-         */
-        protected _someChildren(iterator: (child: State) => boolean): boolean;
-        /**
-         * @name _someChildren
-         * @memberof plat.routing.State
-         * @kind function
-         * @access protected
-         * @variation 1
          *
          * @description
          * Iterates through the next states and calls the input callback with each state.
@@ -423,12 +409,11 @@
          *
          * @returns {boolean}
          */
-        protected _someChildren(iterator: (child: State) => void): boolean;
-        protected _someChildren(iterator: (child: State) => any): boolean {
-            let nextStates = this.nextStates,
-                length = nextStates.length;
+        protected _someChildren(iterator: (child: State) => boolean | void): boolean {
+            const nextStates = this.nextStates;
+            const length = nextStates.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 if (iterator(nextStates[i]) === true) {
                     return true;
                 }
@@ -480,6 +465,6 @@
          * @description
          * Contains the parameter names for a given delegate
          */
-        names: Array<string>;
+        names: string[];
     }
 }

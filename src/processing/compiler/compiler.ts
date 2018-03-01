@@ -23,7 +23,7 @@ module plat.processing {
             _ElementManagerFactory: __ElementManagerFactory,
             _TextManagerFactory: __TextManagerFactory,
             _CommentManagerFactory: __CommentManagerFactory,
-            _managerCache: __ManagerCache
+            _managerCache: __ManagerCache,
         };
 
         /**
@@ -83,43 +83,6 @@ module plat.processing {
          * @memberof plat.processing.Compiler
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Goes through the child Nodes of the given Node, finding elements that contain controls as well as
-         * text that contains markup.
-         *
-         * @param {Node} node The node whose childNodes are going to be compiled.
-         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
-         * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
-         *
-         * @returns {void}
-         */
-        compile(node: Node, control?: ui.TemplateControl): void;
-        /**
-         * @name compile
-         * @memberof plat.processing.Compiler
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * Goes through the Node array, finding elements that contain controls as well as
-         * text that contains markup.
-         *
-         * @param {Array<Node>} nodes The nodes that are going to be compiled.
-         * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
-         * {@link plat.ui.TemplateControl|TemplateControl interface} since only they can contain templates.
-         *
-         * @returns {void}
-         */
-        compile(nodes: Array<Node>, control?: ui.TemplateControl): void;
-        /**
-         * @name compile
-         * @memberof plat.processing.Compiler
-         * @kind function
-         * @access public
-         * @variation 2
          *
          * @description
          * Goes through the NodeList, finding elements that contain controls as well as
@@ -131,20 +94,19 @@ module plat.processing {
          *
          * @returns {void}
          */
-        compile(nodes: NodeList, control?: ui.TemplateControl): void;
-        compile(node: any, control?: ui.TemplateControl): void {
-            let childNodes = node.childNodes,
-                length: number,
-                newLength: number,
-                childNode: Node,
-                hasControl = !isNull(control),
-                manager = <ElementManager>(hasControl ? this._managerCache.read(control.uid) : null),
-                create = this._ElementManagerFactory.create;
+        public compile(node: Node | Node[] | NodeList, control?: ui.TemplateControl): void {
+            const hasControl = !isNull(control);
+            const manager = <ElementManager>(hasControl ? this._managerCache.read(control.uid) : null);
+            const create = this._ElementManagerFactory.create;
+            let childNodes = (<Node>node).childNodes;
+            let length: number;
+            let newLength: number;
+            let childNode: Node;
 
             if (!isUndefined(childNodes)) {
                 childNodes = Array.prototype.slice.call(childNodes);
-            } else if (isFunction(node.push)) {
-                childNodes = node;
+            } else if (isFunction((<Node[]>node).push)) {
+                childNodes = <NodeList>node;
             } else {
                 childNodes = Array.prototype.slice.call(node);
             }
@@ -152,7 +114,7 @@ module plat.processing {
             if (isNull(manager)) {
                 length = childNodes.length;
 
-                for (var i = 0; i < length; ++i) {
+                for (let i = 0; i < length; i += 1) {
                     childNode = childNodes[i];
                     if (childNode.nodeType === Node.ELEMENT_NODE) {
                         if (!isNull(create(<Element>childNode))) {
@@ -165,7 +127,7 @@ module plat.processing {
                     length = newLength;
                 }
             } else {
-                this._compileNodes(childNodes, manager);
+                this._compileNodes(<any>childNodes, manager);
             }
         }
 
@@ -186,23 +148,16 @@ module plat.processing {
          *
          * @returns {void}
          */
-        /**
-         * Iterates through the array of nodes creating Element Managers on Element
-         * nodes, Text Managers on text nodes, and Comment Managers on comment nodes.
-         *
-         * @param nodes The NodeList to be compiled.
-         * @param manager The parent Element Manager for the given array of nodes.
-         */
-        protected _compileNodes(nodes: Array<Node>, manager: ElementManager): void {
-            let length = nodes.length,
-                node: Node,
-                newManager: ElementManager,
-                newLength: number,
-                create = this._ElementManagerFactory.create,
-                commentCreate = this._CommentManagerFactory.create,
-                textCreate = this._TextManagerFactory.create;
+        protected _compileNodes(nodes: Node[], manager: ElementManager): void {
+            const create = this._ElementManagerFactory.create;
+            const commentCreate = this._CommentManagerFactory.create;
+            const textCreate = this._TextManagerFactory.create;
+            let length = nodes.length;
+            let node: Node;
+            let newManager: ElementManager;
+            let newLength: number;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 node = nodes[i];
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
@@ -217,6 +172,7 @@ module plat.processing {
                     case Node.COMMENT_NODE:
                         commentCreate(node, manager);
                         break;
+                    default:
                 }
                 newLength = nodes.length;
                 i += newLength - length;

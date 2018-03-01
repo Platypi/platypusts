@@ -1,4 +1,4 @@
-﻿module plat.ui {
+module plat.ui {
     'use strict';
 
     /**
@@ -26,7 +26,7 @@
          * Set to 120, higher than {@link plat.controls.Bind|`plat-bind`} to ensure that BinControls load
          * prior to the `plat-bind`.
          */
-        priority: number = 120;
+        public priority: number = 120;
 
         /**
          * @name _listeners
@@ -40,7 +40,7 @@
          * The set of functions added externally that listens
          * for property changes.
          */
-        protected _listeners: Array<IPropertyChangedListener<any>> = [];
+        protected _listeners: IPropertyChangedListener<any>[] = [];
 
         /**
          * @name onInput
@@ -55,13 +55,13 @@
          *
          * @returns {plat.IRemoveListener} A function to stop listening for property changes.
          */
-        onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
-            let listeners = this._listeners;
+        public onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
+            const listeners = this._listeners;
 
             listeners.push(listener);
 
             return (): void => {
-                let index = listeners.indexOf(listener);
+                const index = listeners.indexOf(listener);
                 if (index === -1) {
                     return;
                 }
@@ -82,11 +82,11 @@
          * potential child properties if being bound to an object.
          *
          * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
-         * databinding.
+         * data-binding.
          *
          * @returns {void}
          */
-        observeProperties(binder: observable.IImplementTwoWayBinding): void { }
+        public observeProperties(binder: observable.IImplementTwoWayBinding): void { }
 
         /**
          * @name inputChanged
@@ -102,15 +102,15 @@
          *
          * @returns {void}
          */
-        inputChanged(newValue: any, oldValue?: any): void {
+        public inputChanged(newValue: any, oldValue?: any): void {
             if (newValue === oldValue) {
                 return;
             }
 
-            let listeners = this._listeners,
-                length = listeners.length;
+            const listeners = this._listeners;
+            const length = listeners.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 listeners[i](newValue, oldValue);
             }
         }
@@ -127,7 +127,7 @@
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this._listeners = [];
         }
     }
