@@ -1,147 +1,146 @@
-// tslint:disable
 /// <reference path="../../references.d.ts" />
 
-module tests.utils {
+namespace tests.utils {
     interface IUtilTest {
         name: string;
         fn: string;
-        args: Array<any>;
+        args: any[];
         expected: any;
     }
 
-    let utils: plat.Utils = plat.acquire(plat.Utils);
-    let Promise: plat.async.IPromise = plat.acquire(plat.async.IPromise);
+    const utils: plat.Utils = plat.acquire(plat.Utils);
+    const Promise: plat.async.IPromise = plat.acquire(plat.async.IPromise);
 
     function isTrue(obj: any) {
         return obj === true;
     }
 
-    var toBeTests: Array<IUtilTest> = [
+    const toBeTests: IUtilTest[] = [
         {
             name: 'extend with undefined args',
             fn: 'extend',
             args: [undefined],
-            expected: undefined
+            expected: undefined,
         },
         {
             name: 'isObject and return true',
             fn: 'isObject',
             args: [{}],
-            expected: true
+            expected: true,
         },
         {
             name: 'isObject and return false',
             fn: 'isObject',
             args: ['not an object'],
-            expected: false
+            expected: false,
         },
         {
             name: 'isWindow and return true',
             fn: 'isWindow',
             args: [window],
-            expected: true
+            expected: true,
         },
         {
             name: 'isWindow and return false',
             fn: 'isWindow',
             args: [document],
-            expected: false
+            expected: false,
         },
         {
             name: 'isDocument and return true',
             fn: 'isDocument',
             args: [document],
-            expected: true
+            expected: true,
         },
         {
             name: 'isDocument and return false',
             fn: 'isDocument',
             args: [window],
-            expected: false
+            expected: false,
         },
         {
             name: 'isNode and return true',
             fn: 'isNode',
             args: [document.createElement('a').cloneNode()],
-            expected: true
+            expected: true,
         },
         {
             name: 'isNode and return false',
             fn: 'isNode',
             args: [window],
-            expected: false
+            expected: false,
         },
         {
             name: 'isDocumentFragment and return true',
             fn: 'isDocumentFragment',
             args: [document.createDocumentFragment()],
-            expected: true
+            expected: true,
         },
         {
             name: 'isDocumentFragment and return false',
             fn: 'isDocumentFragment',
             args: [document],
-            expected: false
+            expected: false,
         },
         {
             name: 'isString and return true',
             fn: 'isString',
             args: ['this is a string'],
-            expected: true
+            expected: true,
         },
         {
             name: 'isString and return false',
             fn: 'isString',
             args: [12345],
-            expected: false
+            expected: false,
         },
         {
             name: 'isRegExp and return true',
             fn: 'isRegExp',
             args: [/foo/],
-            expected: true
+            expected: true,
         },
         {
             name: 'isRegExp and return false',
             fn: 'isRegExp',
             args: [12345],
-            expected: false
+            expected: false,
         },
         {
             name: 'isEmpty with a string and return true',
             fn: 'isEmpty',
             args: [''],
-            expected: true
+            expected: true,
         },
         {
             name: 'isEmpty with a string and return false',
             fn: 'isEmpty',
             args: [' '],
-            expected: false
+            expected: false,
         },
         {
             name: 'isEmpty with null and return true',
             fn: 'isEmpty',
             args: [null],
-            expected: true
+            expected: true,
         },
         {
             name: 'isEmpty with an array and return true',
             fn: 'isEmpty',
             args: [[]],
-            expected: true
+            expected: true,
         },
         {
             name: 'isEmpty with an array and return false',
             fn: 'isEmpty',
             args: [['']],
-            expected: false
+            expected: false,
         },
         {
             name: 'isEmpty with a number and return true',
             fn: 'isEmpty',
             args: [2],
-            expected: false
+            expected: false,
         },
         {
             name: 'isEmpty with an object and return true',
@@ -153,19 +152,19 @@ module tests.utils {
             name: 'isEmpty with an object and return false',
             fn: 'isEmpty',
             args: [{ foo: null }],
-            expected: false
+            expected: false,
         },
         {
             name: 'isBoolean with true',
             fn: 'isBoolean',
             args: [true],
-            expected: true
+            expected: true,
         },
         {
             name: 'isBoolean with false',
             fn: 'isBoolean',
             args: [false],
-            expected: true
+            expected: true,
         },
         {
             name: 'isBoolean with an object',
@@ -177,49 +176,49 @@ module tests.utils {
             name: 'isNumber with a number',
             fn: 'isNumber',
             args: [2],
-            expected: true
+            expected: true,
         },
         {
             name: 'isNumber with an array',
             fn: 'isNumber',
             args: [[]],
-            expected: false
+            expected: false,
         },
         {
             name: 'isFunction with a function',
             fn: 'isFunction',
             args: [isTrue],
-            expected: true
+            expected: true,
         },
         {
             name: 'isFunction with an object',
             fn: 'isFunction',
             args: [{}],
-            expected: false
+            expected: false,
         },
         {
             name: 'isNull with null',
             fn: 'isNull',
             args: [null],
-            expected: true
+            expected: true,
         },
         {
             name: 'isNull with undefined',
             fn: 'isNull',
             args: [undefined],
-            expected: true
+            expected: true,
         },
         {
             name: 'isNull with an object',
             fn: 'isNull',
             args: [{}],
-            expected: false
+            expected: false,
         },
         {
             name: 'isUndefined with undefined',
             fn: 'isUndefined',
             args: [undefined],
-            expected: true
+            expected: true,
         },
         {
             name: 'isUndefined with null',
@@ -383,90 +382,110 @@ module tests.utils {
             args: ['FooBarBaz', '.'],
             expected: 'foo.bar.baz',
         },
-    ], toEqualTests: IUtilTest[] = [{
+    ];
+    const toEqualTests: IUtilTest[] = [
+        {
             name: 'extend with incorrect arguments',
             fn: 'extend',
             args: [{}, true, false, 2, 'a'],
             expected: {},
         },
-            {
-                name: 'filter with null',
-                fn: 'filter',
-                args: [isTrue, null],
-                expected: [],
-            },
-            {
-                name: 'filter with a number',
-                fn: 'filter',
-                args: [isTrue, 3],
-                expected: [],
-            },
-            {
-                name: 'filter with an array',
-                fn: 'filter',
-                args: [isTrue, [true, false, true]],
-                expected: [true, true],
-            },
-            {
-                name: 'filter with an object',
-                fn: 'filter',
-                args: [isTrue, { foo: true, bar: false, baz: true }],
-                expected: [true, true],
-            },
-            {
-                name: 'where with an array',
-                fn: 'where',
-                args: [{ foo: 'foo' }, [{ foo: 'foo', bar: 'bar' }, { foo: 'bar', bar: 'foo' }]],
-                expected: [{ foo: 'foo', bar: 'bar' }],
-            },
-            {
-                name: 'where with an object',
-                fn: 'where',
-                args: [{ foo: 'foo' }, { foo: { foo: 'foo', bar: 'bar' }, bar: { foo: 'bar', bar: 'foo' } }],
-                expected: [{ foo: 'foo', bar: 'bar' }],
-            },
-            {
-                name: 'map with null',
-                fn: 'map',
-                args: [isTrue, null],
-                expected: [],
-            },
-            {
-                name: 'map with an object',
-                fn: 'map',
-                args: [isTrue, { foo: true, bar: false, baz: true }],
-                expected: [true, false, true],
-            },
-            {
-                name: 'map with an array',
-                fn: 'map',
-                args: [isTrue, [true, false, true]],
-                expected: [true, false, true],
-            },
-            {
-                name: 'pluck with an array',
-                fn: 'pluck',
-                args: ['foo', [{ foo: 'bar', bar: 'foo' }, { foo: 'foo', bar: 'bar' }]],
-                expected: ['bar', 'foo'],
-            },
-            {
-                name: 'pluck with an object',
-                fn: 'pluck',
-                args: ['foo', { foo: { foo: 'bar', bar: 'foo' }, bar: { foo: 'foo', bar: 'bar' } }],
-                expected: ['bar', 'foo'],
-            },
-        ];
+        {
+            name: 'filter with null',
+            fn: 'filter',
+            args: [isTrue, null],
+            expected: [],
+        },
+        {
+            name: 'filter with a number',
+            fn: 'filter',
+            args: [isTrue, 3],
+            expected: [],
+        },
+        {
+            name: 'filter with an array',
+            fn: 'filter',
+            args: [isTrue, [true, false, true]],
+            expected: [true, true],
+        },
+        {
+            name: 'filter with an object',
+            fn: 'filter',
+            args: [isTrue, { foo: true, bar: false, baz: true }],
+            expected: [true, true],
+        },
+        {
+            name: 'where with an array',
+            fn: 'where',
+            args: [
+                { foo: 'foo' },
+                [{ foo: 'foo', bar: 'bar' }, { foo: 'bar', bar: 'foo' }],
+            ],
+            expected: [{ foo: 'foo', bar: 'bar' }],
+        },
+        {
+            name: 'where with an object',
+            fn: 'where',
+            args: [
+                { foo: 'foo' },
+                {
+                    foo: { foo: 'foo', bar: 'bar' },
+                    bar: { foo: 'bar', bar: 'foo' },
+                },
+            ],
+            expected: [{ foo: 'foo', bar: 'bar' }],
+        },
+        {
+            name: 'map with null',
+            fn: 'map',
+            args: [isTrue, null],
+            expected: [],
+        },
+        {
+            name: 'map with an object',
+            fn: 'map',
+            args: [isTrue, { foo: true, bar: false, baz: true }],
+            expected: [true, false, true],
+        },
+        {
+            name: 'map with an array',
+            fn: 'map',
+            args: [isTrue, [true, false, true]],
+            expected: [true, false, true],
+        },
+        {
+            name: 'pluck with an array',
+            fn: 'pluck',
+            args: [
+                'foo',
+                [{ foo: 'bar', bar: 'foo' }, { foo: 'foo', bar: 'bar' }],
+            ],
+            expected: ['bar', 'foo'],
+        },
+        {
+            name: 'pluck with an object',
+            fn: 'pluck',
+            args: [
+                'foo',
+                {
+                    foo: { foo: 'bar', bar: 'foo' },
+                    bar: { foo: 'foo', bar: 'bar' },
+                },
+            ],
+            expected: ['bar', 'foo'],
+        },
+    ];
 
     describe('Utils Tests', () => {
         toBeTests.forEach((test) => {
-            it('should test ' + test.name, () => {
+            it(`should test ${test.name}`, () => {
                 const result = (<any>utils)[test.fn].apply(utils, test.args);
                 expect(result).toBe(test.expected);
             });
         });
 
         toEqualTests.forEach((test) => {
-            it('should test ' + test.name, () => {
+            it(`should test ${test.name}`, () => {
                 const result = (<any>utils)[test.fn].apply(utils, test.args);
                 expect(result).toEqual(test.expected);
             });
@@ -480,27 +499,35 @@ module tests.utils {
         });
 
         it('should test extend with 3 args', () => {
-            const foo = { foo: 'foo' },
-                bar = { foo: 'bar', bar: { name: 'bar' } },
-                baz = utils.extend({ baz: 'baz' }, foo, bar);
+            const foo = { foo: 'foo' };
+            const bar = { foo: 'bar', bar: { name: 'bar' } };
+            const baz = utils.extend({ baz: 'baz' }, foo, bar);
 
-            expect(baz).toEqual({ foo: 'bar', bar: { name: 'bar' }, baz: 'baz' });
+            expect(baz).toEqual({
+                foo: 'bar',
+                bar: { name: 'bar' },
+                baz: 'baz',
+            });
             expect(baz.bar).toBe(bar.bar);
         });
 
         it('should test deep extend', () => {
-            const foo = { foo: 'foo' },
-                bar = { foo: 'bar', bar: { name: 'bar' } },
-                baz = utils.deepExtend({ baz: 'baz' }, foo, bar);
+            const foo = { foo: 'foo' };
+            const bar = { foo: 'bar', bar: { name: 'bar' } };
+            const baz = utils.deepExtend({ baz: 'baz' }, foo, bar);
 
-            expect(baz).toEqual({ foo: 'bar', bar: { name: 'bar' }, baz: 'baz' });
+            expect(baz).toEqual({
+                foo: 'bar',
+                bar: { name: 'bar' },
+                baz: 'baz',
+            });
             expect(baz.bar).not.toBe(bar.bar);
             expect(baz.bar).toEqual(bar.bar);
         });
 
         it('should test clone', () => {
-            const foo = { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
-                baz = utils.clone(foo);
+            const foo = { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] };
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
@@ -508,22 +535,22 @@ module tests.utils {
         });
 
         it('should test clone with null', () => {
-            const foo: void = null,
-                baz = utils.clone(foo);
+            const foo: void = null;
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
 
         it('should test clone with a string', () => {
-            const foo = 'foo',
-                baz = utils.clone(foo);
+            const foo = 'foo';
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
 
         it('should test clone with a number', () => {
-            const foo = 'foo',
-                baz = utils.clone(foo);
+            const foo = 'foo';
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
@@ -534,8 +561,8 @@ module tests.utils {
                 { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
                 { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
                 { foo: 'foo', bar: [{ foo: 'foo' }, { bar: 'bar' }] },
-            ],
-                baz = utils.clone(foo, true);
+            ];
+            const baz = utils.clone(foo, true);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
@@ -543,16 +570,16 @@ module tests.utils {
         });
 
         it('should test clone with a Date', () => {
-            const foo = new Date(),
-                baz = utils.clone(foo, true);
+            const foo = new Date();
+            const baz = utils.clone(foo, true);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
         });
 
         it('should test clone with a RegExp', () => {
-            const foo = /test/ig,
-                baz = utils.clone(foo);
+            const foo = /test/gi;
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
@@ -561,47 +588,47 @@ module tests.utils {
         });
 
         it('should test clone with a RegExpExecArray', () => {
-            const foo = /test/.exec('test'),
-                baz = utils.clone(foo);
+            const foo = /test/.exec('test');
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
         });
 
         it('should test clone with nested Date, RegExp, and RegExpArray', () => {
-            const date = new Date(),
-                regex = /test/,
-                exec = regex.exec('test'),
-                foo = [
-                    { date: date, regex: [regex, exec], exec: exec },
-                    { date: date, regex: [regex, exec], exec: exec },
-                    { date: date, regex: [regex, exec], exec: exec },
-                    { date: date, regex: [regex, exec], exec: exec },
-                ],
-                baz = utils.clone(foo, true);
+            const date = new Date();
+            const regex = /test/;
+            const exec = regex.exec('test');
+            const foo = [
+                { date: date, regex: [regex, exec], exec: exec },
+                { date: date, regex: [regex, exec], exec: exec },
+                { date: date, regex: [regex, exec], exec: exec },
+                { date: date, regex: [regex, exec], exec: exec },
+            ];
+            const baz = utils.clone(foo, true);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
         });
 
         it('should test clone with a Node', () => {
-            const foo = document.createElement('div'),
-                baz = utils.clone(foo);
+            const foo = document.createElement('div');
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
             expect(baz).not.toBe(foo);
         });
 
         it('should test clone with a Function', () => {
-            const foo = () => { },
-                baz = utils.clone(foo);
+            const foo = () => { };
+            const baz = utils.clone(foo);
 
             expect(baz).toBe(foo);
         });
 
         it('should test clone with am Error', () => {
-            const foo = new TypeError('test'),
-                baz = utils.clone(foo);
+            const foo = new TypeError('test');
+            const baz = utils.clone(foo);
 
             expect(baz).toEqual(foo);
         });
@@ -649,25 +676,36 @@ module tests.utils {
         });
 
         it('should test postpone', (done: Function) => {
-            utils.postpone((arg) => {
-                expect(arg).toBe('foo');
-                done();
-            }, ['foo']);
+            utils.postpone(
+                (arg) => {
+                    expect(arg).toBe('foo');
+                    done();
+                },
+                ['foo']
+            );
         });
 
         it('should test defer', (done: Function) => {
-            utils.defer((arg) => {
-                expect(arg).toBe('foo');
-                done();
-            }, 0, ['foo']);
+            utils.defer(
+                (arg) => {
+                    expect(arg).toBe('foo');
+                    done();
+                },
+                0,
+                ['foo']
+            );
         });
 
         it('should test a cancelled defer', (done: Function) => {
             let postArg: string;
 
-            utils.defer((arg) => {
-                postArg = arg;
-            }, 0, ['foo'])();
+            utils.defer(
+                (arg) => {
+                    postArg = arg;
+                },
+                0,
+                ['foo']
+            )();
 
             setTimeout(() => {
                 expect(postArg).not.toBe('foo');
@@ -701,25 +739,28 @@ module tests.utils {
         });
 
         it('should test uniqueId with a prefix', () => {
-            const rand = Math.random().toString() + '_',
-                uid = utils.uniqueId(rand);
+            // tslint:disable-next-line
+            const rand = `${Math.random().toString()}_`;
+            const uid = utils.uniqueId(rand);
 
-            expect(uid).toBe(rand + '00');
+            expect(uid).toBe(`${rand}00`);
         });
 
         it('should test mapAsync', (done: Function) => {
-            let array = [1, 2, 3, 4, 5],
-                temp: number;
+            const array = [1, 2, 3, 4, 5];
+            let temp: number;
 
-            utils.mapAsync((value, key, obj) => {
-                temp = value;
-                return new Promise<number>((resolve) => {
-                    setTimeout(() => {
-                        expect(temp).toEqual(array[array.length - 1]);
-                        resolve(value + 1);
-                    }, value);
-                });
-            }, array)
+            utils
+                .mapAsync((value, key, obj) => {
+                    temp = value;
+
+                    return new Promise<number>((resolve) => {
+                        setTimeout(() => {
+                            expect(temp).toEqual(array[array.length - 1]);
+                            resolve(value + 1);
+                        }, value);
+                    });
+                }, array)
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -727,24 +768,33 @@ module tests.utils {
         });
 
         it('should test mapAsync with an Object', (done: Function) => {
-            let obj: plat.IObject<number> = {
+            const obj: plat.IObject<number> = {
                 a: 1,
                 b: 2,
                 c: 3,
                 d: 4,
                 e: 5,
-            }, temp: number, keys = Object.keys(obj);
+            };
+            let temp: number;
+            const keys = Object.keys(obj);
 
-            utils.mapAsync(function (value, key, obj) {
-                temp = value;
-                expect(this).toEqual(2);
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        expect(temp).toEqual(obj[keys[keys.length - 1]]);
-                        resolve(value + 1);
-                    }, value);
-                });
-            }, obj, 2)
+            utils
+                .mapAsync(
+                    function (value, key, o) {
+                        temp = value;
+                        // tslint:disable-next-line
+                        expect(this).toEqual(2);
+
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                expect(temp).toEqual(o[keys[keys.length - 1]]);
+                                resolve(value + 1);
+                            }, value);
+                        });
+                    },
+                    obj,
+                    2
+                )
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -752,19 +802,26 @@ module tests.utils {
         });
 
         it('should test mapAsyncInOrder', (done: Function) => {
-            let array = [1, 2, 3, 4, 5],
-                temp: number;
+            const array = [1, 2, 3, 4, 5];
+            let temp: number;
 
-            utils.mapAsyncInOrder(function (value, key, obj) {
-                temp = value;
-                expect(this).toEqual(2);
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        expect(temp).toEqual(value);
-                        resolve(value + 1);
-                    }, value);
-                });
-            }, array, 2)
+            utils
+                .mapAsyncInOrder(
+                    function (value, key, obj) {
+                        temp = value;
+                        // tslint:disable-next-line
+                        expect(this).toEqual(2);
+
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                expect(temp).toEqual(value);
+                                resolve(value + 1);
+                            }, value);
+                        });
+                    },
+                    array,
+                    2
+                )
                 .then((results) => {
                     expect(results).toEqual([2, 3, 4, 5, 6]);
                     done();
@@ -775,16 +832,23 @@ module tests.utils {
             const array = [1, 2, 3, 4, 5];
             let temp: number;
 
-            utils.mapAsyncInDescendingOrder(function (value, key, obj) {
-                temp = value;
-                expect(this).toEqual(2);
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        expect(temp).toEqual(value);
-                        resolve(value + 1);
-                    }, value);
-                });
-            }, array, 2)
+            utils
+                .mapAsyncInDescendingOrder(
+                    function (value, key, obj) {
+                        temp = value;
+                        // tslint:disable-next-line
+                        expect(this).toEqual(2);
+
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                expect(temp).toEqual(value);
+                                resolve(value + 1);
+                            }, value);
+                        });
+                    },
+                    array,
+                    2
+                )
                 .then((results) => {
                     expect(results).toEqual([6, 5, 4, 3, 2]);
                     done();

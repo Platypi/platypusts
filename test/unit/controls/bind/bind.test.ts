@@ -1,14 +1,16 @@
-﻿module tests.controls.bind {
+namespace tests.controls.bind {
     describe('Bind Tests', () => {
-        var control: plat.controls.Bind,
-            parent: plat.ui.TemplateControl,
-            ControlFactory = plat.acquire(plat.IControlFactory);
+        let control: plat.controls.Bind;
+        let parent: plat.ui.TemplateControl;
+        const ControlFactory = plat.acquire(plat.IControlFactory);
 
         beforeEach(() => {
             control = plat.acquire(plat.controls.Bind);
             parent = plat.acquire(plat.ui.TemplateControl);
             parent.controls = [control];
-            parent.resources = plat.acquire(plat.ui.IResourcesFactory).getInstance();
+            parent.resources = plat
+                .acquire(plat.ui.IResourcesFactory)
+                .getInstance();
             control.parent = parent;
             control.type = 'plat-bind';
             control.attributes = plat.acquire(plat.ui.Attributes);
@@ -20,7 +22,7 @@
         });
 
         it('should test initialize', () => {
-            var spy = spyOn(control, <any>'_determineType');
+            const spy = spyOn(control, <any>'_determineType');
 
             control.initialize();
 
@@ -28,7 +30,7 @@
         });
 
         it('should test loaded and immediately return', () => {
-            var spy = spyOn((<any>control)._parser, 'parse');
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             control.loaded();
 
@@ -36,9 +38,11 @@
         });
 
         it('should test loaded with undefined attribute', () => {
-            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo" />').childNodes[0];
+            control.element = <HTMLElement>control.dom.serializeHtml(
+                '<input type="text" plat-bind="foo" />'
+            ).childNodes[0];
 
-            var spy = spyOn((<any>control)._parser, 'parse');
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -48,9 +52,11 @@
         });
 
         it('should test loaded with nested identifier', () => {
-            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo.bar" />').childNodes[0];
-            control.attributes['platBind'] = 'foo.bar';
-            var spy = spyOn((<any>control)._parser, 'parse');
+            control.element = <HTMLElement>control.dom.serializeHtml(
+                '<input type="text" plat-bind="foo.bar" />'
+            ).childNodes[0];
+            control.attributes.platBind = 'foo.bar';
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -58,14 +64,18 @@
             expect(spy.calls.count()).toBe(2);
             expect((<any>control)._contextExpression.aliases).toEqual([]);
             expect((<any>control)._contextExpression.expression).toEqual('foo');
-            expect((<any>control)._contextExpression.identifiers).toEqual(['foo']);
+            expect((<any>control)._contextExpression.identifiers).toEqual([
+                'foo',
+            ]);
             expect((<any>control)._property).toEqual('bar');
         });
 
         it('should test loaded with alias identifier and no parent resources', () => {
-            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
-            control.attributes['platBind'] = '@foo';
-            var spy = spyOn((<any>control)._parser, 'parse');
+            control.element = <HTMLElement>control.dom.serializeHtml(
+                '<input type="text" plat-bind="@foo.bar" />'
+            ).childNodes[0];
+            control.attributes.platBind = '@foo';
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -78,18 +88,20 @@
         });
 
         it('should test loaded with alias identifier and no observable resources', () => {
-            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
-            control.attributes['platBind'] = '@foo';
+            control.element = <HTMLElement>control.dom.serializeHtml(
+                '<input type="text" plat-bind="@foo.bar" />'
+            ).childNodes[0];
+            control.attributes.platBind = '@foo';
             parent.resources.add({
                 foo: {
                     type: 'object',
                     value: {
-                        bar: 'text'
-                    }
-                }
+                        bar: 'text',
+                    },
+                },
             });
 
-            var spy = spyOn((<any>control)._parser, 'parse');
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -102,18 +114,20 @@
         });
 
         it('should test loaded with alias identifier and observable resources', () => {
-            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="@foo.bar" />').childNodes[0];
-            control.attributes['platBind'] = '@foo';
+            control.element = <HTMLElement>control.dom.serializeHtml(
+                '<input type="text" plat-bind="@foo.bar" />'
+            ).childNodes[0];
+            control.attributes.platBind = '@foo';
             parent.resources.add({
                 foo: {
                     type: 'observable',
                     value: {
-                        bar: 'text'
-                    }
-                }
+                        bar: 'text',
+                    },
+                },
             });
 
-            var spy = spyOn((<any>control)._parser, 'parse');
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -129,17 +143,19 @@
             expect((<any>control)._contextExpression.evaluate(null)).toEqual({
                 type: 'observable',
                 value: {
-                    bar: 'text'
+                    bar: 'text',
                 },
-                alias: 'foo'
+                alias: 'foo',
             });
         });
 
         it('should test loaded with immediate identifier', () => {
-            control.element = <HTMLElement>control.dom.serializeHtml('<input type="text" plat-bind="foo" />').childNodes[0];
-            control.attributes['platBind'] = 'foo';
+            control.element = <HTMLElement>control.dom.serializeHtml(
+                '<input type="text" plat-bind="foo" />'
+            ).childNodes[0];
+            control.attributes.platBind = 'foo';
             control.initialize();
-            var spy = spyOn((<any>control)._parser, 'parse');
+            const spy = spyOn((<any>control)._parser, 'parse');
 
             spy.and.callThrough();
 
@@ -152,7 +168,7 @@
         });
 
         it('should test contextChanged', () => {
-            var spy = spyOn(control, <any>'_watchExpression');
+            const spy = spyOn(control, <any>'_watchExpression');
 
             control.contextChanged();
 

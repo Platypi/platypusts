@@ -1,15 +1,15 @@
-﻿/// <reference path="../../references.d.ts" />
+/// <reference path="../../references.d.ts" />
 
-module tests.observable.contextManagerStatic {
-    var ContextManager: plat.observable.IContextManagerStatic = plat.acquire(plat.observable.IContextManagerStatic);
+namespace tests.observable.contextManagerStatic {
+    const ContextManager = plat.acquire(plat.observable.IContextManagerStatic);
 
     describe('ContextManagerStatic Tests', () => {
-        var control: plat.ui.TemplateControl,
-            manager: plat.observable.ContextManager;
+        let control: plat.ui.TemplateControl;
+        let manager: plat.observable.ContextManager;
 
         beforeEach(() => {
             control = <any>{
-                uid: 'test'
+                uid: 'test',
             };
 
             manager = ContextManager.getManager(control);
@@ -32,8 +32,8 @@ module tests.observable.contextManagerStatic {
 
             manager = ContextManager.getManager(control);
 
-            var controls = (<any>ContextManager).__controls,
-                managers = (<any>ContextManager).__managers;
+            const controls = (<any>ContextManager).__controls;
+            const managers = (<any>ContextManager).__managers;
 
             controls[control.uid] = {};
 
@@ -47,12 +47,12 @@ module tests.observable.contextManagerStatic {
 
             manager = ContextManager.getManager(control);
 
-            var called = false;
+            let called = false;
 
             controls[control.uid] = {
-                'foo': [() => {
+                foo: [() => {
                     called = true;
-                }]
+                }],
             };
 
             ContextManager.dispose(control);
@@ -69,10 +69,10 @@ module tests.observable.contextManagerStatic {
         });
 
         it('should test removeArrayListeners', () => {
-            var arrayListeners = ContextManager.arrayChangeListeners = {
+            const arrayListeners = ContextManager.arrayChangeListeners = {
                 foo: {
-                    test: [() => { }]
-                }
+                    test: [() => { }],
+                },
             };
 
             ContextManager.removeArrayListeners('foo', 'test');
@@ -81,14 +81,14 @@ module tests.observable.contextManagerStatic {
         });
 
         it('should test getContext', () => {
-            var rootContext = {
+            const rootContext = {
                 foo: {
                     bar: {
-                        baz: 'quux'
-                    }
-                }
-            },
-                context = ContextManager.getContext(rootContext, 'foo.bar.baz'.split('.'));
+                        baz: 'quux',
+                    },
+                },
+            };
+            let context = ContextManager.getContext(rootContext, 'foo.bar.baz'.split('.'));
 
             expect(context).toBe('quux');
 
@@ -102,11 +102,11 @@ module tests.observable.contextManagerStatic {
         });
 
         it('should test defineProperty', () => {
-            var foo = {
+            const foo = {
                 bar: {
-                    quux: 'quux'
+                    quux: 'quux',
                 },
-                baz: 'foo'
+                baz: 'foo',
             };
 
             ContextManager.defineProperty(foo, 'baz', 'baz', false, false, true);
@@ -135,11 +135,11 @@ module tests.observable.contextManagerStatic {
         });
 
         it('should test defineGetter', () => {
-            var foo = {
+            const foo = {
                 bar: {
-                    quux: 'quux'
+                    quux: 'quux',
                 },
-                baz: 'foo'
+                baz: 'foo',
             };
 
             ContextManager.defineGetter(foo, 'baz', 'baz');
@@ -176,24 +176,23 @@ module tests.observable.contextManagerStatic {
         });
 
         it('should test pushRemoveListener', () => {
-            var controls = (<any>ContextManager).__controls,
-                noop = () => { };
+            const controls = (<any>ContextManager).__controls;
+            const noop = () => { };
 
-            expect(controls['blah']).toBeUndefined();
+            expect(controls.blah).toBeUndefined();
             ContextManager.pushRemoveListener('foo', 'blah', noop);
-            expect(controls['blah']['foo']).toEqual([noop]);
-
+            expect(controls.blah.foo).toEqual([noop]);
 
             expect(controls[control.uid]).toBeUndefined();
             ContextManager.pushRemoveListener('foo', control.uid, noop);
-            expect(controls[control.uid]['foo']).toEqual([noop]);
+            expect(controls[control.uid].foo).toEqual([noop]);
         });
 
         it('should test removeIdentifier', () => {
-            var controls = (<any>ContextManager).__controls = {
+            const controls = (<any>ContextManager).__controls = {
                 test: {
-                    foo: [() => { }]
-                }
+                    foo: [() => { }],
+                },
             };
 
             ContextManager.removeIdentifier([control.uid], 'foo');

@@ -27,12 +27,12 @@
     "load-grunt-tasks": "latest",
     "lodash": "latest",
     "rimraf": "latest",
-    "tslint": "^5.9.1",
-    "tslint-microsoft-contrib": "^5.0.3",
+    "tslint": "latest",
+    "tslint-microsoft-contrib": "latest",
     "typescript": "latest"
   },
   "scripts": {
-    "prepublish": "npm run deploy",
+    "prepublishOnly": "npm run deploy",
     "build": "npm run build:examples && npm run build:test && npm run build:src",
     "build:examples": "tsc -p build/tsc/examples",
     "build:src": "tsc -p .",

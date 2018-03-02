@@ -1,8 +1,8 @@
-﻿module tests.controls.attributeControlFactory {
-    var AttributeControlFactory = plat.acquire(plat.IAttributeControlFactory);
+namespace tests.controls.attributeControlFactory {
+    const AttributeControlFactory = plat.acquire(plat.IAttributeControlFactory);
 
     describe('AttributeControlFactory Tests', () => {
-        var control: plat.AttributeControl;
+        let control: plat.AttributeControl;
 
         beforeEach(() => {
             control = AttributeControlFactory.getInstance();
