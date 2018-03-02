@@ -15,8 +15,6 @@ karma.conf.js
 license.txt
 CONTRIBUTE.md
 bower.json
-tsconfig.dist.json
-tsconfig.dist.local.json
-tsconfig.json
+tsconfig*
 README.md
 .vscode

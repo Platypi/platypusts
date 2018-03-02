@@ -9,6 +9,6 @@
 		"watch": false
 	},
 	"files": [
-		"../../../test/references.d.ts"
+		"./test/references.d.ts"
 	]
 }

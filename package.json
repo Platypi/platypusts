@@ -19,16 +19,17 @@
     "karma-jasmine": "latest",
     "lodash": "latest",
     "rimraf": "latest",
+    "ts-bundle": "latest",
     "tsconfig-lint": "latest",
     "typescript": "latest",
-    "uglifyjs": "latest"
+    "uglify-js": "latest"
   },
   "scripts": {
-    "prepublish": "npm run deploy",
+    "prepublishOnly": "npm run deploy",
     "build": "npm run build:examples && npm run build:test && npm run build:src",
-    "build:examples": "tsc -p build/tsc/examples",
+    "build:examples": "tsc -p tsconfig.examples.json",
     "build:src": "tsc -p .",
-    "build:test": "tsc -p build/tsc/test",
+    "build:test": "tsc -p tsconfig.test.json",
     "clean": "rimraf examples/app.* dist/* src/**/*.js src/**/*.map test/**/*.js",
     "clean:examples": "rimraf examples/app.*",
     "clean:src": "rimraf dist/* src/**/*.js src/**/*.map",
