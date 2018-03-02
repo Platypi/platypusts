@@ -3,12 +3,12 @@
         "module": "commonjs",
         "target": "es5",
         "noImplicitAny": true,
-        "removeComments": true,
+        "removeComments": false,
         "preserveConstEnums": true,
-        "watch": false,
-        "inlineSourceMap": true
+        "declaration": true,
+        "sourceMap": false
     },
     "include": [
-        "src/**/*.ts"
+        "dist/platypus-local.ts"
     ]
 }

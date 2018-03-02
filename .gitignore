@@ -172,3 +172,4 @@ tscommand*
 !build/options/*.js
 !dist/*
 !src/debug/
+.vscode
