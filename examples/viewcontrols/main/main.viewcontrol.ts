@@ -44,13 +44,3 @@ module app.viewcontrols {
         plat.routing.Router,
     ]);
 }
-
-function foo(z: [string, string, string]) {
-
-}
-
-let x: [string, string, string] = ['foo', 'bar', 'baz'];
-let y: string[] = x;
-
-foo(x);
-foo(y);
