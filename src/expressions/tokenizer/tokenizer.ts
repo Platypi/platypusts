@@ -204,6 +204,7 @@ namespace plat.expressions {
                         case ',':
                             this.__handleComma(char);
                             break;
+                        // tslint:disable-next-line
                         case "'":
                         case '"':
                             index = this.__handleStringLiteral(index, char);

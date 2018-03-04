@@ -189,6 +189,7 @@ namespace plat.controls {
         'close bracket': 221,
         '}': 221,
         'close brace': 221,
+        // tslint:disable-next-line
         "'": 222,
         'single quote': 222,
         '"': 222,
