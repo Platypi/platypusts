@@ -288,12 +288,12 @@ module plat.async {
          *
          * @typeparam {any} R The return type of the input {@link plat.async.Promise|Promise}.
          *
-         * @param {plat.async.IResolveFunction<R>} resolveFunction The resolve function to invoke.
+         * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
          * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
          *
          * @returns {void}
          */
-        private static __invokeResolveFunction<R>(resolveFunction: IResolveFunction<R>,
+        private static __invokeResolveFunction<R>(resolveFunction: (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void,
             promise: Promise<R>): void {
             function resolvePromise(value?: any): void {
                 Promise.__resolve<R>(promise, value);
@@ -608,11 +608,12 @@ module plat.async {
          *
          * @typeparam {any} R The return type of the promise.
          *
-         * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
+         * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
+         * A function for fulfilling/rejecting the Promise.
          *
          * @returns {plat.async.Promise<R>} A promise object.
          */
-        constructor(resolveFunction: IResolveFunction<R>) {
+        constructor(resolveFunction: (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void) {
             if (!isFunction(resolveFunction)) {
                 throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
             }
@@ -784,12 +785,6 @@ module plat.async {
     }
 
     /**
-     * Describes a function passed into the constructor for a Promise. The function allows you to
-     * resolve/reject the Promise.
-     */
-    export type IResolveFunction<R> = (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void;
-
-    /**
      * The Type for referencing the '_Promise' injectable as a dependency.
      */
     export function IPromise(_window?: any): IPromise {
@@ -810,12 +805,23 @@ module plat.async {
      * Static Promise interface. See plat.async.Promise
      */
     export interface IPromise {
-        all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
-        all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
-        all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
-        all<T1, T2, T3, T4, T5, T6, T7>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
-        all<T1, T2, T3, T4, T5, T6>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>]): Promise<[T1, T2, T3, T4, T5, T6]>;
-        all<T1, T2, T3, T4, T5>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>]): Promise<[T1, T2, T3, T4, T5]>;
+        new <R>(resolveFunction: (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void): Promise<R>;
+
+        all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 |
+            IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 |
+            IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 |
+            IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 |
+            IThenable<T8>, T9 | IThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 |
+            IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 |
+            IThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+        all<T1, T2, T3, T4, T5, T6, T7>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 |
+            IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+        all<T1, T2, T3, T4, T5, T6>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 |
+            IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>]): Promise<[T1, T2, T3, T4, T5, T6]>;
+        all<T1, T2, T3, T4, T5>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 |
+            IThenable<T4>, T5 | IThenable<T5>]): Promise<[T1, T2, T3, T4, T5]>;
         all<T1, T2, T3, T4>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>]): Promise<[T1, T2, T3, T4]>;
         all<T1, T2, T3>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]): Promise<[T1, T2, T3]>;
         all<T1, T2>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>]): Promise<[T1, T2]>;
@@ -826,8 +832,6 @@ module plat.async {
         resolve<R>(value?: R | IThenable<R>): Promise<R>;
 
         reject<R>(error?: any): Promise<R>;
-
-        new <R>(resolveFunction: IResolveFunction<R>): Promise<R>;
     }
 }
 //tslint:enable:promise-must-complete
