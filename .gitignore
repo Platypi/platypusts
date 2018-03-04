@@ -169,7 +169,7 @@ tscommand*
 !*.less
 !*.ts
 !build/*.js
-!build/options/*.js
+!build/*/*.js
 !dist/*
 !src/debug/
 .vscode
