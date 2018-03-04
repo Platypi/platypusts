@@ -1,4 +1,4 @@
-module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -162,7 +162,7 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        public initialize(): void { }
+        public initialize(): void {}
 
         /**
          * @name start
@@ -176,7 +176,7 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        public start(): void { }
+        public start(): void {}
 
         /**
          * @name end
@@ -267,19 +267,30 @@ module plat.ui.animations {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public addEventListener(type: string, listener: EventListener, useCapture?: boolean): IRemoveListener {
+        public addEventListener(
+            type: string,
+            listener: EventListener,
+            useCapture?: boolean
+        ): IRemoveListener {
             if (!isFunction(listener)) {
-                this._log.warn('An animation\'s "addEventListener" must take a function as the second argument.');
+                this._log.warn(
+                    'An animation\'s "addEventListener" must take a function as the second argument.'
+                );
 
                 return noop;
             }
 
             listener = listener.bind(this);
 
-            const removeListener = this.dom.addEventListener(this.element, type, (ev: Event) => {
-                ev.stopPropagation();
-                listener(ev);
-            }, useCapture);
+            const removeListener = this.dom.addEventListener(
+                this.element,
+                type,
+                (ev: Event) => {
+                    ev.stopPropagation();
+                    listener(ev);
+                },
+                useCapture
+            );
             const eventListeners = this.__eventListeners;
 
             eventListeners.push(removeListener);
@@ -309,7 +320,10 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the
          * animation is complete and end() is called.
          */
-        public instantiate(element: Element, options?: any): IAnimatingThenable {
+        public instantiate(
+            element: Element,
+            options?: any
+        ): IAnimatingThenable {
             this.element = <HTMLElement>element;
             this.options = options;
 

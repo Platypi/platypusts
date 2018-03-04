@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.storage.cache {
+module tests.storage.cache {
     const Cache = plat.acquire(plat.storage.ICacheFactory);
     const id = 'testCache';
 

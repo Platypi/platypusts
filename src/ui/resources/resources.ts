@@ -1,4 +1,4 @@
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -202,7 +202,9 @@ module plat.ui {
          * @description
          * An object consisting of keyed arrays containing functions for removing observation listeners.
          */
-        private static __observableResourceRemoveListeners: IObject<IRemoveListener[]> = {};
+        private static __observableResourceRemoveListeners: IObject<
+            IRemoveListener[]
+        > = {};
 
         /**
          * @name __resources
@@ -259,7 +261,10 @@ module plat.ui {
          *
          * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
          */
-        public static create(control: TemplateControl, resource: IResource): IResource {
+        public static create(
+            control: TemplateControl,
+            resource: IResource
+        ): IResource {
             if (isNull(resource)) {
                 return resource;
             }
@@ -372,8 +377,9 @@ module plat.ui {
                     continue;
                 }
 
-                (<any>resourcesInstance)[alias] = resources[alias] = Resources.create(control,
-                    (<any>resourcesInstance)[alias]);
+                (<any>resourcesInstance)[alias] = resources[
+                    alias
+                ] = Resources.create(control, (<any>resourcesInstance)[alias]);
             }
 
             resourcesInstance.__bound = true;
@@ -397,7 +403,10 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public static dispose(control: TemplateControl, persist?: boolean): void {
+        public static dispose(
+            control: TemplateControl,
+            persist?: boolean
+        ): void {
             const resources = control.resources;
 
             if (isNull(resources)) {
@@ -414,8 +423,14 @@ module plat.ui {
                 key = keys[i];
                 resource = (<any>resources)[key];
 
-                if (!isNull(resource) && (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE)) {
-                    define(resources, key, persist ? _clone(resource, true) : null, true, true, true);
+                if (
+                    !isNull(resource) &&
+                    (resource.type === __OBSERVABLE_RESOURCE ||
+                        resource.type === __LITERAL_RESOURCE)
+                ) {
+                    define(resources, key, persist
+                        ? _clone(resource, true)
+                        : null, true, true, true);
                 }
             }
 
@@ -438,7 +453,9 @@ module plat.ui {
          * @returns {plat.IObject<plat.ui.IResource>} The resources created using the input element.
          */
         public static parseElement(element: Element): IObject<IResource> {
-            const children: Element[] = Array.prototype.slice.call((<HTMLElement>element).children);
+            const children: Element[] = Array.prototype.slice.call(
+                (<HTMLElement>element).children
+            );
             const _regex = Resources._regex;
             const whiteSpaceRegex = _regex.whiteSpaceRegex;
             const quotationRegex = _regex.quotationRegex;
@@ -472,8 +489,11 @@ module plat.ui {
                 if (isEmpty(text)) {
                     continue;
                 }
-                resource.value = (nodeName === __INJECTABLE_RESOURCE || nodeName === __LITERAL_RESOURCE) ?
-                    text.replace(quotationRegex, '') : text;
+                resource.value =
+                    nodeName === __INJECTABLE_RESOURCE ||
+                    nodeName === __LITERAL_RESOURCE
+                        ? text.replace(quotationRegex, '')
+                        : text;
 
                 resource.type = nodeName;
                 resources[resource.alias] = resource;
@@ -513,13 +533,19 @@ module plat.ui {
          *
          * @returns {void}
          */
-        protected static _observeResource(control: TemplateControl, resource: IResource): void {
+        protected static _observeResource(
+            control: TemplateControl,
+            resource: IResource
+        ): void {
             const uid = control.uid;
             let value = resource.value;
-            let removeListeners = Resources.__observableResourceRemoveListeners[uid];
+            let removeListeners =
+                Resources.__observableResourceRemoveListeners[uid];
 
             if (isNull(removeListeners)) {
-                removeListeners = Resources.__observableResourceRemoveListeners[uid] = [];
+                removeListeners = Resources.__observableResourceRemoveListeners[
+                    uid
+                ] = [];
             }
 
             if (isString(value)) {
@@ -556,7 +582,8 @@ module plat.ui {
             }
 
             const uid = control.uid;
-            const removeListeners = Resources.__observableResourceRemoveListeners[uid];
+            const removeListeners =
+                Resources.__observableResourceRemoveListeners[uid];
 
             if (isArray(removeListeners)) {
                 const length = removeListeners.length;
@@ -614,7 +641,10 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public initialize(controlInstance: TemplateControl, resources?: Element | IObject<IResource> | Resources): void {
+        public initialize(
+            controlInstance: TemplateControl,
+            resources?: Element | IObject<IResource> | Resources
+        ): void {
             this.__controlInstance = controlInstance;
 
             if (isNull(resources)) {
@@ -679,7 +709,9 @@ module plat.ui {
                 resource = (<IObject<IResource>>resources)[key];
                 resource.alias = key;
 
-                (<any>this)[key] = this.__resources[key] = bound ? create(control, resource) : resource;
+                (<any>this)[key] = this.__resources[key] = bound
+                    ? create(control, resource)
+                    : resource;
             }
         }
     }
@@ -690,28 +722,36 @@ module plat.ui {
     export function IResourcesFactory(
         _ContextManager?: observable.IContextManagerStatic,
         _regex?: expressions.Regex,
-        _log?: debug.Log): IResourcesFactory {
+        _log?: debug.Log
+    ): IResourcesFactory {
         (<any>Resources)._ContextManager = _ContextManager;
         (<any>Resources)._regex = _regex;
         (<any>Resources)._log = _log;
         const controlResources: IObject<boolean> = {};
         const resourceTypes: IObject<boolean> = {};
 
-        controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] =
-            controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
-        resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] =
-            resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
+        controlResources[__CONTROL_RESOURCE] = controlResources[
+            __CONTEXT_RESOURCE
+        ] = controlResources[__ROOT_RESOURCE] = controlResources[
+            __ROOT_CONTEXT_RESOURCE
+        ] = true;
+        resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[
+            __OBJECT_RESOURCE
+        ] = resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[
+            __FUNCTION_RESOURCE
+        ] = resourceTypes[__LITERAL_RESOURCE] = true;
         (<any>Resources).__controlResources = controlResources;
         (<any>Resources).__resourceTypes = resourceTypes;
 
         return Resources;
     }
 
-    register.injectable(__ResourcesFactory, IResourcesFactory, [
-        __ContextManagerStatic,
-        __Regex,
-        __Log,
-    ], __FACTORY);
+    register.injectable(
+        __ResourcesFactory,
+        IResourcesFactory,
+        [__ContextManagerStatic, __Regex, __Log],
+        __FACTORY
+    );
 
     register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);
 

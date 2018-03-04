@@ -6,7 +6,8 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "watch": false,
-        "inlineSourceMap": true
+        "inlineSourceMap": true,
+        "outFile": "test.js"
     },
     "include": [
         "src/references.d.ts"

@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.utils {
+module tests.utils {
     interface IUtilTest {
         name: string;
         fn: string;

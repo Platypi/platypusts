@@ -1,4 +1,4 @@
-module plat.web {
+namespace plat.web {
     'use strict';
 
     /**

@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -189,7 +189,9 @@ module plat.ui.controls {
          * @description
          * A promise that resolves when the leave is finished.
          */
-        private __leavePromise: animations.IAnimationThenable<any>|async.Promise<any>;
+        private __leavePromise:
+            | animations.IAnimationThenable<any>
+            | async.Promise<any>;
 
         /**
          * @name __enterPromise
@@ -202,7 +204,9 @@ module plat.ui.controls {
          * @description
          * A promise that resolves when the entrance is finished.
          */
-        private __enterPromise: animations.IAnimationThenable<any>|async.Promise<any>;
+        private __enterPromise:
+            | animations.IAnimationThenable<any>
+            | async.Promise<any>;
 
         /**
          * @name __initialBind
@@ -233,7 +237,9 @@ module plat.ui.controls {
             super();
 
             const _document = this._document;
-            this.commentNode = _document.createComment(`${__If}${__BOUND_PREFIX}placeholder`);
+            this.commentNode = _document.createComment(
+                `${__If}${__BOUND_PREFIX}placeholder`
+            );
             this.fragmentStore = _document.createDocumentFragment();
         }
 
@@ -271,7 +277,10 @@ module plat.ui.controls {
          * @returns {void}
          */
         public setTemplate(): void {
-            this.bindableTemplates.add('template', Array.prototype.slice.call(this.element.childNodes));
+            this.bindableTemplates.add(
+                'template',
+                Array.prototype.slice.call(this.element.childNodes)
+            );
         }
 
         /**
@@ -293,7 +302,9 @@ module plat.ui.controls {
             if (isObject(options)) {
                 this._animate = options.value.animate === true;
             } else {
-                this._log.warn(`No condition specified in ${__Options} for ${this.type}.`);
+                this._log.warn(
+                    `No condition specified in ${__Options} for ${this.type}.`
+                );
 
                 this.options = {
                     value: {
@@ -351,9 +362,13 @@ module plat.ui.controls {
          */
         protected _setter(options: IIfOptions): async.Promise<void> {
             const value = !!options.condition;
-            let actionPromise: animations.IAnimationThenable<any>|async.Promise<any>;
+            let actionPromise:
+                | animations.IAnimationThenable<any>
+                | async.Promise<any>;
             let next: () => async.Promise<any>;
-            let promise: animations.IAnimationThenable<any>|async.Promise<any>;
+            let promise:
+                | animations.IAnimationThenable<any>
+                | async.Promise<any>;
 
             if (value === this.__condition && !this.__firstTime) {
                 return this._Promise.resolve(null);
@@ -375,8 +390,15 @@ module plat.ui.controls {
 
             if (isNull(actionPromise)) {
                 promise = next();
-            } else if (this._animate && isFunction((<animations.IAnimationThenable<any>>actionPromise).cancel)) {
-                promise = (<animations.IAnimationThenable<any>>actionPromise).cancel().then(next);
+            } else if (
+                this._animate &&
+                isFunction(
+                    (<animations.IAnimationThenable<any>>actionPromise).cancel
+                )
+            ) {
+                promise = (<animations.IAnimationThenable<any>>actionPromise)
+                    .cancel()
+                    .then(next);
             } else {
                 promise = (<async.Promise<any>>actionPromise).then(next);
             }
@@ -407,31 +429,40 @@ module plat.ui.controls {
             if (!isBound) {
                 this.__isBound = true;
 
-                return this.__initialBind = this.bindableTemplates.bind('template').then((template): async.Promise<void> => {
-                    this.__initialBind = null;
+                return (this.__initialBind = this.bindableTemplates
+                    .bind('template')
+                    .then((template): async.Promise<void> => {
+                        this.__initialBind = null;
 
-                    const element = this.element;
-                    if (element.parentNode === this.fragmentStore || isNull(element.parentNode)) {
-                        element.insertBefore(template, null);
-                        if (this._animate) {
-                            return this._animateEntrance();
+                        const element = this.element;
+                        if (
+                            element.parentNode === this.fragmentStore ||
+                            isNull(element.parentNode)
+                        ) {
+                            element.insertBefore(template, null);
+                            if (this._animate) {
+                                return this._animateEntrance();
+                            }
+
+                            return this._elementEntrance();
+                        } else if (this._animate) {
+                            this.__enterPromise = this._animator
+                                .animate(element, __Enter)
+                                .then((): void => {
+                                    this.__enterPromise = null;
+                                });
+
+                            element.insertBefore(template, null);
+
+                            return this.__enterPromise;
                         }
 
-                        return this._elementEntrance();
-                    } else if (this._animate) {
-                        this.__enterPromise = this._animator.animate(element, __Enter).then((): void => {
-                            this.__enterPromise = null;
-                        });
-
                         element.insertBefore(template, null);
-
-                        return this.__enterPromise;
-                    }
-
-                    element.insertBefore(template, null);
-                });
+                    }));
             } else if (!isNull(this.__initialBind)) {
-                this.__initialBind = this.__initialBind.then((): async.Promise<void> => {
+                this.__initialBind = this.__initialBind.then((): async.Promise<
+                    void
+                > => {
                     this.__initialBind = null;
                     if (this._animate) {
                         return this._animateEntrance();
@@ -498,9 +529,11 @@ module plat.ui.controls {
                 return this._animator.resolve().then(noop);
             }
 
-            this.__enterPromise = this._animator.enter(this.element, __Enter, <Element>parentNode, commentNode).then((): void => {
-                this.__enterPromise = null;
-            });
+            this.__enterPromise = this._animator
+                .enter(this.element, __Enter, <Element>parentNode, commentNode)
+                .then((): void => {
+                    this.__enterPromise = null;
+                });
 
             return <animations.IAnimationThenable<void>>this.__enterPromise;
         }
@@ -518,7 +551,9 @@ module plat.ui.controls {
          */
         protected _removeItem(): async.Promise<void> {
             if (!isNull(this.__initialBind)) {
-                this.__initialBind = this.__initialBind.then((): async.Promise<void> => {
+                this.__initialBind = this.__initialBind.then((): async.Promise<
+                    void
+                > => {
                     this.__initialBind = null;
                     if (this._animate) {
                         return this._animateLeave();
@@ -585,18 +620,20 @@ module plat.ui.controls {
         protected _animateLeave(): animations.IAnimationThenable<void> {
             const element = this.element;
 
-            this.__leavePromise = this._animator.leave(element, __Leave).then((): void => {
-                const parent = element.parentNode;
-                const nextSibling = element.nextSibling;
+            this.__leavePromise = this._animator
+                .leave(element, __Leave)
+                .then((): void => {
+                    const parent = element.parentNode;
+                    const nextSibling = element.nextSibling;
 
-                this.__leavePromise = null;
+                    this.__leavePromise = null;
 
-                if (!isNode(this.commentNode.parentNode)) {
-                    parent.insertBefore(this.commentNode, nextSibling);
-                }
+                    if (!isNode(this.commentNode.parentNode)) {
+                        parent.insertBefore(this.commentNode, nextSibling);
+                    }
 
-                this.fragmentStore.insertBefore(element, null);
-            });
+                    this.fragmentStore.insertBefore(element, null);
+                });
 
             return <animations.IAnimationThenable<void>>this.__leavePromise;
         }

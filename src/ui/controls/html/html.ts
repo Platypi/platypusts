@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -119,11 +119,16 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        protected _onOptionsChanged(newValue: IInnerHtmlOptions, oldValue?: IInnerHtmlOptions): void {
+        protected _onOptionsChanged(
+            newValue: IInnerHtmlOptions,
+            oldValue?: IInnerHtmlOptions
+        ): void {
             if (newValue === oldValue) {
                 return;
             } else if (!isObject(newValue)) {
-                this._log.debug(`plat-options for ${this.type} must be an object.`);
+                this._log.debug(
+                    `plat-options for ${this.type} must be an object.`
+                );
 
                 return;
             }
@@ -145,7 +150,9 @@ module plat.ui.controls {
 
                 return;
             } else if (!htmlIsString) {
-                this._log.debug(`Trying to bind a non-string value to ${this.type}.`);
+                this._log.debug(
+                    `Trying to bind a non-string value to ${this.type}.`
+                );
 
                 return;
             } else if (newValue.compile === true) {

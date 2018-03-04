@@ -1,4 +1,4 @@
-module plat.routing {
+namespace plat.routing {
     'use strict';
 
     /**
@@ -87,7 +87,10 @@ module plat.routing {
          *
          * @returns {void}
          */
-        public register(routes: IRouteDelegate[], options?: IRegisterOptions): void {
+        public register(
+            routes: IRouteDelegate[],
+            options?: IRegisterOptions
+        ): void {
             if (!isArray(routes)) {
                 return;
             }
@@ -312,7 +315,11 @@ module plat.routing {
          *
          * @returns {Array<plat.routing.BaseSegment>} The segments created for the route.
          */
-        protected _parse(route: IRouteDelegate, delegates: IDelegateParameterNames[], types: ISegmentTypeCount): BaseSegment[] {
+        protected _parse(
+            route: IRouteDelegate,
+            delegates: IDelegateParameterNames[],
+            types: ISegmentTypeCount
+        ): BaseSegment[] {
             const names: string[] = [];
 
             delegates.push({
@@ -338,7 +345,11 @@ module plat.routing {
          *
          * @returns {plat.routing.State} The final state obtained from compilation.
          */
-        protected _compile(segments: BaseSegment[], state: State, regex: string[]): State {
+        protected _compile(
+            segments: BaseSegment[],
+            state: State,
+            regex: string[]
+        ): State {
             const length = segments.length;
             const compile = this._State.compile;
             let segment: BaseSegment;
@@ -414,9 +425,7 @@ module plat.routing {
          * @returns {Array<plat.routing.State>} The states associated with the given path.
          */
         protected _findStates(path: string): State[] {
-            let states: State[] = [
-                this._rootState,
-            ];
+            let states: State[] = [this._rootState];
             const recognize = this._State.recognize;
             const length = path.length;
 
@@ -474,7 +483,11 @@ module plat.routing {
          *
          * @returns {plat.routing.IRecognizeResult} The linked result.
          */
-        protected _link(state: State, path: string, isTrailingSlashDropped: boolean): IRecognizeResult {
+        protected _link(
+            state: State,
+            path: string,
+            isTrailingSlashDropped: boolean
+        ): IRecognizeResult {
             if (isObject(state) && isArray(state.delegates)) {
                 if (isTrailingSlashDropped && this._isDynamic(state)) {
                     path = `${path}/`;
@@ -502,7 +515,12 @@ module plat.routing {
         }
     }
 
-    register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
+    register.injectable(
+        __RouteRecognizerInstance,
+        RouteRecognizer,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name IRecognizeResult
@@ -514,7 +532,7 @@ module plat.routing {
      * @description
      * An Array of delegate information for a recognized route.
      */
-    export interface IRecognizeResult extends Array<IDelegateInfo> { }
+    export interface IRecognizeResult extends Array<IDelegateInfo> {}
 
     /**
      * @name IDelegateInfo

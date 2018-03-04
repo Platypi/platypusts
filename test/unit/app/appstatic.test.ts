@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.appStatic {
+module tests.appStatic {
     const _AppStatic = plat.acquire(plat.IAppStatic);
     let app: plat.App;
 

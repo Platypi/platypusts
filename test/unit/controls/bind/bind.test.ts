@@ -1,4 +1,4 @@
-namespace tests.controls.bind {
+module tests.controls.bind {
     describe('Bind Tests', () => {
         let control: plat.controls.Bind;
         let parent: plat.ui.TemplateControl;

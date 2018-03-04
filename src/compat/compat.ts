@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -322,7 +322,9 @@ module plat {
          * @description
          * The browser's requestAnimationFrame function if one exists. Otherwise undefined.
          */
-        public requestAnimationFrame: (callback: FrameRequestCallback) => number;
+        public requestAnimationFrame: (
+            callback: FrameRequestCallback
+        ) => number;
 
         /**
          * @name cancelAnimationFrame
@@ -416,7 +418,9 @@ module plat {
                 if (event === 'input' && this.IE === 9) {
                     eventExists = events[event] = false;
                 } else {
-                    eventExists = events[event] = !isUndefined((<any>element)[(`on${event}`)]);
+                    eventExists = events[event] = !isUndefined(
+                        (<any>element)[`on${event}`]
+                    );
                 }
             }
 
@@ -467,12 +471,18 @@ module plat {
                 android = parseInt(android.replace(/\./g, ''), 10);
             }
 
-            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
+            this.isCompatible =
+                isFunction(Object.defineProperty) &&
+                isFunction(this._document.querySelector);
             this.cordova = !isNull((<any>_window).cordova);
             this.pushState = !(isNull(history) || isNull(history.pushState));
-            this.fileSupported = !(isUndefined((<any>_window).File) || isUndefined((<any>_window).FormData));
+            this.fileSupported = !(
+                isUndefined((<any>_window).File) ||
+                isUndefined((<any>_window).FormData)
+            );
             this.amd = isFunction(def) && !isNull(def.amd);
-            this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.msApp =
+                isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
             this.winJs = isObject(winJs) && isObject(winJs.Application);
             this.indexedDb = !isNull(_window.indexedDB);
             this.proto = isObject((<any>{}).__proto__);
@@ -499,10 +509,10 @@ module plat {
                 tridentExec = [];
             }
 
-            let ie = parseInt((msieExec)[1], 10);
+            let ie = parseInt(msieExec[1], 10);
 
             if (!isNumber(ie)) {
-                ie = parseInt((tridentExec)[1], 10);
+                ie = parseInt(tridentExec[1], 10);
             }
 
             if (isNumber(ie)) {
@@ -569,16 +579,20 @@ module plat {
             const _window = this._window;
             const documentElement = this._document.documentElement;
             const styles = _window.getComputedStyle(documentElement, '');
-            const matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/);
+            const matches = Array.prototype.slice
+                .call(styles)
+                .join('')
+                .match(/-(moz|webkit|ms)-/);
             let prefix: string;
             let dom: string;
             let css: string;
             let jsSyntax: string;
 
-            if ((isArray(matches) && matches.length > 1)) {
-                prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
+            if (isArray(matches) && matches.length > 1) {
+                prefix =
+                    isArray(matches) && matches.length > 1 ? matches[1] : '';
                 jsSyntax = prefix[0].toUpperCase() + prefix.slice(1);
-                dom = ('WebKit|Moz|MS').match(new RegExp(`(${prefix})`, 'i'))[1];
+                dom = 'WebKit|Moz|MS'.match(new RegExp(`(${prefix})`, 'i'))[1];
                 css = `-${prefix}-`;
             } else if (!isUndefined((<any>styles).OLink)) {
                 prefix = 'o';
@@ -598,24 +612,33 @@ module plat {
             this.requestAnimationFrame = _window.requestAnimationFrame;
 
             if (!isFunction(this.requestAnimationFrame)) {
-                this.requestAnimationFrame = (<any>_window)[`${prefix}RequestAnimationFrame`];
+                this.requestAnimationFrame = (<any>_window)[
+                    `${prefix}RequestAnimationFrame`
+                ];
             }
 
             this.cancelAnimationFrame = _window.cancelAnimationFrame;
 
             if (!isFunction(this.cancelAnimationFrame)) {
-                this.cancelAnimationFrame = (<any>_window)[`${prefix}CancelRequestAnimationFrame`];
+                this.cancelAnimationFrame = (<any>_window)[
+                    `${prefix}CancelRequestAnimationFrame`
+                ];
             }
 
             if (!isFunction(this.cancelAnimationFrame)) {
-                this.cancelAnimationFrame = (<any>_window)[`${prefix}CancelAnimationFrame`];
+                this.cancelAnimationFrame = (<any>_window)[
+                    `${prefix}CancelAnimationFrame`
+                ];
             }
 
             const style = documentElement.style;
             // handle Android issue where style.transition exists but transition events still need vendor prefix
             // should only affect version 4.1 but we will handle for < 4.4.
-            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
-                !(isUndefined(style.animation) || isUndefined(style.transition))) {
+            if (
+                (isUndefined(this.ANDROID) ||
+                    Math.floor(this.ANDROID / 10) >= 44) &&
+                !(isUndefined(style.animation) || isUndefined(style.transition))
+            ) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: 'animation',
@@ -626,9 +649,20 @@ module plat {
                     $transitionStart: 'transitionstart',
                     $transitionEnd: 'transitionend',
                 };
-            } else if (!(isUndefined((<any>style)[`${jsSyntax}Animation`]) || isUndefined((<any>style)[`${jsSyntax}Transition`])) ||
-                !(isUndefined((<any>style)[`${prefix}Animation`]) || isUndefined((<any>style)[`${prefix}Transition`])) ||
-                !(isUndefined((<any>style)[`${dom}Animation`]) || isUndefined((<any>style)[`${dom}Transition`]))) {
+            } else if (
+                !(
+                    isUndefined((<any>style)[`${jsSyntax}Animation`]) ||
+                    isUndefined((<any>style)[`${jsSyntax}Transition`])
+                ) ||
+                !(
+                    isUndefined((<any>style)[`${prefix}Animation`]) ||
+                    isUndefined((<any>style)[`${prefix}Transition`])
+                ) ||
+                !(
+                    isUndefined((<any>style)[`${dom}Animation`]) ||
+                    isUndefined((<any>style)[`${dom}Transition`])
+                )
+            ) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: `${prefix}Animation`,

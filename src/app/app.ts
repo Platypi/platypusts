@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -175,8 +175,12 @@ module plat {
          */
         public static start(): void {
             if (!App._compat.isCompatible) {
-                App._log.error(new Error('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined'));
+                App._log.error(
+                    new Error(
+                        'PlatypusTS only supports modern browsers where ' +
+                            'Object.defineProperty is defined'
+                    )
+                );
 
                 return;
             }
@@ -336,7 +340,7 @@ module plat {
                 return;
             }
 
-            const app = App.app = appInjector.inject();
+            const app = (App.app = appInjector.inject());
 
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
@@ -367,8 +371,14 @@ module plat {
             const _document = App._document;
             if (App._compat.platCss) {
                 return;
-            } else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
-                (<CSSStyleSheet>_document.styleSheets[0]).insertRule('[plat-hide] { display: none !important; }', 0);
+            } else if (
+                !isNull(_document.styleSheets) &&
+                _document.styleSheets.length > 0
+            ) {
+                (<CSSStyleSheet>_document.styleSheets[0]).insertRule(
+                    '[plat-hide] { display: none !important; }',
+                    0
+                );
 
                 return;
             }
@@ -392,8 +402,12 @@ module plat {
          * @returns {plat.App}
          */
         constructor() {
-            const navigator: routing.Navigator = this.navigator = acquire(__NavigatorInstance);
-            navigator.initialize((<routing.IRouterStatic>acquire(__RouterStatic)).currentRouter());
+            const navigator: routing.Navigator = (this.navigator = acquire(
+                __NavigatorInstance
+            ));
+            navigator.initialize(
+                (<routing.IRouterStatic>acquire(__RouterStatic)).currentRouter()
+            );
         }
 
         /**
@@ -410,7 +424,7 @@ module plat {
          *
          * @returns {void}
          */
-        public suspend(ev: events.LifecycleEvent): void { }
+        public suspend(ev: events.LifecycleEvent): void {}
 
         /**
          * @name resume
@@ -426,7 +440,7 @@ module plat {
          *
          * @returns {void}
          */
-        public resume(ev: events.LifecycleEvent): void { }
+        public resume(ev: events.LifecycleEvent): void {}
 
         /**
          * @name error
@@ -442,7 +456,7 @@ module plat {
          *
          * @returns {void}
          */
-        public error(ev: events.ErrorEvent<Error>): void { }
+        public error(ev: events.ErrorEvent<Error>): void {}
 
         /**
          * @name ready
@@ -458,7 +472,7 @@ module plat {
          *
          * @returns {void}
          */
-        public ready(ev: events.LifecycleEvent): void { }
+        public ready(ev: events.LifecycleEvent): void {}
 
         /**
          * @name exiting
@@ -474,7 +488,7 @@ module plat {
          *
          * @returns {void}
          */
-        public exiting(ev: events.LifecycleEvent): void { }
+        public exiting(ev: events.LifecycleEvent): void {}
 
         /**
          * @name online
@@ -490,7 +504,7 @@ module plat {
          *
          * @returns {void}
          */
-        public online(ev: events.LifecycleEvent): void { }
+        public online(ev: events.LifecycleEvent): void {}
 
         /**
          * @name offline
@@ -506,7 +520,7 @@ module plat {
          *
          * @returns {void}
          */
-        public offline(ev: events.LifecycleEvent): void { }
+        public offline(ev: events.LifecycleEvent): void {}
 
         /**
          * @name dispatchEvent
@@ -551,7 +565,10 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
-        public on(name: string, listener: (ev: events.DispatchEvent, ...args: any[]) => void): IRemoveListener {
+        public on(
+            name: string,
+            listener: (ev: events.DispatchEvent, ...args: any[]) => void
+        ): IRemoveListener {
             let _EventManager = App._EventManager;
 
             if (!isObject(_EventManager)) {
@@ -606,7 +623,8 @@ module plat {
         _document?: Document,
         _compiler?: processing.Compiler,
         _LifecycleEvent?: events.ILifecycleEventStatic,
-        _log?: debug.Log): IAppStatic {
+        _log?: debug.Log
+    ): IAppStatic {
         (<any>App)._compat = _compat;
         (<any>App)._EventManager = _EventManager;
         (<any>App)._document = _document;
@@ -617,14 +635,19 @@ module plat {
         return App;
     }
 
-    register.injectable(__AppStatic, IAppStatic, [
-        __Compat,
-        __EventManagerStatic,
-        __Document,
-        __Compiler,
-        __LifecycleEventStatic,
-        __Log,
-    ], __STATIC);
+    register.injectable(
+        __AppStatic,
+        IAppStatic,
+        [
+            __Compat,
+            __EventManagerStatic,
+            __Document,
+            __Compiler,
+            __LifecycleEventStatic,
+            __Log,
+        ],
+        __STATIC
+    );
 
     /**
      * The Type for referencing the '_app' injectable as a dependency.
@@ -755,7 +778,10 @@ module plat {
      *
      * @typeparam {any} T The type of each value changing.
      */
-    export type IPropertyChangedListener<T> = (newValue: T, oldValue: T) => void;
+    export type IPropertyChangedListener<T> = (
+        newValue: T,
+        oldValue: T
+    ) => void;
 
     /**
      * @name IIdentifierChangedListener
@@ -767,5 +793,9 @@ module plat {
      *
      * @typeparam {any} T The type of each value changing.
      */
-    export type IIdentifierChangedListener<T> = (newValue: T, oldValue: T, identifier: any) => void;
+    export type IIdentifierChangedListener<T> = (
+        newValue: T,
+        oldValue: T,
+        identifier: any
+    ) => void;
 }

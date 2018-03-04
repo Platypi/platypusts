@@ -1,4 +1,3 @@
-
 /**
  * @name web
  * @memberof plat
@@ -8,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to web components in platypus.
  */
-module plat.web {
+namespace plat.web {
     'use strict';
 
     /**
@@ -232,7 +231,12 @@ module plat.web {
          * @returns {plat.web.Browser}
          */
         constructor() {
-            this._EventManager.on(this.uid, __beforeLoad, this.initialize, this);
+            this._EventManager.on(
+                this.uid,
+                __beforeLoad,
+                this.initialize,
+                this
+            );
 
             if (this._compat.msApp) {
                 this._stack = [];
@@ -333,7 +337,10 @@ module plat.web {
             let _stack = this._stack;
 
             if (isArray(_stack) && _stack.length > 1) {
-                this._stack = _stack = _stack.slice(0, _stack.length - (length - 1));
+                this._stack = _stack = _stack.slice(
+                    0,
+                    _stack.length - (length - 1)
+                );
                 this.url(_stack.pop());
                 _stack.pop();
 
@@ -423,9 +430,11 @@ module plat.web {
             const locationUtils = this.urlUtils();
 
             // check for protocol:host:port mismatch
-            return urlUtils.protocol !== locationUtils.protocol ||
+            return (
+                urlUtils.protocol !== locationUtils.protocol ||
                 urlUtils.hostname !== locationUtils.hostname ||
-                urlUtils.port !== locationUtils.port;
+                urlUtils.port !== locationUtils.port
+            );
         }
 
         /**
@@ -453,14 +462,17 @@ module plat.web {
                 return url;
             }
 
-            const isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+            const isLocal =
+                !this._regex.fullUrlRegex.test(url) ||
+                url.indexOf(baseUrl) > -1;
             if (url[0] === '/') {
                 url = url.slice(1);
             }
 
             if (isLocal) {
                 if (config.routingType === config.HASH) {
-                    const hasProtocol = url.indexOf(`${this.__protocol}:`) === 0;
+                    const hasProtocol =
+                        url.indexOf(`${this.__protocol}:`) === 0;
 
                     let prefix = config.hashPrefix;
 
@@ -471,7 +483,10 @@ module plat.web {
                     const append = `#${prefix}`;
                     const hashRegex = new RegExp(`${append}|#/`);
 
-                    if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
+                    if (
+                        url[url.length - 1] !== '/' &&
+                        url.indexOf('?') === -1
+                    ) {
                         url += '/';
                     }
 
@@ -479,7 +494,7 @@ module plat.web {
                         if (hasProtocol) {
                             url = `${url}${append}/`;
                         } else {
-                            url = append + ((url[0] !== '/') ? '/' : '') + url;
+                            url = append + (url[0] !== '/' ? '/' : '') + url;
                         }
                     }
                 }
@@ -523,10 +538,12 @@ module plat.web {
 
             const _EventManager = this._EventManager;
             postpone(() => {
-                _EventManager.dispatch(__urlChanged,
+                _EventManager.dispatch(
+                    __urlChanged,
                     this,
                     _EventManager.DIRECT,
-                    [utils]);
+                    [utils]
+                );
             });
         }
 
@@ -573,13 +590,21 @@ module plat.web {
                         state = {};
                     }
 
-                    _history.replaceState({
-                        previousLocation: state.previousLocation,
-                    }, '', url);
+                    _history.replaceState(
+                        {
+                            previousLocation: state.previousLocation,
+                        },
+                        '',
+                        url
+                    );
                 } else {
-                    _history.pushState({
-                        previousLocation: this.urlUtils().pathname,
-                    }, '', url);
+                    _history.pushState(
+                        {
+                            previousLocation: this.urlUtils().pathname,
+                        },
+                        '',
+                        url
+                    );
                 }
 
                 if (!this.__initializing) {

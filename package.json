@@ -19,11 +19,11 @@
     "karma-jasmine": "latest",
     "lodash": "latest",
     "rimraf": "latest",
+    "ts-bundle": "^0.3.0",
     "tslint": "latest",
     "tslint-microsoft-contrib": "latest",
-    "ts-bundle": "latest",
     "typescript": "latest",
-    "uglify-js": "latest"
+    "uglify-js": "^3.3.13"
   },
   "scripts": {
     "prepublishOnly": "npm run deploy",

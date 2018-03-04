@@ -1,4 +1,4 @@
-module plat.expressions {
+namespace plat.expressions {
     'use strict';
 
     /**
@@ -63,7 +63,8 @@ module plat.expressions {
          * @description
          * A regular expression for determining if a potential variable is valid syntax.
          */
-        private __variableRegex: RegExp = (<Regex>acquire(__Regex)).invalidVariableRegex;
+        private __variableRegex: RegExp = (<Regex>acquire(__Regex))
+            .invalidVariableRegex;
         /**
          * @name __outputQueue
          * @memberof plat.expressions.Tokenizer
@@ -203,7 +204,7 @@ module plat.expressions {
                         case ',':
                             this.__handleComma(char);
                             break;
-                        case '\'':
+                        case "'":
                         case '"':
                             index = this.__handleStringLiteral(index, char);
                             break;
@@ -230,7 +231,7 @@ module plat.expressions {
                 this.__previousChar = char;
             }
 
-            if (ternaryFound && (ternary > 0)) {
+            if (ternaryFound && ternary > 0) {
                 this._throwError('Improper ternary expression');
             } else if (this.__objArgCount.length > 0) {
                 this._throwError('Improper object literal');
@@ -280,7 +281,11 @@ module plat.expressions {
          *
          * @returns {string} The grouped characters.
          */
-        protected _lookAhead(char: string, index: number, isNumberLike: boolean): string {
+        protected _lookAhead(
+            char: string,
+            index: number,
+            isNumberLike: boolean
+        ): string {
             const input = this._input;
             const maxLength = input.length;
             let ch: string;
@@ -358,7 +363,10 @@ module plat.expressions {
          * @returns {string} The resultant inner character string between
          * the first character and end character being looked ahead for.
          */
-        protected _lookAheadForDelimiter(endChar: string, index: number): string {
+        protected _lookAheadForDelimiter(
+            endChar: string,
+            index: number
+        ): string {
             const input = this._input;
             const maxLength = input.length;
             let char = '';
@@ -393,7 +401,11 @@ module plat.expressions {
          *
          * @returns {void}
          */
-        protected _popStackForVal(topOperator: IToken, char: string, error: string): void {
+        protected _popStackForVal(
+            topOperator: IToken,
+            char: string,
+            error: string
+        ): void {
             const outputQueue = this.__outputQueue;
             const operatorStack = this.__operatorStack;
 
@@ -511,7 +523,7 @@ module plat.expressions {
          * @returns {boolean} Whether or not the character is numeric.
          */
         protected _isNumeric(char: string): boolean {
-            return (char >= '0' && char <= '9');
+            return char >= '0' && char <= '9';
         }
 
         /**
@@ -528,12 +540,14 @@ module plat.expressions {
          * @returns {boolean} Whether or not the character is a space.
          */
         protected _isSpace(char: string): boolean {
-            return (char === ' ' ||
+            return (
+                char === ' ' ||
                 char === '\r' ||
                 char === '\n' ||
                 char === '\t' ||
                 char === '\v' ||
-                char === '\u00A0');
+                char === '\u00A0'
+            );
         }
 
         /**
@@ -550,12 +564,14 @@ module plat.expressions {
          * @returns {boolean} Whether or not the character is alphanumeric.
          */
         protected _isAlphaNumeric(char: string): boolean {
-            return (char >= 'a' && char <= 'z' ||
-                char >= 'A' && char <= 'Z' ||
-                char >= '0' && char <= '9' ||
+            return (
+                (char >= 'a' && char <= 'z') ||
+                (char >= 'A' && char <= 'Z') ||
+                (char >= '0' && char <= '9') ||
                 char === '@' ||
                 char === '_' ||
-                char === '$');
+                char === '$'
+            );
         }
 
         /**
@@ -594,8 +610,11 @@ module plat.expressions {
             const isNumberLike = this._isNumeric(char);
             const lookAhead = this._lookAhead(char, index, isNumberLike);
 
-            this.__outputQueue.push(isNumberLike ? ({ val: Number(lookAhead), args: 0 }) :
-                <IToken>({ val: lookAhead, args: -1 }));
+            this.__outputQueue.push(
+                isNumberLike
+                    ? { val: Number(lookAhead), args: 0 }
+                    : <IToken>{ val: lookAhead, args: -1 }
+            );
 
             return index + lookAhead.length - 1;
         }
@@ -622,19 +641,25 @@ module plat.expressions {
             let lookAhead: string;
 
             // if output queue is null OR space or operator or ( or , before .
-            if (topOutputLength < 0 ||
+            if (
+                topOutputLength < 0 ||
                 this._isSpace(previousChar) ||
                 !isNull(OPERATORS[previousChar]) ||
                 previousChar === '(' ||
-                previousChar === ',') {
+                previousChar === ','
+            ) {
                 lookAhead = this._lookAhead(char, index, true);
                 index += lookAhead.length - 1;
                 outputQueue.push({ val: parseFloat(lookAhead), args: 0 });
             } else if (this._isValEqual(operatorStack[0], char)) {
                 outputQueue.push({ val: char, args: 0 });
-            } else if (!(isNull(outputQueue[topOutputLength]) ||
-                !isNumber(Number(outputQueue[topOutputLength].val)) ||
-                this._isValEqual(outputQueue[topOutputLength - 1], char))) {
+            } else if (
+                !(
+                    isNull(outputQueue[topOutputLength]) ||
+                    !isNumber(Number(outputQueue[topOutputLength].val)) ||
+                    this._isValEqual(outputQueue[topOutputLength - 1], char)
+                )
+            ) {
                 lookAhead = this._lookAhead(char, index, true);
                 index += lookAhead.length - 1;
                 outputQueue[topOutputLength].val += parseFloat(lookAhead);
@@ -720,9 +745,11 @@ module plat.expressions {
 
             this.__argCount.push({
                 num: 0,
-                isArray: !(previousChar === ']' ||
+                isArray: !(
+                    previousChar === ']' ||
                     previousChar === ')' ||
-                    this._isAlphaNumeric(previousChar)),
+                    this._isAlphaNumeric(previousChar)
+                ),
             });
 
             this.__lastCommaChar.push(char);
@@ -762,7 +789,10 @@ module plat.expressions {
             // check if function on top of stack
             this.__outputQueue.push({
                 val: '[]',
-                args: (this.__previousChar === '[') ? -1 : (<number>lastArgCountObj.num) + 1,
+                args:
+                    this.__previousChar === '['
+                        ? -1
+                        : <number>lastArgCountObj.num + 1,
             });
         }
         /**
@@ -783,7 +813,11 @@ module plat.expressions {
             const operatorStack = this.__operatorStack;
             let args: number;
 
-            if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
+            if (
+                this._isAlphaNumeric(previousChar) ||
+                previousChar === ']' ||
+                previousChar === ')'
+            ) {
                 const outputQueue = this.__outputQueue;
                 const topOutput = outputQueue[outputQueue.length - 1];
                 const val = isNull(topOutput) ? undefined : topOutput.val;
@@ -847,7 +881,7 @@ module plat.expressions {
                 } else if (this.__removeFnFromStack(localArgNum + 1)) {
                     this.__outputQueue.push({
                         val: '()',
-                        args: (localArgNum + 1),
+                        args: localArgNum + 1,
                     });
                 }
             }
@@ -907,7 +941,11 @@ module plat.expressions {
             const operatorStack = this.__operatorStack;
             const topOperator = operatorStack[0];
 
-            if (!isNull(topOperator) && (topOperator.val === '[' || (topOperator.val === '(' && topOperator.args >= 0))) {
+            if (
+                !isNull(topOperator) &&
+                (topOperator.val === '[' ||
+                    (topOperator.val === '(' && topOperator.args >= 0))
+            ) {
                 operatorStack.unshift({ val: lookAhead, args: 0 });
             } else {
                 this.__outputQueue.push({ val: lookAhead, args: 0 });
@@ -950,7 +988,8 @@ module plat.expressions {
          */
         private __handleColon(char: string, ternary: number): number {
             const lastColonCharArray = this.__lastColonChar;
-            const lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1];
+            const lastColonCharacter =
+                lastColonCharArray[lastColonCharArray.length - 1];
             const outputQueue = this.__outputQueue;
 
             if (lastColonCharacter === '?') {
@@ -1054,7 +1093,10 @@ module plat.expressions {
             switch (operator) {
                 case '+':
                 case '-':
-                    if (this.__outputQueue.length === 0 || isOperator(this.__previousChar)) {
+                    if (
+                        this.__outputQueue.length === 0 ||
+                        isOperator(this.__previousChar)
+                    ) {
                         return OPERATORS[`u${operator}`];
                     }
                 default:
@@ -1085,7 +1127,10 @@ module plat.expressions {
             let firstArrayVal: any;
 
             if (operatorStack.length === 0) {
-                operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                operatorStack.unshift({
+                    val: operator,
+                    args: operatorFn.fn.length - 2,
+                });
 
                 return;
             }
@@ -1098,18 +1143,33 @@ module plat.expressions {
                 }
 
                 firstArrayOperator = OPERATORS[firstArrayVal];
-                if (!(isNull(firstArrayOperator) ||
-                    !(firstArrayOperator.precedence < operatorPrecedence ||
-                        (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
+                if (
+                    !(
+                        isNull(firstArrayOperator) ||
+                        !(
+                            firstArrayOperator.precedence <
+                                operatorPrecedence ||
+                            (isLtR &&
+                                firstArrayOperator.precedence ===
+                                    operatorPrecedence)
+                        )
+                    )
+                ) {
                     outputQueue.push(operatorStack.shift());
                 } else {
-                    operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                    operatorStack.unshift({
+                        val: operator,
+                        args: operatorFn.fn.length - 2,
+                    });
 
                     return;
                 }
             } while (operatorStack.length > 0);
 
-            operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+            operatorStack.unshift({
+                val: operator,
+                args: operatorFn.fn.length - 2,
+            });
         }
         /**
          * @name __removeFnFromStack
@@ -1135,11 +1195,13 @@ module plat.expressions {
             let fnToken: IToken;
             let atLeastOne = false;
 
-            while (!isNull(topOperator) &&
+            while (
+                !isNull(topOperator) &&
                 isValUnequal(topOperator, '([') &&
                 (this._isStringValidVariable(topOperator.val) ||
                     isValEqual(topOperator.val, '.[]') ||
-                    isAccessor(topOperator.val))) {
+                    isAccessor(topOperator.val))
+            ) {
                 fnToken = operatorStack.shift();
                 if (!(fnToken.args !== -1 || isValEqual(fnToken, '.[]'))) {
                     fnToken.args = -2;
@@ -1149,7 +1211,15 @@ module plat.expressions {
                 atLeastOne = true;
             }
 
-            if (!(atLeastOne || isValUnequal(outputQueue[outputQueue.length - argCount - 1], '()'))) {
+            if (
+                !(
+                    atLeastOne ||
+                    isValUnequal(
+                        outputQueue[outputQueue.length - argCount - 1],
+                        '()'
+                    )
+                )
+            ) {
                 atLeastOne = true;
             }
 

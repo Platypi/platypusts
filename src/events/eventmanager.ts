@@ -1,4 +1,4 @@
-module plat.events {
+namespace plat.events {
     'use strict';
 
     /**
@@ -167,7 +167,10 @@ module plat.events {
          * @description
          * Holds all the event listeners for the application lifefycle events.
          */
-        private static __lifecycleEventListeners: { name: string; value(): void }[] = [];
+        private static __lifecycleEventListeners: {
+            name: string;
+            value(): void;
+        }[] = [];
 
         /**
          * @name __initialized
@@ -212,14 +215,18 @@ module plat.events {
 
             while (lifecycleListeners.length > 0) {
                 listener = lifecycleListeners.pop();
-                _document.removeEventListener(listener.name, listener.value, false);
+                _document.removeEventListener(
+                    listener.name,
+                    listener.value,
+                    false
+                );
             }
 
             if (_compat.cordova) {
                 const eventNames = [__resume, __online, __offline];
                 const winJs = _compat.winJs;
                 const length = eventNames.length;
-                const dispatcher = (ev: string): () => void => (): void => {
+                const dispatcher = (ev: string): (() => void) => (): void => {
                     dispatch(ev, EventManager);
                 };
                 let event: string;
@@ -277,7 +284,11 @@ module plat.events {
                         value: fn,
                     });
 
-                    (<any>_window).WinJS.Application.addEventListener(__backClick, fn, false);
+                    (<any>_window).WinJS.Application.addEventListener(
+                        __backClick,
+                        fn,
+                        false
+                    );
                 }
             } else if (_compat.amd) {
                 return;
@@ -326,8 +337,12 @@ module plat.events {
          *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
-        public static on(uid: string, eventName: string, listener: (ev: DispatchEvent, ...args: any[]) => void,
-            context?: any): IRemoveListener {
+        public static on(
+            uid: string,
+            eventName: string,
+            listener: (ev: DispatchEvent, ...args: any[]) => void,
+            context?: any
+        ): IRemoveListener {
             let eventsListener = EventManager.__eventsListeners[uid];
 
             if (isNull(eventsListener)) {
@@ -373,8 +388,15 @@ module plat.events {
          *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
-        public static dispatch(name: string, sender: any, direction: 'down' | 'up' | 'direct', args?: any[]): DispatchEvent {
-            const _dispatchEvent: DispatchEvent = acquire(__DispatchEventInstance);
+        public static dispatch(
+            name: string,
+            sender: any,
+            direction: 'down' | 'up' | 'direct',
+            args?: any[]
+        ): DispatchEvent {
+            const _dispatchEvent: DispatchEvent = acquire(
+                __DispatchEventInstance
+            );
             _dispatchEvent.initialize(name, sender, direction);
             EventManager.sendEvent(_dispatchEvent, args);
 
@@ -396,9 +418,11 @@ module plat.events {
          * @returns {boolean} Whether or not the direction is valid.
          */
         public static hasDirection(direction: string): boolean {
-            return (direction === EventManager.UP ||
+            return (
+                direction === EventManager.UP ||
                 direction === EventManager.DOWN ||
-                direction === EventManager.DIRECT);
+                direction === EventManager.DIRECT
+            );
         }
 
         /**
@@ -487,14 +511,20 @@ module plat.events {
          *
          * @returns {void}
          */
-        protected static _dispatchDown(event: DispatchEvent, args: any[]): void {
+        protected static _dispatchDown(
+            event: DispatchEvent,
+            args: any[]
+        ): void {
             const name = event.name;
             let controls: Control[] = [];
             let control: Control;
 
             controls.push(event.sender);
 
-            while (!isEmpty(controls.length) && EventManager.propagatingEvents[name]) {
+            while (
+                !isEmpty(controls.length) &&
+                EventManager.propagatingEvents[name]
+            ) {
                 control = controls.pop();
 
                 if (isNull(control.uid)) {
@@ -507,7 +537,9 @@ module plat.events {
                     continue;
                 }
 
-                controls = controls.concat((<ui.TemplateControl>control).controls);
+                controls = controls.concat(
+                    (<ui.TemplateControl>control).controls
+                );
             }
         }
 
@@ -526,7 +558,10 @@ module plat.events {
          *
          * @returns {void}
          */
-        protected static _dispatchDirect(event: DispatchEvent, args: any[]): void {
+        protected static _dispatchDirect(
+            event: DispatchEvent,
+            args: any[]
+        ): void {
             const uids = Object.keys(EventManager.__eventsListeners);
             const length = uids.length;
             const name = event.name;
@@ -539,11 +574,19 @@ module plat.events {
 
                 eventsListener = EventManager.__eventsListeners[uids[i]];
 
-                if (isNull(eventsListener) || isNull(eventsListener.listeners[name])) {
+                if (
+                    isNull(eventsListener) ||
+                    isNull(eventsListener.listeners[name])
+                ) {
                     continue;
                 }
 
-                EventManager.__callListeners(eventsListener.context, event, eventsListener.listeners[name], args);
+                EventManager.__callListeners(
+                    eventsListener.context,
+                    event,
+                    eventsListener.listeners[name],
+                    args
+                );
             }
         }
 
@@ -563,7 +606,11 @@ module plat.events {
          *
          * @returns {void}
          */
-        private static __executeEvent(uid: string, ev: DispatchEvent, args: any[]): void {
+        private static __executeEvent(
+            uid: string,
+            ev: DispatchEvent,
+            args: any[]
+        ): void {
             const eventsListener = EventManager.__eventsListeners[uid];
 
             if (isNull(eventsListener)) {
@@ -597,8 +644,12 @@ module plat.events {
          *
          * @returns {void}
          */
-        private static __callListeners(context: any, ev: DispatchEvent,
-            listeners: ((ev: DispatchEvent, ...args: any[]) => void)[], args: any[]): void {
+        private static __callListeners(
+            context: any,
+            ev: DispatchEvent,
+            listeners: ((ev: DispatchEvent, ...args: any[]) => void)[],
+            args: any[]
+        ): void {
             const name = ev.name;
             const length = listeners.length;
             let index = -1;
@@ -626,7 +677,8 @@ module plat.events {
         _compat?: Compat,
         _document?: Document,
         _window?: Window,
-        _dom?: ui.Dom): IEventManagerStatic {
+        _dom?: ui.Dom
+    ): IEventManagerStatic {
         (<any>EventManager)._log = _log;
         (<any>EventManager)._compat = _compat;
         (<any>EventManager)._document = _document;
@@ -636,13 +688,12 @@ module plat.events {
         return <any>EventManager;
     }
 
-    register.injectable(__EventManagerStatic, IEventManagerStatic, [
-        __Log,
-        __Compat,
-        __Document,
-        __Window,
-        __Dom,
-    ], __STATIC);
+    register.injectable(
+        __EventManagerStatic,
+        IEventManagerStatic,
+        [__Log, __Compat, __Document, __Window, __Dom],
+        __STATIC
+    );
 
     /**
      * @name IEventManagerStatic
@@ -765,10 +816,22 @@ module plat.events {
          *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
-        on(uid: string,
-            eventName: 'ready' | 'suspend' | 'resume' | 'online' | 'offline' | 'error' | string,
-            listener: (ev: DispatchEvent | LifecycleEvent | ErrorEvent<Error>, ...args: any[]) => void,
-            context?: any): IRemoveListener;
+        on(
+            uid: string,
+            eventName:
+                | 'ready'
+                | 'suspend'
+                | 'resume'
+                | 'online'
+                | 'offline'
+                | 'error'
+                | string,
+            listener: (
+                ev: DispatchEvent | LifecycleEvent | ErrorEvent<Error>,
+                ...args: any[]
+            ) => void,
+            context?: any
+        ): IRemoveListener;
 
         /**
          * @name dispatch
@@ -788,7 +851,12 @@ module plat.events {
          *
          * @returns {plat.events.DispatchEvent} The dispatched event.
          */
-        dispatch(name: string, sender: any, direction: 'up' | 'down' | 'direct' | string, args?: any[]): DispatchEvent;
+        dispatch(
+            name: string,
+            sender: any,
+            direction: 'up' | 'down' | 'direct' | string,
+            args?: any[]
+        ): DispatchEvent;
 
         /**
          * @name hasDirection

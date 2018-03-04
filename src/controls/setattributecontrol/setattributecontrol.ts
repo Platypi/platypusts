@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -12,7 +12,8 @@ module plat.controls {
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
-    export class SetAttributeControl extends AttributeControl implements ISetAttributeControl {
+    export class SetAttributeControl extends AttributeControl
+        implements ISetAttributeControl {
         /**
          * @name property
          * @memberof plat.controls.SetAttributeControl
@@ -84,7 +85,10 @@ module plat.controls {
 
             this.attribute = camelCase(this.type);
             this.setter();
-            this.__removeListener = this.attributes.observe(this.setter, this.attribute);
+            this.__removeListener = this.attributes.observe(
+                this.setter,
+                this.attribute
+            );
         }
 
         /**
@@ -597,11 +601,14 @@ module plat.controls {
                 const urls: string[] = [];
                 const urlReplace = this._urlReplace;
 
-                expression = expression.replace(this._urlRegex, (match: string): string => {
-                    urls.push(match);
+                expression = expression.replace(
+                    this._urlRegex,
+                    (match: string): string => {
+                        urls.push(match);
 
-                    return urlReplace;
-                });
+                        return urlReplace;
+                    }
+                );
 
                 const style = element.style;
                 const addedStyles = this.__addedStyles;

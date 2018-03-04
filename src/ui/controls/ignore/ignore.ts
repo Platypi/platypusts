@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -25,7 +25,9 @@ module plat.ui.controls {
          * @returns {void}
          */
         public setTemplate(): void {
-            this.innerTemplate = <DocumentFragment>appendChildren(this.element.childNodes);
+            this.innerTemplate = <DocumentFragment>appendChildren(
+                this.element.childNodes
+            );
         }
 
         /**

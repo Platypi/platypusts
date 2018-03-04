@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -297,25 +297,63 @@ module plat.ui.controls {
             const article = __Article;
             const twitter = __Twitter;
 
-            this.element.setAttribute('prefix', 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#');
+            this.element.setAttribute(
+                'prefix',
+                'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#'
+            );
 
             this._titleElement = this._createElement<HTMLTitleElement>(title);
-            this._ogTitleElement = this._createElement<HTMLMetaElement>(meta, og + title);
-            this._twitterTitleElement = this._createElement<HTMLMetaElement>(meta, twitter + title);
+            this._ogTitleElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + title
+            );
+            this._twitterTitleElement = this._createElement<HTMLMetaElement>(
+                meta,
+                twitter + title
+            );
 
-            this._descriptionElement = this._createElement<HTMLMetaElement>(meta, description);
-            this._ogDescriptionElement = this._createElement<HTMLMetaElement>(meta, og + description);
-            this._twitterDescriptionElement = this._createElement<HTMLMetaElement>(meta, twitter + description);
+            this._descriptionElement = this._createElement<HTMLMetaElement>(
+                meta,
+                description
+            );
+            this._ogDescriptionElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + description
+            );
+            this._twitterDescriptionElement = this._createElement<
+                HTMLMetaElement
+            >(meta, twitter + description);
 
-            this._ogUrlElement = this._createElement<HTMLMetaElement>(meta, og + url);
-            this._twitterUrlElement = this._createElement<HTMLMetaElement>(meta, twitter + url);
+            this._ogUrlElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + url
+            );
+            this._twitterUrlElement = this._createElement<HTMLMetaElement>(
+                meta,
+                twitter + url
+            );
 
-            this._authorElement = this._createElement<HTMLMetaElement>(meta, author);
-            this._googleAuthorElement = this._createElement<HTMLLinkElement>(link, author);
-            this._fbAuthorElement = this._createElement<HTMLMetaElement>(meta, article + author);
-            this._twitterCreatorElement = this._createElement<HTMLMetaElement>(meta, twitter + creator);
+            this._authorElement = this._createElement<HTMLMetaElement>(
+                meta,
+                author
+            );
+            this._googleAuthorElement = this._createElement<HTMLLinkElement>(
+                link,
+                author
+            );
+            this._fbAuthorElement = this._createElement<HTMLMetaElement>(
+                meta,
+                article + author
+            );
+            this._twitterCreatorElement = this._createElement<HTMLMetaElement>(
+                meta,
+                twitter + creator
+            );
 
-            this._ogTypeElement = this._createElement<HTMLMetaElement>(meta, og + type);
+            this._ogTypeElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + type
+            );
         }
 
         /**
@@ -337,10 +375,10 @@ module plat.ui.controls {
             }
 
             this._titleElement.innerText = title;
-            this._setContent([
-                this._ogTitleElement,
-                this._twitterTitleElement,
-            ], title);
+            this._setContent(
+                [this._ogTitleElement, this._twitterTitleElement],
+                title
+            );
 
             return title;
         }
@@ -363,11 +401,14 @@ module plat.ui.controls {
                 return this._getContent(this._descriptionElement);
             }
 
-            this._setContent([
-                this._descriptionElement,
-                this._ogDescriptionElement,
-                this._twitterDescriptionElement,
-            ], description);
+            this._setContent(
+                [
+                    this._descriptionElement,
+                    this._ogDescriptionElement,
+                    this._twitterDescriptionElement,
+                ],
+                description
+            );
 
             return description;
         }
@@ -390,10 +431,10 @@ module plat.ui.controls {
                 return this._getContent(this._ogUrlElement);
             }
 
-            this._setContent([
-                this._ogUrlElement,
-                this._twitterUrlElement,
-            ], url);
+            this._setContent(
+                [this._ogUrlElement, this._twitterUrlElement],
+                url
+            );
 
             return url;
         }
@@ -417,9 +458,7 @@ module plat.ui.controls {
                 return this._getContent(this._authorElement);
             }
 
-            this._setContent([
-                this._authorElement,
-            ], author);
+            this._setContent([this._authorElement], author);
 
             return author;
         }
@@ -443,9 +482,7 @@ module plat.ui.controls {
                 return this._getContent(this._googleAuthorElement);
             }
 
-            this._setContent([
-                this._googleAuthorElement,
-            ], author);
+            this._setContent([this._googleAuthorElement], author);
 
             return author;
         }
@@ -469,9 +506,7 @@ module plat.ui.controls {
                 return this._getContent(this._fbAuthorElement);
             }
 
-            this._setContent([
-                this._fbAuthorElement,
-            ], author);
+            this._setContent([this._fbAuthorElement], author);
 
             return author;
         }
@@ -495,9 +530,7 @@ module plat.ui.controls {
                 return this._getContent(this._twitterCreatorElement);
             }
 
-            this._setContent([
-                this._twitterCreatorElement,
-            ], creator);
+            this._setContent([this._twitterCreatorElement], creator);
 
             return creator;
         }
@@ -520,9 +553,7 @@ module plat.ui.controls {
                 return this._getContent(this._ogTypeElement);
             }
 
-            this._setContent([
-                this._ogTypeElement,
-            ], type);
+            this._setContent([this._ogTypeElement], type);
 
             return type;
         }
@@ -555,19 +586,26 @@ module plat.ui.controls {
             forEach((image: string): void => {
                 image = this._browser.urlUtils(image).href;
 
-                const elements = head.querySelectorAll(`${meta}[content="${image}"]`);
+                const elements = head.querySelectorAll(
+                    `${meta}[content="${image}"]`
+                );
 
                 if (elements.length === 2) {
                     return;
                 }
 
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaImage, true);
-                twitterElement = this._createElement<HTMLMetaElement>(meta, twitter + __MetaImage, true);
+                ogElement = this._createElement<HTMLMetaElement>(
+                    meta,
+                    og + __MetaImage,
+                    true
+                );
+                twitterElement = this._createElement<HTMLMetaElement>(
+                    meta,
+                    twitter + __MetaImage,
+                    true
+                );
 
-                this._setContent([
-                    ogElement,
-                    twitterElement,
-                ], image);
+                this._setContent([ogElement, twitterElement], image);
             }, images);
         }
 
@@ -599,17 +637,21 @@ module plat.ui.controls {
             forEach((video: string): void => {
                 video = _browser.urlUtils(video).href;
 
-                const elements = head.querySelectorAll(`${meta}[content="${video}"]`);
+                const elements = head.querySelectorAll(
+                    `${meta}[content="${video}"]`
+                );
 
                 if (elements.length === 1) {
                     return;
                 }
 
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo, true);
+                ogElement = this._createElement<HTMLMetaElement>(
+                    meta,
+                    og + metaVideo,
+                    true
+                );
 
-                this._setContent([
-                    ogElement,
-                ], video);
+                this._setContent([ogElement], video);
             }, videos);
         }
 
@@ -733,7 +775,9 @@ module plat.ui.controls {
          */
         protected _setContent(elements: HTMLElement[], value: string): void {
             const el: HTMLHeadElement = this.element;
-            const nodes: HTMLElement[] = Array.prototype.slice.call(el.children);
+            const nodes: HTMLElement[] = Array.prototype.slice.call(
+                el.children
+            );
             const length = elements.length;
             const content = __Content;
             const href = __MetaHref;
@@ -778,13 +822,21 @@ module plat.ui.controls {
          *
          * @returns {T} The created element.
          */
-        protected _createElement<T extends HTMLElement>(tag: string, name?: string, multiple?: boolean): T {
+        protected _createElement<T extends HTMLElement>(
+            tag: string,
+            name?: string,
+            multiple?: boolean
+        ): T {
             const hasName = isString(name);
             const element: HTMLHeadElement = this.element;
 
             let el: T;
-            let attr: string = (hasName &&
-                (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName;
+            let attr: string =
+                hasName &&
+                (name.indexOf(__OpenGraph) === 0 ||
+                    name.indexOf(__Article) === 0)
+                    ? __MetaProperty
+                    : __MetaName;
 
             if (tag === __MetaLink) {
                 attr = __Rel;
@@ -821,14 +873,25 @@ module plat.ui.controls {
          */
         protected _removeAllElements(): void {
             const slice = Array.prototype.slice;
-            const og = this._document.head.querySelectorAll(`meta[${__MetaProperty}^="${__OpenGraph}"]`);
-            const twitter = this._document.head.querySelectorAll(`meta[${__MetaName}^="${__Twitter}"]`);
+            const og = this._document.head.querySelectorAll(
+                `meta[${__MetaProperty}^="${__OpenGraph}"]`
+            );
+            const twitter = this._document.head.querySelectorAll(
+                `meta[${__MetaName}^="${__Twitter}"]`
+            );
 
-            this._removeElements.apply(this, [
-                this._descriptionElement,
-                this._authorElement,
-                this._googleAuthorElement,
-            ].concat(slice.call(og), slice.call(twitter), slice.call(this._structuredDataElements)));
+            this._removeElements.apply(
+                this,
+                [
+                    this._descriptionElement,
+                    this._authorElement,
+                    this._googleAuthorElement,
+                ].concat(
+                    slice.call(og),
+                    slice.call(twitter),
+                    slice.call(this._structuredDataElements)
+                )
+            );
 
             this._structuredDataElements = [];
         }
@@ -846,7 +909,9 @@ module plat.ui.controls {
          */
         protected _removeElements(...elements: HTMLElement[]): void {
             const el = this.element;
-            const nodes: HTMLElement[] = Array.prototype.slice.call(el.children);
+            const nodes: HTMLElement[] = Array.prototype.slice.call(
+                el.children
+            );
             const length = elements.length;
             let element: HTMLElement;
 
@@ -1038,7 +1103,7 @@ module plat.ui.controls {
      * An interface for the http://schema.org/BlogPosting type.
      */
     // tslint:disable-next-line
-    export interface IBlogPosting extends IArticle { }
+    export interface IBlogPosting extends IArticle {}
 
     /**
      * @name IBlogPosting

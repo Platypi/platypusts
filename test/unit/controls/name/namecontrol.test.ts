@@ -1,4 +1,4 @@
-namespace tests.controls.nameControl {
+module tests.controls.nameControl {
     describe('NameControl Tests', () => {
         let control: plat.controls.Name;
         let parent: plat.ui.TemplateControl;

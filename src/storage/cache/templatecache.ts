@@ -1,4 +1,4 @@
-module plat.storage {
+namespace plat.storage {
     'use strict';
 
     /**
@@ -76,7 +76,10 @@ module plat.storage {
          * @returns {plat.async.Promise<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when
          * the input {@link plat.async.Promise|Promise} resolves.
          */
-        public put(key: string, value?: string | DocumentFragment | Node | async.Promise<Node>): async.Promise<DocumentFragment> {
+        public put(
+            key: string,
+            value?: string | DocumentFragment | Node | async.Promise<Node>
+        ): async.Promise<DocumentFragment> {
             const Promise = this._Promise;
             super.put(key, Promise.resolve<DocumentFragment>(<any>value));
 
@@ -115,13 +118,18 @@ module plat.storage {
                 return <any>this._Promise.reject(null);
             }
 
-            return promise.then((node): async.Promise<DocumentFragment> => {
-                return this.put(key, node);
-            }, (error: Error): DocumentFragment => {
-                this._log.warn(`Error retrieving template, ${key}, from promise.`);
+            return promise.then(
+                (node): async.Promise<DocumentFragment> => {
+                    return this.put(key, node);
+                },
+                (error: Error): DocumentFragment => {
+                    this._log.warn(
+                        `Error retrieving template, ${key}, from promise.`
+                    );
 
-                return <DocumentFragment>null;
-            });
+                    return <DocumentFragment>null;
+                }
+            );
         }
     }
 

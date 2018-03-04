@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -282,10 +282,12 @@ module plat.ui.controls {
         constructor() {
             super();
 
-            this.itemsLoaded = new this._Promise<void>((resolve, reject): void => {
-                this.__resolveFn = resolve;
-                this.__rejectFn = reject;
-            }).catch(noop);
+            this.itemsLoaded = new this._Promise<void>(
+                (resolve, reject): void => {
+                    this.__resolveFn = resolve;
+                    this.__rejectFn = reject;
+                }
+            ).catch(noop);
         }
 
         /**
@@ -318,17 +320,23 @@ module plat.ui.controls {
             const defaultOptionValues = platOptions.default;
 
             if (isObject(defaultOptionValues)) {
-                const defaultOption: HTMLOptionElement = this._document.createElement('option');
+                const defaultOption: HTMLOptionElement = this._document.createElement(
+                    'option'
+                );
                 const defaultValue = defaultOptionValues.value;
                 const defaultTextContent = defaultOptionValues.textContent;
 
-                defaultOption.value = isUndefined(defaultValue) ? defaultTextContent : defaultValue;
-                defaultOption.textContent = isUndefined(defaultTextContent) ? defaultValue : defaultTextContent;
+                defaultOption.value = isUndefined(defaultValue)
+                    ? defaultTextContent
+                    : defaultValue;
+                defaultOption.textContent = isUndefined(defaultTextContent)
+                    ? defaultValue
+                    : defaultTextContent;
                 this.element.insertBefore(defaultOption, null);
             }
 
             if (!isNull(platOptions.group)) {
-                const group = this._group = platOptions.group;
+                const group = (this._group = platOptions.group);
                 const optionGroup = this._document.createElement('optgroup');
 
                 optionGroup.label = __startSymbol + group + __endSymbol;
@@ -358,9 +366,11 @@ module plat.ui.controls {
         public contextChanged(newValue: any[], oldValue: any[]): void {
             if (isEmpty(newValue) || !isArray(newValue)) {
                 if (!isEmpty(oldValue)) {
-                    this.itemsLoaded.then((): void => {
-                        this._removeItems(this.controls.length);
-                    }).then(this._observeChange.bind(this));
+                    this.itemsLoaded
+                        .then((): void => {
+                            this._removeItems(this.controls.length);
+                        })
+                        .then(this._observeChange.bind(this));
                 }
 
                 return;
@@ -410,7 +420,8 @@ module plat.ui.controls {
                 this._isGrouped = !isNull(this._group);
             }
 
-            this._defaultOption = <HTMLOptionElement>this.element.firstElementChild;
+            this._defaultOption = <HTMLOptionElement>this.element
+                .firstElementChild;
 
             const context = this.context;
             if (!isArray(context)) {
@@ -459,7 +470,9 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        public observeProperties(binder: observable.IImplementTwoWayBinding): void {
+        public observeProperties(
+            binder: observable.IImplementTwoWayBinding
+        ): void {
             const element = this.element;
 
             this._binder = binder;
@@ -479,7 +492,12 @@ module plat.ui.controls {
                 binder.observeProperty(this._setSelectedIndex);
             }
 
-            this.addEventListener(element, 'change', this._observeChange, false);
+            this.addEventListener(
+                element,
+                'change',
+                this._observeChange,
+                false
+            );
         }
 
         /**
@@ -498,12 +516,20 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        protected _setSelectedIndex(newValue: string, oldValue: string, identifier: string, firstTime?: boolean): void {
+        protected _setSelectedIndex(
+            newValue: string,
+            oldValue: string,
+            identifier: string,
+            firstTime?: boolean
+        ): void {
             const element = this.element;
             const value = element.value;
 
             if (isNull(newValue)) {
-                if (firstTime === true || !this._document.body.contains(element)) {
+                if (
+                    firstTime === true ||
+                    !this._document.body.contains(element)
+                ) {
                     this.itemsLoaded.then((): void => {
                         if (isNull(this._binder.evaluate())) {
                             const newLast = element.value;
@@ -531,7 +557,11 @@ module plat.ui.controls {
                         newValue = Object.prototype.toString.call(newValue);
                     }
 
-                    this._log.info(`Trying to bind the invalid value "${newValue}" to a ${this.type}.`);
+                    this._log.info(
+                        `Trying to bind the invalid value "${newValue}" to a ${
+                            this.type
+                        }.`
+                    );
                 }
             }
 
@@ -558,7 +588,10 @@ module plat.ui.controls {
                 element.value = this.__lastValue = newValue;
                 // check to make sure the user changed to a valid value
                 // second boolean argument is an ie fix for inconsistency
-                if (element.value !== newValue || element.selectedIndex === -1) {
+                if (
+                    element.value !== newValue ||
+                    element.selectedIndex === -1
+                ) {
                     element.selectedIndex = -1;
                 }
             });
@@ -580,7 +613,12 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        protected _setSelectedIndices(newValue: any[], oldValue: any[], identifier: string, firstTime?: boolean): void {
+        protected _setSelectedIndices(
+            newValue: any[],
+            oldValue: any[],
+            identifier: string,
+            firstTime?: boolean
+        ): void {
             this.itemsLoaded.then((): void => {
                 const element = this.element;
                 const options = element.options;
@@ -641,8 +679,10 @@ module plat.ui.controls {
                         }
                         option.selected = true;
                         continue;
-                    } else if ((value === 'true' && trueIndex !== -1) ||
-                        value === 'false' && falseIndex !== -1) {
+                    } else if (
+                        (value === 'true' && trueIndex !== -1) ||
+                        (value === 'false' && falseIndex !== -1)
+                    ) {
                         index = trueIndex > falseIndex ? trueIndex : falseIndex;
 
                         if (index < highestIndex) {
@@ -674,7 +714,9 @@ module plat.ui.controls {
          */
         protected _observeChange(): void {
             const element = this.element;
-            const newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+            const newLast = element.multiple
+                ? this._getSelectedValues()
+                : this._castValue(element.value);
 
             if (newLast === this.__lastValue) {
                 return;
@@ -789,7 +831,9 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        protected _executeEvent(changes: observable.IArrayChanges<any>[]): void {
+        protected _executeEvent(
+            changes: observable.IArrayChanges<any>[]
+        ): void {
             const method = `_${changes[0].type}`;
 
             if (isFunction((<any>this)[method])) {
@@ -812,33 +856,43 @@ module plat.ui.controls {
          *
          * @returns {plat.async.Promise<void>} The itemsLoaded promise.
          */
-        protected _addItems(numberOfItems: number, index: number): async.Promise<void> {
+        protected _addItems(
+            numberOfItems: number,
+            index: number
+        ): async.Promise<void> {
             const bindableTemplates = this.bindableTemplates;
             const promises: async.Promise<void>[] = [];
             const insertOption = this._insertOption;
 
             while (numberOfItems > 0) {
                 numberOfItems -= 1;
-                promises.push(bindableTemplates.bind('option', index).then<void>(insertOption.bind(this, index)));
+                promises.push(
+                    bindableTemplates
+                        .bind('option', index)
+                        .then<void>(insertOption.bind(this, index))
+                );
                 index += 1;
             }
 
             if (promises.length > 0) {
-                this.itemsLoaded = this._Promise.all(promises).then((): void => {
-                    if (isFunction(this.__resolveFn)) {
-                        this.__resolveFn();
-                        this.__resolveFn = this.__rejectFn = null;
-                    }
-
-                    return;
-                }).catch((error: any): void => {
-                    postpone((): void => {
-                        if (isString(error)) {
-                            error = new Error(error);
+                this.itemsLoaded = this._Promise
+                    .all(promises)
+                    .then((): void => {
+                        if (isFunction(this.__resolveFn)) {
+                            this.__resolveFn();
+                            this.__resolveFn = this.__rejectFn = null;
                         }
-                        this._log.error(error);
+
+                        return;
+                    })
+                    .catch((error: any): void => {
+                        postpone((): void => {
+                            if (isString(error)) {
+                                error = new Error(error);
+                            }
+                            this._log.error(error);
+                        });
                     });
-                });
             }
 
             return this.itemsLoaded;
@@ -861,7 +915,10 @@ module plat.ui.controls {
          * @returns {plat.async.Promise<any>} A promise that resolves when the option
          * or optgroup has successfully be inserted.
          */
-        protected _insertOption(index: number, option: DocumentFragment): async.Promise<any> {
+        protected _insertOption(
+            index: number,
+            option: DocumentFragment
+        ): async.Promise<any> {
             const element = this.element;
             if (this._isGrouped) {
                 const groups = this.groups;
@@ -875,9 +932,11 @@ module plat.ui.controls {
                 let optgroup: any = groups[newGroup];
 
                 if (isNull(optgroup)) {
-                    return (groups[newGroup] = <any>this.bindableTemplates.bind('group', index)
+                    return (groups[newGroup] = <any>this.bindableTemplates
+                        .bind('group', index)
                         .then((groupFragment: DocumentFragment): Element => {
-                            optgroup = groups[newGroup] = <Element>groupFragment.childNodes[1];
+                            optgroup = groups[newGroup] = <Element>groupFragment
+                                .childNodes[1];
 
                             optgroup.insertBefore(option, null);
                             element.insertBefore(groupFragment, null);
@@ -963,7 +1022,10 @@ module plat.ui.controls {
             this.groups = {};
 
             if (!isNull(this._defaultOption)) {
-                this.element.insertBefore(this._defaultOption.cloneNode(true), null);
+                this.element.insertBefore(
+                    this._defaultOption.cloneNode(true),
+                    null
+                );
             }
 
             this._addItems(this.context.length, 0);
@@ -1087,7 +1149,10 @@ module plat.ui.controls {
             const removeCount = change.removed.length;
 
             if (addCount > removeCount) {
-                this._addItems(addCount - removeCount, change.object.length - addCount - 1);
+                this._addItems(
+                    addCount - removeCount,
+                    change.object.length - addCount - 1
+                );
             } else if (removeCount > addCount) {
                 this.itemsLoaded.then((): void => {
                     this._removeItems(removeCount - addCount);

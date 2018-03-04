@@ -1,4 +1,4 @@
-module plat.processing {
+namespace plat.processing {
     'use strict';
 
     /**
@@ -52,10 +52,12 @@ module plat.processing {
             if (NodeManager.hasMarkup(value)) {
                 const expressions = NodeManager.findMarkup(value);
                 const map = {
-                    nodes: [{
-                        node: node,
-                        expressions: expressions,
-                    }],
+                    nodes: [
+                        {
+                            node: node,
+                            expressions: expressions,
+                        },
+                    ],
                 };
 
                 manager.initialize(map, parent);
@@ -84,15 +86,20 @@ module plat.processing {
          *
          * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
          */
-        protected static _cloneNodeMap(sourceMap: INodeMap, newNode: Node): INodeMap {
+        protected static _cloneNodeMap(
+            sourceMap: INodeMap,
+            newNode: Node
+        ): INodeMap {
             const node = sourceMap.nodes[0];
 
             return {
-                nodes: [{
-                    expressions: node.expressions,
-                    nodeName: node.nodeName,
-                    node: newNode,
-                }],
+                nodes: [
+                    {
+                        expressions: node.expressions,
+                        nodeName: node.nodeName,
+                        node: newNode,
+                    },
+                ],
             };
         }
 
@@ -113,12 +120,19 @@ module plat.processing {
          *
          * @returns {plat.processing.TextManager} The cloned {@link plat.processing.TextManager|TextManager}.
          */
-        protected static _clone(sourceManager: NodeManager, node: Node, parent: ElementManager): TextManager {
+        protected static _clone(
+            sourceManager: NodeManager,
+            node: Node,
+            parent: ElementManager
+        ): TextManager {
             const map = sourceManager.nodeMap;
             const manager = new TextManager();
 
             if (!isNull(map)) {
-                manager.initialize(TextManager._cloneNodeMap(map, node), parent);
+                manager.initialize(
+                    TextManager._cloneNodeMap(map, node),
+                    parent
+                );
             } else {
                 manager.initialize(null, parent);
                 manager.bind = noop;
@@ -165,8 +179,11 @@ module plat.processing {
             const textNode = node.node;
             const expressions = node.expressions;
 
-            NodeManager.observeExpressions(node.expressions, parent,
-                this._setText.bind(this, textNode, parent, expressions));
+            NodeManager.observeExpressions(
+                node.expressions,
+                parent,
+                this._setText.bind(this, textNode, parent, expressions)
+            );
 
             this._setText(textNode, parent, expressions);
         }
@@ -188,7 +205,11 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _setText(node: Node, control: ui.TemplateControl, expressions: expressions.IParsedExpression[]): void {
+        protected _setText(
+            node: Node,
+            control: ui.TemplateControl,
+            expressions: expressions.IParsedExpression[]
+        ): void {
             if (!isObject(control)) {
                 control = <any>{};
             }
@@ -204,7 +225,12 @@ module plat.processing {
         return TextManager;
     }
 
-    register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
+    register.injectable(
+        __TextManagerFactory,
+        ITextManagerFactory,
+        null,
+        __FACTORY
+    );
     register.injectable(__TextManagerInstance, TextManager, null, __INSTANCE);
 
     /**

@@ -6,7 +6,7 @@
  * @description
  * The entry point into the platypus library.
  */
-module plat {
+namespace plat {
     'use strict';
 
     if (!isUndefined(window)) {
@@ -123,8 +123,19 @@ module plat {
             ((...args: any[]) => T2) | (new (...args: any[]) => T2)
         ]
     ): [T1, T2];
-    export function acquire<T>(dependency: ((...args: any[]) => T) | (new (...args: any[]) => T)): T;
-    export function acquire(dependencies: ((...args: any[]) => any) | (new (...args: any[]) => any) | Function | Function[] | string | string[] | any[]): any;
+    export function acquire<T>(
+        dependency: ((...args: any[]) => T) | (new (...args: any[]) => T)
+    ): T;
+    export function acquire(
+        dependencies:
+            | ((...args: any[]) => any)
+            | (new (...args: any[]) => any)
+            | Function
+            | Function[]
+            | string
+            | string[]
+            | any[]
+    ): any;
     export function acquire(dependencies: any): any {
         const array = isArray(dependencies);
         let deps: dependency.Injector<any>[];

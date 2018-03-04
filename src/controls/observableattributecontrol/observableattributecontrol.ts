@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -106,7 +106,9 @@ module plat.controls {
          * @description
          * The _addListener function bound to this control.
          */
-        protected _boundAddListener: typeof ObservableAttributeControl.prototype._addListener = this._addListener.bind(this);
+        protected _boundAddListener: typeof ObservableAttributeControl.prototype._addListener = this._addListener.bind(
+            this
+        );
 
         /**
          * @name initialize
@@ -183,10 +185,16 @@ module plat.controls {
                 return;
             }
 
-            this._ContextManager.defineGetter(templateControl, this.property, <observable.IObservableProperty<any>>{
-                value: value,
-                observe: this._boundAddListener,
-            }, true, true);
+            this._ContextManager.defineGetter(
+                templateControl,
+                this.property,
+                <observable.IObservableProperty<any>>{
+                    value: value,
+                    observe: this._boundAddListener,
+                },
+                true,
+                true
+            );
 
             this._callListeners(value, oldValue);
         }
@@ -225,7 +233,9 @@ module plat.controls {
          *
          * @param {plat.IPropertyChangedListener} listener The listener added by the Template Control.
          */
-        protected _addListener(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
+        protected _addListener(
+            listener: (newValue: any, oldValue: any) => void
+        ): IRemoveListener {
             const listeners = this._listeners;
 
             listener = listener.bind(this.templateControl);
@@ -276,7 +286,10 @@ module plat.controls {
                 return;
             }
 
-            this._removeListener = this.observeExpression(this._setProperty, this.attributes[this.attribute]);
+            this._removeListener = this.observeExpression(
+                this._setProperty,
+                this.attributes[this.attribute]
+            );
         }
     }
 

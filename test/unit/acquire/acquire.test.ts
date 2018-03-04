@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.acquire {
+module tests.acquire {
     const utils = plat.acquire(plat.Utils);
 
     function instanceOf(Constructor: new () => void) {

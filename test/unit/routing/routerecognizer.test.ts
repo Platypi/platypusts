@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.routing.routeRecognizer {
+module tests.routing.routeRecognizer {
     describe('Route Recognizer tests', () => {
         let router: plat.routing.RouteRecognizer;
         let delegate1: Object;

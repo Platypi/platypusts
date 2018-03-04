@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -12,7 +12,8 @@ module plat.controls {
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that binds to a specified DOM event handler.
      */
-    export class SimpleEventControl extends AttributeControl implements ISendEvents {
+    export class SimpleEventControl extends AttributeControl
+        implements ISendEvents {
         protected static _inject: any = {
             _parser: __Parser,
             _regex: __Regex,
@@ -163,7 +164,12 @@ module plat.controls {
          * @returns {void}
          */
         protected _addEventListeners(): void {
-            this.addEventListener(this.element, this.event, this._onEvent, false);
+            this.addEventListener(
+                this.element,
+                this.event,
+                this._onEvent,
+                false
+            );
         }
 
         /**
@@ -179,7 +185,11 @@ module plat.controls {
          * @returns {{ fn: () => void; control: any; args: Array<expressions.IParsedExpression>; }}
          * The function to call and the associated arguments, as well as the control context with which to call the function.
          */
-        protected _buildExpression(): { context: any; args: expressions.IParsedExpression[]; fn(): void } {
+        protected _buildExpression(): {
+            context: any;
+            args: expressions.IParsedExpression[];
+            fn(): void;
+        } {
             const parent = this.parent;
             const templateControl = this.templateControl;
             const listenerStr = this._listener;
@@ -224,16 +234,23 @@ module plat.controls {
                                 fn = fnObj[segment];
                             }
                         } else {
-                            this._log.warn(`Invalid path for function "${listenerStr}"`);
+                            this._log.warn(
+                                `Invalid path for function "${listenerStr}"`
+                            );
                         }
                     } else if (isFunction(fnObj)) {
                         fn = fnObj;
                     }
                 }
             } else {
-                const listener = this.findProperty(listenerStr, this.templateControl);
+                const listener = this.findProperty(
+                    listenerStr,
+                    this.templateControl
+                );
                 if (isNull(listener)) {
-                    this._log.warn(`Could not find property ${listenerStr} on any associated control.`);
+                    this._log.warn(
+                        `Could not find property ${listenerStr} on any associated control.`
+                    );
 
                     return {
                         fn: noop,
@@ -246,7 +263,11 @@ module plat.controls {
                 const identifiers = parsedExpression.identifiers;
 
                 if (identifiers.length > 1) {
-                    this._log.warn(`Cannot have more than one identifier in a ${this.type}'s expression.`);
+                    this._log.warn(
+                        `Cannot have more than one identifier in a ${
+                            this.type
+                        }'s expression.`
+                    );
 
                     return {
                         fn: noop,
@@ -280,7 +301,9 @@ module plat.controls {
             return {
                 fn: fn,
                 context: context,
-                args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases),
+                args: isNull(this._args)
+                    ? []
+                    : this._args.evaluate(argContext, aliases),
             };
         }
 
@@ -302,7 +325,11 @@ module plat.controls {
             const fn = expression.fn;
 
             if (!isFunction(fn)) {
-                this._log.warn(`Cannot find registered event method ${this._listener} for control: ${this.type}`);
+                this._log.warn(
+                    `Cannot find registered event method ${
+                        this._listener
+                    } for control: ${this.type}`
+                );
 
                 return;
             }
@@ -1146,45 +1173,84 @@ module plat.controls {
             };
 
             if (isUndefined(_compat.ANDROID)) {
-                this.addEventListener(element, 'compositionstart', (): void => { composing = true; }, false);
-                this.addEventListener(element, 'compositionend', (ev: Event): void => {
-                    composing = false;
-                    eventListener(ev);
-                }, false);
+                this.addEventListener(
+                    element,
+                    'compositionstart',
+                    (): void => {
+                        composing = true;
+                    },
+                    false
+                );
+                this.addEventListener(
+                    element,
+                    'compositionend',
+                    (ev: Event): void => {
+                        composing = false;
+                        eventListener(ev);
+                    },
+                    false
+                );
             }
 
-            this.addEventListener(element, input, (ev: Event): void => {
-                inputFired = true;
-                eventListener(ev);
-            }, false);
-            this.addEventListener(element, 'change', (ev: Event): void => {
-                if (inputFired) {
-                    inputFired = false;
+            this.addEventListener(
+                element,
+                input,
+                (ev: Event): void => {
+                    inputFired = true;
+                    eventListener(ev);
+                },
+                false
+            );
+            this.addEventListener(
+                element,
+                'change',
+                (ev: Event): void => {
+                    if (inputFired) {
+                        inputFired = false;
 
-                    return;
-                }
-                eventListener(ev);
-            }, false);
+                        return;
+                    }
+                    eventListener(ev);
+                },
+                false
+            );
 
             if (_compat.hasEvent(input)) {
                 return;
             }
 
-            this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
-                const key = ev.keyCode;
-                const codes = KeyCodes;
+            this.addEventListener(
+                element,
+                'keydown',
+                (ev: KeyboardEvent): void => {
+                    const key = ev.keyCode;
+                    const codes = KeyCodes;
 
-                if (key === codes.lwk ||
-                    key === codes.rwk ||
-                    (key >= codes.shift && key <= codes.escape) ||
-                    (key > codes.space && key <= codes.down)) {
-                    return;
-                }
+                    if (
+                        key === codes.lwk ||
+                        key === codes.rwk ||
+                        (key >= codes.shift && key <= codes.escape) ||
+                        (key > codes.space && key <= codes.down)
+                    ) {
+                        return;
+                    }
 
-                postponedEventListener(ev);
-            }, false);
-            this.addEventListener(element, 'cut', postponedEventListener, false);
-            this.addEventListener(element, 'paste', postponedEventListener, false);
+                    postponedEventListener(ev);
+                },
+                false
+            );
+            this.addEventListener(
+                element,
+                'cut',
+                postponedEventListener,
+                false
+            );
+            this.addEventListener(
+                element,
+                'paste',
+                postponedEventListener,
+                false
+            );
         }
     }
 

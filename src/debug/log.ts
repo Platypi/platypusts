@@ -7,7 +7,7 @@
  * @description
  * Holds all classes and interfaces related to debugging components in platypus.
  */
-module plat.debug {
+namespace plat.debug {
     'use strict';
 
     /**

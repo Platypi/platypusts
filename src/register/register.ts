@@ -1,11 +1,17 @@
 let controlInjectors: plat.dependency.InjectorObject<plat.Control> = {};
-let viewControlInjectors: plat.dependency.InjectorObject<plat.ui.ViewControl> = {};
+let viewControlInjectors: plat.dependency.InjectorObject<
+    plat.ui.ViewControl
+> = {};
 let instanceInjectorDependencies: plat.IObject<plat.IObject<string>> = {};
 let injectableInjectors: plat.dependency.InjectorObject<any> = {};
 let unregisteredInjectors: plat.dependency.InjectorObject<any> = {};
 let staticInjectors: plat.dependency.InjectorObject<any> = {};
-let animationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};
-let jsAnimationInjectors: plat.dependency.InjectorObject<plat.ui.animations.BaseAnimation> = {};
+let animationInjectors: plat.dependency.InjectorObject<
+    plat.ui.animations.BaseAnimation
+> = {};
+let jsAnimationInjectors: plat.dependency.InjectorObject<
+    plat.ui.animations.BaseAnimation
+> = {};
 
 /**
  * @name register
@@ -16,7 +22,7 @@ let jsAnimationInjectors: plat.dependency.InjectorObject<plat.ui.animations.Base
  * @description
  * Holds all the classes and interfaces related to registering components for platypus.
  */
-module plat.register {
+namespace plat.register {
     'use strict';
 
     /**
@@ -42,9 +48,20 @@ module plat.register {
      *
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    function add(obj: dependency.InjectorObject<any>, name: string, Type: any, dependencies?: any[],
-        injectableType?: string, isStatic?: boolean): typeof register {
-        const injector = obj[name] = new dependency.Injector<any>(name, Type, dependencies, injectableType);
+    function add(
+        obj: dependency.InjectorObject<any>,
+        name: string,
+        Type: any,
+        dependencies?: any[],
+        injectableType?: string,
+        isStatic?: boolean
+    ): typeof register {
+        const injector = (obj[name] = new dependency.Injector<any>(
+            name,
+            Type,
+            dependencies,
+            injectableType
+        ));
 
         if (isStatic === true) {
             staticInjectors[name] = injector;
@@ -70,7 +87,11 @@ module plat.register {
      *
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export const app: IRegisterFunction<App> = (name: string, Type: new (...args: any[]) => App, dependencies?: any[]): typeof register => {
+    export const app: IRegisterFunction<App> = (
+        name: string,
+        Type: new (...args: any[]) => App,
+        dependencies?: any[]
+    ): typeof register => {
         const _Injector: typeof dependency.Injector = acquire(__InjectorStatic);
         const _AppStatic: IAppStatic = acquire(__AppStatic);
 
@@ -99,8 +120,12 @@ module plat.register {
      *
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export const control: IExtendedRegisterFunction<Control, boolean> =
-        (name: string, Type: new (...args: any[]) => Control, dependencies?: any[], isStatic?: boolean): typeof register => {
+    export const control: IExtendedRegisterFunction<Control, boolean> = (
+        name: string,
+        Type: new (...args: any[]) => Control,
+        dependencies?: any[],
+        isStatic?: boolean
+    ): typeof register => {
         if (isString(name)) {
             name = name.toLowerCase();
         } else {
@@ -111,7 +136,13 @@ module plat.register {
             isStatic = true;
         }
 
-        return add(controlInjectors, name, Type, dependencies, isStatic ? __STATIC : undefined);
+        return add(
+            controlInjectors,
+            name,
+            Type,
+            dependencies,
+            isStatic ? __STATIC : undefined
+        );
     };
 
     /**
@@ -135,12 +166,17 @@ module plat.register {
      *
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export const viewControl: IRegisterFunction<ui.ViewControl> = (name: string, Type: any,
-        dependencies?: any[]): typeof register => {
+    export const viewControl: IRegisterFunction<ui.ViewControl> = (
+        name: string,
+        Type: any,
+        dependencies?: any[]
+    ): typeof register => {
         if (isString(name)) {
             name = name.toLowerCase();
         } else {
-            throw new Error('A ViewControl must be registered with a string name');
+            throw new Error(
+                'A ViewControl must be registered with a string name'
+            );
         }
 
         return add(viewControlInjectors, name, Type, dependencies);
@@ -171,21 +207,50 @@ module plat.register {
      *
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export const injectable: IInjectableType & IExtendedRegisterFunction<any, string> = (name: string,
+    export const injectable: IInjectableType &
+        IExtendedRegisterFunction<any, string> = (
+        name: string,
         Type: (new (...args: any[]) => any) | ((...args: any[]) => any),
-        dependencies?: any[], injectableType?: string): typeof register => {
+        dependencies?: any[],
+        injectableType?: string
+    ): typeof register => {
         if (!isString(injectableType)) {
             injectableType = __SINGLETON;
         } else {
             injectableType = injectableType.toLowerCase();
-            if (injectableType === __FACTORY || injectableType === __STATIC || injectableType === __CLASS) {
-                return add(injectableInjectors, name, Type, dependencies, injectableType, true);
-            } else if (!(injectableType === __SINGLETON || injectableType === __INSTANCE)) {
-                throw new Error(`Invalid injectable type ${injectableType} during injectable registration.`);
+            if (
+                injectableType === __FACTORY ||
+                injectableType === __STATIC ||
+                injectableType === __CLASS
+            ) {
+                return add(
+                    injectableInjectors,
+                    name,
+                    Type,
+                    dependencies,
+                    injectableType,
+                    true
+                );
+            } else if (
+                !(
+                    injectableType === __SINGLETON ||
+                    injectableType === __INSTANCE
+                )
+            ) {
+                throw new Error(
+                    `Invalid injectable type ${injectableType} during injectable registration.`
+                );
             }
         }
 
-        return add(injectableInjectors, name, Type, dependencies, injectableType, false);
+        return add(
+            injectableInjectors,
+            name,
+            Type,
+            dependencies,
+            injectableType,
+            false
+        );
     };
 
     /**
@@ -293,18 +358,34 @@ module plat.register {
      *
      * @returns {plat.register} The object that contains the register methods (for method chaining).
      */
-    export const animation: IAnimationType & IExtendedRegisterFunction<ui.animations.BaseAnimation | ui.animations.CssAnimation, string> =
-        (name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation | ui.animations.CssAnimation,
-        dependencies?: any[], animationType?: 'css' | 'js' | string): typeof register => {
+    export const animation: IAnimationType &
+        IExtendedRegisterFunction<
+            ui.animations.BaseAnimation | ui.animations.CssAnimation,
+            string
+        > = (
+        name: string,
+        Type: new (...args: any[]) =>
+            | ui.animations.BaseAnimation
+            | ui.animations.CssAnimation,
+        dependencies?: any[],
+        animationType?: 'css' | 'js' | string
+    ): typeof register => {
         if (isString(animationType)) {
             animationType = animationType.toLowerCase();
             if (!(animationType === __CSS || animationType === __JS)) {
-                throw new Error(`Invalid animationType "${animationType}" during animation registration.`);
+                throw new Error(
+                    `Invalid animationType "${animationType}" during animation registration.`
+                );
             }
         }
 
-        return add((animationType === __JS ? jsAnimationInjectors : animationInjectors),
-            name, Type, dependencies, injectable.INSTANCE);
+        return add(
+            animationType === __JS ? jsAnimationInjectors : animationInjectors,
+            name,
+            Type,
+            dependencies,
+            injectable.INSTANCE
+        );
     };
 
     /**
@@ -342,263 +423,715 @@ module plat.register {
 
     export interface IRegisterFunction<RegisterType> {
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9,
+                      d10: D10
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9,
+                      d10: D10
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
-                ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string,
-                ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string,
-                ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string,
-                ((...args: any[]) => D10) | (new (...args: any[]) => D10) | string
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
+
+                    | ((...args: any[]) => D7)
+                    | (new (...args: any[]) => D7)
+                    | string,
+
+                    | ((...args: any[]) => D8)
+                    | (new (...args: any[]) => D8)
+                    | string,
+
+                    | ((...args: any[]) => D9)
+                    | (new (...args: any[]) => D9)
+                    | string,
+
+                    | ((...args: any[]) => D10)
+                    | (new (...args: any[]) => D10)
+                    | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
-                ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string,
-                ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
+
+                    | ((...args: any[]) => D7)
+                    | (new (...args: any[]) => D7)
+                    | string,
+
+                    | ((...args: any[]) => D8)
+                    | (new (...args: any[]) => D8)
+                    | string,
                 ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
-                ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
+
+                    | ((...args: any[]) => D7)
+                    | (new (...args: any[]) => D7)
+                    | string,
                 ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
                 ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T)
+                | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
                 ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T)
+                | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
                 ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3, d4: D4) => T)
+                | (new (d1: D1, d2: D2, d3: D3, d4: D4) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
                 ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2, D3>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3) => T) | (new (d1: D1, d2: D2, d3: D3) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3) => T)
+                | (new (d1: D1, d2: D2, d3: D3) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
                 ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1, D2>(
-            name: string, Type:
-                ((d1: D1, d2: D2) => T) | (new (d1: D1, d2: D2) => T),
+            name: string,
+            Type: ((d1: D1, d2: D2) => T) | (new (d1: D1, d2: D2) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
                 ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string
             ]
         ): typeof register;
         <T extends RegisterType, D1>(
-            name: string, Type:
-            ((d1: D1) => T) | (new (d1: D1) => T),
+            name: string,
+            Type: ((d1: D1) => T) | (new (d1: D1) => T),
             dependencies: [
                 ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string
             ]
         ): typeof register;
-        <T extends RegisterType>(name: string, Type: (() => T) | (new () => T)): typeof register;
+        <T extends RegisterType>(
+            name: string,
+            Type: (() => T) | (new () => T)
+        ): typeof register;
     }
 
     export interface IExtendedRegisterFunction<RegisterType, XT> {
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9,
+                      d10: D10
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9,
+                      d10: D10
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
-                ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string,
-                ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string,
-                ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string,
-                ((...args: any[]) => D10) | (new (...args: any[]) => D10) | string
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
+
+                    | ((...args: any[]) => D7)
+                    | (new (...args: any[]) => D7)
+                    | string,
+
+                    | ((...args: any[]) => D8)
+                    | (new (...args: any[]) => D8)
+                    | string,
+
+                    | ((...args: any[]) => D9)
+                    | (new (...args: any[]) => D9)
+                    | string,
+
+                    | ((...args: any[]) => D10)
+                    | (new (...args: any[]) => D10)
+                    | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8,
+                      d9: D9
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
-                ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string,
-                ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
+
+                    | ((...args: any[]) => D7)
+                    | (new (...args: any[]) => D7)
+                    | string,
+
+                    | ((...args: any[]) => D8)
+                    | (new (...args: any[]) => D8)
+                    | string,
                 ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7,
+                      d8: D8
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
-                ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
+
+                    | ((...args: any[]) => D7)
+                    | (new (...args: any[]) => D7)
+                    | string,
                 ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T),
+            name: string,
+            Type:
+                | ((
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7
+                  ) => T)
+                | (new (
+                      d1: D1,
+                      d2: D2,
+                      d3: D3,
+                      d4: D4,
+                      d5: D5,
+                      d6: D6,
+                      d7: D7
+                  ) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
-                ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
+
+                    | ((...args: any[]) => D6)
+                    | (new (...args: any[]) => D6)
+                    | string,
                 ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5, D6>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T)
+                | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
-                ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
+
+                    | ((...args: any[]) => D5)
+                    | (new (...args: any[]) => D5)
+                    | string,
                 ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4, D5>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T)
+                | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
-                ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
+
+                    | ((...args: any[]) => D4)
+                    | (new (...args: any[]) => D4)
+                    | string,
                 ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3, D4>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3, d4: D4) => T) |
-                (new (d1: D1, d2: D2, d3: D3, d4: D4) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3, d4: D4) => T)
+                | (new (d1: D1, d2: D2, d3: D3, d4: D4) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
-                ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
+
+                    | ((...args: any[]) => D3)
+                    | (new (...args: any[]) => D3)
+                    | string,
                 ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2, D3>(
-            name: string, Type:
-                ((d1: D1, d2: D2, d3: D3) => T) | (new (d1: D1, d2: D2, d3: D3) => T),
+            name: string,
+            Type:
+                | ((d1: D1, d2: D2, d3: D3) => T)
+                | (new (d1: D1, d2: D2, d3: D3) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
-                ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
+
+                    | ((...args: any[]) => D2)
+                    | (new (...args: any[]) => D2)
+                    | string,
                 ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1, D2>(
-            name: string, Type:
-                ((d1: D1, d2: D2) => T) | (new (d1: D1, d2: D2) => T),
+            name: string,
+            Type: ((d1: D1, d2: D2) => T) | (new (d1: D1, d2: D2) => T),
             dependencies: [
-                ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string,
+
+                    | ((...args: any[]) => D1)
+                    | (new (...args: any[]) => D1)
+                    | string,
                 ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string
             ],
             type?: XT
         ): typeof register;
         <T extends RegisterType, D1>(
-            name: string, Type:
-            ((d1: D1) => T) | (new (d1: D1) => T),
+            name: string,
+            Type: ((d1: D1) => T) | (new (d1: D1) => T),
             dependencies: [
                 ((...args: any[]) => D1) | (new (...args: any[]) => D1) | string
             ],
             type?: XT
         ): typeof register;
-        <T extends RegisterType>(name: string, Type: (() => T) | (new () => T)): typeof register;
+        <T extends RegisterType>(
+            name: string,
+            Type: (() => T) | (new () => T)
+        ): typeof register;
     }
 }

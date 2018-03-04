@@ -7,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to Document processing in platypus.
  */
-module plat.processing {
+namespace plat.processing {
     'use strict';
 
     /**
@@ -94,9 +94,14 @@ module plat.processing {
          *
          * @returns {void}
          */
-        public compile(node: Node | Node[] | NodeList, control?: ui.TemplateControl): void {
+        public compile(
+            node: Node | Node[] | NodeList,
+            control?: ui.TemplateControl
+        ): void {
             const hasControl = !isNull(control);
-            const manager = <ElementManager>(hasControl ? this._managerCache.read(control.uid) : null);
+            const manager = <ElementManager>(hasControl
+                ? this._managerCache.read(control.uid)
+                : null);
             const create = this._ElementManagerFactory.create;
             let childNodes = (<Node>node).childNodes;
             let length: number;
@@ -163,7 +168,10 @@ module plat.processing {
                     case Node.ELEMENT_NODE:
                         newManager = create(<Element>node, manager);
                         if (!isNull(newManager)) {
-                            this._compileNodes(Array.prototype.slice.call(node.childNodes), newManager);
+                            this._compileNodes(
+                                Array.prototype.slice.call(node.childNodes),
+                                newManager
+                            );
                         }
                         break;
                     case Node.TEXT_NODE:

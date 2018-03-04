@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -74,7 +74,12 @@ module plat {
         return AttributeControl;
     }
 
-    register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
+    register.injectable(
+        __AttributeControlFactory,
+        IAttributeControlFactory,
+        null,
+        __FACTORY
+    );
 
     /**
      * @name IAttributeControlFactory

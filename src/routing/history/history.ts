@@ -7,7 +7,7 @@
  * @description
  * Holds all classes and interfaces related to routing components in platypus.
  */
-module plat.routing {
+namespace plat.routing {
     'use strict';
 
     /**

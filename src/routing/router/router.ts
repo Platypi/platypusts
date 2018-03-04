@@ -1,4 +1,4 @@
-module plat.routing {
+namespace plat.routing {
     'use strict';
 
     const __CHILD_ROUTE = '/*childRoute';
@@ -262,7 +262,9 @@ module plat.routing {
          * @description
          * An object containing interceptor methods for particular routes.
          */
-        protected _interceptors: IObject<((routeInfo: IRouteInfo) => any)[]> = {};
+        protected _interceptors: IObject<
+            ((routeInfo: IRouteInfo) => any)[]
+        > = {};
 
         /**
          * @name _unknownHandler
@@ -340,7 +342,9 @@ module plat.routing {
          * @description
          * A shortcut to the Promise.resolve function.
          */
-        protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(this._Promise);
+        protected _resolve: typeof async.Promise.resolve = this._Promise.resolve.bind(
+            this._Promise
+        );
 
         /**
          * @name _resolve
@@ -353,7 +357,9 @@ module plat.routing {
          * @description
          * A shortcut to the Promise.reject function.
          */
-        protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(this._Promise);
+        protected _reject: typeof async.Promise.reject = this._Promise.reject.bind(
+            this._Promise
+        );
 
         /**
          * @name currentRouter
@@ -502,7 +508,9 @@ module plat.routing {
                 .then((): async.Promise<void> => {
                     const routeInfo = _clone(this.currentRouteInfo, true);
 
-                    return this.finishNavigating = this._canNavigateTo(routeInfo)
+                    return (this.finishNavigating = this._canNavigateTo(
+                        routeInfo
+                    )
                         .then((canNavigateTo): async.Promise<void> => {
                             if (!canNavigateTo) {
                                 return;
@@ -510,12 +518,16 @@ module plat.routing {
                             this.currentRouteInfo = undefined;
 
                             return this._performNavigation(routeInfo);
-                        }).then((): void => {
-                            this.navigating = false;
-                            this.currentRouteInfo = routeInfo;
-                        }, (): void => {
-                            this.navigating = false;
-                        });
+                        })
+                        .then(
+                            (): void => {
+                                this.navigating = false;
+                                this.currentRouteInfo = routeInfo;
+                            },
+                            (): void => {
+                                this.navigating = false;
+                            }
+                        ));
                 });
         }
 
@@ -564,7 +576,10 @@ module plat.routing {
          * @returns {plat.async.Promise<void>} A {@link plat.async.IPromise|Promise} that resolves when the
          * forced navigation is complete.
          */
-        public configure(routes: IRouteMapping | IRouteMapping[], force?: boolean): async.Promise<void> {
+        public configure(
+            routes: IRouteMapping | IRouteMapping[],
+            force?: boolean
+        ): async.Promise<void> {
             if (isArray(routes)) {
                 forEach((route: IRouteMapping): void => {
                     this._configureRoute(route);
@@ -619,9 +634,17 @@ module plat.routing {
          *
          * @returns {plat.routing.Router} The router, for method chaining.
          */
-        public param(handler: (value: any, parameters: any, query: any) => any,
-            parameter: string, view?: string | (new (...args: any[]) => any)): Router {
-            return this._addHandler(handler, parameter, view, this._paramTransforms);
+        public param(
+            handler: (value: any, parameters: any, query: any) => any,
+            parameter: string,
+            view?: string | (new (...args: any[]) => any)
+        ): Router {
+            return this._addHandler(
+                handler,
+                parameter,
+                view,
+                this._paramTransforms
+            );
         }
 
         /**
@@ -643,9 +666,17 @@ module plat.routing {
          *
          * @returns {plat.routing.Router} The router, for method chaining.
          */
-        public queryParam(handler: (value: string, query: any) => any,
-            parameter: string, view?: string | (new (...args: any[]) => any)): Router {
-            return this._addHandler(handler, parameter, view, this._queryTransforms);
+        public queryParam(
+            handler: (value: string, query: any) => any,
+            parameter: string,
+            view?: string | (new (...args: any[]) => any)
+        ): Router {
+            return this._addHandler(
+                handler,
+                parameter,
+                view,
+                this._queryTransforms
+            );
         }
 
         /**
@@ -664,7 +695,10 @@ module plat.routing {
          *
          * @returns {plat.routing.Router} The router, for method chaining.
          */
-        public intercept(interceptor: (routeInfo: IRouteInfo) => any, view?: string | (new (...args: any[]) => any)): Router {
+        public intercept(
+            interceptor: (routeInfo: IRouteInfo) => any,
+            view?: string | (new (...args: any[]) => any)
+        ): Router {
             if (isUndefined(view)) {
                 view = '*';
             }
@@ -707,7 +741,12 @@ module plat.routing {
          * @returns {plat.async.Promise<void>} A {@link plat.async.IPromise|Promise} that resolves/rejects based on the success of
          * the navigation.
          */
-        public navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.Promise<void> {
+        public navigate(
+            url: string,
+            query?: IObject<any>,
+            force?: boolean,
+            poll?: boolean
+        ): async.Promise<void> {
             if (poll === false) {
                 poll = !isObject(this.currentRouteInfo);
             }
@@ -725,9 +764,17 @@ module plat.routing {
 
             force = force === true;
 
-            if (!isString(url) || this.navigating || (!force && url === this._previousUrl && queryString === this._previousQuery)) {
+            if (
+                !isString(url) ||
+                this.navigating ||
+                (!force &&
+                    url === this._previousUrl &&
+                    queryString === this._previousQuery)
+            ) {
                 if (this.navigating) {
-                    return this.finishNavigating.then((): async.Promise<void> => {
+                    return this.finishNavigating.then((): async.Promise<
+                        void
+                    > => {
                         return this.navigate(url, query, force);
                     });
                 }
@@ -793,7 +840,9 @@ module plat.routing {
                                 view: <any>undefined,
                             };
 
-                            return resolve(this._unknownHandler(unknownRouteConfig)).then(() => {
+                            return resolve(
+                                this._unknownHandler(unknownRouteConfig)
+                            ).then(() => {
                                 const view = unknownRouteConfig.view;
                                 if (isUndefined(view)) {
                                     return;
@@ -812,22 +861,29 @@ module plat.routing {
                     routeInfo = result[0];
                     routeInfo.query = query;
                     pattern = routeInfo.delegate.pattern;
-                    pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
+                    pattern = pattern.slice(
+                        0,
+                        pattern.length - __CHILD_ROUTE_LENGTH
+                    );
 
                     if (!emptyResult || this._isSameRoute(routeInfo)) {
                         // the pattern for this router is the same as the last pattern so
                         // only navigate child routers.
                         this.navigating = true;
 
-                        return this.finishNavigating = this._navigateChildren(routeInfo)
-                            .then((): void => {
+                        return (this.finishNavigating = this._navigateChildren(
+                            routeInfo
+                        ).then(
+                            (): void => {
                                 this._previousUrl = url;
                                 this._previousQuery = queryString;
                                 this.navigating = false;
-                            }, (e: any): void => {
+                            },
+                            (e: any): void => {
                                 this.navigating = false;
                                 throw e;
-                            });
+                            }
+                        ));
                     }
                 }
             } else {
@@ -848,9 +904,12 @@ module plat.routing {
 
             this.navigating = true;
 
-            const routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
+            const routeInfoCopy = (this._nextRouteInfo = _clone(
+                routeInfo,
+                true
+            ));
 
-            return this.finishNavigating = this._canNavigate(routeInfo, poll)
+            return (this.finishNavigating = this._canNavigate(routeInfo, poll)
                 .then((canNavigate: boolean): async.Promise<void> => {
                     if (!canNavigate) {
                         this.navigating = false;
@@ -861,16 +920,20 @@ module plat.routing {
                     this._previousQuery = queryString;
 
                     return this._performNavigation(routeInfo);
-                }).then((): void => {
-                    this._previousPattern = pattern;
-                    this._previousSegment = segment;
-                    this.currentRouteInfo = routeInfoCopy;
-                    this.navigating = false;
-                }, (e: any): void => {
-                    this._previousSegment = previousSegment;
-                    this.navigating = false;
-                    throw e;
-                });
+                })
+                .then(
+                    (): void => {
+                        this._previousPattern = pattern;
+                        this._previousSegment = segment;
+                        this.currentRouteInfo = routeInfoCopy;
+                        this.navigating = false;
+                    },
+                    (e: any): void => {
+                        this._previousSegment = previousSegment;
+                        this.navigating = false;
+                        throw e;
+                    }
+                ));
         }
 
         /**
@@ -889,7 +952,11 @@ module plat.routing {
          *
          * @returns {string} The generated route.
          */
-        public generate(name: string | (new (...args: any[]) => any), parameters?: IObject<string>, query?: IObject<string>): string {
+        public generate(
+            name: string | (new (...args: any[]) => any),
+            parameters?: IObject<string>,
+            query?: IObject<string>
+        ): string {
             const alias = name;
 
             name = this._Injector.convertDependency(name);
@@ -902,7 +969,9 @@ module plat.routing {
             let router: Router = this;
             let prefix = '';
 
-            while (!(isNull(router) || router._recognizer.exists(<string>name))) {
+            while (
+                !(isNull(router) || router._recognizer.exists(<string>name))
+            ) {
                 router = router.parent;
             }
 
@@ -913,9 +982,10 @@ module plat.routing {
             const path = router._recognizer.generate(<string>name, parameters);
             let previous: string;
 
-            while (!isNull(router = router.parent)) {
+            while (!isNull((router = router.parent))) {
                 previous = router._previousSegment;
-                previous = (!isNull(previous) && previous !== '/') ? previous : '';
+                previous =
+                    !isNull(previous) && previous !== '/' ? previous : '';
                 prefix = previous + prefix;
             }
 
@@ -989,8 +1059,12 @@ module plat.routing {
          *
          * @returns {plat.routing.Router} The router for method chaining.
          */
-        protected _addHandler(handler: (value: string, values: any, query?: any) => any,
-            parameter: string, view: any, handlers: IObject<IRouteTransforms>): Router {
+        protected _addHandler(
+            handler: (value: string, values: any, query?: any) => any,
+            parameter: string,
+            view: any,
+            handlers: IObject<IRouteTransforms>
+        ): Router {
             if (isUndefined(view)) {
                 view = '*';
             }
@@ -1070,7 +1144,10 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<void>} A {@link plat.async.IPromise|Promise} that resolves when the navigation is complete.
          */
-        protected _navigateChildren(info: IRouteInfo, poll: boolean = true): async.Promise<void> {
+        protected _navigateChildren(
+            info: IRouteInfo,
+            poll: boolean = true
+        ): async.Promise<void> {
             const childRoute = this._getChildRoute(info);
 
             if (isNull(childRoute)) {
@@ -1125,17 +1202,24 @@ module plat.routing {
         protected _performNavigation(info: IRouteInfo): async.Promise<void> {
             const sameRoute = this._isSameRoute(this._nextRouteInfo);
 
-            return this._performNavigateFrom(sameRoute).then((): async.Promise<void[]> => {
-                if (sameRoute) {
-                    return;
-                }
+            return this._performNavigateFrom(sameRoute)
+                .then((): async.Promise<void[]> => {
+                    if (sameRoute) {
+                        return;
+                    }
 
-                return mapAsync((port: ISupportRouteNavigation): async.Promise<void> => {
-                    return port.navigateTo(info);
-                }, this._ports);
-            }).then((): async.Promise<void> => {
-                return this._navigateChildren(info, false);
-            });
+                    return mapAsync(
+                        (
+                            port: ISupportRouteNavigation
+                        ): async.Promise<void> => {
+                            return port.navigateTo(info);
+                        },
+                        this._ports
+                    );
+                })
+                .then((): async.Promise<void> => {
+                    return this._navigateChildren(info, false);
+                });
         }
 
         /**
@@ -1151,7 +1235,9 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<void>} Resolves when the navigation from is complete.
          */
-        protected _performNavigateFrom(ignorePorts?: boolean): async.Promise<void> {
+        protected _performNavigateFrom(
+            ignorePorts?: boolean
+        ): async.Promise<void> {
             return mapAsync((child: Router): async.Promise<void> => {
                 return child._performNavigateFrom();
             }, this.children)
@@ -1160,10 +1246,16 @@ module plat.routing {
                         return;
                     }
 
-                    return mapAsync((port: ISupportRouteNavigation): async.Promise<void> => {
-                        return port.navigateFrom();
-                    }, this._ports);
-                }).then(noop);
+                    return mapAsync(
+                        (
+                            port: ISupportRouteNavigation
+                        ): async.Promise<void> => {
+                            return port.navigateFrom();
+                        },
+                        this._ports
+                    );
+                })
+                .then(noop);
         }
 
         /**
@@ -1179,27 +1271,40 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<boolean>} Whether or not we can navigate to the next state.
          */
-        protected _canNavigate(info: IRouteInfo, poll: boolean = true): async.Promise<boolean> {
+        protected _canNavigate(
+            info: IRouteInfo,
+            poll: boolean = true
+        ): async.Promise<boolean> {
             const sameRoute = this._isSameRoute(this._nextRouteInfo);
 
             if (!poll) {
-                return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then((): async.Promise<boolean> => {
-                    return this._callInterceptors(info);
-                }).then(() => {
-                    return true;
-                }, () => {
-                    return true;
-                });
+                return this._callAllHandlers(
+                    info.delegate.alias,
+                    info.parameters,
+                    info.query
+                )
+                    .then((): async.Promise<boolean> => {
+                        return this._callInterceptors(info);
+                    })
+                    .then(
+                        () => {
+                            return true;
+                        },
+                        () => {
+                            return true;
+                        }
+                    );
             }
 
-            return this._canNavigateFrom(sameRoute)
-                .then((canNavigateFrom: boolean): async.Promise<boolean> => {
+            return this._canNavigateFrom(sameRoute).then(
+                (canNavigateFrom: boolean): async.Promise<boolean> => {
                     if (!canNavigateFrom) {
                         return <any>canNavigateFrom;
                     }
 
                     return this._canNavigateTo(info, sameRoute);
-                });
+                }
+            );
         }
 
         /**
@@ -1215,21 +1320,37 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<boolean>} Whether or not we can navigate from the current
          */
-        protected _canNavigateFrom(ignorePorts?: boolean): async.Promise<boolean> {
-            return this._Promise.all(this.children.reduce(
-                (promises: async.Promise<boolean>[], child: Router): async.Promise<boolean>[] => {
-                return promises.concat(child._canNavigateFrom());
-            }, <async.Promise<boolean>[]>[]))
+        protected _canNavigateFrom(
+            ignorePorts?: boolean
+        ): async.Promise<boolean> {
+            return this._Promise
+                .all(
+                    this.children.reduce(
+                        (
+                            promises: async.Promise<boolean>[],
+                            child: Router
+                        ): async.Promise<boolean>[] => {
+                            return promises.concat(child._canNavigateFrom());
+                        },
+                        <async.Promise<boolean>[]>[]
+                    )
+                )
                 .then(booleanReduce)
                 .then((canNavigateFrom: boolean): async.Promise<boolean[]> => {
                     if (!canNavigateFrom || ignorePorts) {
                         return <any>[canNavigateFrom];
                     }
 
-                    return mapAsync((port: ISupportRouteNavigation): async.Promise<boolean> => {
-                        return port.canNavigateFrom();
-                    }, this._ports);
-                }).then(booleanReduce);
+                    return mapAsync(
+                        (
+                            port: ISupportRouteNavigation
+                        ): async.Promise<boolean> => {
+                            return port.canNavigateFrom();
+                        },
+                        this._ports
+                    );
+                })
+                .then(booleanReduce);
         }
 
         /**
@@ -1246,22 +1367,37 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<boolean>} Whether or not we can navigate to the next state.
          */
-        protected _canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.Promise<boolean> {
+        protected _canNavigateTo(
+            info: IRouteInfo,
+            ignorePorts?: boolean
+        ): async.Promise<boolean> {
             if (isEmpty(this._ports)) {
                 return this._resolve(true);
             }
 
-            return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then((): async.Promise<boolean> => {
-                return this._callInterceptors(info);
-            }).then((canNavigateTo): async.Promise<boolean[]> => {
-                if (canNavigateTo === false || ignorePorts) {
-                    return <any>[canNavigateTo];
-                }
+            return this._callAllHandlers(
+                info.delegate.alias,
+                info.parameters,
+                info.query
+            )
+                .then((): async.Promise<boolean> => {
+                    return this._callInterceptors(info);
+                })
+                .then((canNavigateTo): async.Promise<boolean[]> => {
+                    if (canNavigateTo === false || ignorePorts) {
+                        return <any>[canNavigateTo];
+                    }
 
-                return mapAsync((port: ISupportRouteNavigation): async.Promise<boolean> => {
-                    return port.canNavigateTo(info);
-                }, this._ports);
-            }).then(booleanReduce);
+                    return mapAsync(
+                        (
+                            port: ISupportRouteNavigation
+                        ): async.Promise<boolean> => {
+                            return port.canNavigateTo(info);
+                        },
+                        this._ports
+                    );
+                })
+                .then(booleanReduce);
         }
 
         /**
@@ -1279,11 +1415,39 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<void>} Resolves when the handlers have finished execution.
          */
-        protected _callAllHandlers(view: string, parameters: any, query?: any): async.Promise<void> {
-            return this._callHandlers(this._queryTransforms['*'], query, undefined, true)
-                .then((): async.Promise<void> => this._callHandlers(this._queryTransforms[view], query, undefined, true))
-                .then((): async.Promise<void> => this._callHandlers(this._paramTransforms['*'], parameters, query))
-                .then((): async.Promise<void> => this._callHandlers(this._paramTransforms[view], parameters, query))
+        protected _callAllHandlers(
+            view: string,
+            parameters: any,
+            query?: any
+        ): async.Promise<void> {
+            return this._callHandlers(
+                this._queryTransforms['*'],
+                query,
+                undefined,
+                true
+            )
+                .then((): async.Promise<void> =>
+                    this._callHandlers(
+                        this._queryTransforms[view],
+                        query,
+                        undefined,
+                        true
+                    )
+                )
+                .then((): async.Promise<void> =>
+                    this._callHandlers(
+                        this._paramTransforms['*'],
+                        parameters,
+                        query
+                    )
+                )
+                .then((): async.Promise<void> =>
+                    this._callHandlers(
+                        this._paramTransforms[view],
+                        parameters,
+                        query
+                    )
+                )
                 .then(noop);
         }
 
@@ -1303,22 +1467,36 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<void>} Resolves when the handlers have finished execution.
          */
-        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any, force?: boolean): async.Promise<void> {
+        protected _callHandlers(
+            allHandlers: IRouteTransforms,
+            obj: any,
+            query?: any,
+            force?: boolean
+        ): async.Promise<void> {
             const resolve = this._resolve;
             if (!isObject(obj)) {
                 obj = {};
             }
 
-            return mapAsync((handlers: ((value: string, values: any, query?: any) => any)[], key: string): async.Promise<any[]> => {
-                return mapAsyncInOrder((handler): async.Promise<any> => {
-                    if (force !== true && isUndefined(obj[key])) {
-                        return resolve();
-                    }
+            return mapAsync(
+                (
+                    handlers: ((
+                        value: string,
+                        values: any,
+                        query?: any
+                    ) => any)[],
+                    key: string
+                ): async.Promise<any[]> => {
+                    return mapAsyncInOrder((handler): async.Promise<any> => {
+                        if (force !== true && isUndefined(obj[key])) {
+                            return resolve();
+                        }
 
-                    return resolve(handler(obj[key], obj, query));
-                }, handlers);
-            }, allHandlers)
-                .then(noop);
+                        return resolve(handler(obj[key], obj, query));
+                    }, handlers);
+                },
+                allHandlers
+            ).then(noop);
         }
 
         /**
@@ -1337,18 +1515,28 @@ module plat.routing {
         protected _callInterceptors(info: IRouteInfo): async.Promise<boolean> {
             const resolve = this._resolve;
 
-            return mapAsyncInOrder((handler: (routeInfo: IRouteInfo) => any): async.Promise<boolean> => {
-                return resolve(handler(info));
-            }, this._interceptors['*'])
+            return mapAsyncInOrder(
+                (
+                    handler: (routeInfo: IRouteInfo) => any
+                ): async.Promise<boolean> => {
+                    return resolve(handler(info));
+                },
+                this._interceptors['*']
+            )
                 .then(booleanReduce)
                 .then((canNavigate: boolean): async.Promise<boolean[]> => {
                     if (!canNavigate) {
                         return <any>[canNavigate];
                     }
 
-                    return mapAsync((handler: (routeInfo: IRouteInfo) => any): async.Promise<boolean> => {
-                        return resolve(handler(info));
-                    }, this._interceptors[info.delegate.alias]);
+                    return mapAsync(
+                        (
+                            handler: (routeInfo: IRouteInfo) => any
+                        ): async.Promise<boolean> => {
+                            return resolve(handler(info));
+                        },
+                        this._interceptors[info.delegate.alias]
+                    );
                 })
                 .then(booleanReduce);
         }
@@ -1379,16 +1567,20 @@ module plat.routing {
 
             const currentDelegate = currentRouteInfo.delegate;
             const delegate = info.delegate;
-            const currentParameters = serializeQuery(currentRouteInfo.parameters);
+            const currentParameters = serializeQuery(
+                currentRouteInfo.parameters
+            );
             const parameters = serializeQuery(info.parameters);
             const currentQuery = serializeQuery(currentRouteInfo.query);
             const query = serializeQuery(info.query);
 
-            return currentDelegate.view === delegate.view &&
+            return (
+                currentDelegate.view === delegate.view &&
                 currentDelegate.alias === delegate.alias &&
                 currentDelegate.pattern === delegate.pattern &&
                 currentParameters === parameters &&
-                (currentQuery === query || this.children.length > 0);
+                (currentQuery === query || this.children.length > 0)
+            );
         }
 
         /**
@@ -1410,7 +1602,10 @@ module plat.routing {
                     const delegate = info.delegate;
                     const pattern = delegate.pattern;
 
-                    delegate.pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
+                    delegate.pattern = pattern.slice(
+                        0,
+                        pattern.length - __CHILD_ROUTE_LENGTH
+                    );
                     deleteProperty(info.parameters, 'childRoute');
                 }
             }
@@ -1538,7 +1733,7 @@ module plat.routing {
      * @description
      * The result of a recognized route.
      */
-    export interface IRouteResult extends Array<IRouteInfo> { }
+    export interface IRouteResult extends Array<IRouteInfo> {}
 
     /**
      * @name IRouteInfo
@@ -1625,7 +1820,8 @@ module plat.routing {
      * @description
      * An object that contains an Array of route transform functions.
      */
-    export interface IRouteTransforms extends IObject<((value: string, values: any, query?: any) => any)[]> { }
+    export interface IRouteTransforms
+        extends IObject<((value: string, values: any, query?: any) => any)[]> {}
 
     /**
      * @name ISupportRouteNavigation

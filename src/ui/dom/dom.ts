@@ -1,4 +1,4 @@
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -45,9 +45,18 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function for removing the added event listener.
          */
-        public addEventListener(element: Window | Node, type: string,
-            listener: IGestureListener | EventListener, useCapture?: boolean): IRemoveListener {
-            return this._domEvents.addEventListener(element, type, listener, useCapture);
+        public addEventListener(
+            element: Window | Node,
+            type: string,
+            listener: IGestureListener | EventListener,
+            useCapture?: boolean
+        ): IRemoveListener {
+            return this._domEvents.addEventListener(
+                element,
+                type,
+                listener,
+                useCapture
+            );
         }
 
         /**
@@ -161,7 +170,11 @@ module plat.ui {
          *
          * @returns {Array<Node>} An Array copy of the fragment's childNodes.
          */
-        public insertBefore(parent: Node, nodes: Node[] | NodeList | DocumentFragment | Node, endNode?: Node): Node[] {
+        public insertBefore(
+            parent: Node,
+            nodes: Node[] | NodeList | DocumentFragment | Node,
+            endNode?: Node
+        ): Node[] {
             return insertBefore(parent, nodes, endNode);
         }
 
@@ -370,7 +383,11 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public replaceClass(element: Element, oldClass: string, newClass: string): void {
+        public replaceClass(
+            element: Element,
+            oldClass: string,
+            newClass: string
+        ): void {
             replaceClass(<HTMLElement>element, oldClass, newClass);
         }
 
@@ -408,7 +425,9 @@ module plat.ui {
          * @returns {plat.async.Promise<DocumentFragment>} A thenable that will resolve with the template, serialized as a
          * DocumentFragment.
          */
-        public getTemplate(templateUrl: string): async.Promise<DocumentFragment> {
+        public getTemplate(
+            templateUrl: string
+        ): async.Promise<DocumentFragment> {
             return getTemplate(templateUrl);
         }
 

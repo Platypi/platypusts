@@ -7,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to event management components in platypus.
  */
-module plat.events {
+namespace plat.events {
     'use strict';
 
     /**
@@ -138,7 +138,11 @@ module plat.events {
          *
          * @returns {void}
          */
-        public initialize(name: string, sender: any, direction?: 'up' | 'down' | 'direct' | string): void {
+        public initialize(
+            name: string,
+            sender: any,
+            direction?: 'up' | 'down' | 'direct' | string
+        ): void {
             this.name = name;
 
             if (!isString(direction)) {
@@ -163,7 +167,11 @@ module plat.events {
          */
         public preventDefault(): void {
             if (!this.defaultPrevented) {
-                this._ContextManager.defineGetter(this, 'defaultPrevented', true);
+                this._ContextManager.defineGetter(
+                    this,
+                    'defaultPrevented',
+                    true
+                );
             }
         }
 
@@ -187,5 +195,10 @@ module plat.events {
         }
     }
 
-    register.injectable(__DispatchEventInstance, DispatchEvent, null, __INSTANCE);
+    register.injectable(
+        __DispatchEventInstance,
+        DispatchEvent,
+        null,
+        __INSTANCE
+    );
 }

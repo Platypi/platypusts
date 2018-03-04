@@ -7,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to storage in platypus.
  */
-module plat.storage {
+namespace plat.storage {
     'use strict';
 
     /**
@@ -112,7 +112,10 @@ module plat.storage {
          *
          * @returns {plat.storage.Cache<T>} The new cache.
          */
-        public static create<T>(uid: string, options?: ICacheOptions): Cache<T> {
+        public static create<T>(
+            uid: string,
+            options?: ICacheOptions
+        ): Cache<T> {
             let cache: Cache<T> = caches[uid];
 
             if (isNull(cache)) {
@@ -238,7 +241,12 @@ module plat.storage {
             const timeout = this.__options.timeout;
 
             if (isNumber(timeout) && timeout > 0) {
-                defer(<(key?: string) => void>this.remove, timeout, [key], this);
+                defer(
+                    <(key?: string) => void>this.remove,
+                    timeout,
+                    [key],
+                    this
+                );
             }
 
             return value;
@@ -388,7 +396,9 @@ module plat.storage {
     /**
      * A cache for persisting NodeManager trees.
      */
-    export let managerCache = Cache.create<processing.NodeManager>('__managerCache');
+    export let managerCache = Cache.create<processing.NodeManager>(
+        '__managerCache'
+    );
 
     /**
      * The Type for referencing the '_managerCache' injectable as a dependency.

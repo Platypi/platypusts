@@ -1,4 +1,4 @@
-namespace tests.async.promise {
+module tests.async.promise {
     const Promise: plat.async.IPromise = plat.acquire(plat.async.IPromise);
 
     describe('Promise Tests', () => {

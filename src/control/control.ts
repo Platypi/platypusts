@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -260,7 +260,9 @@ module plat {
          * @returns {plat.ui.TemplateControl} The root control.
          */
         public static getRootControl(control: Control): ui.TemplateControl;
-        public static getRootControl(control: ui.TemplateControl): ui.TemplateControl {
+        public static getRootControl(
+            control: ui.TemplateControl
+        ): ui.TemplateControl {
             if (isNull(control)) {
                 return control;
             } else if (!isNull(control.root)) {
@@ -275,7 +277,11 @@ module plat {
             }
 
             if (!control.hasOwnContext && isObject(control.context)) {
-                Control._log.debug(`Root control: ${control.type} found that sets its context to an Object but does not set the this.hasOwnContext = true.`);
+                Control._log.debug(
+                    `Root control: ${
+                        control.type
+                    } found that sets its context to an Object but does not set the this.hasOwnContext = true.`
+                );
             }
 
             return control;
@@ -306,13 +312,19 @@ module plat {
 
             if (isString(ctrl.absoluteContextPath)) {
                 if (isFunction(ctrl.contextChanged)) {
-                    const contextManager = Control._ContextManager.getManager(ctrl.root);
+                    const contextManager = Control._ContextManager.getManager(
+                        ctrl.root
+                    );
 
                     contextManager.observe(ctrl.absoluteContextPath, {
                         uid: control.uid,
                         priority: __CONTEXT_CHANGED_PRIORITY,
                         listener: (newValue, oldValue): void => {
-                            ui.TemplateControl.contextChanged(<ui.TemplateControl>control, newValue, oldValue);
+                            ui.TemplateControl.contextChanged(
+                                <ui.TemplateControl>control,
+                                newValue,
+                                oldValue
+                            );
                         },
                     });
 
@@ -380,7 +392,12 @@ module plat {
 
             if ((<IInternal>control).__injectable__type === __STATIC) {
                 const injector = controlInjectors[control.type];
-                register.control(control.type, (<any>control).constructor, <[string]>injector.dependencies, true);
+                register.control(
+                    control.type,
+                    (<any>control).constructor,
+                    <[string]>injector.dependencies,
+                    true
+                );
             }
         }
 
@@ -491,7 +508,10 @@ module plat {
          *
          * @returns {void}
          */
-        private static __addRemoveListener(uid: string, listener: IRemoveListener): void {
+        private static __addRemoveListener(
+            uid: string,
+            listener: IRemoveListener
+        ): void {
             const removeListeners = Control.__eventListeners;
 
             if (isArray(removeListeners[uid])) {
@@ -518,7 +538,10 @@ module plat {
          *
          * @returns {void}
          */
-        private static __spliceRemoveListener(uid: string, listener: IRemoveListener): void {
+        private static __spliceRemoveListener(
+            uid: string,
+            listener: IRemoveListener
+        ): void {
             const removeListeners = Control.__eventListeners;
             const controlListeners = removeListeners[uid];
 
@@ -549,7 +572,11 @@ module plat {
          *
          * @returns {Array<plat.Control>} The controls matching the input key/value pair.
          */
-        private static __getControls<T extends Control>(control: Control, key: string, value: string | (new () => T)): T[] {
+        private static __getControls<T extends Control>(
+            control: Control,
+            key: string,
+            value: string | (new () => T)
+        ): T[] {
             const controls: Control[] = [];
             const root = Control.getRootControl(control);
             let child: Control;
@@ -595,7 +622,7 @@ module plat {
          *
          * @returns {plat.Control}
          */
-        constructor() { }
+        constructor() {}
 
         /**
          * @name initialize
@@ -613,7 +640,7 @@ module plat {
          *
          * @returns {void}
          */
-        public initialize(): void { }
+        public initialize(): void {}
 
         /**
          * @name loaded
@@ -629,7 +656,7 @@ module plat {
          *
          * @returns {void}
          */
-        public loaded(): void { }
+        public loaded(): void {}
 
         /**
          * @name getControlsByName
@@ -663,7 +690,9 @@ module plat {
          *
          * @returns {Array<T>} The controls matching the input type.
          */
-        public getControlsByType<T extends Control>(type: string | (new () => T)): T[] {
+        public getControlsByType<T extends Control>(
+            type: string | (new () => T)
+        ): T[] {
             if (isString(type)) {
                 return Control.__getControls(this, 'type', type);
             }
@@ -689,15 +718,27 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public addEventListener(element: EventTarget, type: string, listener: ui.IGestureListener | EventListener, useCapture?: boolean): IRemoveListener {
+        public addEventListener(
+            element: EventTarget,
+            type: string,
+            listener: ui.IGestureListener | EventListener,
+            useCapture?: boolean
+        ): IRemoveListener {
             if (!isFunction(listener)) {
-                this._log.warn('"Control.addEventListener" must take a function as the third argument.');
+                this._log.warn(
+                    '"Control.addEventListener" must take a function as the third argument.'
+                );
 
                 return noop;
             }
 
             listener = listener.bind(this);
-            const removeListener = this.dom.addEventListener(<Element>element, type, listener, useCapture);
+            const removeListener = this.dom.addEventListener(
+                <Element>element,
+                type,
+                listener,
+                useCapture
+            );
             const uid = this.uid;
 
             Control.__addRemoveListener(uid, removeListener);
@@ -726,14 +767,25 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
-        public observe<T>(listener: (value: T, oldValue: T, identifier: number | string) => void, identifier?: number | string): IRemoveListener {
-            const control: ui.TemplateControl = isObject((<any>this).context) ? <any>this : this.parent;
+        public observe<T>(
+            listener: (
+                value: T,
+                oldValue: T,
+                identifier: number | string
+            ) => void,
+            identifier?: number | string
+        ): IRemoveListener {
+            const control: ui.TemplateControl = isObject((<any>this).context)
+                ? <any>this
+                : this.parent;
             const root = Control.getRootControl(control);
 
             if (isNull(control)) {
                 return noop;
             } else if (isNull(control.absoluteContextPath)) {
-                this._log.warn('Should not call plat.Control.observe prior to the control being loaded');
+                this._log.warn(
+                    'Should not call plat.Control.observe prior to the control being loaded'
+                );
 
                 return noop;
             }
@@ -752,7 +804,9 @@ module plat {
                 const identifiers = identifierExpression.identifiers;
 
                 if (identifiers.length > 1) {
-                    this._log.warn('Only a single identifier can be observed when calling the function plat.Control.observe');
+                    this._log.warn(
+                        'Only a single identifier can be observed when calling the function plat.Control.observe'
+                    );
                 }
 
                 const expression = identifierExpression.identifiers[0];
@@ -766,16 +820,23 @@ module plat {
                     } else if (start === __CONTEXT_RESOURCE) {
                         absoluteIdentifier = control.absoluteContextPath + join;
                     } else {
-                        absoluteIdentifier = `${control.absoluteContextPath}.${expression}`;
+                        absoluteIdentifier = `${
+                            control.absoluteContextPath
+                        }.${expression}`;
                     }
                 } else {
-                    absoluteIdentifier = `${control.absoluteContextPath}.${expression}`;
+                    absoluteIdentifier = `${
+                        control.absoluteContextPath
+                    }.${expression}`;
                 }
             } else {
-                absoluteIdentifier = `${control.absoluteContextPath}.${identifier}`;
+                absoluteIdentifier = `${
+                    control.absoluteContextPath
+                }.${identifier}`;
             }
 
-            let _ContextManager: observable.IContextManagerStatic = Control._ContextManager;
+            let _ContextManager: observable.IContextManagerStatic =
+                Control._ContextManager;
 
             if (!isObject(_ContextManager)) {
                 _ContextManager = acquire(__ContextManagerStatic);
@@ -811,8 +872,13 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        public observeArray<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: string) => void,
-            identifier?: string): IRemoveListener;
+        public observeArray<T>(
+            listener: (
+                changes: observable.IArrayChanges<T>[],
+                identifier: string
+            ) => void,
+            identifier?: string
+        ): IRemoveListener;
         /**
          * @name observeArray
          * @memberof plat.Control
@@ -833,11 +899,23 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
-        public observeArray<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: number) => void,
-            identifier?: number): IRemoveListener;
-        public observeArray<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: any) => void,
-            identifier?: any): IRemoveListener {
-            const control: ui.TemplateControl = isObject((<any>this).context) ? <any>this : this.parent;
+        public observeArray<T>(
+            listener: (
+                changes: observable.IArrayChanges<T>[],
+                identifier: number
+            ) => void,
+            identifier?: number
+        ): IRemoveListener;
+        public observeArray<T>(
+            listener: (
+                changes: observable.IArrayChanges<T>[],
+                identifier: any
+            ) => void,
+            identifier?: any
+        ): IRemoveListener {
+            const control: ui.TemplateControl = isObject((<any>this).context)
+                ? <any>this
+                : this.parent;
             const context = control.context;
 
             if (isNull(control) || !isObject(context)) {
@@ -858,10 +936,14 @@ module plat {
             } else if (isString(identifier)) {
                 const identifierExpression = _parser.parse(identifier);
                 array = identifierExpression.evaluate(context);
-                absoluteIdentifier = `${control.absoluteContextPath}.${identifierExpression.identifiers[0]}`;
+                absoluteIdentifier = `${control.absoluteContextPath}.${
+                    identifierExpression.identifiers[0]
+                }`;
             } else {
                 array = context[identifier];
-                absoluteIdentifier = `${control.absoluteContextPath}.${identifier}`;
+                absoluteIdentifier = `${
+                    control.absoluteContextPath
+                }.${identifier}`;
             }
 
             if (!isArray(array)) {
@@ -875,23 +957,39 @@ module plat {
 
             listener = listener.bind(this);
 
-            let _ContextManager: observable.IContextManagerStatic = Control._ContextManager;
+            let _ContextManager: observable.IContextManagerStatic =
+                Control._ContextManager;
 
             if (!isObject(_ContextManager)) {
                 _ContextManager = acquire(__ContextManagerStatic);
             }
 
-            const contextManager = _ContextManager.getManager(Control.getRootControl(control));
+            const contextManager = _ContextManager.getManager(
+                Control.getRootControl(control)
+            );
             const uid = this.uid;
-            const callback = (changes: observable.IArrayChanges<any>[]): void => {
+            const callback = (
+                changes: observable.IArrayChanges<any>[]
+            ): void => {
                 listener(changes, identifier);
             };
-            let removeListener = contextManager.observeArrayMutation(uid, callback, absoluteIdentifier, array, null);
+            let removeListener = contextManager.observeArrayMutation(
+                uid,
+                callback,
+                absoluteIdentifier,
+                array,
+                null
+            );
             const removeCallback = contextManager.observe(absoluteIdentifier, {
                 listener: (newValue: any[], oldValue: any[]): void => {
                     removeListener();
-                    removeListener = contextManager
-                        .observeArrayMutation(uid, callback, absoluteIdentifier, newValue, oldValue);
+                    removeListener = contextManager.observeArrayMutation(
+                        uid,
+                        callback,
+                        absoluteIdentifier,
+                        newValue,
+                        oldValue
+                    );
                 },
                 uid: uid,
             });
@@ -919,9 +1017,14 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the expression.
          */
-        public observeExpression<T>(listener: (value: T, oldValue: T,
-             expression: expressions.IParsedExpression | string) => void,
-             expression: expressions.IParsedExpression | string): IRemoveListener {
+        public observeExpression<T>(
+            listener: (
+                value: T,
+                oldValue: T,
+                expression: expressions.IParsedExpression | string
+            ) => void,
+            expression: expressions.IParsedExpression | string
+        ): IRemoveListener {
             if (isEmpty(expression)) {
                 return noop;
             }
@@ -934,19 +1037,26 @@ module plat {
 
             if (isString(expression)) {
                 expression = _parser.parse(<string>expression);
-            } else if (!isFunction((<expressions.IParsedExpression>expression).evaluate)) {
+            } else if (
+                !isFunction(
+                    (<expressions.IParsedExpression>expression).evaluate
+                )
+            ) {
                 return noop;
             }
 
-            const control: ui.TemplateControl = !isNull((<ui.TemplateControl>(<any>this)).resources) ?
-                <ui.TemplateControl>(<any>this) :
-                this.parent;
+            const control: ui.TemplateControl = !isNull(
+                (<ui.TemplateControl>(<any>this)).resources
+            )
+                ? <ui.TemplateControl>(<any>this)
+                : this.parent;
 
             if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
 
-            let _ContextManager: observable.IContextManagerStatic = Control._ContextManager;
+            let _ContextManager: observable.IContextManagerStatic =
+                Control._ContextManager;
 
             if (!isObject(_ContextManager)) {
                 _ContextManager = acquire(__ContextManagerStatic);
@@ -960,7 +1070,10 @@ module plat {
             const evaluateExpression = TemplateControl.evaluateExpression;
             let alias: string;
             let length = aliases.length;
-            let resourceObj: { resource: ui.IResource; control: ui.TemplateControl };
+            let resourceObj: {
+                resource: ui.IResource;
+                control: ui.TemplateControl;
+            };
             let type: string;
             let i: number;
 
@@ -970,7 +1083,10 @@ module plat {
 
                 if (!isNull(resourceObj)) {
                     type = resourceObj.resource.type;
-                    if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                    if (
+                        type === __OBSERVABLE_RESOURCE ||
+                        type === __LITERAL_RESOURCE
+                    ) {
                         resources[alias] = getManager(resourceObj.control);
                     }
                 }
@@ -980,7 +1096,8 @@ module plat {
             const absoluteContextPath = control.absoluteContextPath;
             const absolutePath = `${absoluteContextPath}.`;
             const managers: IObject<observable.ContextManager> = {};
-            let identifiers = (<expressions.IParsedExpression>expression).identifiers;
+            let identifiers = (<expressions.IParsedExpression>expression)
+                .identifiers;
             let identifier: string;
             let split: string[] = [];
             let topIdentifier: string;
@@ -996,11 +1113,19 @@ module plat {
                     alias = topIdentifier.slice(1);
 
                     if (alias === __CONTEXT_RESOURCE) {
-                        managers[absoluteContextPath + identifier.replace(topIdentifier, '')] = contextManager;
+                        managers[
+                            absoluteContextPath +
+                                identifier.replace(topIdentifier, '')
+                        ] = contextManager;
                     } else if (alias === __ROOT_CONTEXT_RESOURCE) {
-                        managers[identifier.replace(topIdentifier, 'context')] = contextManager;
+                        managers[
+                            identifier.replace(topIdentifier, 'context')
+                        ] = contextManager;
                     } else {
-                        identifier = identifier.replace(topIdentifier, `resources.${alias}.value`);
+                        identifier = identifier.replace(
+                            topIdentifier,
+                            `resources.${alias}.value`
+                        );
 
                         if (!isNull(resources[alias])) {
                             managers[identifier] = resources[alias];
@@ -1021,17 +1146,24 @@ module plat {
             const uid = this.uid;
             const observableListener = (): void => {
                 const value = evaluateExpression(expression, control);
-                listener.call(this, value, oldValue, (<expressions.IParsedExpression>expression).expression);
+                listener.call(
+                    this,
+                    value,
+                    oldValue,
+                    (<expressions.IParsedExpression>expression).expression
+                );
                 oldValue = value;
             };
 
             for (i = 0; i < length; i += 1) {
                 identifier = identifiers[i];
 
-                listeners.push(managers[identifier].observe(identifier, {
-                    uid: uid,
-                    listener: observableListener,
-                }));
+                listeners.push(
+                    managers[identifier].observe(identifier, {
+                        uid: uid,
+                        listener: observableListener,
+                    })
+                );
             }
 
             return (): void => {
@@ -1057,8 +1189,15 @@ module plat {
          *
          * @returns {any} The evaluated expression
          */
-        public evaluateExpression(expression: string | expressions.IParsedExpression, aliases?: IObject<any>): any {
-            return ui.TemplateControl.evaluateExpression(expression, this.parent, aliases);
+        public evaluateExpression(
+            expression: string | expressions.IParsedExpression,
+            aliases?: IObject<any>
+        ): any {
+            return ui.TemplateControl.evaluateExpression(
+                expression,
+                this.parent,
+                aliases
+            );
         }
 
         /**
@@ -1078,7 +1217,10 @@ module plat {
          * @returns {plat.IControlProperty} An object containing the property's parsed expression, the
          * evaluated property value, and the control that it's on.
          */
-        public findProperty(property: string, control?: Control): IControlProperty {
+        public findProperty(
+            property: string,
+            control?: Control
+        ): IControlProperty {
             let _parser = Control._parser;
 
             if (!isObject(_parser)) {
@@ -1127,7 +1269,11 @@ module plat {
          *
          * @returns {void}
          */
-        public dispatchEvent(name: string, direction?: 'up' | 'down' | 'direct' | string, ...args: any[]): void {
+        public dispatchEvent(
+            name: string,
+            direction?: 'up' | 'down' | 'direct' | string,
+            ...args: any[]
+        ): void {
             let _EventManager = Control._EventManager;
 
             if (!isObject(_EventManager)) {
@@ -1167,7 +1313,10 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
-        public on(name: string, listener: (ev: events.DispatchEvent, ...args: any[]) => void): IRemoveListener {
+        public on(
+            name: string,
+            listener: (ev: events.DispatchEvent, ...args: any[]) => void
+        ): IRemoveListener {
             let _EventManager = Control._EventManager;
 
             if (!isObject(_EventManager)) {
@@ -1190,7 +1339,7 @@ module plat {
          *
          * @returns {void}
          */
-        public dispose(): void { }
+        public dispose(): void {}
     }
 
     /**
@@ -1202,7 +1351,8 @@ module plat {
         _EventManager?: events.IEventManagerStatic,
         _Promise?: async.IPromise,
         _dom?: ui.Dom,
-        _log?: debug.Log): IControlFactory {
+        _log?: debug.Log
+    ): IControlFactory {
         (<any>Control)._parser = _parser;
         (<any>Control)._ContextManager = _ContextManager;
         (<any>Control)._EventManager = _EventManager;
@@ -1213,14 +1363,19 @@ module plat {
         return Control;
     }
 
-    register.injectable(__ControlFactory, IControlFactory, [
-        __Parser,
-        __ContextManagerStatic,
-        __EventManagerStatic,
-        __Promise,
-        __Dom,
-        __Log,
-    ], __FACTORY);
+    register.injectable(
+        __ControlFactory,
+        IControlFactory,
+        [
+            __Parser,
+            __ContextManagerStatic,
+            __EventManagerStatic,
+            __Promise,
+            __Dom,
+            __Log,
+        ],
+        __FACTORY
+    );
 
     /**
      * @name IControlFactory
@@ -1429,7 +1584,9 @@ module plat {
              *
              * @returns {plat.IRemoveListener} A method for removing the listener.
              */
-            observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
+            observe(
+                listener: (newValue: T, oldValue: T) => void
+            ): IRemoveListener;
         }
 
         /**
@@ -1455,7 +1612,9 @@ module plat {
              *
              * @returns {plat.IRemoveListener} A function to stop listening for property changes.
              */
-            onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener;
+            onInput(
+                listener: (newValue: any, oldValue: any) => void
+            ): IRemoveListener;
 
             /**
              * @name observeProperties
@@ -1504,7 +1663,11 @@ module plat {
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: number | string, autocast?: boolean): IRemoveListener;
+            observeProperty<T>(
+                listener: IBoundPropertyChangedListener<T>,
+                identifier?: number | string,
+                autocast?: boolean
+            ): IRemoveListener;
 
             /**
              * @name observeArrayChange
@@ -1525,7 +1688,13 @@ module plat {
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeArrayChange<T>(listener: (changes: IArrayChanges<T>[], identifier: string) => void, identifier?: string): IRemoveListener;
+            observeArrayChange<T>(
+                listener: (
+                    changes: IArrayChanges<T>[],
+                    identifier: string
+                ) => void,
+                identifier?: string
+            ): IRemoveListener;
             /**
              * @name observeArrayChange
              * @memberof plat.observable.IImplementTwoWayBinding
@@ -1545,7 +1714,13 @@ module plat {
              *
              * @returns {plat.IRemoveListener} A function to stop listening for changes.
              */
-            observeArrayChange<T>(listener: (changes: IArrayChanges<T>[], identifier: number) => void, index?: number): IRemoveListener;
+            observeArrayChange<T>(
+                listener: (
+                    changes: IArrayChanges<T>[],
+                    identifier: number
+                ) => void,
+                index?: number
+            ): IRemoveListener;
 
             /**
              * @name evaluate
@@ -1571,6 +1746,11 @@ module plat {
          *
          * @typeparam {any} T The type of each value changing.
          */
-        export type IBoundPropertyChangedListener<T> = (newValue: T, oldValue: T, identifier: any, firstTime?: boolean) => void;
+        export type IBoundPropertyChangedListener<T> = (
+            newValue: T,
+            oldValue: T,
+            identifier: any,
+            firstTime?: boolean
+        ) => void;
     }
 }

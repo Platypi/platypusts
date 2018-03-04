@@ -1,4 +1,4 @@
-module plat.routing {
+namespace plat.routing {
     'use strict';
 
     /**
@@ -244,7 +244,7 @@ module plat.routing {
                 }
 
                 if (aStatics !== bStatics) {
-                    return bStatics = aStatics;
+                    return (bStatics = aStatics);
                 }
 
                 return 0;
@@ -384,8 +384,10 @@ module plat.routing {
             this._someChildren((child): boolean => {
                 s = child.specification;
 
-                if (s.validCharacters === validChars &&
-                    s.invalidCharacters === invalidChars) {
+                if (
+                    s.validCharacters === validChars &&
+                    s.invalidCharacters === invalidChars
+                ) {
                     found = child;
 
                     return true;
@@ -409,7 +411,9 @@ module plat.routing {
          *
          * @returns {boolean}
          */
-        protected _someChildren(iterator: (child: State) => boolean | void): boolean {
+        protected _someChildren(
+            iterator: (child: State) => boolean | void
+        ): boolean {
             const nextStates = this.nextStates;
             const length = nextStates.length;
 

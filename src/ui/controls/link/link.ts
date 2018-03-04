@@ -1,4 +1,3 @@
-
 /**
  * @name controls
  * @memberof plat.ui
@@ -8,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to UI control components in platypus.
  */
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -159,7 +158,12 @@ module plat.ui.controls {
          * @returns {void}
          */
         public initialize(): void {
-            this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick.bind(this), false);
+            this._removeClickListener = this.dom.addEventListener(
+                this.element,
+                'click',
+                this._handleClick.bind(this),
+                false
+            );
         }
 
         /**
@@ -179,9 +183,13 @@ module plat.ui.controls {
 
             if (!isObject(options)) {
                 this._log.warn(
-                    `No options specified for ${this.type}. Please send in options of type plat.ui.controls.ILinkOptions.`
+                    `No options specified for ${
+                        this.type
+                    }. Please send in options of type plat.ui.controls.ILinkOptions.`
                 );
-                options = this.options = <observable.IObservableProperty<ILinkOptions>>{};
+                options = this.options = <observable.IObservableProperty<
+                    ILinkOptions
+                >>{};
                 options.value = <ILinkOptions>{ view: '' };
                 this.setHref();
 

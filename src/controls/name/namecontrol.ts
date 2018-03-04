@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -71,9 +71,11 @@ module plat.controls {
             let control: any = this.parent;
 
             while (!isUndefined(name) && isObject(control)) {
-                if (isObject(control[name]) &&
+                if (
+                    isObject(control[name]) &&
                     isNode(control[name].element) &&
-                    control[name].element === this.element) {
+                    control[name].element === this.element
+                ) {
                     deleteProperty(control, name);
                 }
 

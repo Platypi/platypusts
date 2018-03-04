@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
  */
 var plat;
 (function (plat) {
-    'use strict;';
+    'use strict';
     /*
      */
     var __prefix = '$';
@@ -1341,7 +1341,7 @@ var plat;
          * @param {boolean} isStatic The injectable type is a static type.
          */
         function add(obj, name, Type, dependencies, injectableType, isStatic) {
-            var injector = obj[name] = new dependency.Injector(name, Type, dependencies, injectableType);
+            var injector = (obj[name] = new dependency.Injector(name, Type, dependencies, injectableType));
             if (isStatic === true) {
                 staticInjectors[name] = injector;
             }
@@ -1418,10 +1418,13 @@ var plat;
             }
             else {
                 injectableType = injectableType.toLowerCase();
-                if (injectableType === __FACTORY || injectableType === __STATIC || injectableType === __CLASS) {
+                if (injectableType === __FACTORY ||
+                    injectableType === __STATIC ||
+                    injectableType === __CLASS) {
                     return add(injectableInjectors, name, Type, dependencies, injectableType, true);
                 }
-                else if (!(injectableType === __SINGLETON || injectableType === __INSTANCE)) {
+                else if (!(injectableType === __SINGLETON ||
+                    injectableType === __INSTANCE)) {
                     throw new Error("Invalid injectable type " + injectableType + " during injectable registration.");
                 }
             }
@@ -1472,7 +1475,7 @@ var plat;
                     throw new Error("Invalid animationType \"" + animationType + "\" during animation registration.");
                 }
             }
-            return add((animationType === __JS ? jsAnimationInjectors : animationInjectors), name, Type, dependencies, register.injectable.INSTANCE);
+            return add(animationType === __JS ? jsAnimationInjectors : animationInjectors, name, Type, dependencies, register.injectable.INSTANCE);
         };
         /**
          * A CSS animation.
@@ -1511,7 +1514,7 @@ var plat;
                 this.name = name;
                 this.Constructor = Constructor;
                 this.type = type;
-                var deps = this.dependencies = Injector.convertDependencies(dependencies);
+                var deps = (this.dependencies = Injector.convertDependencies(dependencies));
                 var index = deps.indexOf(__NOOP_INJECTOR);
                 var circularReference;
                 Object.defineProperty(Constructor, '__injectorName', {
@@ -1621,10 +1624,10 @@ var plat;
              * @param {plat.dependency.Injector<any>} dependency The object to check.
              */
             Injector.isInjector = function (dependency) {
-                return isFunction(dependency.inject) &&
+                return (isFunction(dependency.inject) &&
                     !isUndefined(dependency.type) &&
                     !isUndefined(dependency.name) &&
-                    !isUndefined(dependency.Constructor);
+                    !isUndefined(dependency.Constructor));
             };
             /**
              * Gets the string name related to an injector.
@@ -1638,7 +1641,9 @@ var plat;
                     return dependency;
                 }
                 var Constructor = dependency;
-                var _inject = isObject(Constructor._inject) ? Constructor._inject : {};
+                var _inject = isObject(Constructor._inject)
+                    ? Constructor._inject
+                    : {};
                 if (isString(Constructor.__injectorName)) {
                     dependency = Constructor.__injectorName;
                 }
@@ -1684,7 +1689,8 @@ var plat;
                 var isInstance = type === __INSTANCE;
                 var toInject;
                 if (isInstance) {
-                    toInject = instanceInjectorDependencies[Constructor.__injectorName];
+                    toInject =
+                        instanceInjectorDependencies[Constructor.__injectorName];
                 }
                 if (!isObject(toInject)) {
                     toInject = Injector.__walk(obj, Object.getPrototypeOf(obj), {});
@@ -1745,7 +1751,9 @@ var plat;
                         if (!isString(dependency)) {
                             dependency = uniqueId(__Plat);
                         }
-                        injector = new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._injectorDependencies : []);
+                        injector = new Injector(dependency, Constructor, isObject(Constructor._inject)
+                            ? Constructor._injectorDependencies
+                            : []);
                         unregisteredInjectors[dependency] = injector;
                     }
                     else {
@@ -1762,7 +1770,8 @@ var plat;
                 if (isNull(Constructor)) {
                     return;
                 }
-                else if (Constructor === Injector || Constructor === __InjectorStatic) {
+                else if (Constructor === Injector ||
+                    Constructor === __InjectorStatic) {
                     var ret = Injector.__wrap(Injector);
                     ret.name = __InjectorStatic;
                     return ret;
@@ -1814,10 +1823,12 @@ var plat;
                 var source = injector.name;
                 var dependencies = injector.dependencies;
                 var node;
-                var stack = [{
+                var stack = [
+                    {
                         name: source,
                         dependencies: dependencies.slice(0),
-                    }];
+                    },
+                ];
                 var dependency;
                 var locate = Injector.__locateInjector;
                 var length;
@@ -2100,7 +2111,7 @@ var plat;
                     eventExists = events[event] = false;
                 }
                 else {
-                    eventExists = events[event] = !isUndefined(element[("on" + event)]);
+                    eventExists = events[event] = !isUndefined(element["on" + event]);
                 }
             }
             return eventExists;
@@ -2131,12 +2142,16 @@ var plat;
             if (isString(android) && !/iemobile/i.test(userAgent)) {
                 android = parseInt(android.replace(/\./g, ''), 10);
             }
-            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
+            this.isCompatible =
+                isFunction(Object.defineProperty) &&
+                    isFunction(this._document.querySelector);
             this.cordova = !isNull(_window.cordova);
             this.pushState = !(isNull(history) || isNull(history.pushState));
-            this.fileSupported = !(isUndefined(_window.File) || isUndefined(_window.FormData));
+            this.fileSupported = !(isUndefined(_window.File) ||
+                isUndefined(_window.FormData));
             this.amd = isFunction(def) && !isNull(def.amd);
-            this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.msApp =
+                isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
             this.winJs = isObject(winJs) && isObject(winJs.Application);
             this.indexedDb = !isNull(_window.indexedDB);
             this.proto = isObject({}.__proto__);
@@ -2157,9 +2172,9 @@ var plat;
             if (!isArrayLike(tridentExec)) {
                 tridentExec = [];
             }
-            var ie = parseInt((msieExec)[1], 10);
+            var ie = parseInt(msieExec[1], 10);
             if (!isNumber(ie)) {
-                ie = parseInt((tridentExec)[1], 10);
+                ie = parseInt(tridentExec[1], 10);
             }
             if (isNumber(ie)) {
                 this.IE = ie;
@@ -2210,15 +2225,19 @@ var plat;
             var _window = this._window;
             var documentElement = this._document.documentElement;
             var styles = _window.getComputedStyle(documentElement, '');
-            var matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/);
+            var matches = Array.prototype.slice
+                .call(styles)
+                .join('')
+                .match(/-(moz|webkit|ms)-/);
             var prefix;
             var dom;
             var css;
             var jsSyntax;
-            if ((isArray(matches) && matches.length > 1)) {
-                prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
+            if (isArray(matches) && matches.length > 1) {
+                prefix =
+                    isArray(matches) && matches.length > 1 ? matches[1] : '';
                 jsSyntax = prefix[0].toUpperCase() + prefix.slice(1);
-                dom = ('WebKit|Moz|MS').match(new RegExp("(" + prefix + ")", 'i'))[1];
+                dom = 'WebKit|Moz|MS'.match(new RegExp("(" + prefix + ")", 'i'))[1];
                 css = "-" + prefix + "-";
             }
             else if (!isUndefined(styles.OLink)) {
@@ -2249,7 +2268,8 @@ var plat;
             var style = documentElement.style;
             // handle Android issue where style.transition exists but transition events still need vendor prefix 
             // should only affect version 4.1 but we will handle for < 4.4. 
-            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
+            if ((isUndefined(this.ANDROID) ||
+                Math.floor(this.ANDROID / 10) >= 44) &&
                 !(isUndefined(style.animation) || isUndefined(style.transition))) {
                 this.animationSupported = true;
                 this.animationEvents = {
@@ -2262,9 +2282,12 @@ var plat;
                     $transitionEnd: 'transitionend',
                 };
             }
-            else if (!(isUndefined(style[jsSyntax + "Animation"]) || isUndefined(style[jsSyntax + "Transition"])) ||
-                !(isUndefined(style[prefix + "Animation"]) || isUndefined(style[prefix + "Transition"])) ||
-                !(isUndefined(style[dom + "Animation"]) || isUndefined(style[dom + "Transition"]))) {
+            else if (!(isUndefined(style[jsSyntax + "Animation"]) ||
+                isUndefined(style[jsSyntax + "Transition"])) ||
+                !(isUndefined(style[prefix + "Animation"]) ||
+                    isUndefined(style[prefix + "Transition"])) ||
+                !(isUndefined(style[dom + "Animation"]) ||
+                    isUndefined(style[dom + "Transition"]))) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: prefix + "Animation",
@@ -2663,7 +2686,7 @@ var plat;
                 /**
                  * Determines if an email address is valid.
                  */
-                this.validateEmail = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
+                this.validateEmail = new RegExp('^(([^<>()[\\]\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\"]+)*)|' +
                     '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
                     '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
                 /**
@@ -2791,7 +2814,8 @@ var plat;
                 /**
                  * A regular expression for determining if a potential variable is valid syntax.
                  */
-                this.__variableRegex = acquire(__Regex).invalidVariableRegex;
+                this.__variableRegex = acquire(__Regex)
+                    .invalidVariableRegex;
                 /**
                  * A queue used for determining the output of the tokenization.
                  */
@@ -2871,7 +2895,7 @@ var plat;
                             case ',':
                                 this.__handleComma(char);
                                 break;
-                            case '\'':
+                            case "'":
                             case '"':
                                 index = this.__handleStringLiteral(index, char);
                                 break;
@@ -2898,7 +2922,7 @@ var plat;
                     }
                     this.__previousChar = char;
                 }
-                if (ternaryFound && (ternary > 0)) {
+                if (ternaryFound && ternary > 0) {
                     this._throwError('Improper ternary expression');
                 }
                 else if (this.__objArgCount.length > 0) {
@@ -3066,7 +3090,7 @@ var plat;
              * @param {string} char The character to check.
              */
             Tokenizer.prototype._isNumeric = function (char) {
-                return (char >= '0' && char <= '9');
+                return char >= '0' && char <= '9';
             };
             /**
              * Checks if a single character is a space.
@@ -3085,9 +3109,9 @@ var plat;
              * @param {string} char The character to check.
              */
             Tokenizer.prototype._isAlphaNumeric = function (char) {
-                return (char >= 'a' && char <= 'z' ||
-                    char >= 'A' && char <= 'Z' ||
-                    char >= '0' && char <= '9' ||
+                return ((char >= 'a' && char <= 'z') ||
+                    (char >= 'A' && char <= 'Z') ||
+                    (char >= '0' && char <= '9') ||
                     char === '@' ||
                     char === '_' ||
                     char === '$');
@@ -3107,8 +3131,9 @@ var plat;
             Tokenizer.prototype.__handleAlphaNumeric = function (index, char) {
                 var isNumberLike = this._isNumeric(char);
                 var lookAhead = this._lookAhead(char, index, isNumberLike);
-                this.__outputQueue.push(isNumberLike ? ({ val: Number(lookAhead), args: 0 }) :
-                    ({ val: lookAhead, args: -1 }));
+                this.__outputQueue.push(isNumberLike
+                    ? { val: Number(lookAhead), args: 0 }
+                    : { val: lookAhead, args: -1 });
                 return index + lookAhead.length - 1;
             };
             /**
@@ -3215,7 +3240,9 @@ var plat;
                 // check if function on top of stack 
                 this.__outputQueue.push({
                     val: '[]',
-                    args: (this.__previousChar === '[') ? -1 : lastArgCountObj.num + 1,
+                    args: this.__previousChar === '['
+                        ? -1
+                        : lastArgCountObj.num + 1,
                 });
             };
             /**
@@ -3226,7 +3253,9 @@ var plat;
                 var previousChar = this.__previousChar;
                 var operatorStack = this.__operatorStack;
                 var args;
-                if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
+                if (this._isAlphaNumeric(previousChar) ||
+                    previousChar === ']' ||
+                    previousChar === ')') {
                     var outputQueue = this.__outputQueue;
                     var topOutput = outputQueue[outputQueue.length - 1];
                     var val = isNull(topOutput) ? undefined : topOutput.val;
@@ -3275,7 +3304,7 @@ var plat;
                     else if (this.__removeFnFromStack(localArgNum + 1)) {
                         this.__outputQueue.push({
                             val: '()',
-                            args: (localArgNum + 1),
+                            args: localArgNum + 1,
                         });
                     }
                 }
@@ -3313,7 +3342,9 @@ var plat;
                 var lookAhead = this._lookAheadForDelimiter(char, index);
                 var operatorStack = this.__operatorStack;
                 var topOperator = operatorStack[0];
-                if (!isNull(topOperator) && (topOperator.val === '[' || (topOperator.val === '(' && topOperator.args >= 0))) {
+                if (!isNull(topOperator) &&
+                    (topOperator.val === '[' ||
+                        (topOperator.val === '(' && topOperator.args >= 0))) {
                     operatorStack.unshift({ val: lookAhead, args: 0 });
                 }
                 else {
@@ -3402,7 +3433,8 @@ var plat;
                 switch (operator) {
                     case '+':
                     case '-':
-                        if (this.__outputQueue.length === 0 || isOperator(this.__previousChar)) {
+                        if (this.__outputQueue.length === 0 ||
+                            isOperator(this.__previousChar)) {
                             return OPERATORS["u" + operator];
                         }
                     default:
@@ -3423,7 +3455,10 @@ var plat;
                 var firstArrayOperator;
                 var firstArrayVal;
                 if (operatorStack.length === 0) {
-                    operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                    operatorStack.unshift({
+                        val: operator,
+                        args: operatorFn.fn.length - 2,
+                    });
                     return;
                 }
                 do {
@@ -3434,16 +3469,25 @@ var plat;
                     }
                     firstArrayOperator = OPERATORS[firstArrayVal];
                     if (!(isNull(firstArrayOperator) ||
-                        !(firstArrayOperator.precedence < operatorPrecedence ||
-                            (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
+                        !(firstArrayOperator.precedence <
+                            operatorPrecedence ||
+                            (isLtR &&
+                                firstArrayOperator.precedence ===
+                                    operatorPrecedence)))) {
                         outputQueue.push(operatorStack.shift());
                     }
                     else {
-                        operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                        operatorStack.unshift({
+                            val: operator,
+                            args: operatorFn.fn.length - 2,
+                        });
                         return;
                     }
                 } while (operatorStack.length > 0);
-                operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                operatorStack.unshift({
+                    val: operator,
+                    args: operatorFn.fn.length - 2,
+                });
             };
             /**
              * Removes a reference to a function that is present in the operator stack and places
@@ -3472,7 +3516,8 @@ var plat;
                     topOperator = operatorStack[0];
                     atLeastOne = true;
                 }
-                if (!(atLeastOne || isValUnequal(outputQueue[outputQueue.length - argCount - 1], '()'))) {
+                if (!(atLeastOne ||
+                    isValUnequal(outputQueue[outputQueue.length - argCount - 1], '()'))) {
                     atLeastOne = true;
                 }
                 return atLeastOne;
@@ -3640,7 +3685,9 @@ var plat;
                 // make the identifiers array unique entries only 
                 this._makeIdentifiersUnique();
                 var parsedExpression = {
-                    evaluate: new Function(__CONTEXT, __ALIASES, "" + this.__fnEvalConstant + (codeArray.length === 0 ? "\"" + expression + "\"" : codeArray.join('')) + ";"),
+                    evaluate: new Function(__CONTEXT, __ALIASES, "" + this.__fnEvalConstant + (codeArray.length === 0
+                        ? "\"" + expression + "\""
+                        : codeArray.join('')) + ";"),
                     expression: expression,
                     identifiers: this.__identifiers.slice(0),
                     aliases: Object.keys(this.__aliases),
@@ -3764,15 +3811,13 @@ var plat;
                     (isString(token) &&
                         (castTokenIsNumberLike ||
                             this._isValUnequal(peek, '[]()') ||
-                            (isValEqual(peek, '[]') &&
-                                !isPeekIndexer)))) {
+                            (isValEqual(peek, '[]') && !isPeekIndexer)))) {
                     this.__tempIdentifiers.push('.');
                     return "\"" + token + "\"";
                 }
                 else {
                     if (!castTokenIsNumberLike ||
-                        (isValEqual(peek, '.[]') &&
-                            isPeekIndexer)) {
+                        (isValEqual(peek, '.[]') && isPeekIndexer)) {
                         this.__tempIdentifiers.push(token);
                     }
                     else {
@@ -3797,7 +3842,8 @@ var plat;
                 }
                 var nextToken = this._peek(index);
                 var isValEqual = this._isValEqual;
-                if (isValEqual(this._tokens[index - 1], '()') && isValEqual(nextToken, '.[]')) {
+                if (isValEqual(this._tokens[index - 1], '()') &&
+                    isValEqual(nextToken, '.[]')) {
                     this.__tempIdentifiers.push('.');
                 }
                 else {
@@ -3881,7 +3927,9 @@ var plat;
                 var tempIdentifiers = this.__tempIdentifiers;
                 var codeArray = this.__codeArray;
                 var previousToken = this._lookBack(index);
-                var grabFnName = !isNull(previousToken) && (previousToken.args === -2 || this._isValEqual(previousToken, '.[]'));
+                var grabFnName = !isNull(previousToken) &&
+                    (previousToken.args === -2 ||
+                        this._isValEqual(previousToken, '.[]'));
                 var j = 0;
                 var tempStr = '';
                 var tempIdentifier;
@@ -3915,7 +3963,9 @@ var plat;
                     if (codeArray.length > 0) {
                         var context = codeArray.pop();
                         var lastIndex = tempIdentifiers.length - 1;
-                        if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
+                        if (!(lastIndex < 0 ||
+                            tempIdentifiers[lastIndex] === '.' ||
+                            identifierFnName === '')) {
                             tempIdentifiers[lastIndex] += "." + identifierFnName;
                             identifiers.push(tempIdentifiers.pop());
                             // check fn name is not null, pushed an identifier, and the context is not an array literal 
@@ -3948,7 +3998,9 @@ var plat;
                 }
                 codeArray.push(codeStr);
                 var length = tempIdentifiers.length;
-                if (this._isValEqual(this._peek(index), '[]') && length > 0 && tempIdentifiers[length - 1] !== '.') {
+                if (this._isValEqual(this._peek(index), '[]') &&
+                    length > 0 &&
+                    tempIdentifiers[length - 1] !== '.') {
                     identifiers.push(tempIdentifiers.pop());
                 }
                 return useLocalContext;
@@ -3983,7 +4035,8 @@ var plat;
                     codeStr = "(" + this.__indexIntoContext.toString() + ")(" + codeArray.pop() + "," + codeStr + ")";
                     tempIdentifiers.push('.');
                 }
-                else if (token === '[]' && !(isNull(previousToken) || previousToken.args >= 0)) {
+                else if (token === '[]' &&
+                    !(isNull(previousToken) || previousToken.args >= 0)) {
                     codeStr = "(" + this.__indexIntoContext.toString() + ")(" + codeArray.pop() + "," + codeStr + ")";
                     lastIndex = tempIdentifiers.length - 1;
                     if (lastIndex >= 0) {
@@ -4001,7 +4054,9 @@ var plat;
                             tempIdentifiers[lastIndex] += "." + identifierIndexer;
                         }
                     }
-                    else if (hasIdentifierIndexer && identifierIndexer !== '.' && token !== '.') {
+                    else if (hasIdentifierIndexer &&
+                        identifierIndexer !== '.' &&
+                        token !== '.') {
                         identifiers.push(identifierIndexer);
                     }
                 }
@@ -4085,7 +4140,9 @@ var plat;
              * @param {string} token The property used to find the initial context.
              */
             Parser.prototype.__findInitialContext = function (context, aliases, token) {
-                if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
+                if (token[0] === '@' &&
+                    aliases !== null &&
+                    typeof aliases === 'object') {
                     return aliases[token.slice(1)];
                 }
                 else if (context !== null && typeof context === 'object') {
@@ -4253,9 +4310,9 @@ var plat;
                 var urlUtils = this.urlUtils(url);
                 var locationUtils = this.urlUtils();
                 // check for protocol:host:port mismatch 
-                return urlUtils.protocol !== locationUtils.protocol ||
+                return (urlUtils.protocol !== locationUtils.protocol ||
                     urlUtils.hostname !== locationUtils.hostname ||
-                    urlUtils.port !== locationUtils.port;
+                    urlUtils.port !== locationUtils.port);
             };
             /**
              * Formats the URL in the case of HASH routing.
@@ -4270,7 +4327,8 @@ var plat;
                 if (url === baseUrl) {
                     return url;
                 }
-                var isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+                var isLocal = !this._regex.fullUrlRegex.test(url) ||
+                    url.indexOf(baseUrl) > -1;
                 if (url[0] === '/') {
                     url = url.slice(1);
                 }
@@ -4283,7 +4341,8 @@ var plat;
                         }
                         var append = "#" + prefix;
                         var hashRegex = new RegExp(append + "|#/");
-                        if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
+                        if (url[url.length - 1] !== '/' &&
+                            url.indexOf('?') === -1) {
                             url += '/';
                         }
                         if (!hashRegex.test(url)) {
@@ -4291,7 +4350,7 @@ var plat;
                                 url = "" + url + append + "/";
                             }
                             else {
-                                url = append + ((url[0] !== '/') ? '/' : '') + url;
+                                url = append + (url[0] !== '/' ? '/' : '') + url;
                             }
                         }
                     }
@@ -4474,7 +4533,9 @@ var plat;
                 var protocol = _location.protocol;
                 var host = _location.host;
                 var origin = _location.origin;
-                if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
+                if (protocol === 'file:' ||
+                    protocol.indexOf('wmapp') > -1 ||
+                    protocol.indexOf('ms-appx') > -1) {
                     origin = _location.href;
                 }
                 else if (isUndefined(origin)) {
@@ -4511,10 +4572,16 @@ var plat;
                 element.setAttribute('href', url);
                 url = element.href;
                 this.href = url;
-                this.protocol = isString(element.protocol) ? element.protocol.replace(/:$/, '') : '';
+                this.protocol = isString(element.protocol)
+                    ? element.protocol.replace(/:$/, '')
+                    : '';
                 this.host = element.host;
-                this.search = isString(element.search) ? element.search.replace(/^\?/, '') : '';
-                this.hash = isString(element.hash) ? element.hash.replace(/^#/, '') : '';
+                this.search = isString(element.search)
+                    ? element.search.replace(/^\?/, '')
+                    : '';
+                this.hash = isString(element.hash)
+                    ? element.hash.replace(/^#/, '')
+                    : '';
                 this.hostname = element.hostname;
                 this.port = element.port;
                 var path;
@@ -4522,9 +4589,10 @@ var plat;
                     path = url.replace(_browserConfig.baseUrl, '/');
                 }
                 else {
-                    path = (element.pathname.charAt(0) === '/')
-                        ? element.pathname
-                        : "/" + element.pathname;
+                    path =
+                        element.pathname.charAt(0) === '/'
+                            ? element.pathname
+                            : "/" + element.pathname;
                 }
                 path = path.replace(this._regex.initialUrlRegex, '/');
                 this.pathname = path.split('?')[0].split('#')[0];
@@ -4556,14 +4624,15 @@ var plat;
     var async;
     (function (async) {
         var __promiseQueue = [];
-        var browserGlobal = (typeof window !== 'undefined') ? window : {};
+        var browserGlobal = typeof window !== 'undefined' ? window : {};
         var BrowserMutationObserver = browserGlobal.MutationObserver;
         if (!isObject(BrowserMutationObserver)) {
             BrowserMutationObserver = browserGlobal.WebKitMutationObserver;
         }
         var scheduleFlush;
         // decide what async method to use to triggering processing of queued callbacks: 
-        if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
+        if (typeof process !== 'undefined' &&
+            {}.toString.call(process) === '[object process]') {
             scheduleFlush = useNextTick();
         }
         else if (BrowserMutationObserver) {
@@ -4580,7 +4649,8 @@ var plat;
              * An ES6 implementation of the Promise API. Useful for asynchronous programming.
              * Takes in 2 generic types corresponding to the fulfilled success and error types.
              * The error type (U) should extend Error in order to get proper stack tracing.
-             * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
+             * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
+             * A function for fulfilling/rejecting the Promise.
              */
             function Promise(resolveFunction) {
                 if (!isFunction(resolveFunction)) {
@@ -4639,7 +4709,8 @@ var plat;
                     var promise;
                     for (var i = 0; i < promises.length; i += 1) {
                         promise = promises[i];
-                        if (isObject(promise) && typeof promise.then === 'function') {
+                        if (isObject(promise) &&
+                            typeof promise.then === 'function') {
                             promise.then(resolve, reject);
                         }
                         else {
@@ -4668,7 +4739,7 @@ var plat;
             };
             /**
              * Invokes the resolve function for a promise. Handles error catching.
-             * @param {plat.async.IResolveFunction<R>} resolveFunction The resolve function to invoke.
+             * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
              * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
              */
             Promise.__invokeResolveFunction = function (resolveFunction, promise) {
@@ -4750,14 +4821,14 @@ var plat;
              * @param {any} promise The promise object.
              */
             Promise.__publishFulfillment = function (promise) {
-                Promise.__publish(promise, promise.__state = State.FULFILLED);
+                Promise.__publish(promise, (promise.__state = State.FULFILLED));
             };
             /**
              * Publishes a promises that has been rejected.
              * @param {any} promise The promise object.
              */
             Promise.__publishRejection = function (promise) {
-                Promise.__publish(promise, promise.__state = State.REJECTED);
+                Promise.__publish(promise, (promise.__state = State.REJECTED));
             };
             /**
              * Asynchronously rejects a promise
@@ -4909,7 +4980,7 @@ var plat;
         async.Promise = Promise;
         var State;
         (function (State) {
-            State[State["PENDING"] = (void 0)] = "PENDING";
+            State[State["PENDING"] = void 0] = "PENDING";
             State[State["SEALED"] = 0] = "SEALED";
             State[State["FULFILLED"] = 1] = "FULFILLED";
             State[State["REJECTED"] = 2] = "REJECTED";
@@ -5042,7 +5113,7 @@ var plat;
                     if (!isString(jsonpIdentifier)) {
                         jsonpIdentifier = 'callback';
                     }
-                    scriptTag.src = "" + url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + "=" + jsonpCallback;
+                    scriptTag.src = "" + url + (url.indexOf('?') > -1 ? '&' : '?') + jsonpIdentifier + "=" + jsonpCallback;
                     var oldValue = _window[jsonpCallback];
                     _window[jsonpCallback] = function (response) {
                         // clean up 
@@ -5147,7 +5218,9 @@ var plat;
                     // synchronous XHR not supported 
                     true, options.user, options.password);
                     var responseType = options.responseType;
-                    if (!(_this.__fileSupported || responseType === '' || responseType === 'text')) {
+                    if (!(_this.__fileSupported ||
+                        responseType === '' ||
+                        responseType === 'text')) {
                         responseType = '';
                     }
                     // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json. 
@@ -5261,7 +5334,9 @@ var plat;
                                 reject(new AjaxError({
                                     response: "Request timed out in " + timeout + "ms for " + options.url,
                                     status: 408,
-                                    getAllResponseHeaders: function () { return xhr.getAllResponseHeaders(); },
+                                    getAllResponseHeaders: function () {
+                                        return xhr.getAllResponseHeaders();
+                                    },
                                     xhr: xhr,
                                 }));
                                 xhr.onreadystatechange = null;
@@ -5324,7 +5399,9 @@ var plat;
                 return {
                     response: response,
                     status: status,
-                    getAllResponseHeaders: function () { return xhr.getAllResponseHeaders(); },
+                    getAllResponseHeaders: function () {
+                        return xhr.getAllResponseHeaders();
+                    },
                     xhr: xhr,
                 };
             };
@@ -5483,7 +5560,8 @@ var plat;
                 }
                 else if (isObject(val)) {
                     // check if val is an pseudo File 
-                    if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
+                    if (isFunction(val.slice) &&
+                        !(isUndefined(val.name) || isUndefined(val.path))) {
                         var fileList = _document.querySelectorAll("input[type=\"file\"][name=\"" + key + "\"]");
                         var length_4 = fileList.length;
                         // if no inputs found, stringify the data 
@@ -6273,7 +6351,15 @@ var plat;
         /**
          * The array methods to be overwritten if it is to be observed.
          */
-        var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+        var arrayMethods = [
+            'push',
+            'pop',
+            'reverse',
+            'shift',
+            'sort',
+            'splice',
+            'unshift',
+        ];
         /**
          * A class for managing both context inheritance and observable properties on controls and
          * facilitating in data-binding.
@@ -6906,14 +6992,16 @@ var plat;
                     property = binding.slice(start);
                     split = property.split(period);
                     key = split.pop();
-                    keyIsLength = (key === lengthStr);
+                    keyIsLength = key === lengthStr;
                     parentProperty = split.join(period);
                     if (isEmpty(parentProperty)) {
                         newParent = newValue;
                         oldParent = oldValue;
                         newChild = isNull(newParent) ? undefined : newParent[key];
                         oldChild = isNull(oldParent) ? undefined : oldParent[key];
-                        if (keyIsLength && !isArray(oldParent) && isArray(newParent)) {
+                        if (keyIsLength &&
+                            !isArray(oldParent) &&
+                            isArray(newParent)) {
                             var lengthListener = this_1.__lengthListeners[binding];
                             if (!isNull(lengthListener)) {
                                 var uid_2 = lengthListener.uid;
@@ -6952,7 +7040,8 @@ var plat;
                         newValue: newChild,
                         oldValue: oldChild,
                     };
-                    if (isObject(newParent) && (!isArray(newParent) || newParent.length > key)) {
+                    if (isObject(newParent) &&
+                        (!isArray(newParent) || newParent.length > key)) {
                         this_1._define(binding, newParent, key);
                     }
                     this_1._execute(binding, newChild, oldChild);
@@ -6982,7 +7071,9 @@ var plat;
                         this.__observedIdentifier = null;
                         access(context, property);
                         if (isString(this.__observedIdentifier)) {
-                            absoluteIdentifier = this.__observedIdentifier + (isLength === true ? '.length' : '');
+                            absoluteIdentifier =
+                                this.__observedIdentifier +
+                                    (isLength === true ? '.length' : '');
                         }
                     }
                 }
@@ -7091,14 +7182,16 @@ var plat;
                         callbacks = callbackObjects[keys[i]];
                         jLength = callbacks.length;
                         for (j = 0; j < jLength; j += 1) {
-                            callbacks[j]([{
+                            callbacks[j]([
+                                {
                                     object: this,
                                     type: method,
                                     index: index,
                                     removed: removed,
                                     addedCount: addedCount,
                                     oldArray: oldArray,
-                                }]);
+                                },
+                            ]);
                         }
                     }
                     if (selfNotify) {
@@ -7250,7 +7343,8 @@ var plat;
                             childPropertiesExist = mappings.length > 0;
                         }
                         _this._execute(identifier, newValue, oldValue);
-                        if (!childPropertiesExist && isEmpty(_this.__identifiers[identifier])) {
+                        if (!childPropertiesExist &&
+                            isEmpty(_this.__identifiers[identifier])) {
                             ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                         }
                         else if (isObject(value)) {
@@ -7352,9 +7446,7 @@ var plat;
             return ContextManager;
         }
         observable.IContextManagerStatic = IContextManagerStatic;
-        register.injectable(__ContextManagerStatic, IContextManagerStatic, [
-            __Log,
-        ], __STATIC);
+        register.injectable(__ContextManagerStatic, IContextManagerStatic, [__Log], __STATIC);
         register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
     })(observable = plat.observable || (plat.observable = {}));
     /**
@@ -7663,7 +7755,8 @@ var plat;
                 var controls = [];
                 var control;
                 controls.push(event.sender);
-                while (!isEmpty(controls.length) && EventManager.propagatingEvents[name]) {
+                while (!isEmpty(controls.length) &&
+                    EventManager.propagatingEvents[name]) {
                     control = controls.pop();
                     if (isNull(control.uid)) {
                         continue;
@@ -7690,7 +7783,8 @@ var plat;
                         break;
                     }
                     eventsListener = EventManager.__eventsListeners[uids[i]];
-                    if (isNull(eventsListener) || isNull(eventsListener.listeners[name])) {
+                    if (isNull(eventsListener) ||
+                        isNull(eventsListener.listeners[name])) {
                         continue;
                     }
                     EventManager.__callListeners(eventsListener.context, event, eventsListener.listeners[name], args);
@@ -7781,13 +7875,7 @@ var plat;
             return EventManager;
         }
         events.IEventManagerStatic = IEventManagerStatic;
-        register.injectable(__EventManagerStatic, IEventManagerStatic, [
-            __Log,
-            __Compat,
-            __Document,
-            __Window,
-            __Dom,
-        ], __STATIC);
+        register.injectable(__EventManagerStatic, IEventManagerStatic, [__Log, __Compat, __Document, __Window, __Dom], __STATIC);
         /**
          * Represents an internal Error Event. This is used for any
          * internal errors (both fatal and warnings). All error events are
@@ -8131,7 +8219,9 @@ var plat;
          */
         Control.prototype.observe = function (listener, identifier) {
             var _this = this;
-            var control = isObject(this.context) ? this : this.parent;
+            var control = isObject(this.context)
+                ? this
+                : this.parent;
             var root = Control.getRootControl(control);
             if (isNull(control)) {
                 return noop;
@@ -8189,7 +8279,9 @@ var plat;
             });
         };
         Control.prototype.observeArray = function (listener, identifier) {
-            var control = isObject(this.context) ? this : this.parent;
+            var control = isObject(this.context)
+                ? this
+                : this.parent;
             var context = control.context;
             if (isNull(control) || !isObject(context)) {
                 return noop;
@@ -8234,8 +8326,7 @@ var plat;
             var removeCallback = contextManager.observe(absoluteIdentifier, {
                 listener: function (newValue, oldValue) {
                     removeListener();
-                    removeListener = contextManager
-                        .observeArrayMutation(uid, callback, absoluteIdentifier, newValue, oldValue);
+                    removeListener = contextManager.observeArrayMutation(uid, callback, absoluteIdentifier, newValue, oldValue);
                 },
                 uid: uid,
             });
@@ -8265,9 +8356,9 @@ var plat;
             else if (!isFunction(expression.evaluate)) {
                 return noop;
             }
-            var control = !isNull(this.resources) ?
-                this :
-                this.parent;
+            var control = !isNull(this.resources)
+                ? this
+                : this.parent;
             if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
@@ -8291,7 +8382,8 @@ var plat;
                 resourceObj = findResource(control, alias);
                 if (!isNull(resourceObj)) {
                     type = resourceObj.resource.type;
-                    if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                    if (type === __OBSERVABLE_RESOURCE ||
+                        type === __LITERAL_RESOURCE) {
                         resources[alias] = getManager(resourceObj.control);
                     }
                 }
@@ -8300,7 +8392,8 @@ var plat;
             var absoluteContextPath = control.absoluteContextPath;
             var absolutePath = absoluteContextPath + ".";
             var managers = {};
-            var identifiers = expression.identifiers;
+            var identifiers = expression
+                .identifiers;
             var identifier;
             var split = [];
             var topIdentifier;
@@ -8312,7 +8405,8 @@ var plat;
                 if (identifier[0] === '@') {
                     alias = topIdentifier.slice(1);
                     if (alias === __CONTEXT_RESOURCE) {
-                        managers[absoluteContextPath + identifier.replace(topIdentifier, '')] = contextManager;
+                        managers[absoluteContextPath +
+                            identifier.replace(topIdentifier, '')] = contextManager;
                     }
                     else if (alias === __ROOT_CONTEXT_RESOURCE) {
                         managers[identifier.replace(topIdentifier, 'context')] = contextManager;
@@ -8660,14 +8754,19 @@ var plat;
              */
             TemplateControl.findResource = function (control, alias) {
                 var resource;
-                if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
+                if (isNull(control) ||
+                    isNull(control.resources) ||
+                    !isString(alias) ||
+                    isEmpty(alias)) {
                     return;
                 }
                 if (alias[0] === '@') {
                     alias = alias.slice(1);
                 }
                 var isRootContext = alias === __ROOT_CONTEXT_RESOURCE;
-                if (isRootContext || alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
+                if (isRootContext ||
+                    alias === __CONTEXT_RESOURCE ||
+                    alias === __CONTROL_RESOURCE) {
                     if (isRootContext) {
                         control = Control.getRootControl(control);
                     }
@@ -8705,7 +8804,9 @@ var plat;
                 }
                 var uid = control.uid;
                 var childControls = control.controls;
-                var controls = isArray(childControls) ? childControls.slice(0) : childControls;
+                var controls = isArray(childControls)
+                    ? childControls.slice(0)
+                    : childControls;
                 var ContextManager = Control._ContextManager;
                 var define = ContextManager.defineProperty;
                 if (!isNull(controls)) {
@@ -8857,7 +8958,9 @@ var plat;
                 }
                 else if (!isNull(control.templateString)) {
                     var controlType_1 = control.type;
-                    return templateCache.read(controlType_1).catch(function (template) {
+                    return templateCache
+                        .read(controlType_1)
+                        .catch(function (template) {
                         if (isNull(template)) {
                             template = control.templateString;
                         }
@@ -9426,7 +9529,9 @@ var plat;
                         return this._Promise.resolve(fragment);
                     }
                 }
-                if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
+                if (!(isNull(relativeIdentifier) ||
+                    isNumber(relativeIdentifier) ||
+                    isString(relativeIdentifier))) {
                     this._log.warn(this.control.type + " using relativeIdentifier: " + relativeIdentifier + ", need a string or number");
                     return;
                 }
@@ -9560,7 +9665,9 @@ var plat;
                     this._log.error(new Error(this.control.type + " cannot bind template, no template stored with key: " + key));
                     return;
                 }
-                if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
+                if (!(isNull(relativeIdentifier) ||
+                    isNumber(relativeIdentifier) ||
+                    isString(relativeIdentifier))) {
                     this._log.warn(this.control.type + " trying to bind: " + relativeIdentifier + ". Identifier must be either a string or number");
                     return;
                 }
@@ -9574,16 +9681,19 @@ var plat;
                     return _this._bindTemplate(key, nodeMap);
                 });
                 if (!noIndex) {
-                    return templatePromise.then(function (fragment) {
+                    return templatePromise
+                        .then(function (fragment) {
                         var childNodes = Array.prototype.slice.call(fragment.childNodes);
-                        var oldControl = _this.control.controls[index];
+                        var oldControl = _this.control
+                            .controls[index];
                         var endNode = oldControl.endNode;
                         var parentNode = endNode.parentNode;
                         var nextSibling = endNode.nextSibling;
                         _this._TemplateControlFactory.dispose(oldControl);
                         parentNode.insertBefore(fragment, nextSibling);
                         return childNodes;
-                    }).then(null, function (error) {
+                    })
+                        .then(null, function (error) {
                         postpone(function () {
                             if (isString(error)) {
                                 error = new Error(error);
@@ -9613,7 +9723,9 @@ var plat;
                 var _this = this;
                 var control = nodeMap.uiControlNode.control;
                 var disposed = false;
-                var dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
+                var dispose = isFunction(control.dispose)
+                    ? control.dispose.bind(control)
+                    : noop;
                 control.dispose = function () {
                     disposed = true;
                     dispose();
@@ -9681,12 +9793,14 @@ var plat;
                 manager.setUiControlTemplate();
                 this.cache[key] = manager;
                 promises.push(manager.fulfillTemplate());
-                this.templates[key] = this._Promise.all(promises).then(function () {
+                this.templates[key] = this._Promise
+                    .all(promises)
+                    .then(function () {
                     var element = nodeMap.element;
                     var clone = element.cloneNode(true);
                     var _document = _this._document;
-                    var startNode = control.startNode = _document.createComment(control.type + __START_NODE);
-                    var endNode = control.endNode = _document.createComment(control.type + __END_NODE);
+                    var startNode = (control.startNode = _document.createComment(control.type + __START_NODE));
+                    var endNode = (control.endNode = _document.createComment(control.type + __END_NODE));
                     element.insertBefore(startNode, element.firstChild);
                     element.insertBefore(endNode, null);
                     return clone;
@@ -9964,8 +10078,12 @@ var plat;
                 for (var i = 0; i < length; i += 1) {
                     key = keys[i];
                     resource = resources[key];
-                    if (!isNull(resource) && (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE)) {
-                        define(resources, key, persist ? _clone(resource, true) : null, true, true, true);
+                    if (!isNull(resource) &&
+                        (resource.type === __OBSERVABLE_RESOURCE ||
+                            resource.type === __LITERAL_RESOURCE)) {
+                        define(resources, key, persist
+                            ? _clone(resource, true)
+                            : null, true, true, true);
                     }
                 }
                 Resources._removeListeners(resources.__controlInstance);
@@ -10005,8 +10123,11 @@ var plat;
                     if (isEmpty(text)) {
                         continue;
                     }
-                    resource.value = (nodeName === __INJECTABLE_RESOURCE || nodeName === __LITERAL_RESOURCE) ?
-                        text.replace(quotationRegex, '') : text;
+                    resource.value =
+                        nodeName === __INJECTABLE_RESOURCE ||
+                            nodeName === __LITERAL_RESOURCE
+                            ? text.replace(quotationRegex, '')
+                            : text;
                     resource.type = nodeName;
                     resources[resource.alias] = resource;
                 }
@@ -10129,7 +10250,9 @@ var plat;
                     key = keys[i];
                     resource = resources[key];
                     resource.alias = key;
-                    this[key] = this.__resources[key] = bound ? create(control, resource) : resource;
+                    this[key] = this.__resources[key] = bound
+                        ? create(control, resource)
+                        : resource;
                 }
             };
             /**
@@ -10170,20 +10293,14 @@ var plat;
             Resources._log = _log;
             var controlResources = {};
             var resourceTypes = {};
-            controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] =
-                controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
-            resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] =
-                resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
+            controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] = controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
+            resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] = resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
             Resources.__controlResources = controlResources;
             Resources.__resourceTypes = resourceTypes;
             return Resources;
         }
         ui.IResourcesFactory = IResourcesFactory;
-        register.injectable(__ResourcesFactory, IResourcesFactory, [
-            __ContextManagerStatic,
-            __Regex,
-            __Log,
-        ], __FACTORY);
+        register.injectable(__ResourcesFactory, IResourcesFactory, [__ContextManagerStatic, __Regex, __Log], __FACTORY);
         register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);
         /**
          * A class for managing DOM event registration and handling.
@@ -10201,11 +10318,14 @@ var plat;
                 /**
                  * The version of android, or -1 if not on android.
                  */
-                this._androidVersion = isUndefined(this._compat.ANDROID) ? -1 : this._compat.ANDROID;
+                this._androidVersion = isUndefined(this._compat.ANDROID)
+                    ? -1
+                    : this._compat.ANDROID;
                 /**
                  * Whether or not we're on Android 4.4.x or below.
                  */
-                this._android44orBelow = this._androidVersion > -1 && Math.floor(this._androidVersion / 10) <= 44;
+                this._android44orBelow = this._androidVersion > -1 &&
+                    Math.floor(this._androidVersion / 10) <= 44;
                 /**
                  * Whether or not the user is using mouse when touch events are present.
                  */
@@ -10330,7 +10450,8 @@ var plat;
                     this.__reverseMap[mappedType] = type;
                     this.__registerElement(element, type);
                     mappedCount[type] += 1;
-                    if (_compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
+                    if (_compat.hasTouchEvents &&
+                        !this.__cancelRegex.test(mappedType)) {
                         mappedType = mappedType
                             .replace('touch', 'mouse')
                             .replace('start', 'down')
@@ -10339,7 +10460,9 @@ var plat;
                     }
                 }
                 element.addEventListener(type, listener, useCapture);
-                if (!isUndefined(element["on" + type]) || isUndefined(gestures[type]) || mappingExists) {
+                if (!isUndefined(element["on" + type]) ||
+                    isUndefined(gestures[type]) ||
+                    mappingExists) {
                     return function () {
                         if (listenerRemoved) {
                             return;
@@ -10488,7 +10611,14 @@ var plat;
                     yTarget: target,
                 };
                 if (this._android44orBelow) {
-                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                    this.__haveSwipeSubscribers =
+                        this.__findFirstSubscribers(target, [
+                            gestures.$swipe,
+                            gestures.$swipedown,
+                            gestures.$swipeleft,
+                            gestures.$swiperight,
+                            gestures.$swipeup,
+                        ]).length > 0;
                 }
                 var gestureCount = this._gestureCount;
                 var noHolds = gestureCount.$hold <= 0;
@@ -10569,7 +10699,8 @@ var plat;
                 var y = evt.clientY;
                 var minMove = this.__hasMoved;
                 if (!minMove) {
-                    minMove = (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
+                    minMove =
+                        this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance;
                 }
                 // if minimum distance not met 
                 if (!minMove) {
@@ -10586,12 +10717,14 @@ var plat;
                 if (!isObject(lastMove)) {
                     lastMove = swipeOrigin;
                 }
-                var direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+                var direction = (evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY));
                 this.__handleOriginChange(direction);
                 var dx = Math.abs(x - swipeOrigin.clientX);
                 var dy = Math.abs(y - swipeOrigin.clientY);
                 evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
-                if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
+                if (!noSwiping &&
+                    this._android44orBelow &&
+                    this.__haveSwipeSubscribers) {
                     ev.preventDefault();
                 }
                 // if tracking events exist 
@@ -10645,7 +10778,8 @@ var plat;
                         else if (this._inTouch === true) {
                             // immediately handle the input depending on type for more native-like experience 
                             if (ev.target !== this.__focusedElement) {
-                                if (this.__handleInput(ev.target) && ev.cancelable === true) {
+                                if (this.__handleInput(ev.target) &&
+                                    ev.cancelable === true) {
                                     ev.preventDefault();
                                 }
                             }
@@ -10717,7 +10851,8 @@ var plat;
                     this.__capturedTarget = null;
                     return true;
                 }
-                else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+                else if (isNull(touchDown) ||
+                    touchEnd - touchDown.timeStamp > intervals.tapInterval) {
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__tapCount = 0;
                     // clear captured target 
@@ -10731,7 +10866,7 @@ var plat;
                 // and time between taps 
                 if (this.__tapCount > 0 &&
                     this.__getDistance(x, lastTouchUp.clientX, y, lastTouchUp.clientY) <= config.distances.maxDblTapDistance &&
-                    ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
+                    touchEnd - lastTouchUp.timeStamp <= intervals.dblTapInterval) {
                     // handle dbltap events 
                     this.__handleDbltap(ev);
                 }
@@ -10780,7 +10915,8 @@ var plat;
                 }
                 var index = this.__getTouchIndex(touches);
                 var type = ev.type;
-                ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
+                ev =
+                    index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
                 this._inTouch = false;
                 this.__clearTempStates();
                 if (this.__hasMoved) {
@@ -10839,7 +10975,8 @@ var plat;
                 // fire tap event immediately if no dbltap zoom delay 
                 // or a mouse is being used 
                 if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
-                    ev.pointerType === 'mouse' || ev.type === 'mouseup') {
+                    ev.pointerType === 'mouse' ||
+                    ev.type === 'mouseup') {
                     ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
                     return;
@@ -10919,10 +11056,20 @@ var plat;
                 if (!isObject(eventTarget)) {
                     eventTarget = ev.target;
                 }
-                var domEvents = this.__findFirstSubscribers(eventTarget, [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
+                var domEvents = this.__findFirstSubscribers(eventTarget, [
+                    trackGesture,
+                    trackGesture + direction.x,
+                    trackGesture + direction.y,
+                ]);
                 if (this._android44orBelow) {
-                    var anyEvents = this.__findFirstSubscribers(eventTarget, [trackGesture, gestures.$trackdown, gestures.$trackup,
-                        gestures.$trackleft, gestures.$trackright, gestures.$trackend]);
+                    var anyEvents = this.__findFirstSubscribers(eventTarget, [
+                        trackGesture,
+                        gestures.$trackdown,
+                        gestures.$trackup,
+                        gestures.$trackleft,
+                        gestures.$trackright,
+                        gestures.$trackend,
+                    ]);
                     if (anyEvents.length > 0) {
                         originalEv.preventDefault();
                     }
@@ -10979,7 +11126,9 @@ var plat;
                     var cancelEvent = touchEvents.$touchcancel;
                     startEvents = this._startEvents = touchEvents.$touchstart;
                     moveEvents = this._moveEvents = touchEvents.$touchmove;
-                    endEvents = this._endEvents = touchEvents.$touchend + (isEmpty(cancelEvent) ? '' : (" " + cancelEvent));
+                    endEvents = this._endEvents =
+                        touchEvents.$touchend +
+                            (isEmpty(cancelEvent) ? '' : " " + cancelEvent);
                 }
                 listeners[startEvents] = this._onTouchStart.bind(this);
                 listeners[moveEvents] = this._onTouchMove.bind(this);
@@ -11040,8 +11189,11 @@ var plat;
              */
             DomEvents.prototype.__registerMove = function (eventType) {
                 var gestureCount = this._gestureCount;
-                if (eventType === 'touchstart' || this.__mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
-                    gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+                if (eventType === 'touchstart' ||
+                    this.__mappedCount.$touchmove > 0 ||
+                    gestureCount.$track > 0 ||
+                    gestureCount.$trackend > 0 ||
+                    gestureCount.$swipe > 0) {
                     this.__registerType(this._moveEvents);
                     this.__detectingMove = true;
                 }
@@ -11123,7 +11275,8 @@ var plat;
                     this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
                     return;
                 }
-                ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
+                ev.pointerType =
+                    eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
             };
             /**
              * Sets the captured target.
@@ -11194,7 +11347,7 @@ var plat;
                         continue;
                     }
                     return domEvent;
-                } while (!isNull(eventTarget = eventTarget.parentNode));
+                } while (!isNull((eventTarget = eventTarget.parentNode)));
             };
             /**
              * Searches from the EventTarget up the DOM tree looking for all elements with the
@@ -11227,7 +11380,8 @@ var plat;
                             types.splice(index, 1);
                         }
                     }
-                } while (types.length > 0 && !isNull(eventTarget = eventTarget.parentNode));
+                } while (types.length > 0 &&
+                    !isNull((eventTarget = eventTarget.parentNode)));
                 return domEvents;
             };
             /**
@@ -11387,7 +11541,9 @@ var plat;
                         y: ev.clientY,
                     };
                 }
-                else if (!isUndefined(ev.offsetX) && !isUndefined(ev.offsetY) && target === ev.target) {
+                else if (!isUndefined(ev.offsetX) &&
+                    !isUndefined(ev.offsetY) &&
+                    target === ev.target) {
                     return {
                         x: ev.offsetX,
                         y: ev.offsetY,
@@ -11403,14 +11559,14 @@ var plat;
                 else {
                     x = target.offsetLeft;
                     y = target.offsetTop;
-                    while (!isNull(target = target.offsetParent)) {
+                    while (!isNull((target = target.offsetParent))) {
                         x += target.offsetLeft;
                         y += target.offsetTop;
                     }
                 }
                 return {
-                    x: (ev.clientX - x),
-                    y: (ev.clientY - y),
+                    x: ev.clientX - x,
+                    y: ev.clientY - y,
                 };
             };
             // utility methods 
@@ -11424,7 +11580,7 @@ var plat;
             DomEvents.prototype.__getDistance = function (x1, x2, y1, y2) {
                 var x = x2 - x1;
                 var y = y2 - y1;
-                return Math.sqrt((x * x) + (y * y));
+                return Math.sqrt(x * x + y * y);
             };
             /**
              * Calculates the velocity between two (x, y) coordinate points over a given time.
@@ -11485,12 +11641,14 @@ var plat;
                 if (isEmpty(primary)) {
                     primary = 'none';
                 }
-                var horizontal = dx === 0 ? x : (dx < 0 ? 'left' : 'right');
-                var vertical = dy === 0 ? y : (dy < 0 ? 'up' : 'down');
+                var horizontal = dx === 0 ? x : dx < 0 ? 'left' : 'right';
+                var vertical = dy === 0 ? y : dy < 0 ? 'up' : 'down';
                 return {
                     x: horizontal,
                     y: vertical,
-                    primary: (distanceX === distanceY ? primary : (distanceX > distanceY ? horizontal : vertical)),
+                    primary: distanceX === distanceY
+                        ? primary
+                        : distanceX > distanceY ? horizontal : vertical,
                 };
             };
             /**
@@ -11511,13 +11669,20 @@ var plat;
                 }
                 var origin = this.__swipeOrigin;
                 var gestures = this._gestures;
-                var swipes = [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup];
+                var swipes = [
+                    gestures.$swipe,
+                    gestures.$swipedown,
+                    gestures.$swipeleft,
+                    gestures.$swiperight,
+                    gestures.$swipeup,
+                ];
                 if (!xSame) {
                     origin.clientX = lastMove.clientX;
                     origin.xTimestamp = lastMove.timeStamp;
                     origin.xTarget = lastMove.target;
                     if (this._android44orBelow) {
-                        this.__haveSwipeSubscribers = this.__findFirstSubscribers(origin.xTarget, swipes).length > 0;
+                        this.__haveSwipeSubscribers =
+                            this.__findFirstSubscribers(origin.xTarget, swipes).length > 0;
                     }
                 }
                 if (!ySame) {
@@ -11525,7 +11690,8 @@ var plat;
                     origin.yTimestamp = lastMove.timeStamp;
                     origin.yTarget = lastMove.target;
                     if (this._android44orBelow) {
-                        this.__haveSwipeSubscribers = this.__findFirstSubscribers(origin.yTarget, swipes).length > 0;
+                        this.__haveSwipeSubscribers =
+                            this.__findFirstSubscribers(origin.yTarget, swipes).length > 0;
                     }
                 }
             };
@@ -11576,7 +11742,8 @@ var plat;
                 if (this._compat.platCss) {
                     return;
                 }
-                else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+                else if (!isNull(_document.styleSheets) &&
+                    _document.styleSheets.length > 0) {
                     var styleSheet = _document.styleSheets[0];
                     styleClasses = DomEvents.config.styleConfig;
                     classLength = styleClasses.length;
@@ -11594,7 +11761,8 @@ var plat;
                 classLength = styleClasses.length;
                 while (classLength > 0) {
                     classLength -= 1;
-                    textContent = this.__createStyle(styleClasses[classLength]) + textContent;
+                    textContent =
+                        this.__createStyle(styleClasses[classLength]) + textContent;
                 }
                 style.textContent = textContent;
                 head.appendChild(style);
@@ -11623,7 +11791,8 @@ var plat;
              * Blurs the currently focused element.
              */
             DomEvents.prototype.__blurFocusedElement = function () {
-                var focusedElement = this.__focusedElement;
+                var focusedElement = this
+                    .__focusedElement;
                 if (!isObject(focusedElement)) {
                     focusedElement = {};
                 }
@@ -11662,7 +11831,8 @@ var plat;
                         return;
                     }
                     target.removeEventListener('click', handler, false);
-                    if (_this._document.body.contains(target) && isFunction(target.click)) {
+                    if (_this._document.body.contains(target) &&
+                        isFunction(target.click)) {
                         target.click();
                     }
                 });
@@ -11851,7 +12021,8 @@ var plat;
                 },
                 /**
                  */
-                styleConfig: [{
+                styleConfig: [
+                    {
                         /**
                          */
                         className: 'plat-gesture',
@@ -11869,17 +12040,16 @@ var plat;
                             '-ms-touch-action: manipulation',
                             'touch-action: manipulation',
                         ],
-                    }, {
+                    },
+                    {
                         /**
                          */
                         className: 'plat-no-touch-action',
                         /**
                          */
-                        styles: [
-                            '-ms-touch-action: none',
-                            'touch-action: none',
-                        ],
-                    }],
+                        styles: ['-ms-touch-action: none', 'touch-action: none'],
+                    },
+                ],
             };
             /**
              * An object containing the event types for all of the
@@ -11990,8 +12160,9 @@ var plat;
                 var target = ev.target;
                 this.__extendEventObject(customEv, ev);
                 customEv.initCustomEvent(this.event, true, true, 0);
-                var success = isDocument(element) ||
-                    element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
+                var success = isDocument(element) || element.contains(target)
+                    ? target.dispatchEvent(customEv)
+                    : element.dispatchEvent(customEv);
                 if (!success) {
                     ev.preventDefault();
                 }
@@ -12009,15 +12180,21 @@ var plat;
                 customEv.clientY = ev.clientY;
                 customEv.offsetX = ev.offset.x;
                 customEv.offsetY = ev.offset.y;
-                customEv.direction = isNull(ev.direction) ? {
-                    x: 'none',
-                    y: 'none',
-                    primary: 'none',
-                } : ev.direction;
+                customEv.direction = isNull(ev.direction)
+                    ? {
+                        x: 'none',
+                        y: 'none',
+                        primary: 'none',
+                    }
+                    : ev.direction;
                 customEv.touches = ev._touches;
-                customEv.velocity = isNull(ev.velocity) ? { x: 0, y: 0 } : ev.velocity;
+                customEv.velocity = isNull(ev.velocity)
+                    ? { x: 0, y: 0 }
+                    : ev.velocity;
                 customEv.identifier = isNull(ev.identifier) ? 0 : ev.identifier;
-                customEv.pointerType = isNumber(pointerType) ? this.__convertPointerType(pointerType, ev.type) : pointerType;
+                customEv.pointerType = isNumber(pointerType)
+                    ? this.__convertPointerType(pointerType, ev.type)
+                    : pointerType;
                 customEv.screenX = ev.screenX;
                 customEv.screenY = ev.screenY;
                 customEv.pageX = ev.pageX;
@@ -12039,7 +12216,7 @@ var plat;
                         return 'touch';
                     default:
                 }
-                return (eventType.indexOf('mouse') === -1) ? 'touch' : 'mouse';
+                return eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
             };
             return CustomDomEvent;
         }(DomEvent));
@@ -12222,7 +12399,8 @@ var plat;
                     var animationInstances = [];
                     var elementNodes = [];
                     var immediateResolve;
-                    if (!this._compat.animationSupported || isUndefined(animationInjector)) {
+                    if (!this._compat.animationSupported ||
+                        isUndefined(animationInjector)) {
                         animationInjector = jsAnimationInjectors[key];
                         if (isUndefined(animationInjector)) {
                             elements = this.__constructAnimatableElements(elements, { inject: noop }, elementNodes, animationInstances);
@@ -12254,7 +12432,9 @@ var plat;
                     var previousPromise;
                     var animationPromise = new AnimationPromise(function (resolve) {
                         var _Promise = _this._Promise;
-                        previousPromise = _Promise.all(previousAnimations).then(function () {
+                        previousPromise = _Promise
+                            .all(previousAnimations)
+                            .then(function () {
                             var animationPromises = [];
                             for (var i = 0; i < length; i += 1) {
                                 animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
@@ -12267,12 +12447,13 @@ var plat;
                                 _this._handleEndFunctionality(elements, elementNodes, functionality);
                                 animatedElement.animationEnd(true);
                                 var parent_1 = _this._animatedElements[animatingParentId];
-                                var resolvedPromise_1 = isPromise(parent_1.promise) ?
-                                    function () {
+                                var resolvedPromise_1 = isPromise(parent_1.promise)
+                                    ? function () {
                                         return parent_1.promise;
-                                    } : function () {
-                                    return animationPromise;
-                                };
+                                    }
+                                    : function () {
+                                        return animationPromise;
+                                    };
                                 animationsFinished.then(function () {
                                     resolve(resolvedPromise_1);
                                 });
@@ -12444,9 +12625,9 @@ var plat;
                         }
                         deleteProperty(animatedElements, id);
                     };
-                    return animatedElements[id] = {
+                    return (animatedElements[id] = {
                         animationEnd: removeListener,
-                    };
+                    });
                 };
                 /**
                  * Checks whether or not any parent elements are animating.
@@ -12455,7 +12636,9 @@ var plat;
                 Animator.prototype.__isParentAnimating = function (elements) {
                     var animationId;
                     var element = elements[0];
-                    while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
+                    while (!(isDocument((element = element.parentNode)) ||
+                        isNull(element) ||
+                        element.nodeType !== Node.ELEMENT_NODE)) {
                         if (hasClass(element, __Animating)) {
                             var _plat = element.__plat;
                             if (!isObject(_plat)) {
@@ -12525,7 +12708,8 @@ var plat;
                         else if (isArrayLike(elements)) {
                             elements = Array.prototype.slice.call(elements);
                         }
-                        else if (!(isNode(elements) && elements.nodeType === Node.ELEMENT_NODE)) {
+                        else if (!(isNode(elements) &&
+                            elements.nodeType === Node.ELEMENT_NODE)) {
                             return [];
                         }
                         else {
@@ -12598,7 +12782,9 @@ var plat;
                             this.__animationInstances = instances;
                         }
                         else if (isObject(instances)) {
-                            this.__animationInstances = [instances];
+                            this.__animationInstances = [
+                                instances,
+                            ];
                         }
                     }
                 };
@@ -12828,7 +13014,8 @@ var plat;
                     /**
                      * A set of browser compatible CSS animation events capable of being listened to.
                      */
-                    _this._animationEvents = _this._compat.animationEvents;
+                    _this._animationEvents = _this._compat
+                        .animationEvents;
                     return _this;
                 }
                 /**
@@ -12913,9 +13100,10 @@ var plat;
                             options = {};
                         }
                         var computedStyle = _this._window.getComputedStyle(element, options.pseudo);
-                        var animationName = computedStyle[(animationId + "Name")];
-                        if (animationName === '' || animationName === 'none' ||
-                            computedStyle[(animationId + "PlayState")] === 'paused') {
+                        var animationName = computedStyle[animationId + "Name"];
+                        if (animationName === '' ||
+                            animationName === 'none' ||
+                            computedStyle[animationId + "PlayState"] === 'paused') {
                             _this._dispose();
                             _this.end();
                             return;
@@ -12943,7 +13131,8 @@ var plat;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
                             if (_this._cancelAnimation !== noop) {
-                                _this.element.style[(animationEvents.$animation + "PlayState")] = 'paused';
+                                _this.element.style[animationEvents.$animation + "PlayState"] =
+                                    'paused';
                             }
                             resolve();
                         });
@@ -12961,7 +13150,8 @@ var plat;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
                             if (_this._cancelAnimation !== noop) {
-                                _this.element.style[(animationEvents.$animation + "PlayState")] = 'running';
+                                _this.element.style[animationEvents.$animation + "PlayState"] =
+                                    'running';
                             }
                             resolve();
                         });
@@ -13148,8 +13338,8 @@ var plat;
                             options = {};
                         }
                         var computedStyle = _this._window.getComputedStyle(element, options.pseudo);
-                        var properties = _this._properties = computedStyle[(transitionId + "Property")].split(',');
-                        var durations = computedStyle[(transitionId + "Duration")].split(',');
+                        var properties = (_this._properties = computedStyle[transitionId + "Property"].split(','));
+                        var durations = computedStyle[transitionId + "Duration"].split(',');
                         var length = properties.length;
                         var propLength = length;
                         var noTransition = false;
@@ -13237,9 +13427,12 @@ var plat;
                     if (isString(propertyName)) {
                         this._transitionCount += 1;
                         var count = this._transitionCount;
-                        propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
-                        if ((count < this._count) ||
-                            (!this._usingCss && this._normalizedKeys[propertyName] === true &&
+                        propertyName = propertyName
+                            .replace(this._normalizeRegex, '')
+                            .toLowerCase();
+                        if (count < this._count ||
+                            (!this._usingCss &&
+                                this._normalizedKeys[propertyName] === true &&
                                 count < this._properties.length)) {
                             return;
                         }
@@ -13318,7 +13511,7 @@ var plat;
                 SimpleCssTransition.prototype.__cssTransition = function (computedStyle, durations) {
                     var _this = this;
                     var transitionId = this._animationEvents.$transition;
-                    var delays = computedStyle[(transitionId + "Delay")].split(',');
+                    var delays = computedStyle[transitionId + "Delay"].split(',');
                     var properties = this._properties;
                     var length = properties.length;
                     var normalizedKeys = this._normalizedKeys;
@@ -13335,7 +13528,8 @@ var plat;
                             // disposal has already occurred 
                             return;
                         }
-                        else if (prop === 'all' || computedStyle[prop] !== computedProp) {
+                        else if (prop === 'all' ||
+                            computedStyle[prop] !== computedProp) {
                             // we can't know if the transition started due to 'all' being set and have to rely on this.options.count 
                             // or 
                             // we know the transition started due to the properties being different 
@@ -13354,11 +13548,20 @@ var plat;
                     }
                     for (; i < length; i += 1) {
                         property = properties[i] = properties[i].trim();
-                        duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
-                        delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
+                        duration =
+                            durations.length > i
+                                ? durations[i].trim()
+                                : durations[durations.length - 1].trim();
+                        delay =
+                            delays.length > i
+                                ? delays[i].trim()
+                                : delays[delays.length - 1].trim();
                         normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
                         computedProperty = computedStyle[property];
-                        defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
+                        defer(this._toMs(duration) + this._toMs(delay), [
+                            property,
+                            computedProperty,
+                        ]);
                     }
                 };
                 return SimpleCssTransition;
@@ -13387,7 +13590,7 @@ var plat;
                  * router.
                  */
                 Viewport.prototype.initialize = function () {
-                    var router = this._router = this._Router.currentRouter();
+                    var router = (this._router = this._Router.currentRouter());
                     var parentViewport = this._getParentViewport();
                     var parentRouter;
                     if (!(isNull(parentViewport) || isNull(parentViewport._router))) {
@@ -13402,11 +13605,14 @@ var plat;
                  */
                 Viewport.prototype.loaded = function () {
                     var _this = this;
-                    var animate = this._animate = isObject(this.options) && this.options.value.animate === true;
+                    var animate = (this._animate =
+                        isObject(this.options) && this.options.value.animate === true);
                     if (animate) {
                         this.dom.addClass(this.element, __Viewport + "-animate");
                     }
-                    this._Promise.resolve(this._router.finishNavigating).then(function () {
+                    this._Promise
+                        .resolve(this._router.finishNavigating)
+                        .then(function () {
                         _this._router.register(_this);
                     });
                 };
@@ -13441,7 +13647,9 @@ var plat;
                     if (isFunction(view.canNavigateTo)) {
                         response = view.canNavigateTo(parameters, routeInfo.query);
                     }
-                    return this._Promise.resolve(response).then(function (canNavigateTo) {
+                    return this._Promise
+                        .resolve(response)
+                        .then(function (canNavigateTo) {
                         _this._nextInjector = injector;
                         _this._nextView = view;
                         return canNavigateTo;
@@ -13523,7 +13731,8 @@ var plat;
                     else {
                         promise = this._Promise.resolve();
                     }
-                    return promise.catch(function (error) {
+                    return promise
+                        .catch(function (error) {
                         if (isObject(error)) {
                             if (isString(error.message)) {
                                 _this._log.debug(_this.type + " error: " + error.message);
@@ -13533,7 +13742,8 @@ var plat;
                             return;
                         }
                         _this._log.debug(error);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         if (!(_this._animate && viewExists)) {
                             Control.dispose(view);
                             return;
@@ -13567,8 +13777,9 @@ var plat;
                     var doc = this._document;
                     var type = injector.name;
                     var replaceWith = control.replaceWith;
-                    var node = (isEmpty(replaceWith) || replaceWith === 'any') ?
-                        doc.createElement('div') : doc.createElement(replaceWith);
+                    var node = isEmpty(replaceWith) || replaceWith === 'any'
+                        ? doc.createElement('div')
+                        : doc.createElement(replaceWith);
                     node.setAttribute(__Control, type);
                     node.className = __ViewControl;
                     return {
@@ -13645,7 +13856,7 @@ var plat;
                     if (!isObject(options)) {
                         options = {};
                     }
-                    var id = this._id = options.id;
+                    var id = (this._id = options.id);
                     if (isNull(id)) {
                         this._log.warn(this.type + " instantiated without an id option");
                         return;
@@ -13705,11 +13916,13 @@ var plat;
                     this.elementNodes = [];
                     var controlPromise;
                     if (isPromise(template)) {
-                        controlPromise = template.catch(function (error) {
+                        controlPromise = template
+                            .catch(function (error) {
                             if (isNull(error)) {
                                 return TemplateControl.determineTemplate(_this, url);
                             }
-                        }).then(function (fragment) {
+                        })
+                            .then(function (fragment) {
                             _this.bindableTemplates.add(id, fragment.cloneNode(true));
                             return _this;
                         });
@@ -13732,16 +13945,20 @@ var plat;
                     if (!isPromise(templatePromise)) {
                         return;
                     }
-                    templatePromise.then(function (templateControl) {
-                        if (!(isNull(_this._url) || (_this._url === templateControl._url))) {
+                    templatePromise
+                        .then(function (templateControl) {
+                        if (!(isNull(_this._url) ||
+                            _this._url === templateControl._url)) {
                             _this._log.warn("The specified url: " + _this._url + " should match " + _this.type + " with id: \"" + _this._id + "\". Loading original url.");
                         }
                         _this.__mapBindableTemplates(templateControl);
                         return _this.bindableTemplates.bind(_this._id);
-                    }).then(function (clone) {
+                    })
+                        .then(function (clone) {
                         var endNode = _this.endNode;
                         insertBefore(endNode.parentNode, clone, endNode);
-                    }).catch(function (error) {
+                    })
+                        .catch(function (error) {
                         postpone(function () {
                             _this._log.warn("Problem resolving " + _this.type + " url: " + error.response);
                         });
@@ -13863,17 +14080,20 @@ var plat;
                     else {
                         newValue = [];
                     }
-                    this._executeEvent([{
+                    this._executeEvent([
+                        {
                             object: newValue,
                             type: 'splice',
-                        }]);
+                        },
+                    ]);
                 };
                 /**
                  * Observes the Array context for changes and adds initial items to the DOM.
                  */
                 ForEach.prototype.loaded = function () {
                     var options = this.options;
-                    var animating = this._animate = isObject(options) && options.value.animate === true;
+                    var animating = (this._animate =
+                        isObject(options) && options.value.animate === true);
                     var context = this.context;
                     this._container = this.element;
                     if (animating) {
@@ -13945,7 +14165,9 @@ var plat;
                         index += 1;
                     }
                     if (promises.length > 0) {
-                        this.itemsLoaded = this._Promise.all(promises).then(function (templates) {
+                        this.itemsLoaded = this._Promise
+                            .all(promises)
+                            .then(function (templates) {
                             _this._setBlockLength(templates);
                             if (animateItems > 0) {
                                 var length_10 = templates.length;
@@ -13967,7 +14189,8 @@ var plat;
                                 _this.__resolveFn();
                                 _this.__resolveFn = _this.__rejectFn = null;
                             }
-                        }).catch(function (error) {
+                        })
+                            .catch(function (error) {
                             postpone(function () {
                                 if (isString(error)) {
                                     error = new Error(error);
@@ -13995,7 +14218,9 @@ var plat;
                     }
                     var animationQueue = this._animationQueue;
                     var animation = {
-                        animation: this._animator.enter(item, __Enter, this._container).then(function () {
+                        animation: this._animator
+                            .enter(item, __Enter, this._container)
+                            .then(function () {
                             var index = animationQueue.indexOf(animation);
                             if (index === -1) {
                                 return;
@@ -14075,7 +14300,7 @@ var plat;
                  * @param {number} index The index used to create the resource aliases.
                  */
                 ForEach.prototype._getAliases = function (index) {
-                    var isEven = (index % 2) === 0;
+                    var isEven = index % 2 === 0;
                     var aliases = {};
                     var _aliases = this._aliases;
                     var type = __LITERAL_RESOURCE;
@@ -14096,7 +14321,7 @@ var plat;
                         type: type,
                     };
                     aliases[_aliases.last] = {
-                        value: index === (this.context.length - 1),
+                        value: index === this.context.length - 1,
                         type: type,
                     };
                     return aliases;
@@ -14153,7 +14378,8 @@ var plat;
                     if (this._animate) {
                         var animationQueue = this._animationQueue;
                         var animationLength = animationQueue.length;
-                        this._animateItems(0, addedCount, __Enter, null, animationLength > 0 && animationQueue[animationLength - 1].op === 'clone');
+                        this._animateItems(0, addedCount, __Enter, null, animationLength > 0 &&
+                            animationQueue[animationLength - 1].op === 'clone');
                     }
                     var addPromise = this._addItems(change.object.length - addedCount, addedCount, 0).then(function () {
                         var index = addQueue.indexOf(addPromise);
@@ -14176,7 +14402,9 @@ var plat;
                     }
                     else if (this._animate) {
                         if (addQueue.length === 0) {
-                            addQueue = addQueue.concat([this._animateItems(0, 1, __Leave, 'clone', true)]);
+                            addQueue = addQueue.concat([
+                                this._animateItems(0, 1, __Leave, 'clone', true),
+                            ]);
                         }
                     }
                     var removeIndex = change.object.length;
@@ -14240,7 +14468,8 @@ var plat;
                             if (currentLength < addCount - startIndex) {
                                 animationCount = currentLength - startIndex;
                             }
-                            this._animateItems(startIndex, animationCount, __Enter, null, animationLength > 0 && animationQueue[animationLength - 1].op === 'clone');
+                            this._animateItems(startIndex, animationCount, __Enter, null, animationLength > 0 &&
+                                animationQueue[animationLength - 1].op === 'clone');
                             animationCount = addCount - animationCount;
                         }
                         else {
@@ -14257,7 +14486,9 @@ var plat;
                     else if (removeCount > addCount) {
                         var adding_1 = addCount > 0;
                         if (animating && !adding_1 && addQueue.length === 0) {
-                            addQueue = addQueue.concat([this._animateItems(change.index, removeCount, __Leave, 'clone', true)]);
+                            addQueue = addQueue.concat([
+                                this._animateItems(change.index, removeCount, __Leave, 'clone', true),
+                            ]);
                         }
                         var deleteCount_1 = removeCount - addCount;
                         if (currentLength >= deleteCount_1) {
@@ -14269,7 +14500,8 @@ var plat;
                         this._Promise.all(addQueue).then(function () {
                             if (animating && adding_1) {
                                 var animLength = animationQueue.length;
-                                _this._animateItems(change.index, addCount, __Enter, null, animLength > 0 && animationQueue[animLength - 1].op === 'clone');
+                                _this._animateItems(change.index, addCount, __Enter, null, animLength > 0 &&
+                                    animationQueue[animLength - 1].op === 'clone');
                             }
                             _this._removeItems(currentLength - deleteCount_1, deleteCount_1);
                         });
@@ -14359,7 +14591,9 @@ var plat;
                         return this._Promise.resolve();
                     }
                     var animationQueue = this._animationQueue;
-                    var animationPromise = this._animator.leave(nodes, key).then(function () {
+                    var animationPromise = this._animator
+                        .leave(nodes, key)
+                        .then(function () {
                         var index = animationQueue.indexOf(animation);
                         if (index === -1) {
                             return;
@@ -14513,10 +14747,7 @@ var plat;
                         return this._getContent(this._titleElement);
                     }
                     this._titleElement.innerText = title;
-                    this._setContent([
-                        this._ogTitleElement,
-                        this._twitterTitleElement,
-                    ], title);
+                    this._setContent([this._ogTitleElement, this._twitterTitleElement], title);
                     return title;
                 };
                 /**
@@ -14542,10 +14773,7 @@ var plat;
                     if (!isString(url)) {
                         return this._getContent(this._ogUrlElement);
                     }
-                    this._setContent([
-                        this._ogUrlElement,
-                        this._twitterUrlElement,
-                    ], url);
+                    this._setContent([this._ogUrlElement, this._twitterUrlElement], url);
                     return url;
                 };
                 /**
@@ -14557,9 +14785,7 @@ var plat;
                     if (!isString(author)) {
                         return this._getContent(this._authorElement);
                     }
-                    this._setContent([
-                        this._authorElement,
-                    ], author);
+                    this._setContent([this._authorElement], author);
                     return author;
                 };
                 /**
@@ -14571,9 +14797,7 @@ var plat;
                     if (!isString(author)) {
                         return this._getContent(this._googleAuthorElement);
                     }
-                    this._setContent([
-                        this._googleAuthorElement,
-                    ], author);
+                    this._setContent([this._googleAuthorElement], author);
                     return author;
                 };
                 /**
@@ -14585,9 +14809,7 @@ var plat;
                     if (!isString(author)) {
                         return this._getContent(this._fbAuthorElement);
                     }
-                    this._setContent([
-                        this._fbAuthorElement,
-                    ], author);
+                    this._setContent([this._fbAuthorElement], author);
                     return author;
                 };
                 /**
@@ -14599,9 +14821,7 @@ var plat;
                     if (!isString(creator)) {
                         return this._getContent(this._twitterCreatorElement);
                     }
-                    this._setContent([
-                        this._twitterCreatorElement,
-                    ], creator);
+                    this._setContent([this._twitterCreatorElement], creator);
                     return creator;
                 };
                 /**
@@ -14612,9 +14832,7 @@ var plat;
                     if (!isString(type)) {
                         return this._getContent(this._ogTypeElement);
                     }
-                    this._setContent([
-                        this._ogTypeElement,
-                    ], type);
+                    this._setContent([this._ogTypeElement], type);
                     return type;
                 };
                 /**
@@ -14640,10 +14858,7 @@ var plat;
                         }
                         ogElement = _this._createElement(meta, og + __MetaImage, true);
                         twitterElement = _this._createElement(meta, twitter + __MetaImage, true);
-                        _this._setContent([
-                            ogElement,
-                            twitterElement,
-                        ], image);
+                        _this._setContent([ogElement, twitterElement], image);
                     }, images);
                 };
                 /**
@@ -14668,9 +14883,7 @@ var plat;
                             return;
                         }
                         ogElement = _this._createElement(meta, og + metaVideo, true);
-                        _this._setContent([
-                            ogElement,
-                        ], video);
+                        _this._setContent([ogElement], video);
                     }, videos);
                 };
                 /**
@@ -14772,8 +14985,11 @@ var plat;
                     var hasName = isString(name);
                     var element = this.element;
                     var el;
-                    var attr = (hasName &&
-                        (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName;
+                    var attr = hasName &&
+                        (name.indexOf(__OpenGraph) === 0 ||
+                            name.indexOf(__Article) === 0)
+                        ? __MetaProperty
+                        : __MetaName;
                     if (tag === __MetaLink) {
                         attr = __Rel;
                     }
@@ -14963,12 +15179,16 @@ var plat;
                         var defaultOption = this._document.createElement('option');
                         var defaultValue = defaultOptionValues.value;
                         var defaultTextContent = defaultOptionValues.textContent;
-                        defaultOption.value = isUndefined(defaultValue) ? defaultTextContent : defaultValue;
-                        defaultOption.textContent = isUndefined(defaultTextContent) ? defaultValue : defaultTextContent;
+                        defaultOption.value = isUndefined(defaultValue)
+                            ? defaultTextContent
+                            : defaultValue;
+                        defaultOption.textContent = isUndefined(defaultTextContent)
+                            ? defaultValue
+                            : defaultTextContent;
                         this.element.insertBefore(defaultOption, null);
                     }
                     if (!isNull(platOptions.group)) {
-                        var group = this._group = platOptions.group;
+                        var group = (this._group = platOptions.group);
                         var optionGroup = this._document.createElement('optgroup');
                         optionGroup.label = __startSymbol + group + __endSymbol;
                         this.bindableTemplates.add('group', optionGroup);
@@ -14988,9 +15208,11 @@ var plat;
                     var _this = this;
                     if (isEmpty(newValue) || !isArray(newValue)) {
                         if (!isEmpty(oldValue)) {
-                            this.itemsLoaded.then(function () {
+                            this.itemsLoaded
+                                .then(function () {
                                 _this._removeItems(_this.controls.length);
-                            }).then(this._observeChange.bind(this));
+                            })
+                                .then(this._observeChange.bind(this));
                         }
                         return;
                     }
@@ -15022,7 +15244,8 @@ var plat;
                         this._group = platOptions.group;
                         this._isGrouped = !isNull(this._group);
                     }
-                    this._defaultOption = this.element.firstElementChild;
+                    this._defaultOption = this.element
+                        .firstElementChild;
                     var context = this.context;
                     if (!isArray(context)) {
                         return;
@@ -15079,7 +15302,8 @@ var plat;
                     var element = this.element;
                     var value = element.value;
                     if (isNull(newValue)) {
-                        if (firstTime === true || !this._document.body.contains(element)) {
+                        if (firstTime === true ||
+                            !this._document.body.contains(element)) {
                             this.itemsLoaded.then(function () {
                                 if (isNull(_this._binder.evaluate())) {
                                     var newLast = element.value;
@@ -15129,7 +15353,8 @@ var plat;
                         element.value = _this.__lastValue = newValue;
                         // check to make sure the user changed to a valid value 
                         // second boolean argument is an ie fix for inconsistency 
-                        if (element.value !== newValue || element.selectedIndex === -1) {
+                        if (element.value !== newValue ||
+                            element.selectedIndex === -1) {
                             element.selectedIndex = -1;
                         }
                     });
@@ -15194,7 +15419,7 @@ var plat;
                                 continue;
                             }
                             else if ((value === 'true' && trueIndex !== -1) ||
-                                value === 'false' && falseIndex !== -1) {
+                                (value === 'false' && falseIndex !== -1)) {
                                 index = trueIndex > falseIndex ? trueIndex : falseIndex;
                                 if (index < highestIndex) {
                                     _this._propertyType = 'boolean';
@@ -15213,7 +15438,9 @@ var plat;
                  */
                 Select.prototype._observeChange = function () {
                     var element = this.element;
-                    var newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+                    var newLast = element.multiple
+                        ? this._getSelectedValues()
+                        : this._castValue(element.value);
                     if (newLast === this.__lastValue) {
                         return;
                     }
@@ -15302,17 +15529,22 @@ var plat;
                     var insertOption = this._insertOption;
                     while (numberOfItems > 0) {
                         numberOfItems -= 1;
-                        promises.push(bindableTemplates.bind('option', index).then(insertOption.bind(this, index)));
+                        promises.push(bindableTemplates
+                            .bind('option', index)
+                            .then(insertOption.bind(this, index)));
                         index += 1;
                     }
                     if (promises.length > 0) {
-                        this.itemsLoaded = this._Promise.all(promises).then(function () {
+                        this.itemsLoaded = this._Promise
+                            .all(promises)
+                            .then(function () {
                             if (isFunction(_this.__resolveFn)) {
                                 _this.__resolveFn();
                                 _this.__resolveFn = _this.__rejectFn = null;
                             }
                             return;
-                        }).catch(function (error) {
+                        })
+                            .catch(function (error) {
                             postpone(function () {
                                 if (isString(error)) {
                                     error = new Error(error);
@@ -15341,9 +15573,11 @@ var plat;
                         var newGroup_1 = group[this._group];
                         var optgroup_1 = groups_1[newGroup_1];
                         if (isNull(optgroup_1)) {
-                            return (groups_1[newGroup_1] = this.bindableTemplates.bind('group', index)
+                            return (groups_1[newGroup_1] = this.bindableTemplates
+                                .bind('group', index)
                                 .then(function (groupFragment) {
-                                optgroup_1 = groups_1[newGroup_1] = groupFragment.childNodes[1];
+                                optgroup_1 = groups_1[newGroup_1] = groupFragment
+                                    .childNodes[1];
                                 optgroup_1.insertBefore(option, null);
                                 element.insertBefore(groupFragment, null);
                                 return optgroup_1;
@@ -15619,8 +15853,11 @@ var plat;
                     if (isNull(actionPromise)) {
                         promise = next();
                     }
-                    else if (this._animate && isFunction(actionPromise.cancel)) {
-                        promise = actionPromise.cancel().then(next);
+                    else if (this._animate &&
+                        isFunction(actionPromise.cancel)) {
+                        promise = actionPromise
+                            .cancel()
+                            .then(next);
                     }
                     else {
                         promise = actionPromise.then(next);
@@ -15640,10 +15877,13 @@ var plat;
                     }
                     if (!isBound) {
                         this.__isBound = true;
-                        return this.__initialBind = this.bindableTemplates.bind('template').then(function (template) {
+                        return (this.__initialBind = this.bindableTemplates
+                            .bind('template')
+                            .then(function (template) {
                             _this.__initialBind = null;
                             var element = _this.element;
-                            if (element.parentNode === _this.fragmentStore || isNull(element.parentNode)) {
+                            if (element.parentNode === _this.fragmentStore ||
+                                isNull(element.parentNode)) {
                                 element.insertBefore(template, null);
                                 if (_this._animate) {
                                     return _this._animateEntrance();
@@ -15651,14 +15891,16 @@ var plat;
                                 return _this._elementEntrance();
                             }
                             else if (_this._animate) {
-                                _this.__enterPromise = _this._animator.animate(element, __Enter).then(function () {
+                                _this.__enterPromise = _this._animator
+                                    .animate(element, __Enter)
+                                    .then(function () {
                                     _this.__enterPromise = null;
                                 });
                                 element.insertBefore(template, null);
                                 return _this.__enterPromise;
                             }
                             element.insertBefore(template, null);
-                        });
+                        }));
                     }
                     else if (!isNull(this.__initialBind)) {
                         this.__initialBind = this.__initialBind.then(function () {
@@ -15705,7 +15947,9 @@ var plat;
                     if (!isNode(parentNode)) {
                         return this._animator.resolve().then(noop);
                     }
-                    this.__enterPromise = this._animator.enter(this.element, __Enter, parentNode, commentNode).then(function () {
+                    this.__enterPromise = this._animator
+                        .enter(this.element, __Enter, parentNode, commentNode)
+                        .then(function () {
                         _this.__enterPromise = null;
                     });
                     return this.__enterPromise;
@@ -15761,7 +16005,9 @@ var plat;
                 If.prototype._animateLeave = function () {
                     var _this = this;
                     var element = this.element;
-                    this.__leavePromise = this._animator.leave(element, __Leave).then(function () {
+                    this.__leavePromise = this._animator
+                        .leave(element, __Leave)
+                        .then(function () {
                         var parent = element.parentNode;
                         var nextSibling = element.nextSibling;
                         _this.__leavePromise = null;
@@ -15963,7 +16209,9 @@ var plat;
              */
             Compiler.prototype.compile = function (node, control) {
                 var hasControl = !isNull(control);
-                var manager = (hasControl ? this._managerCache.read(control.uid) : null);
+                var manager = (hasControl
+                    ? this._managerCache.read(control.uid)
+                    : null);
                 var create = this._ElementManagerFactory.create;
                 var childNodes = node.childNodes;
                 var length;
@@ -16298,13 +16546,15 @@ var plat;
                         var type = resourceObj.resource.type;
                         if (alias === __CONTEXT_RESOURCE) {
                             manager = _ContextManager.getManager(Control.getRootControl(control));
-                            absoluteIdentifier = control.absoluteContextPath + absoluteIdentifier;
+                            absoluteIdentifier =
+                                control.absoluteContextPath + absoluteIdentifier;
                         }
                         else if (alias === __ROOT_CONTEXT_RESOURCE) {
                             manager = _ContextManager.getManager(resources[alias].control);
                             absoluteIdentifier = "context" + absoluteIdentifier;
                         }
-                        else if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                        else if (type === __OBSERVABLE_RESOURCE ||
+                            type === __LITERAL_RESOURCE) {
                             manager = _ContextManager.getManager(resources[alias].control);
                             absoluteIdentifier = "resources." + alias + ".value" + absoluteIdentifier;
                         }
@@ -16313,7 +16563,8 @@ var plat;
                 else {
                     // look on the control.context 
                     isDefined = !isUndefined(_ContextManager.getContext(control.context, split));
-                    if (isDefined || isUndefined(_ContextManager.getContext(control, split))) {
+                    if (isDefined ||
+                        isUndefined(_ContextManager.getContext(control, split))) {
                         manager = _ContextManager.getManager(Control.getRootControl(control));
                         absoluteIdentifier = control.absoluteContextPath + "." + identifier;
                     }
@@ -16452,7 +16703,9 @@ var plat;
                         noControlAttribute = false;
                     }
                     else if (element.hasAttribute(__AttributePrefix + __Control)) {
-                        name = element.getAttribute(__AttributePrefix + __Control).toLowerCase();
+                        name = element
+                            .getAttribute(__AttributePrefix + __Control)
+                            .toLowerCase();
                         injector = controlInjectors[name];
                         if (!isObject(injector)) {
                             injector = viewControlInjectors[name];
@@ -16476,7 +16729,8 @@ var plat;
                     }
                     var replacementType = uiControl.replaceWith;
                     var replaceWithDiv = replacementType === 'any' && noControlAttribute;
-                    if (!isEmpty(replacementType) && (replacementType !== 'any' || replaceWithDiv) &&
+                    if (!isEmpty(replacementType) &&
+                        (replacementType !== 'any' || replaceWithDiv) &&
                         replacementType.toLowerCase() !== nodeName) {
                         if (replaceWithDiv) {
                             replacementType = 'div';
@@ -16506,7 +16760,9 @@ var plat;
                 }
                 manager.initialize(elementMap, parent);
                 if (!(elementMap.hasControl || hasUiControl)) {
-                    manager.bind = function () { return []; };
+                    manager.bind = function () {
+                        return [];
+                    };
                 }
                 else {
                     manager.setUiControlTemplate();
@@ -16526,7 +16782,8 @@ var plat;
                 while (childNodes.length > 0) {
                     childNode = childNodes.shift();
                     nodeName = childNode.nodeName.toLowerCase();
-                    if (nodeName === __Resources || nodeName === "x-" + __Resources) {
+                    if (nodeName === __Resources ||
+                        nodeName === "x-" + __Resources) {
                         return node.removeChild(childNode);
                     }
                 }
@@ -16562,7 +16819,9 @@ var plat;
                 manager.hasOwnContext = sourceManager.hasOwnContext;
                 manager.isClone = true;
                 if (!(nodeMap.hasControl || hasNewControl)) {
-                    manager.bind = function () { return []; };
+                    manager.bind = function () {
+                        return [];
+                    };
                 }
                 if (hasNewControl) {
                     ElementManager._managerCache.put(newControl.uid, manager);
@@ -16618,7 +16877,9 @@ var plat;
                 var attributes;
                 if (isNode(element)) {
                     if (element.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-                        return isClone === true ? ElementManager._copyAttributeNodes(nodes) : [];
+                        return isClone === true
+                            ? ElementManager._copyAttributeNodes(nodes)
+                            : [];
                     }
                     attributes = element.attributes;
                 }
@@ -16686,8 +16947,12 @@ var plat;
                         else if (isNull(bControl)) {
                             return -1;
                         }
-                        var aPriority = isNumber(aControl.priority) ? aControl.priority : 0;
-                        var bPriority = isNumber(bControl.priority) ? bControl.priority : 0;
+                        var aPriority = isNumber(aControl.priority)
+                            ? aControl.priority
+                            : 0;
+                        var bPriority = isNumber(bControl.priority)
+                            ? bControl.priority
+                            : 0;
                         return bPriority - aPriority;
                     });
                     for (i = 0; i < length; i += 1) {
@@ -16715,8 +16980,10 @@ var plat;
                 manager._compiler = acquire(__Compiler);
                 manager._CommentManagerFactory = acquire(__CommentManagerFactory);
                 manager._ControlFactory = acquire(__ControlFactory);
-                manager._TemplateControlFactory = NodeManager._TemplateControlFactory;
-                manager._BindableTemplatesFactory = ElementManager._BindableTemplatesFactory;
+                manager._TemplateControlFactory =
+                    NodeManager._TemplateControlFactory;
+                manager._BindableTemplatesFactory =
+                    ElementManager._BindableTemplatesFactory;
                 manager._log = ElementManager._log;
                 return manager;
             };
@@ -16832,8 +17099,9 @@ var plat;
                     childContext: sourceMap.childContext,
                     nodes: [],
                     element: element,
-                    uiControlNode: !isNull(sourceMap.uiControlNode) ?
-                        ElementManager._cloneNode(sourceMap.uiControlNode, element, newControl) : null,
+                    uiControlNode: !isNull(sourceMap.uiControlNode)
+                        ? ElementManager._cloneNode(sourceMap.uiControlNode, element, newControl)
+                        : null,
                     hasControl: hasControl,
                 };
                 if (hasControl) {
@@ -16850,7 +17118,9 @@ var plat;
             ElementManager.prototype.clone = function (newNode, parentManager, nodeMap) {
                 var replace = this.replace;
                 var children = this.children;
-                var newControl = !isNull(nodeMap) ? nodeMap.uiControlNode.control : null;
+                var newControl = !isNull(nodeMap)
+                    ? nodeMap.uiControlNode.control
+                    : null;
                 var newControlExists = !isNull(newControl);
                 var childNodes;
                 var clonedManager;
@@ -16931,7 +17201,9 @@ var plat;
                 if (nodeMap.hasControl) {
                     ElementManager.createAttributeControls(nodeMap, this.getParentControl(), control);
                 }
-                if (!dontInitialize && hasUiControl && isFunction(control.initialize)) {
+                if (!dontInitialize &&
+                    hasUiControl &&
+                    isFunction(control.initialize)) {
                     control.initialize();
                 }
             };
@@ -16951,7 +17223,9 @@ var plat;
                     var getManager = this._ContextManager.getManager;
                     var childContext = nodeMap.childContext;
                     var contextManager_1;
-                    var absoluteContextPath_1 = isNull(parent) ? __CONTEXT : parent.absoluteContextPath;
+                    var absoluteContextPath_1 = isNull(parent)
+                        ? __CONTEXT
+                        : parent.absoluteContextPath;
                     controls.push(uiControl_1);
                     if (inheritsContext && !isNull(childContext)) {
                         if (childContext[0] === '@') {
@@ -16961,14 +17235,16 @@ var plat;
                             var resourceObj = _TemplateControlFactory.findResource(uiControl_1, alias);
                             if (isObject(resourceObj)) {
                                 var resource = resourceObj.resource;
-                                childContext = (split.length > 0 ? "." + split.join('.') : '');
+                                childContext =
+                                    split.length > 0 ? "." + split.join('.') : '';
                                 if (alias === __CONTEXT_RESOURCE) {
                                     absoluteContextPath_1 += childContext;
                                 }
                                 else if (alias === __ROOT_CONTEXT_RESOURCE) {
                                     absoluteContextPath_1 = __CONTEXT + childContext;
                                 }
-                                else if (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE) {
+                                else if (resource.type === __OBSERVABLE_RESOURCE ||
+                                    resource.type === __LITERAL_RESOURCE) {
                                     absoluteContextPath_1 = "resources." + alias + ".value" + childContext;
                                     uiControl_1.root = resourceObj.control;
                                 }
@@ -16994,7 +17270,9 @@ var plat;
                     var awaitContext = false;
                     if (inheritsContext) {
                         uiControl_1.context = contextManager_1.getContext(absoluteContextPath_1.split('.'), false);
-                        awaitContext = isUndefined(uiControl_1.context) && !this._BindableTemplatesFactory.isBoundControl(uiControl_1);
+                        awaitContext =
+                            isUndefined(uiControl_1.context) &&
+                                !this._BindableTemplatesFactory.isBoundControl(uiControl_1);
                     }
                     else {
                         absoluteContextPath_1 = __CONTEXT;
@@ -17034,7 +17312,9 @@ var plat;
                 var controlNode = this.nodeMap.uiControlNode;
                 if (!isNull(controlNode)) {
                     var control_1 = controlNode.control;
-                    this.templatePromise = this._TemplateControlFactory.determineTemplate(control_1, templateUrl).then(function (template) {
+                    this.templatePromise = this._TemplateControlFactory
+                        .determineTemplate(control_1, templateUrl)
+                        .then(function (template) {
                         _this.templatePromise = null;
                         _this._initializeControl(control_1, template.cloneNode(true));
                     }, function (error) {
@@ -17091,9 +17371,11 @@ var plat;
              */
             ElementManager.prototype.fulfillAndLoad = function () {
                 var _this = this;
-                return this.fulfillTemplate().then(function () {
+                return this.fulfillTemplate()
+                    .then(function () {
                     return _this.bindAndLoad();
-                }).catch(function (error) {
+                })
+                    .catch(function (error) {
                     postpone(function () {
                         if (isString(error)) {
                             error = new Error(error);
@@ -17117,9 +17399,11 @@ var plat;
                 else {
                     promise = this._bindChildren();
                 }
-                return promise.then(function () {
+                return promise
+                    .then(function () {
                     return _this._loadControls(controls, _this.getUiControl());
-                }).catch(function (error) {
+                })
+                    .catch(function (error) {
                     postpone(function () {
                         if (isString(error)) {
                             error = new Error(error);
@@ -17142,7 +17426,9 @@ var plat;
                     return loadMethod();
                 }
                 return new this._Promise(function (resolve) {
-                    var removeListener = _this._ContextManager.getManager(root).observe(__CONTEXT, {
+                    var removeListener = _this._ContextManager
+                        .getManager(root)
+                        .observe(__CONTEXT, {
                         listener: function () {
                             removeListener();
                             loadMethod().then(resolve);
@@ -17233,7 +17519,8 @@ var plat;
                 for (; i < length; i += 1) {
                     control = controls[i];
                     control.templateControl = templateControl;
-                    if (!templateControlLoaded && templateControlPriority > control.priority) {
+                    if (!templateControlLoaded &&
+                        templateControlPriority > control.priority) {
                         templateControlLoaded = true;
                         promise = load(templateControl);
                     }
@@ -17256,7 +17543,8 @@ var plat;
                 var element = nodeMap.element;
                 var childNodes = Array.prototype.slice.call(element.childNodes);
                 var newAttributes = ElementManager._AttributesFactory.getInstance();
-                var replace = this.replace = (uiControl.replaceWith === null || uiControl.replaceWith === '');
+                var replace = (this.replace =
+                    uiControl.replaceWith === null || uiControl.replaceWith === '');
                 var uid = uiControl.uid;
                 var resources = uiControl.resources;
                 if (!isString(uid)) {
@@ -17287,7 +17575,9 @@ var plat;
                 if (!isObject(uiControl.bindableTemplates)) {
                     uiControl.bindableTemplates = this._BindableTemplatesFactory.create(uiControl);
                 }
-                if (childNodes.length > 0 && (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
+                if (childNodes.length > 0 &&
+                    (!isEmpty(uiControl.templateString) ||
+                        !isEmpty(uiControl.templateUrl))) {
                     uiControl.innerTemplate = appendChildren(childNodes);
                 }
                 if (replace) {
@@ -17307,8 +17597,8 @@ var plat;
                 var _document = ElementManager._document;
                 var controlType = control.type;
                 var controlUid = control.uid;
-                var startNode = control.startNode = _document.createComment(controlType + " " + controlUid + __START_NODE);
-                var endNode = control.endNode = _document.createComment(controlType + " " + controlUid + __END_NODE);
+                var startNode = (control.startNode = _document.createComment(controlType + " " + controlUid + __START_NODE));
+                var endNode = (control.endNode = _document.createComment(controlType + " " + controlUid + __END_NODE));
                 var create = this._CommentManagerFactory.create;
                 create(startNode, this);
                 create(endNode, this);
@@ -17482,10 +17772,12 @@ var plat;
                 if (NodeManager.hasMarkup(value)) {
                     var expressions_1 = NodeManager.findMarkup(value);
                     var map_1 = {
-                        nodes: [{
+                        nodes: [
+                            {
                                 node: node,
                                 expressions: expressions_1,
-                            }],
+                            },
+                        ],
                     };
                     manager.initialize(map_1, parent);
                     return manager;
@@ -17502,11 +17794,13 @@ var plat;
             TextManager._cloneNodeMap = function (sourceMap, newNode) {
                 var node = sourceMap.nodes[0];
                 return {
-                    nodes: [{
+                    nodes: [
+                        {
                             expressions: node.expressions,
                             nodeName: node.nodeName,
                             node: newNode,
-                        }],
+                        },
+                    ],
                 };
             };
             /**
@@ -17598,9 +17892,11 @@ var plat;
             CommentManager.create = function (node, parent) {
                 var manager = new CommentManager();
                 manager.initialize({
-                    nodes: [{
+                    nodes: [
+                        {
                             node: node,
-                        }],
+                        },
+                    ],
                 }, parent);
                 return manager;
             };
@@ -17678,7 +17974,10 @@ var plat;
                 var last = this._lastValues;
                 var element = this.element;
                 var nodeValue = attr.value;
-                var classes = nodeManager.build(node.expressions, this.parent).trim().split(/\s+/);
+                var classes = nodeManager
+                    .build(node.expressions, this.parent)
+                    .trim()
+                    .split(/\s+/);
                 var c;
                 var length = classes.length;
                 var i;
@@ -17690,10 +17989,13 @@ var plat;
                     var end = nodeValue.indexOf(__endSymbol);
                     while (start !== -1 && end !== -1) {
                         // increment with while loop instead of just += 2 for nested object literal case. 
-                        while (nodeValue[end] !== endChar || nodeValue[end + 1] === endChar) {
+                        while (nodeValue[end] !== endChar ||
+                            nodeValue[end + 1] === endChar) {
                             end += 1;
                         }
-                        nodeValue = nodeValue.slice(0, start).trim() + " " + nodeValue.slice(end).trim();
+                        nodeValue = nodeValue
+                            .slice(0, start)
+                            .trim() + " " + nodeValue.slice(end).trim();
                         start = nodeValue.indexOf(__startSymbol);
                         end = nodeValue.indexOf(__endSymbol);
                     }
@@ -17789,7 +18091,9 @@ var plat;
              */
             Navigator.prototype.initialize = function (router) {
                 this._router = router;
-                if (isObject(router) && router.isRoot && !isObject(Navigator._root)) {
+                if (isObject(router) &&
+                    router.isRoot &&
+                    !isObject(Navigator._root)) {
                     this.isRoot = true;
                     Navigator._root = this;
                     this._observeUrl();
@@ -17909,7 +18213,8 @@ var plat;
                     var _history = _this._history;
                     var state = _history.state;
                     _this._ignoreOnce = true;
-                    if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
+                    if (isNull(state.previousLocation) ||
+                        state.previousLocation === previousUrl) {
                         _history.go(-1);
                     }
                     else {
@@ -17952,7 +18257,8 @@ var plat;
                         .then(function () {
                         EventManager.dispatch(__navigating, _this, EventManager.DIRECT, [utils]);
                         return _this._router.navigate(utils.pathname, utils.query);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         _this._previousUrl = utils.pathname;
                         if (isFunction(_this._resolveNavigate)) {
                             _this._backNavigate = false;
@@ -17999,8 +18305,19 @@ var plat;
         routing.History = History;
         register.injectable(__History, History, [__Window]);
         var specialCharacters = [
-            '/', '.', '*', '+', '?', '|',
-            '(', ')', '[', ']', '{', '}', '\\',
+            '/',
+            '.',
+            '*',
+            '+',
+            '?',
+            '|',
+            '(',
+            ')',
+            '[',
+            ']',
+            '{',
+            '}',
+            '\\',
         ];
         var escapeRegex = new RegExp("(\\" + specialCharacters.join('|\\') + ")", 'g');
         var baseSegment;
@@ -18370,7 +18687,7 @@ var plat;
                         return aDynamics - bDynamics;
                     }
                     if (aStatics !== bStatics) {
-                        return bStatics = aStatics;
+                        return (bStatics = aStatics);
                     }
                     return 0;
                 });
@@ -18682,9 +18999,7 @@ var plat;
              * @param {string} path The path with which to look for compiled states.
              */
             RouteRecognizer.prototype._findStates = function (path) {
-                var states = [
-                    this._rootState,
-                ];
+                var states = [this._rootState];
                 var recognize = this._State.recognize;
                 var length = path.length;
                 for (var i = 0; i < length; i += 1) {
@@ -18863,19 +19178,20 @@ var plat;
                     .catch(noop)
                     .then(function () {
                     var routeInfo = _clone(_this.currentRouteInfo, true);
-                    return _this.finishNavigating = _this._canNavigateTo(routeInfo)
+                    return (_this.finishNavigating = _this._canNavigateTo(routeInfo)
                         .then(function (canNavigateTo) {
                         if (!canNavigateTo) {
                             return;
                         }
                         _this.currentRouteInfo = undefined;
                         return _this._performNavigation(routeInfo);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         _this.navigating = false;
                         _this.currentRouteInfo = routeInfo;
                     }, function () {
                         _this.navigating = false;
-                    });
+                    }));
                 });
             };
             /**
@@ -18996,7 +19312,11 @@ var plat;
                     url = '';
                 }
                 force = force === true;
-                if (!isString(url) || this.navigating || (!force && url === this._previousUrl && queryString === this._previousQuery)) {
+                if (!isString(url) ||
+                    this.navigating ||
+                    (!force &&
+                        url === this._previousUrl &&
+                        queryString === this._previousQuery)) {
                     if (this.navigating) {
                         return this.finishNavigating.then(function () {
                             return _this.navigate(url, query, force);
@@ -19075,15 +19395,14 @@ var plat;
                             // the pattern for this router is the same as the last pattern so 
                             // only navigate child routers. 
                             this.navigating = true;
-                            return this.finishNavigating = this._navigateChildren(routeInfo)
-                                .then(function () {
+                            return (this.finishNavigating = this._navigateChildren(routeInfo).then(function () {
                                 _this._previousUrl = url;
                                 _this._previousQuery = queryString;
                                 _this.navigating = false;
                             }, function (e) {
                                 _this.navigating = false;
                                 throw e;
-                            });
+                            }));
                         }
                     }
                 }
@@ -19098,8 +19417,8 @@ var plat;
                 var previousSegment = this._previousSegment;
                 this._previousSegment = segment;
                 this.navigating = true;
-                var routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
-                return this.finishNavigating = this._canNavigate(routeInfo, poll)
+                var routeInfoCopy = (this._nextRouteInfo = _clone(routeInfo, true));
+                return (this.finishNavigating = this._canNavigate(routeInfo, poll)
                     .then(function (canNavigate) {
                     if (!canNavigate) {
                         _this.navigating = false;
@@ -19108,7 +19427,8 @@ var plat;
                     _this._previousUrl = url;
                     _this._previousQuery = queryString;
                     return _this._performNavigation(routeInfo);
-                }).then(function () {
+                })
+                    .then(function () {
                     _this._previousPattern = pattern;
                     _this._previousSegment = segment;
                     _this.currentRouteInfo = routeInfoCopy;
@@ -19117,7 +19437,7 @@ var plat;
                     _this._previousSegment = previousSegment;
                     _this.navigating = false;
                     throw e;
-                });
+                }));
             };
             /**
              * Attempts to generate a route with the specified route name. Will generate the full-path from the root
@@ -19143,9 +19463,10 @@ var plat;
                 }
                 var path = router._recognizer.generate(name, parameters);
                 var previous;
-                while (!isNull(router = router.parent)) {
+                while (!isNull((router = router.parent))) {
                     previous = router._previousSegment;
-                    previous = (!isNull(previous) && previous !== '/') ? previous : '';
+                    previous =
+                        !isNull(previous) && previous !== '/' ? previous : '';
                     prefix = previous + prefix;
                 }
                 return prefix + path + serializeQuery(query);
@@ -19274,14 +19595,16 @@ var plat;
             Router.prototype._performNavigation = function (info) {
                 var _this = this;
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
-                return this._performNavigateFrom(sameRoute).then(function () {
+                return this._performNavigateFrom(sameRoute)
+                    .then(function () {
                     if (sameRoute) {
                         return;
                     }
                     return mapAsync(function (port) {
                         return port.navigateTo(info);
                     }, _this._ports);
-                }).then(function () {
+                })
+                    .then(function () {
                     return _this._navigateChildren(info, false);
                 });
             };
@@ -19301,7 +19624,8 @@ var plat;
                     return mapAsync(function (port) {
                         return port.navigateFrom();
                     }, _this._ports);
-                }).then(noop);
+                })
+                    .then(noop);
             };
             /**
              * Determines if we can navigate from the current state and navigate to the next state.
@@ -19312,16 +19636,17 @@ var plat;
                 if (poll === void 0) { poll = true; }
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
                 if (!poll) {
-                    return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then(function () {
+                    return this._callAllHandlers(info.delegate.alias, info.parameters, info.query)
+                        .then(function () {
                         return _this._callInterceptors(info);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         return true;
                     }, function () {
                         return true;
                     });
                 }
-                return this._canNavigateFrom(sameRoute)
-                    .then(function (canNavigateFrom) {
+                return this._canNavigateFrom(sameRoute).then(function (canNavigateFrom) {
                     if (!canNavigateFrom) {
                         return canNavigateFrom;
                     }
@@ -19334,7 +19659,8 @@ var plat;
              */
             Router.prototype._canNavigateFrom = function (ignorePorts) {
                 var _this = this;
-                return this._Promise.all(this.children.reduce(function (promises, child) {
+                return this._Promise
+                    .all(this.children.reduce(function (promises, child) {
                     return promises.concat(child._canNavigateFrom());
                 }, []))
                     .then(booleanReduce)
@@ -19345,7 +19671,8 @@ var plat;
                     return mapAsync(function (port) {
                         return port.canNavigateFrom();
                     }, _this._ports);
-                }).then(booleanReduce);
+                })
+                    .then(booleanReduce);
             };
             /**
              * Determines if we can navigate to the next state.
@@ -19357,16 +19684,19 @@ var plat;
                 if (isEmpty(this._ports)) {
                     return this._resolve(true);
                 }
-                return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then(function () {
+                return this._callAllHandlers(info.delegate.alias, info.parameters, info.query)
+                    .then(function () {
                     return _this._callInterceptors(info);
-                }).then(function (canNavigateTo) {
+                })
+                    .then(function (canNavigateTo) {
                     if (canNavigateTo === false || ignorePorts) {
                         return [canNavigateTo];
                     }
                     return mapAsync(function (port) {
                         return port.canNavigateTo(info);
                     }, _this._ports);
-                }).then(booleanReduce);
+                })
+                    .then(booleanReduce);
             };
             /**
              * Calls all the registered query and param transforms for a route.
@@ -19377,9 +19707,15 @@ var plat;
             Router.prototype._callAllHandlers = function (view, parameters, query) {
                 var _this = this;
                 return this._callHandlers(this._queryTransforms['*'], query, undefined, true)
-                    .then(function () { return _this._callHandlers(_this._queryTransforms[view], query, undefined, true); })
-                    .then(function () { return _this._callHandlers(_this._paramTransforms['*'], parameters, query); })
-                    .then(function () { return _this._callHandlers(_this._paramTransforms[view], parameters, query); })
+                    .then(function () {
+                    return _this._callHandlers(_this._queryTransforms[view], query, undefined, true);
+                })
+                    .then(function () {
+                    return _this._callHandlers(_this._paramTransforms['*'], parameters, query);
+                })
+                    .then(function () {
+                    return _this._callHandlers(_this._paramTransforms[view], parameters, query);
+                })
                     .then(noop);
             };
             /**
@@ -19401,8 +19737,7 @@ var plat;
                         }
                         return resolve(handler(obj[key], obj, query));
                     }, handlers);
-                }, allHandlers)
-                    .then(noop);
+                }, allHandlers).then(noop);
             };
             /**
              * Calls the interceptors for a particular route.
@@ -19443,11 +19778,11 @@ var plat;
                 var parameters = serializeQuery(info.parameters);
                 var currentQuery = serializeQuery(currentRouteInfo.query);
                 var query = serializeQuery(info.query);
-                return currentDelegate.view === delegate.view &&
+                return (currentDelegate.view === delegate.view &&
                     currentDelegate.alias === delegate.alias &&
                     currentDelegate.pattern === delegate.pattern &&
                     currentParameters === parameters &&
-                    (currentQuery === query || this.children.length > 0);
+                    (currentQuery === query || this.children.length > 0));
             };
             /**
              * Removes childRoute from routeInfo
@@ -19720,7 +20055,9 @@ var plat;
                 return {
                     fn: fn,
                     context: context,
-                    args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases),
+                    args: isNull(this._args)
+                        ? []
+                        : this._args.evaluate(argContext, aliases),
                 };
             };
             /**
@@ -20245,7 +20582,9 @@ var plat;
                     });
                 };
                 if (isUndefined(_compat.ANDROID)) {
-                    this.addEventListener(element, 'compositionstart', function () { composing = true; }, false);
+                    this.addEventListener(element, 'compositionstart', function () {
+                        composing = true;
+                    }, false);
                     this.addEventListener(element, 'compositionend', function (ev) {
                         composing = false;
                         eventListener(ev);
@@ -20322,7 +20661,8 @@ var plat;
             shift: 16,
             ctrl: 17,
             alt: 18,
-            pause: 19, break: 19,
+            pause: 19,
+            break: 19,
             'caps lock': 20,
             escape: 27,
             space: 32,
@@ -20330,42 +20670,93 @@ var plat;
             'page down': 34,
             end: 35,
             home: 36,
-            left: 37, 'left arrow': 37,
-            up: 38, 'up arrow': 38,
-            right: 39, 'right arrow': 39,
-            down: 40, 'down arrow': 40,
+            left: 37,
+            'left arrow': 37,
+            up: 38,
+            'up arrow': 38,
+            right: 39,
+            'right arrow': 39,
+            down: 40,
+            'down arrow': 40,
             insert: 45,
             delete: 46,
-            0: 48, zero: 48,
-            ')': 48, 'right parenthesis': 48,
-            1: 49, one: 49,
-            '!': 49, exclamation: 49, 'exclamation point': 49,
-            2: 50, two: 50,
-            '@': 50, at: 50,
-            3: 51, three: 51,
-            '#': 51, 'number sign': 51,
-            hash: 51, pound: 51,
-            4: 52, four: 52,
-            $: 52, dollar: 52, 'dollar sign': 52,
-            5: 53, five: 53,
-            '%': 53, percent: 53, 'percent sign': 53,
-            6: 54, six: 54,
-            '^': 54, caret: 54,
-            7: 55, seven: 55,
-            '&': 55, ampersand: 55,
-            8: 56, eight: 56,
-            '*': 56, asterisk: 56,
-            9: 57, nine: 57,
-            '(': 57, 'left parenthesis': 57,
-            a: 65, b: 66, c: 67, d: 68, e: 69,
-            f: 70, g: 71, h: 72, i: 73, j: 74,
-            k: 75, l: 76, m: 77, n: 78, o: 79,
-            p: 80, q: 81, r: 82, s: 83, t: 84,
-            u: 85, v: 86, w: 87, x: 88, y: 89,
+            0: 48,
+            zero: 48,
+            ')': 48,
+            'right parenthesis': 48,
+            1: 49,
+            one: 49,
+            '!': 49,
+            exclamation: 49,
+            'exclamation point': 49,
+            2: 50,
+            two: 50,
+            '@': 50,
+            at: 50,
+            3: 51,
+            three: 51,
+            '#': 51,
+            'number sign': 51,
+            hash: 51,
+            pound: 51,
+            4: 52,
+            four: 52,
+            $: 52,
+            dollar: 52,
+            'dollar sign': 52,
+            5: 53,
+            five: 53,
+            '%': 53,
+            percent: 53,
+            'percent sign': 53,
+            6: 54,
+            six: 54,
+            '^': 54,
+            caret: 54,
+            7: 55,
+            seven: 55,
+            '&': 55,
+            ampersand: 55,
+            8: 56,
+            eight: 56,
+            '*': 56,
+            asterisk: 56,
+            9: 57,
+            nine: 57,
+            '(': 57,
+            'left parenthesis': 57,
+            a: 65,
+            b: 66,
+            c: 67,
+            d: 68,
+            e: 69,
+            f: 70,
+            g: 71,
+            h: 72,
+            i: 73,
+            j: 74,
+            k: 75,
+            l: 76,
+            m: 77,
+            n: 78,
+            o: 79,
+            p: 80,
+            q: 81,
+            r: 82,
+            s: 83,
+            t: 84,
+            u: 85,
+            v: 86,
+            w: 87,
+            x: 88,
+            y: 89,
             z: 90,
-            lwk: 91, 'left window key': 91,
-            rwk: 92, 'right window key': 92,
-            select: 93, 'select key': 93,
+            lwk: 91,
+            'left window key': 91,
+            rwk: 92,
+            'right window key': 92,
+            select: 93,
+            'select key': 93,
             'numpad 0': 96,
             'numpad 1': 97,
             'numpad 2': 98,
@@ -20381,35 +20772,69 @@ var plat;
             subtract: 109,
             'decimal point': 110,
             divide: 111,
-            f1: 112, f2: 113, f3: 114, f4: 115,
-            f5: 116, f6: 117, f7: 118, f8: 119,
-            f9: 120, f10: 121, f11: 122, f12: 123,
+            f1: 112,
+            f2: 113,
+            f3: 114,
+            f4: 115,
+            f5: 116,
+            f6: 117,
+            f7: 118,
+            f8: 119,
+            f9: 120,
+            f10: 121,
+            f11: 122,
+            f12: 123,
             'num lock': 144,
             'scroll lock': 145,
-            ';': 186, 'semi-colon': 186,
-            ':': 186, colon: 186,
-            '=': 187, equal: 187, 'equal sign': 187,
-            '+': 187, plus: 187,
-            ',': 188, comma: 188,
-            '<': 188, lt: 188, 'less than': 188,
+            ';': 186,
+            'semi-colon': 186,
+            ':': 186,
+            colon: 186,
+            '=': 187,
+            equal: 187,
+            'equal sign': 187,
+            '+': 187,
+            plus: 187,
+            ',': 188,
+            comma: 188,
+            '<': 188,
+            lt: 188,
+            'less than': 188,
             'left angle bracket': 188,
-            '-': 189, dash: 189,
-            _: 189, underscore: 189,
-            '.': 190, period: 190,
-            '>': 190, gt: 190, 'greater than': 190,
+            '-': 189,
+            dash: 189,
+            _: 189,
+            underscore: 189,
+            '.': 190,
+            period: 190,
+            '>': 190,
+            gt: 190,
+            'greater than': 190,
             'right angle bracket': 190,
-            '/': 191, 'forward slash': 191,
-            '?': 191, 'question mark': 191,
-            '`': 192, 'grave accent': 192,
-            '~': 192, tilde: 192,
-            '[': 219, 'open bracket': 219,
-            '{': 219, 'open brace': 219,
-            '\\': 220, 'back slash': 220,
-            '|': 220, pipe: 220,
-            ']': 221, 'close bracket': 221,
-            '}': 221, 'close brace': 221,
-            '\'': 222, 'single quote': 222,
-            '"': 222, 'double quote': 222,
+            '/': 191,
+            'forward slash': 191,
+            '?': 191,
+            'question mark': 191,
+            '`': 192,
+            'grave accent': 192,
+            '~': 192,
+            tilde: 192,
+            '[': 219,
+            'open bracket': 219,
+            '{': 219,
+            'open brace': 219,
+            '\\': 220,
+            'back slash': 220,
+            '|': 220,
+            pipe: 220,
+            ']': 221,
+            'close bracket': 221,
+            '}': 221,
+            'close brace': 221,
+            "'": 222,
+            'single quote': 222,
+            '"': 222,
+            'double quote': 222,
         };
         /**
          * Base class used for filtering keys on KeyboardEvents.
@@ -20509,7 +20934,9 @@ var plat;
                 var index;
                 for (var i = 0; i < length; i += 1) {
                     key = keys[i];
-                    index = isNumber(key) ? key : controls.KeyCodes[key.toLowerCase()];
+                    index = isNumber(key)
+                        ? key
+                        : controls.KeyCodes[key.toLowerCase()];
                     keyCodes[index] = true;
                 }
             };
@@ -20556,8 +20983,10 @@ var plat;
                 if (isNull(keyCode) || keyCode === 0) {
                     keyCode = ev.which;
                 }
-                if (_super.prototype._compareKeys.call(this, ev) && ((keyCode >= 48 && keyCode <= 90) ||
-                    (keyCode >= 186) || (keyCode >= 96 && keyCode <= 111))) {
+                if (_super.prototype._compareKeys.call(this, ev) &&
+                    ((keyCode >= 48 && keyCode <= 90) ||
+                        keyCode >= 186 ||
+                        (keyCode >= 96 && keyCode <= 111))) {
                     var remove_1 = this.addEventListener(this.element, 'keypress', function (e) {
                         remove_1();
                         _super.prototype._onEvent.call(_this, e);
@@ -21143,11 +21572,13 @@ var plat;
                 /**
                  * Whether or not the File API is supported.
                  */
-                _this.__fileSupported = acquire(__Compat).fileSupported;
+                _this.__fileSupported = acquire(__Compat)
+                    .fileSupported;
                 /**
                  * Used to grab a filename from input[type="file"].
                  */
-                _this.__fileNameRegex = acquire(__Regex).fileNameRegex;
+                _this.__fileNameRegex = acquire(__Regex)
+                    .fileNameRegex;
                 /**
                  * Used to denote that a property change happened from within this control.
                  */
@@ -21171,7 +21602,7 @@ var plat;
                 }
                 var attr = camelCase(this.type);
                 var _parser = this._parser;
-                var expression = this._expression = _parser.parse(this.attributes[attr]);
+                var expression = (this._expression = _parser.parse(this.attributes[attr]));
                 var identifiers = expression.identifiers;
                 if (identifiers.length !== 1) {
                     this._log.warn("Only 1 identifier allowed in a " + this.type + " expression.");
@@ -21186,14 +21617,16 @@ var plat;
                     var type = void 0;
                     if (isObject(resourceObj_1)) {
                         type = resourceObj_1.resource.type;
-                        if (type !== __OBSERVABLE_RESOURCE && type !== __LITERAL_RESOURCE) {
+                        if (type !== __OBSERVABLE_RESOURCE &&
+                            type !== __LITERAL_RESOURCE) {
                             return;
                         }
                     }
                     else {
                         resourceObj_1 = { resource: {} };
                     }
-                    if (alias === __CONTEXT_RESOURCE || alias === __ROOT_CONTEXT_RESOURCE) {
+                    if (alias === __CONTEXT_RESOURCE ||
+                        alias === __ROOT_CONTEXT_RESOURCE) {
                         this._contextExpression = _parser.parse(split.join('.'));
                     }
                     else {
@@ -21293,7 +21726,9 @@ var plat;
                     });
                 };
                 if (isUndefined(_compat.ANDROID)) {
-                    this.addEventListener(element, 'compositionstart', function () { composing = true; }, false);
+                    this.addEventListener(element, 'compositionstart', function () {
+                        composing = true;
+                    }, false);
                     this.addEventListener(element, 'compositionend', function () {
                         composing = false;
                         eventListener();
@@ -21608,7 +22043,7 @@ var plat;
                         newValue = newValue.toString();
                     }
                 }
-                element.checked = (element.value === newValue);
+                element.checked = element.value === newValue;
             };
             /**
              * Setter for input[type="date"]
@@ -21682,7 +22117,8 @@ var plat;
                 var element = this.element;
                 var value = element.value;
                 if (isNull(newValue)) {
-                    if (firstTime === true || !this._document.body.contains(element)) {
+                    if (firstTime === true ||
+                        !this._document.body.contains(element)) {
                         this._propertyChanged();
                         return;
                     }
@@ -21776,7 +22212,7 @@ var plat;
                         continue;
                     }
                     else if ((value === 'true' && trueIndex !== -1) ||
-                        value === 'false' && falseIndex !== -1) {
+                        (value === 'false' && falseIndex !== -1)) {
                         if (trueIndex !== -1) {
                             index = trueIndex;
                         }
@@ -21844,7 +22280,9 @@ var plat;
                                 this._propertyType = 'nullable';
                                 var multi = element.multiple;
                                 this._addEventType = this._addChangeEventListener;
-                                this._getter = multi ? this._getFiles : this._getFile;
+                                this._getter = multi
+                                    ? this._getFiles
+                                    : this._getFile;
                                 break;
                             case 'hidden':
                                 this._getter = this._getValue;
@@ -21881,7 +22319,8 @@ var plat;
                 var contextExpression = this._contextExpression;
                 var context = this.evaluateExpression(contextExpression);
                 if (!isObject(context)) {
-                    if (isNull(context) && contextExpression.identifiers.length > 0) {
+                    if (isNull(context) &&
+                        contextExpression.identifiers.length > 0) {
                         context = this._createContext(contextExpression.identifiers[0]);
                     }
                     else {
@@ -21946,7 +22385,11 @@ var plat;
                             castValue.push(this._castProperty(value[i], type));
                         }
                     }
-                    else if (isDate(value) || isFile(value) || isPromise(value) || isWindow(value) || isNode(value)) {
+                    else if (isDate(value) ||
+                        isFile(value) ||
+                        isPromise(value) ||
+                        isWindow(value) ||
+                        isNode(value)) {
                         castValue = value;
                     }
                     else {
@@ -22073,7 +22516,9 @@ var plat;
             Bind.prototype._observingBindableProperty = function () {
                 var _this = this;
                 var templateControl = this.templateControl;
-                if (isObject(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
+                if (isObject(templateControl) &&
+                    isFunction(templateControl.onInput) &&
+                    isFunction(templateControl.observeProperties)) {
                     templateControl.onInput(function (newValue) {
                         _this._getter = function () { return newValue; };
                         _this._propertyChanged();
@@ -22336,7 +22781,7 @@ var plat;
              * Reference to the Log injectable.
              */
             this._log = App._log;
-            var navigator = this.navigator = acquire(__NavigatorInstance);
+            var navigator = (this.navigator = acquire(__NavigatorInstance));
             navigator.initialize(acquire(__RouterStatic).currentRouter());
         }
         /**
@@ -22436,7 +22881,7 @@ var plat;
             if (isNull(appInjector) || !isFunction(appInjector.inject)) {
                 return;
             }
-            var app = App.app = appInjector.inject();
+            var app = (App.app = appInjector.inject());
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
             app.on(__online, app.online);
@@ -22456,7 +22901,8 @@ var plat;
             if (App._compat.platCss) {
                 return;
             }
-            else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+            else if (!isNull(_document.styleSheets) &&
+                _document.styleSheets.length > 0) {
                 _document.styleSheets[0].insertRule('[plat-hide] { display: none !important; }', 0);
                 return;
             }

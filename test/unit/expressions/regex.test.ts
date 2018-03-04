@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.expressions.regex {
+module tests.expressions.regex {
     const regex = plat.acquire(plat.expressions.Regex);
     const regexs: IRegexTest[] = [
         {

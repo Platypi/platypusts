@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -21,7 +21,7 @@ module plat {
          *
          * @returns {void}
          */
-        public noop(): void { }
+        public noop(): void {}
 
         /**
          * @name extend
@@ -42,7 +42,10 @@ module plat {
          * @returns {any} The extended destination object.
          */
         public extend(destination: any, ...sources: any[]): any {
-            return _extend.apply(null, [false, false, destination].concat(sources));
+            return _extend.apply(
+                null,
+                [false, false, destination].concat(sources)
+            );
         }
 
         /**
@@ -64,7 +67,10 @@ module plat {
          * @returns {any} The extended destination object.
          */
         public deepExtend(destination: any, ...sources: any[]): any {
-            return _extend.apply(null, [true, false, destination].concat(sources));
+            return _extend.apply(
+                null,
+                [true, false, destination].concat(sources)
+            );
         }
 
         /**
@@ -418,7 +424,11 @@ module plat {
          *
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        public filter<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): T[];
+        public filter<T>(
+            iterator: IListIterator<T, boolean>,
+            array: T[],
+            context?: any
+        ): T[];
         /**
          * @name filter
          * @memberof plat.Utils
@@ -439,8 +449,16 @@ module plat {
          *
          * @returns {Array<T>} An array of objects which evaluated to true with the iterator.
          */
-        public filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): T[];
-        public filter(iterator: (value: any, key: any, obj: any) => boolean, obj: any, context?: any): any[] {
+        public filter<T>(
+            iterator: IObjectIterator<T, boolean>,
+            obj: IObject<T>,
+            context?: any
+        ): T[];
+        public filter(
+            iterator: (value: any, key: any, obj: any) => boolean,
+            obj: any,
+            context?: any
+        ): any[] {
             return filter(iterator, obj, context);
         }
 
@@ -483,7 +501,11 @@ module plat {
          *
          * @returns {Array<T>} The array.
          */
-        public forEach<T>(iterator: IListIterator<T, void>, array: T[], context?: any): T[];
+        public forEach<T>(
+            iterator: IListIterator<T, void>,
+            array: T[],
+            context?: any
+        ): T[];
         /**
          * @name forEach
          * @memberof plat.Utils
@@ -503,8 +525,16 @@ module plat {
          *
          * @returns {any} The input Object.
          */
-        public forEach<T>(iterator: IObjectIterator<T, void>, obj: IObject<T>, context?: any): IObject<T>;
-        public forEach(iterator: (value: any, key: any, obj: any) => void, obj: any, context?: any): any {
+        public forEach<T>(
+            iterator: IObjectIterator<T, void>,
+            obj: IObject<T>,
+            context?: any
+        ): IObject<T>;
+        public forEach(
+            iterator: (value: any, key: any, obj: any) => void,
+            obj: any,
+            context?: any
+        ): any {
             return forEach(iterator, obj, context);
         }
 
@@ -529,7 +559,11 @@ module plat {
          *
          * @returns {Array<R>} The accumulated transformed values from the iterator.
          */
-        public map<T, R>(iterator: IListIterator<T, R>, array: T[], context?: any): R[];
+        public map<T, R>(
+            iterator: IListIterator<T, R>,
+            array: T[],
+            context?: any
+        ): R[];
         /**
          * @name map
          * @memberof plat.Utils
@@ -551,8 +585,16 @@ module plat {
          *
          * @returns {Array<U>} The accumulated transformed values from the iterator.
          */
-        public map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): R[];
-        public map(iterator: (value: any, key: any, obj: any) => any, obj: any, context?: any): any[] {
+        public map<T, R>(
+            iterator: IObjectIterator<T, R>,
+            obj: IObject<T>,
+            context?: any
+        ): R[];
+        public map(
+            iterator: (value: any, key: any, obj: any) => any,
+            obj: any,
+            context?: any
+        ): any[] {
             return map<any, any>(iterator, obj, context);
         }
 
@@ -577,7 +619,11 @@ module plat {
          *
          * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        public mapAsync<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[], context?: any): async.Promise<R[]>;
+        public mapAsync<T, R>(
+            iterator: IListIterator<T, async.Promise<R>>,
+            array: T[],
+            context?: any
+        ): async.Promise<R[]>;
         /**
          * @name mapAsync
          * @memberof plat.Utils
@@ -599,9 +645,16 @@ module plat {
          *
          * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        public mapAsync<T, R>(iterator: IObjectIterator<T, async.Promise<R>>, obj: IObject<T>, context?: any): async.Promise<R[]>;
-        public mapAsync<T, R>(iterator: (value: T, key: any, obj: any) => async.Promise<R>, obj: any,
-            context?: any): async.Promise<R[]> {
+        public mapAsync<T, R>(
+            iterator: IObjectIterator<T, async.Promise<R>>,
+            obj: IObject<T>,
+            context?: any
+        ): async.Promise<R[]>;
+        public mapAsync<T, R>(
+            iterator: (value: T, key: any, obj: any) => async.Promise<R>,
+            obj: any,
+            context?: any
+        ): async.Promise<R[]> {
             return mapAsync(iterator, obj, context);
         }
 
@@ -625,8 +678,11 @@ module plat {
          *
          * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        public mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[],
-            context?: any): async.Promise<R[]> {
+        public mapAsyncInOrder<T, R>(
+            iterator: IListIterator<T, async.Promise<R>>,
+            array: T[],
+            context?: any
+        ): async.Promise<R[]> {
             return mapAsyncInOrder(iterator, array, context);
         }
 
@@ -650,8 +706,11 @@ module plat {
          *
          * @returns {plat.async.Promise<Array<R>>} The accumulated transformed values from the iterator.
          */
-        public mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[],
-            context?: any): async.Promise<R[]> {
+        public mapAsyncInDescendingOrder<T, R>(
+            iterator: IListIterator<T, async.Promise<R>>,
+            array: T[],
+            context?: any
+        ): async.Promise<R[]> {
             return mapAsyncInDescendingOrder(iterator, array, context);
         }
 
@@ -695,7 +754,11 @@ module plat {
          *
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        public some<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): boolean;
+        public some<T>(
+            iterator: IListIterator<T, boolean>,
+            array: T[],
+            context?: any
+        ): boolean;
         /**
          * @name some
          * @memberof plat.Utils
@@ -715,8 +778,16 @@ module plat {
          *
          * @returns {boolean} True if any calls to iterator return true, false otherwise.
          */
-        public some<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): boolean;
-        public some(iterator: (value: any, key: any, obj: any) => boolean, obj: any, context?: any): boolean {
+        public some<T>(
+            iterator: IObjectIterator<T, boolean>,
+            obj: IObject<T>,
+            context?: any
+        ): boolean;
+        public some(
+            iterator: (value: any, key: any, obj: any) => boolean,
+            obj: any,
+            context?: any
+        ): boolean {
             return some(iterator, obj, context);
         }
 
@@ -736,7 +807,11 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        public postpone(method: (...args: any[]) => void, args?: any[], context?: any): IRemoveListener {
+        public postpone(
+            method: (...args: any[]) => void,
+            args?: any[],
+            context?: any
+        ): IRemoveListener {
             return defer(method, 0, args, context);
         }
 
@@ -757,7 +832,12 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        public defer(method: (...args: any[]) => void, timeout: number, args?: any[], context?: any): IRemoveListener {
+        public defer(
+            method: (...args: any[]) => void,
+            timeout: number,
+            args?: any[],
+            context?: any
+        ): IRemoveListener {
             return defer(method, timeout, args, context);
         }
 
@@ -778,7 +858,12 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will clear the timeout when called.
          */
-        public setInterval(method: (...args: any[]) => void, interval: number, args?: any[], context?: any): IRemoveListener {
+        public setInterval(
+            method: (...args: any[]) => void,
+            interval: number,
+            args?: any[],
+            context?: any
+        ): IRemoveListener {
             return setIntervalGlobal(method, interval, args, context);
         }
 
@@ -796,7 +881,10 @@ module plat {
          *
          * @returns {plat.IRemoveListener} A function that will cancel the frame request when called.
          */
-        public requestAnimationFrame(method: FrameRequestCallback, context?: any): IRemoveListener {
+        public requestAnimationFrame(
+            method: FrameRequestCallback,
+            context?: any
+        ): IRemoveListener {
             return requestAnimationFrameGlobal(method, context);
         }
 
@@ -881,5 +969,9 @@ module plat {
      * @typeparam {any} T The value passed into the iterator.
      * @typeparam {any} R The return type of the iterator.
      */
-    export type IObjectIterator<T, R> = (value: T, key: string, obj: IObject<T>) => R;
+    export type IObjectIterator<T, R> = (
+        value: T,
+        key: string,
+        obj: IObject<T>
+    ) => R;
 }

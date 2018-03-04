@@ -1,4 +1,4 @@
-module plat.events {
+namespace plat.events {
     'use strict';
 
     /**
@@ -75,7 +75,12 @@ module plat.events {
          *
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        public static dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E> {
+        public static dispatch<E extends Error>(
+            name: string,
+            sender: any,
+            error: E,
+            logLevel: number
+        ): ErrorEvent<E> {
             const event = <ErrorEvent<E>>acquire(ErrorEvent);
 
             event.initialize(name, sender, null, error);
@@ -102,7 +107,12 @@ module plat.events {
          *
          * @returns {void}
          */
-        public initialize(name: string, sender: any, direction?: string | 'direct', error?: E): void {
+        public initialize(
+            name: string,
+            sender: any,
+            direction?: string | 'direct',
+            error?: E
+        ): void {
             super.initialize(name, sender, this._EventManager.DIRECT);
 
             this.error = error;
@@ -112,13 +122,20 @@ module plat.events {
     /**
      * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
      */
-    export function IErrorEventStatic(_EventManager?: IEventManagerStatic): IErrorEventStatic {
+    export function IErrorEventStatic(
+        _EventManager?: IEventManagerStatic
+    ): IErrorEventStatic {
         (<any>ErrorEvent)._EventManager = _EventManager;
 
         return ErrorEvent;
     }
 
-    register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
+    register.injectable(
+        __ErrorEventStatic,
+        IErrorEventStatic,
+        [__EventManagerStatic],
+        __STATIC
+    );
 
     /**
      * @name IErrorEventStatic
@@ -148,6 +165,11 @@ module plat.events {
          *
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E>;
+        dispatch<E extends Error>(
+            name: string,
+            sender: any,
+            error: E,
+            logLevel: number
+        ): ErrorEvent<E>;
     }
 }

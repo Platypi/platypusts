@@ -1,4 +1,4 @@
-namespace tests.controls.attributeControl {
+module tests.controls.attributeControl {
     const AttributeControlFactory = plat.acquire(plat.IAttributeControlFactory);
 
     describe('AttributeControl Tests', () => {

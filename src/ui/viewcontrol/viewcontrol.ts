@@ -1,4 +1,4 @@
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -16,7 +16,8 @@ module plat.ui {
      * It has the ability to initiate, approve, and reject navigation to/from itself. A ViewControl also has the
      * ability to inject a {@link plat.routing.Router|Router} and configure sub-navigation.
      */
-    export class ViewControl extends TemplateControl implements ISupportNavigation {
+    export class ViewControl extends TemplateControl
+        implements ISupportNavigation {
         /**
          * @name hasOwnContext
          * @memberof plat.ui.ViewControl
@@ -92,7 +93,7 @@ module plat.ui {
          *
          * @returns {any} Either a boolean or Promise<boolean> to accept/reject navigation.
          */
-        public canNavigateFrom(): any { }
+        public canNavigateFrom(): any {}
 
         /**
          * @name canNavigateTo
@@ -107,7 +108,7 @@ module plat.ui {
          *
          * @returns {any} Either a boolean or Promise<boolean> to accept/reject navigation.
          */
-        public canNavigateTo(parameters: any, query: any): any { }
+        public canNavigateTo(parameters: any, query: any): any {}
 
         /**
          * @name navigatingFrom
@@ -120,7 +121,7 @@ module plat.ui {
          *
          * @returns {any} You can return an Promise<void> in order to delay navigating from.
          */
-        public navigatingFrom(): any { }
+        public navigatingFrom(): any {}
 
         /**
          * @name navigatedTo
@@ -134,7 +135,7 @@ module plat.ui {
          *
          * @returns {any}
          */
-        public navigatedTo(parameters: any, query: any): any { }
+        public navigatedTo(parameters: any, query: any): any {}
     }
 
     /**
@@ -191,7 +192,7 @@ module plat.ui {
          *
          * @returns {any} Either a boolean or Promise<boolean> to accept/reject navigation.
          */
-        canNavigateTo (parameters: any, query: any): any;
+        canNavigateTo(parameters: any, query: any): any;
 
         /**
          * @name navigatingFrom
@@ -218,6 +219,6 @@ module plat.ui {
          *
          * @returns {any}
          */
-        navigatedTo (parameters: any, query: any): any;
+        navigatedTo(parameters: any, query: any): any;
     }
 }

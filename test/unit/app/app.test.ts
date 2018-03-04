@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.app {
+module tests.app {
     let called = false;
     class App extends plat.App {
         public suspend() {

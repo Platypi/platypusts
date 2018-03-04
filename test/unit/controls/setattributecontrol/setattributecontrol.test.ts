@@ -1,4 +1,4 @@
-namespace tests.controls.setAttributeControl {
+module tests.controls.setAttributeControl {
     describe('SetAttributeControl Tests', () => {
         let control: plat.controls.SetAttributeControl;
         let parent: plat.ui.TemplateControl;

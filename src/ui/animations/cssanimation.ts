@@ -1,4 +1,4 @@
-module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -23,7 +23,8 @@ module plat.ui.animations {
          * @description
          * A set of browser compatible CSS animation events capable of being listened to.
          */
-        protected _animationEvents: IAnimationEvents = this._compat.animationEvents;
+        protected _animationEvents: IAnimationEvents = this._compat
+            .animationEvents;
 
         /**
          * @name animationStart
@@ -38,8 +39,14 @@ module plat.ui.animations {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public animationStart(listener: (ev?: AnimationEvent) => void): IRemoveListener {
-            return this.addEventListener(this._animationEvents.$animationStart, listener, false);
+        public animationStart(
+            listener: (ev?: AnimationEvent) => void
+        ): IRemoveListener {
+            return this.addEventListener(
+                this._animationEvents.$animationStart,
+                listener,
+                false
+            );
         }
 
         /**
@@ -55,8 +62,14 @@ module plat.ui.animations {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public animationEnd(listener: (ev?: AnimationEvent) => void): IRemoveListener {
-            return this.addEventListener(this._animationEvents.$animationEnd, listener, false);
+        public animationEnd(
+            listener: (ev?: AnimationEvent) => void
+        ): IRemoveListener {
+            return this.addEventListener(
+                this._animationEvents.$animationEnd,
+                listener,
+                false
+            );
         }
 
         /**
@@ -72,8 +85,14 @@ module plat.ui.animations {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public animationIteration(listener: (ev?: AnimationEvent) => void): IRemoveListener {
-            return this.addEventListener(this._animationEvents.$animationIteration, listener, false);
+        public animationIteration(
+            listener: (ev?: AnimationEvent) => void
+        ): IRemoveListener {
+            return this.addEventListener(
+                this._animationEvents.$animationIteration,
+                listener,
+                false
+            );
         }
 
         /**
@@ -89,8 +108,14 @@ module plat.ui.animations {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public transitionStart(listener: (ev?: TransitionEvent) => void): IRemoveListener {
-            return this.addEventListener(this._animationEvents.$transitionStart, listener, false);
+        public transitionStart(
+            listener: (ev?: TransitionEvent) => void
+        ): IRemoveListener {
+            return this.addEventListener(
+                this._animationEvents.$transitionStart,
+                listener,
+                false
+            );
         }
 
         /**
@@ -106,8 +131,14 @@ module plat.ui.animations {
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        public transitionEnd(listener: (ev?: TransitionEvent) => void): IRemoveListener {
-            return this.addEventListener(this._animationEvents.$transitionEnd, listener, false);
+        public transitionEnd(
+            listener: (ev?: TransitionEvent) => void
+        ): IRemoveListener {
+            return this.addEventListener(
+                this._animationEvents.$transitionEnd,
+                listener,
+                false
+            );
         }
     }
 }

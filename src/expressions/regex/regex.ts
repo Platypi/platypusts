@@ -1,4 +1,4 @@
-module plat.expressions {
+namespace plat.expressions {
     'use strict';
 
     /**
@@ -21,7 +21,9 @@ module plat.expressions {
          * @description
          * A regular expression for finding markup in a string.
          */
-        public markupRegex: RegExp = new RegExp(`${__startSymbol}[\\S\\s]*${__endSymbol}`);
+        public markupRegex: RegExp = new RegExp(
+            `${__startSymbol}[\\S\\s]*${__endSymbol}`
+        );
 
         /**
          * @name argumentRegex
@@ -134,9 +136,11 @@ module plat.expressions {
          * @description
          * Determines if an email address is valid.
          */
-        public validateEmail: RegExp = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
-            '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
-            '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
+        public validateEmail: RegExp = new RegExp(
+            '^(([^<>()[\\]\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\"]+)*)|' +
+                '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
+                '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$'
+        );
 
         /**
          * @name validateTelephone

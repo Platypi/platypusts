@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.controlFactory {
+module tests.controlFactory {
     const ControlFactory = plat.acquire(plat.IControlFactory);
     let control: plat.Control;
 

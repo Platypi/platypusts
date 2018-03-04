@@ -1,4 +1,4 @@
-namespace tests.control {
+module tests.control {
     const ControlFactory = plat.acquire(plat.IControlFactory);
     const TemplateControlFactory = plat.acquire(
         plat.ui.ITemplateControlFactory

@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -18,11 +18,18 @@ module plat {
          * @returns {async.Promise<GeolocationPosition, GeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
-        public getCurrentPosition(positionOptions?: GeolocationPositionOptions)
-                : async.Promise<GeolocationPosition> {
-            return new this._Promise<GeolocationPosition>((resolve, reject): void => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
-            });
+        public getCurrentPosition(
+            positionOptions?: GeolocationPositionOptions
+        ): async.Promise<GeolocationPosition> {
+            return new this._Promise<GeolocationPosition>(
+                (resolve, reject): void => {
+                    navigator.geolocation.getCurrentPosition(
+                        resolve,
+                        reject,
+                        positionOptions
+                    );
+                }
+            );
         }
 
         /**
@@ -35,16 +42,26 @@ module plat {
          *
          * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
          */
-        public watchPosition(updateCallback: (position: GeolocationPosition) => void,
+        public watchPosition(
+            updateCallback: (position: GeolocationPosition) => void,
             errorCallback?: (error: PositionError) => void,
-            positionOptions?: GeolocationPositionOptions): IRemoveListener;
-        public watchPosition(updateCallback: any, errorCallback?: any, positionOptions?: any): () => void {
+            positionOptions?: GeolocationPositionOptions
+        ): IRemoveListener;
+        public watchPosition(
+            updateCallback: any,
+            errorCallback?: any,
+            positionOptions?: any
+        ): () => void {
             if (!isNull(errorCallback) && !isFunction(errorCallback)) {
                 positionOptions = errorCallback;
                 errorCallback = null;
             }
 
-            const timeoutId = navigator.geolocation.watchPosition(updateCallback, errorCallback, positionOptions);
+            const timeoutId = navigator.geolocation.watchPosition(
+                updateCallback,
+                errorCallback,
+                positionOptions
+            );
 
             return (): void => {
                 navigator.geolocation.clearWatch(timeoutId);

@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.expressions.parser {
+module tests.expressions.parser {
     const parser = plat.acquire(plat.expressions.Parser);
     const context = {
         title: 'Parser',

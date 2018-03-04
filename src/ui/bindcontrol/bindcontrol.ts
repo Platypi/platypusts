@@ -1,4 +1,4 @@
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -13,7 +13,8 @@ module plat.ui {
      * An extended {@link plat.ui.TemplateControl|TemplateControl} that allows for the binding of a value to
      * another listening control (e.g. {@link plat.controls.Bind|plat-bind} control).
      */
-    export class BindControl extends TemplateControl implements observable.ISupportTwoWayBinding {
+    export class BindControl extends TemplateControl
+        implements observable.ISupportTwoWayBinding {
         /**
          * @name priority
          * @memberof plat.ui.BindControl
@@ -55,7 +56,9 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for property changes.
          */
-        public onInput(listener: (newValue: any, oldValue: any) => void): IRemoveListener {
+        public onInput(
+            listener: (newValue: any, oldValue: any) => void
+        ): IRemoveListener {
             const listeners = this._listeners;
 
             listeners.push(listener);
@@ -86,7 +89,9 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public observeProperties(binder: observable.IImplementTwoWayBinding): void { }
+        public observeProperties(
+            binder: observable.IImplementTwoWayBinding
+        ): void {}
 
         /**
          * @name inputChanged

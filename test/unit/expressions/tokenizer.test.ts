@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.expressions.tokenizer {
+module tests.expressions.tokenizer {
     const tokenizer = plat.acquire(plat.expressions.Tokenizer);
     const tokenTests: ITokenTest[] = [{
         name: 'Mathematical Operations',

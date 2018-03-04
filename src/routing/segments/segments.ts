@@ -1,9 +1,20 @@
-module plat.routing {
+namespace plat.routing {
     'use strict';
 
     const specialCharacters = [
-        '/', '.', '*', '+', '?', '|',
-        '(', ')', '[', ']', '{', '}', '\\',
+        '/',
+        '.',
+        '*',
+        '+',
+        '?',
+        '|',
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
+        '\\',
     ];
     const escapeRegex = new RegExp(`(\\${specialCharacters.join('|\\')})`, 'g');
 
@@ -106,7 +117,11 @@ module plat.routing {
          *
          * @returns {Array<plat.routing.BaseSegment>} The parsed segments.
          */
-        public static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[] {
+        public static parse(
+            route: string,
+            names: string[],
+            types: ISegmentTypeCount
+        ): BaseSegment[] {
             if (!isString(route) || !isArray(names) || !isObject(types)) {
                 return [];
             } else if (route[0] === '/') {
@@ -139,7 +154,13 @@ module plat.routing {
                 if (isObject(match)) {
                     name = match[1];
 
-                    results.push(findSegment(name, __DynamicSegmentInstance, dynamicSegments));
+                    results.push(
+                        findSegment(
+                            name,
+                            __DynamicSegmentInstance,
+                            dynamicSegments
+                        )
+                    );
                     names.push(name);
                     types.dynamics += 1;
 
@@ -150,14 +171,22 @@ module plat.routing {
                 if (isObject(match)) {
                     name = match[1];
 
-                    results.push(findSegment(name, __SplatSegmentInstance, splatSegments));
+                    results.push(
+                        findSegment(name, __SplatSegmentInstance, splatSegments)
+                    );
                     names.push(name);
                     types.splats += 1;
 
                     continue;
                 }
 
-                results.push(findSegment(segment, __StaticSegmentInstance, staticSegments));
+                results.push(
+                    findSegment(
+                        segment,
+                        __StaticSegmentInstance,
+                        staticSegments
+                    )
+                );
                 types.statics += 1;
             }
 
@@ -181,7 +210,11 @@ module plat.routing {
          *
          * @returns {plat.routing.BaseSegment} The located segment.
          */
-        private static __findSegment(name: string, token: string, cache: IObject<BaseSegment>): BaseSegment {
+        private static __findSegment(
+            name: string,
+            token: string,
+            cache: IObject<BaseSegment>
+        ): BaseSegment {
             let segment = cache[name];
 
             if (!isObject(segment)) {
@@ -226,7 +259,10 @@ module plat.routing {
          *
          * @returns {T} The accumulated object.
          */
-        public reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
+        public reduceCharacters<T>(
+            iterator: (previousValue: T, spec: ICharacterSpecification) => T,
+            initialValue?: T
+        ): T {
             if (isObject(this._specification)) {
                 initialValue = iterator(initialValue, this._specification);
             }
@@ -255,13 +291,20 @@ module plat.routing {
     /**
      * The Type for referencing the '_BaseSegmentFactory' injectable as a dependency.
      */
-    export function IBaseSegmentFactory(_regex: expressions.Regex): typeof BaseSegment {
+    export function IBaseSegmentFactory(
+        _regex: expressions.Regex
+    ): typeof BaseSegment {
         (<any>BaseSegment)._regex = _regex;
 
         return BaseSegment;
     }
 
-    register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
+    register.injectable(
+        __BaseSegmentFactory,
+        IBaseSegmentFactory,
+        [__Regex],
+        __FACTORY
+    );
 
     register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
 
@@ -324,7 +367,10 @@ module plat.routing {
          *
          * @returns {T} The accumulated object.
          */
-        public reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
+        public reduceCharacters<T>(
+            iterator: (previousValue: T, spec: ICharacterSpecification) => T,
+            initialValue?: T
+        ): T {
             const name: string = this.name;
             const length = name.length;
             let value = initialValue;
@@ -337,7 +383,12 @@ module plat.routing {
         }
     }
 
-    register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
+    register.injectable(
+        __StaticSegmentInstance,
+        StaticSegment,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name VariableSegment
@@ -382,7 +433,12 @@ module plat.routing {
         }
     }
 
-    register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
+    register.injectable(
+        __VariableSegmentInstance,
+        VariableSegment,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name SplatSegment
@@ -492,7 +548,12 @@ module plat.routing {
         };
     }
 
-    register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
+    register.injectable(
+        __DynamicSegmentInstance,
+        DynamicSegment,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name ICharacterSpecification

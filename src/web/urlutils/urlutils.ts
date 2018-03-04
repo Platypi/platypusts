@@ -1,4 +1,4 @@
-module plat.web {
+namespace plat.web {
     'use strict';
 
     /**
@@ -295,7 +295,11 @@ module plat.web {
             const host = _location.host;
             let origin = (<any>_location).origin;
 
-            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
+            if (
+                protocol === 'file:' ||
+                protocol.indexOf('wmapp') > -1 ||
+                protocol.indexOf('ms-appx') > -1
+            ) {
                 origin = _location.href;
             } else if (isUndefined(origin)) {
                 origin = `${_location.protocol}//${_location.host}`;
@@ -324,7 +328,10 @@ module plat.web {
 
             if (isEmpty(baseUrl) || !this._regex.fullUrlRegex.test(baseUrl)) {
                 const url = this._window.location.href;
-                const trimmedUrl = url.replace(this._regex.initialUrlRegex, '/');
+                const trimmedUrl = url.replace(
+                    this._regex.initialUrlRegex,
+                    '/'
+                );
 
                 if (isString(baseUrl)) {
                     if (baseUrl.indexOf('/') === 0) {
@@ -388,10 +395,16 @@ module plat.web {
             url = element.href;
 
             this.href = url;
-            this.protocol = isString(element.protocol) ? element.protocol.replace(/:$/, '') : '';
+            this.protocol = isString(element.protocol)
+                ? element.protocol.replace(/:$/, '')
+                : '';
             this.host = element.host;
-            this.search = isString(element.search) ? element.search.replace(/^\?/, '') : '';
-            this.hash = isString(element.hash) ? element.hash.replace(/^#/, '') : '';
+            this.search = isString(element.search)
+                ? element.search.replace(/^\?/, '')
+                : '';
+            this.hash = isString(element.hash)
+                ? element.hash.replace(/^#/, '')
+                : '';
             this.hostname = element.hostname;
             this.port = element.port;
 
@@ -400,9 +413,10 @@ module plat.web {
             if (!isEmpty(_browserConfig.baseUrl)) {
                 path = url.replace(_browserConfig.baseUrl, '/');
             } else {
-                path = (element.pathname.charAt(0) === '/')
-                ? element.pathname
-                : `/${element.pathname}`;
+                path =
+                    element.pathname.charAt(0) === '/'
+                        ? element.pathname
+                        : `/${element.pathname}`;
             }
 
             path = path.replace(this._regex.initialUrlRegex, '/');

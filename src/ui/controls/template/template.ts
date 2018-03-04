@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -165,8 +165,12 @@ module plat.ui.controls {
          */
         constructor() {
             super();
-            const _CacheFactory: storage.ICacheFactory = acquire(__CacheFactory);
-            this.__templateControlCache = _CacheFactory.create<any>(__TemplateControlCache);
+            const _CacheFactory: storage.ICacheFactory = acquire(
+                __CacheFactory
+            );
+            this.__templateControlCache = _CacheFactory.create<any>(
+                __TemplateControlCache
+            );
         }
 
         /**
@@ -193,17 +197,21 @@ module plat.ui.controls {
                 options = <any>{};
             }
 
-            const id = this._id = options.id;
+            const id = (this._id = options.id);
 
             if (isNull(id)) {
-                this._log.warn(`${this.type} instantiated without an id option`);
+                this._log.warn(
+                    `${this.type} instantiated without an id option`
+                );
 
                 return;
             }
 
             this._url = options.templateUrl;
 
-            const templatePromise: async.Promise<Template> = this.__templateControlCache.read(id);
+            const templatePromise: async.Promise<
+                Template
+            > = this.__templateControlCache.read(id);
 
             if (!isNull(templatePromise)) {
                 this.__templatePromise = templatePromise;
@@ -291,15 +299,20 @@ module plat.ui.controls {
 
             let controlPromise: async.Promise<TemplateControl>;
             if (isPromise(template)) {
-                controlPromise = template.catch((error: Error): async.Promise<DocumentFragment> => {
-                    if (isNull(error)) {
-                        return TemplateControl.determineTemplate(this, url);
-                    }
-                }).then((fragment: DocumentFragment): TemplateControl => {
-                    this.bindableTemplates.add(id, fragment.cloneNode(true));
+                controlPromise = template
+                    .catch((error: Error): async.Promise<DocumentFragment> => {
+                        if (isNull(error)) {
+                            return TemplateControl.determineTemplate(this, url);
+                        }
+                    })
+                    .then((fragment: DocumentFragment): TemplateControl => {
+                        this.bindableTemplates.add(
+                            id,
+                            fragment.cloneNode(true)
+                        );
 
-                    return this;
-                });
+                        return this;
+                    });
             } else {
                 this.bindableTemplates.add(id, template.cloneNode(true));
 
@@ -325,28 +338,45 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        protected _waitForTemplateControl(templatePromise: async.Promise<Template>): void {
-
+        protected _waitForTemplateControl(
+            templatePromise: async.Promise<Template>
+        ): void {
             if (!isPromise(templatePromise)) {
                 return;
             }
 
-            templatePromise.then((templateControl: Template): async.Promise<DocumentFragment> => {
-                if (!(isNull(this._url) || (this._url === templateControl._url))) {
-                    this._log.warn(
-                    `The specified url: ${this._url} should match ${this.type} with id: "${this._id}". Loading original url.`
-                    );
-                }
+            templatePromise
+                .then((templateControl: Template): async.Promise<
+                    DocumentFragment
+                > => {
+                    if (
+                        !(
+                            isNull(this._url) ||
+                            this._url === templateControl._url
+                        )
+                    ) {
+                        this._log.warn(
+                            `The specified url: ${this._url} should match ${
+                                this.type
+                            } with id: "${this._id}". Loading original url.`
+                        );
+                    }
 
-                this.__mapBindableTemplates(templateControl);
+                    this.__mapBindableTemplates(templateControl);
 
-                return this.bindableTemplates.bind(this._id);
-            }).then((clone: DocumentFragment): void => {
+                    return this.bindableTemplates.bind(this._id);
+                })
+                .then((clone: DocumentFragment): void => {
                     const endNode = this.endNode;
                     insertBefore(endNode.parentNode, clone, endNode);
-                }).catch((error: any): void => {
+                })
+                .catch((error: any): void => {
                     postpone((): void => {
-                        this._log.warn(`Problem resolving ${this.type} url: ${error.response}`);
+                        this._log.warn(
+                            `Problem resolving ${this.type} url: ${
+                                error.response
+                            }`
+                        );
                     });
                 });
         }

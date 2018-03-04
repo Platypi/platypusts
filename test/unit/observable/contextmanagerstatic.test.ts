@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.observable.contextManagerStatic {
+module tests.observable.contextManagerStatic {
     const ContextManager = plat.acquire(plat.observable.IContextManagerStatic);
 
     describe('ContextManagerStatic Tests', () => {

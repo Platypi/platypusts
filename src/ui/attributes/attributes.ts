@@ -7,7 +7,7 @@
  * @description
  * Holds all the classes and interfaces related to UI components for platypus.
  */
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -37,7 +37,9 @@ module plat.ui {
          * The set of functions added externally that listens
          * for attribute changes.
          */
-        private __listeners: IObject<((newValue: any, oldValue: any) => void)[]> = {};
+        private __listeners: IObject<
+            ((newValue: any, oldValue: any) => void)[]
+        > = {};
         /**
          * @name __control
          * @memberof plat.ui.Attributes
@@ -99,7 +101,10 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
          */
-        public observe(listener: (newValue: any, oldValue: any) => void, key: string): IRemoveListener {
+        public observe(
+            listener: (newValue: any, oldValue: any) => void,
+            key: string
+        ): IRemoveListener {
             const listeners = this.__listeners[camelCase(key)];
 
             if (isNull(listeners)) {
@@ -134,7 +139,11 @@ module plat.ui {
          *
          * @returns {void}
          */
-        protected _attributeChanged(key: string, newValue: any, oldValue: any): void {
+        protected _attributeChanged(
+            key: string,
+            newValue: any,
+            oldValue: any
+        ): void {
             const listeners = this.__listeners[camelCase(key)];
             const length = listeners.length;
 
@@ -149,5 +158,10 @@ module plat.ui {
     }
 
     register.injectable(__AttributesInstance, Attributes, null, __INSTANCE);
-    register.injectable(__AttributesFactory, IAttributesFactory, null, __FACTORY);
+    register.injectable(
+        __AttributesFactory,
+        IAttributesFactory,
+        null,
+        __FACTORY
+    );
 }

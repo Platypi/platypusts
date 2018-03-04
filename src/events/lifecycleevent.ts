@@ -1,4 +1,4 @@
-module plat.events {
+namespace plat.events {
     'use strict';
 
     /**
@@ -61,9 +61,19 @@ module plat.events {
         return LifecycleEvent;
     }
 
-    register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, __STATIC);
+    register.injectable(
+        __LifecycleEventStatic,
+        ILifecycleEventStatic,
+        null,
+        __STATIC
+    );
 
-    register.injectable(__LifecycleEventInstance, LifecycleEvent, null, __INSTANCE);
+    register.injectable(
+        __LifecycleEventInstance,
+        LifecycleEvent,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name ILifecycleEventStatic

@@ -1,10 +1,10 @@
 // tslint:disable:promise-must-complete
-module plat.async {
+namespace plat.async {
     'use strict';
     declare const process: any;
 
     let __promiseQueue: any[] = [];
-    const browserGlobal: any = (typeof window !== 'undefined') ? window : {};
+    const browserGlobal: any = typeof window !== 'undefined' ? window : {};
 
     let BrowserMutationObserver = browserGlobal.MutationObserver;
 
@@ -15,7 +15,10 @@ module plat.async {
     let scheduleFlush: () => void;
 
     // decide what async method to use to triggering processing of queued callbacks:
-    if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
+    if (
+        typeof process !== 'undefined' &&
+        {}.toString.call(process) === '[object process]'
+    ) {
         scheduleFlush = useNextTick();
     } else if (BrowserMutationObserver) {
         scheduleFlush = useMutationObserver();
@@ -48,13 +51,21 @@ module plat.async {
          * @description
          * The configuration for creating asynchronous promise flushing.
          */
-        public static config: { async(callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>): void } = {
+        public static config: {
+            async(
+                callback: (arg?: IThenable<any>) => void,
+                arg?: IThenable<any>
+            ): void;
+        } = {
             /**
              * Handles asynchronous flushing of callbacks. If the callback queue is of
              * length 1, then we need to schedule a flush. Afterward, any additional
              * callbacks added to the queue will be flushed accordingly.
              */
-            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>): void => {
+            async: (
+                callback: (arg?: IThenable<any>) => void,
+                arg?: IThenable<any>
+            ): void => {
                 const length = __promiseQueue.push([callback, arg]);
                 if (length === 1) {
                     scheduleFlush();
@@ -122,30 +133,81 @@ module plat.async {
          * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
          */
         public static all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
-                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>,
+                T8 | IThenable<T8>,
+                T9 | IThenable<T9>,
+                T10 | IThenable<T10>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
         public static all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
-                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>,
+                T8 | IThenable<T8>,
+                T9 | IThenable<T9>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
         public static all<T1, T2, T3, T4, T5, T6, T7, T8>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
-                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>,
+                T8 | IThenable<T8>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
         public static all<T1, T2, T3, T4, T5, T6, T7>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
-                IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
         public static all<T1, T2, T3, T4, T5, T6>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 |
-                IThenable<T5>, T6 | IThenable<T6>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6]>;
         public static all<T1, T2, T3, T4, T5>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>, T5 | IThenable<T5>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>
+            ]
         ): Promise<[T1, T2, T3, T4, T5]>;
         public static all<T1, T2, T3, T4>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable <T4>]
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>
+            ]
         ): Promise<[T1, T2, T3, T4]>;
         public static all<T1, T2, T3>(
             values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]
@@ -153,46 +215,55 @@ module plat.async {
         public static all<T1, T2>(
             values: [T1 | IThenable<T1>, T2 | IThenable<T2>]
         ): Promise<[T1, T2]>;
-        public static all<T1>(
-            values: (T1 | IThenable<T1>)[]
-        ): Promise<[T1]>;
-        public static all<TAll>(values: (TAll | IThenable<TAll>)[]): Promise<TAll[]> {
+        public static all<T1>(values: (T1 | IThenable<T1>)[]): Promise<[T1]>;
+        public static all<TAll>(
+            values: (TAll | IThenable<TAll>)[]
+        ): Promise<TAll[]> {
             if (!isArray(values)) {
                 return Promise.all([<any>values]);
             }
 
-            return new Promise<any[]>((resolve: (value?: any[]) => void, reject: (reason?: any) => void): void => {
-                const results: any[] = [];
-                let remaining = (<any[]>values).length;
-                let promise: Promise<any>;
-
-                if (remaining === 0) {
-                    resolve(<any>[]);
-                }
-
-                function resolver(index: number): (value: any) => void {
-                    return (value: any): void => resolveAll(index, value);
-                }
-
-                function resolveAll(index: number, value: any): any {
-                    results[index] = value;
-                    remaining -= 1;
+            return new Promise<any[]>(
+                (
+                    resolve: (value?: any[]) => void,
+                    reject: (reason?: any) => void
+                ): void => {
+                    const results: any[] = [];
+                    let remaining = (<any[]>values).length;
+                    let promise: Promise<any>;
 
                     if (remaining === 0) {
-                        resolve(<any>results);
+                        resolve(<any>[]);
+                    }
+
+                    function resolver(index: number): (value: any) => void {
+                        return (value: any): void => resolveAll(index, value);
+                    }
+
+                    function resolveAll(index: number, value: any): any {
+                        results[index] = value;
+                        remaining -= 1;
+
+                        if (remaining === 0) {
+                            resolve(<any>results);
+                        }
+                    }
+
+                    for (
+                        let i = 0;
+                        i < (<IThenable<any>[]>values).length;
+                        i += 1
+                    ) {
+                        promise = (<Promise<any>[]>values)[i];
+
+                        if (isPromise(promise)) {
+                            promise.then(resolver(i), reject);
+                        } else {
+                            resolveAll(i, promise);
+                        }
                     }
                 }
-
-                for (let i = 0; i < (<IThenable<any>[]>values).length; i += 1) {
-                    promise = (<Promise<any>[]>values)[i];
-
-                    if (isPromise(promise)) {
-                        promise.then(resolver(i), reject);
-                    } else {
-                        resolveAll(i, promise);
-                    }
-                }
-            });
+            );
         }
 
         /**
@@ -219,19 +290,31 @@ module plat.async {
                 return Promise.race([<any>promises]);
             }
 
-            return new Promise<any>((resolve: (value: any) => any, reject: (error: any) => any): void => {
-                let promise: Promise<any>;
+            return new Promise<any>(
+                (
+                    resolve: (value: any) => any,
+                    reject: (error: any) => any
+                ): void => {
+                    let promise: Promise<any>;
 
-                for (let i = 0; i < (<IThenable<R>[]>promises).length; i += 1) {
-                    promise = (<Promise<R>[]>promises)[i];
+                    for (
+                        let i = 0;
+                        i < (<IThenable<R>[]>promises).length;
+                        i += 1
+                    ) {
+                        promise = (<Promise<R>[]>promises)[i];
 
-                    if (isObject(promise) && typeof promise.then === 'function') {
-                        promise.then(resolve, reject);
-                    } else {
-                        resolve(<any>promise);
+                        if (
+                            isObject(promise) &&
+                            typeof promise.then === 'function'
+                        ) {
+                            promise.then(resolve, reject);
+                        } else {
+                            resolve(<any>promise);
+                        }
                     }
                 }
-            });
+            );
         }
 
         /**
@@ -251,9 +334,14 @@ module plat.async {
          * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
          */
         public static resolve<R>(value?: R | IThenable<R>): Promise<R> {
-            return new Promise<R>((resolve: (value: R) => any, reject: (reason: any) => any): void => {
-                resolve(<R>value);
-            });
+            return new Promise<R>(
+                (
+                    resolve: (value: R) => any,
+                    reject: (reason: any) => any
+                ): void => {
+                    resolve(<R>value);
+                }
+            );
         }
 
         /**
@@ -271,9 +359,14 @@ module plat.async {
          * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
          */
         public static reject<R>(error?: any): Promise<R> {
-            return new Promise<R>((resolve: (value: any) => any, reject: (error: any) => any): void => {
-                reject(error);
-            });
+            return new Promise<R>(
+                (
+                    resolve: (value: any) => any,
+                    reject: (error: any) => any
+                ): void => {
+                    reject(error);
+                }
+            );
         }
 
         /**
@@ -293,8 +386,13 @@ module plat.async {
          *
          * @returns {void}
          */
-        private static __invokeResolveFunction<R>(resolveFunction: (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void,
-            promise: Promise<R>): void {
+        private static __invokeResolveFunction<R>(
+            resolveFunction: (
+                resolve: (value?: R | IThenable<R>) => void,
+                reject: (error?: any) => void
+            ) => void,
+            promise: Promise<R>
+        ): void {
             function resolvePromise(value?: any): void {
                 Promise.__resolve<R>(promise, value);
             }
@@ -327,7 +425,12 @@ module plat.async {
          *
          * @returns {void}
          */
-        private static __invokeCallback(settled: State, promise: any, callback: (response: any) => any, detail: any): void {
+        private static __invokeCallback(
+            settled: State,
+            promise: any,
+            callback: (response: any) => any,
+            detail: any
+        ): void {
             const hasCallback = isFunction(callback);
             let value: any;
             let error: Error;
@@ -406,7 +509,7 @@ module plat.async {
          * @returns {void}
          */
         private static __publishFulfillment(promise: any): void {
-            Promise.__publish(promise, promise.__state = State.FULFILLED);
+            Promise.__publish(promise, (promise.__state = State.FULFILLED));
         }
 
         /**
@@ -424,7 +527,7 @@ module plat.async {
          * @returns {void}
          */
         private static __publishRejection(promise: any): void {
-            Promise.__publish(promise, promise.__state = State.REJECTED);
+            Promise.__publish(promise, (promise.__state = State.REJECTED));
         }
 
         /**
@@ -521,36 +624,48 @@ module plat.async {
          *
          * @returns {boolean} Whether or not the value passed in is a promise.
          */
-        private static __handleThenable<R>(promise: Promise<R>, value: Promise<R>): boolean {
+        private static __handleThenable<R>(
+            promise: Promise<R>,
+            value: Promise<R>
+        ): boolean {
             let resolved: boolean;
 
             if (promise === value) {
-                Promise.__reject(promise, new TypeError('A promises callback cannot return the same promise.'));
+                Promise.__reject(
+                    promise,
+                    new TypeError(
+                        'A promises callback cannot return the same promise.'
+                    )
+                );
 
                 return true;
             }
 
             if (isPromise(value)) {
                 try {
-                    value.then.call(value, (val: any): boolean => {
-                        if (resolved) {
-                            return true;
-                        }
-                        resolved = true;
+                    value.then.call(
+                        value,
+                        (val: any): boolean => {
+                            if (resolved) {
+                                return true;
+                            }
+                            resolved = true;
 
-                        if (value !== val) {
-                            Promise.__resolve<R>(promise, val);
-                        } else {
-                            Promise.__fulfill<R>(promise, val);
-                        }
-                    }, (val: any): boolean => {
-                        if (resolved) {
-                            return true;
-                        }
-                        resolved = true;
+                            if (value !== val) {
+                                Promise.__resolve<R>(promise, val);
+                            } else {
+                                Promise.__fulfill<R>(promise, val);
+                            }
+                        },
+                        (val: any): boolean => {
+                            if (resolved) {
+                                return true;
+                            }
+                            resolved = true;
 
-                        Promise.__reject(promise, val);
-                    });
+                            Promise.__reject(promise, val);
+                        }
+                    );
 
                     return true;
                 } catch (error) {
@@ -585,8 +700,12 @@ module plat.async {
          *
          * @returns {void}
          */
-        private static __subscribe(parent: Promise<any>, child: IThenable<any>,
-            onFulfilled: (success: any) => any, onRejected: (error: any) => any): void {
+        private static __subscribe(
+            parent: Promise<any>,
+            child: IThenable<any>,
+            onFulfilled: (success: any) => any,
+            onRejected: (error: any) => any
+        ): void {
             const subscribers = parent.__subscribers;
             const length = subscribers.length;
 
@@ -613,14 +732,23 @@ module plat.async {
          *
          * @returns {plat.async.Promise<R>} A promise object.
          */
-        constructor(resolveFunction: (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void) {
+        constructor(
+            resolveFunction: (
+                resolve: (value?: R | IThenable<R>) => void,
+                reject: (error?: any) => void
+            ) => void
+        ) {
             if (!isFunction(resolveFunction)) {
-                throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
+                throw new TypeError(
+                    'You must pass a resolver function as the first argument to the promise constructor'
+                );
             }
 
             if (!(this instanceof Promise)) {
-                throw new TypeError('Failed to construct "Promise": ' +
-                    'Please use the "new" operator, this object constructor cannot be called as a function.');
+                throw new TypeError(
+                    'Failed to construct "Promise": ' +
+                        'Please use the "new" operator, this object constructor cannot be called as a function.'
+                );
             }
 
             this.__subscribers = [];
@@ -646,16 +774,27 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
          */
-        public then<U>(onFulfilled?: (value: R) => U | IThenable<U>, onRejected?: (error: any) => U | IThenable<U> | void): Promise<U> {
+        public then<U>(
+            onFulfilled?: (value: R) => U | IThenable<U>,
+            onRejected?: (error: any) => U | IThenable<U> | void
+        ): Promise<U> {
             // tslint:disable-next-line
             const promise = this;
 
-            const thenPromise = <Promise<U>>new (<any>this).constructor(noop, this);
+            const thenPromise = <Promise<U>>new (<any>this).constructor(
+                noop,
+                this
+            );
 
             if (!isNull(this.__state)) {
                 const callbacks = arguments;
                 Promise.config.async((): void => {
-                    Promise.__invokeCallback(promise.__state, thenPromise, callbacks[promise.__state - 1], promise.__detail);
+                    Promise.__invokeCallback(
+                        promise.__state,
+                        thenPromise,
+                        callbacks[promise.__state - 1],
+                        promise.__detail
+                    );
                 });
             } else {
                 Promise.__subscribe(this, thenPromise, onFulfilled, onRejected);
@@ -680,7 +819,9 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
          */
-        public catch<U>(onRejected?: (error: any) => U | IThenable<U>): Promise<U> {
+        public catch<U>(
+            onRejected?: (error: any) => U | IThenable<U>
+        ): Promise<U> {
             return this.then(null, onRejected);
         }
 
@@ -730,11 +871,14 @@ module plat.async {
          *
          * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
          */
-        then<U>(onFulfilled?: (value: R) => U | IThenable<U>, onRejected?: (error: any) => U | IThenable<U> | void): IThenable<U>;
+        then<U>(
+            onFulfilled?: (value: R) => U | IThenable<U>,
+            onRejected?: (error: any) => U | IThenable<U> | void
+        ): IThenable<U>;
     }
 
     enum State {
-        PENDING = <any>(void 0),
+        PENDING = <any>void 0,
         SEALED = 0,
         FULFILLED = 1,
         REJECTED = 2,
@@ -755,10 +899,14 @@ module plat.async {
 
         observer.observe(element, { attributes: true });
 
-        _window.addEventListener('unload', (): void => {
-            observer.disconnect();
-            observer = null;
-        }, false);
+        _window.addEventListener(
+            'unload',
+            (): void => {
+                observer.disconnect();
+                observer = null;
+            },
+            false
+        );
 
         return (): void => {
             element.setAttribute('drainQueue', 'drainQueue');
@@ -788,11 +936,13 @@ module plat.async {
      * The Type for referencing the '_Promise' injectable as a dependency.
      */
     export function IPromise(_window?: any): IPromise {
-        if (!isNull(_window.Promise) &&
+        if (
+            !isNull(_window.Promise) &&
             isFunction(_window.Promise.all) &&
             isFunction(_window.Promise.race) &&
             isFunction(_window.Promise.resolve) &&
-            isFunction(_window.Promise.reject)) {
+            isFunction(_window.Promise.reject)
+        ) {
             return _window.Promise;
         }
 
@@ -805,26 +955,96 @@ module plat.async {
      * Static Promise interface. See plat.async.Promise
      */
     export interface IPromise {
-        new <R>(resolveFunction: (resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void): Promise<R>;
+        new <R>(
+            resolveFunction: (
+                resolve: (value?: R | IThenable<R>) => void,
+                reject: (error?: any) => void
+            ) => void
+        ): Promise<R>;
 
-        all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 |
-            IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 |
-            IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
-        all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 |
-            IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 |
-            IThenable<T8>, T9 | IThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
-        all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 |
-            IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 |
-            IThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
-        all<T1, T2, T3, T4, T5, T6, T7>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 |
-            IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
-        all<T1, T2, T3, T4, T5, T6>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 |
-            IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>]): Promise<[T1, T2, T3, T4, T5, T6]>;
-        all<T1, T2, T3, T4, T5>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 |
-            IThenable<T4>, T5 | IThenable<T5>]): Promise<[T1, T2, T3, T4, T5]>;
-        all<T1, T2, T3, T4>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>]): Promise<[T1, T2, T3, T4]>;
-        all<T1, T2, T3>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]): Promise<[T1, T2, T3]>;
-        all<T1, T2>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>]): Promise<[T1, T2]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>,
+                T8 | IThenable<T8>,
+                T9 | IThenable<T9>,
+                T10 | IThenable<T10>
+            ]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>,
+                T8 | IThenable<T8>,
+                T9 | IThenable<T9>
+            ]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>,
+                T8 | IThenable<T8>
+            ]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+        all<T1, T2, T3, T4, T5, T6, T7>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>,
+                T7 | IThenable<T7>
+            ]
+        ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+        all<T1, T2, T3, T4, T5, T6>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>,
+                T6 | IThenable<T6>
+            ]
+        ): Promise<[T1, T2, T3, T4, T5, T6]>;
+        all<T1, T2, T3, T4, T5>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>,
+                T5 | IThenable<T5>
+            ]
+        ): Promise<[T1, T2, T3, T4, T5]>;
+        all<T1, T2, T3, T4>(
+            values: [
+                T1 | IThenable<T1>,
+                T2 | IThenable<T2>,
+                T3 | IThenable<T3>,
+                T4 | IThenable<T4>
+            ]
+        ): Promise<[T1, T2, T3, T4]>;
+        all<T1, T2, T3>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]
+        ): Promise<[T1, T2, T3]>;
+        all<T1, T2>(
+            values: [T1 | IThenable<T1>, T2 | IThenable<T2>]
+        ): Promise<[T1, T2]>;
         all<T1>(values: (T1 | IThenable<T1>)[]): Promise<[T1]>;
 
         race<R>(promises: (R | IThenable<R>)[]): Promise<R>;

@@ -1,4 +1,4 @@
-module plat.routing {
+namespace plat.routing {
     'use strict';
 
     /**
@@ -262,7 +262,11 @@ module plat.routing {
         public initialize(router: Router): void {
             this._router = router;
 
-            if (isObject(router) && router.isRoot && !isObject(Navigator._root)) {
+            if (
+                isObject(router) &&
+                router.isRoot &&
+                !isObject(Navigator._root)
+            ) {
                 this.isRoot = true;
                 Navigator._root = this;
                 this._observeUrl();
@@ -283,7 +287,10 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        public navigate(view: any, options?: INavigateOptions): async.Promise<void> {
+        public navigate(
+            view: any,
+            options?: INavigateOptions
+        ): async.Promise<void> {
             options = isObject(options) ? options : {};
             let url: string;
 
@@ -291,11 +298,17 @@ module plat.routing {
                 if (options.isUrl) {
                     url = view;
                 } else {
-                    url = this._generate(view, options.parameters, options.query);
+                    url = this._generate(
+                        view,
+                        options.parameters,
+                        options.query
+                    );
                 }
 
                 if (!isString(url)) {
-                    const error = new Error('Cannot serialize url from input parameters, check your view reference.');
+                    const error = new Error(
+                        'Cannot serialize url from input parameters, check your view reference.'
+                    );
                     this._log.error(error);
                 }
 
@@ -400,7 +413,10 @@ module plat.routing {
          *
          * @returns {plat.async.Promise<void>} A promise that resolves when the navigation has finished.
          */
-        protected _navigate(url: string, replace?: boolean): async.Promise<void> {
+        protected _navigate(
+            url: string,
+            replace?: boolean
+        ): async.Promise<void> {
             if (!this.isRoot) {
                 return Navigator._root._navigate(url, replace);
             }
@@ -457,7 +473,8 @@ module plat.routing {
             const EventManager = this._EventManager;
             let previousUrl: string;
             const headControl: ui.controls.Head = acquire(__Head);
-            const headExists = isObject(headControl) && isFunction(headControl.navigated);
+            const headExists =
+                isObject(headControl) && isFunction(headControl.navigated);
             const onFailedNavigation: (e: any) => void = (e: any): void => {
                 this._previousUrl = previousUrl;
 
@@ -465,7 +482,10 @@ module plat.routing {
                 const state: IHistoryState = _history.state;
 
                 this._ignoreOnce = true;
-                if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
+                if (
+                    isNull(state.previousLocation) ||
+                    state.previousLocation === previousUrl
+                ) {
                     _history.go(-1);
                 } else {
                     _history.go(1);
@@ -487,7 +507,11 @@ module plat.routing {
             // Protect against accidentally calling this method twice.
             EventManager.dispose(this.uid);
             EventManager.on(this.uid, __backButton, (): void => {
-                const ev = EventManager.dispatch(__backButtonPressed, this, EventManager.DIRECT);
+                const ev = EventManager.dispatch(
+                    __backButtonPressed,
+                    this,
+                    EventManager.DIRECT
+                );
                 if (ev.defaultPrevented) {
                     return;
                 }
@@ -495,49 +519,75 @@ module plat.routing {
                 this.goBack();
             });
 
-            EventManager.on(this.uid, __urlChanged, (ev: events.DispatchEvent, utils?: web.UrlUtils): void => {
-                if (this._ignoreOnce) {
-                    this._ignoreOnce = false;
-
-                    if (isFunction(this._resolveNavigate)) {
-                        this._backNavigate = false;
-                        this._resolveNavigate();
-                    }
-
-                    return;
-                }
-
-                previousUrl = this._previousUrl;
-
-                ev = EventManager.dispatch(__beforeNavigate, this, EventManager.DIRECT, [utils]);
-
-                if (ev.defaultPrevented) {
-                    onFailedNavigation(new Error(`Navigation prevented during ${__beforeNavigate} event`));
-
-                    return;
-                }
-
-                this.finishNavigating()
-                    .then((): async.Promise<void> => {
-
-                        EventManager.dispatch(__navigating, this, EventManager.DIRECT, [utils]);
-
-                        return this._router.navigate(utils.pathname, utils.query);
-                    }).then((): void => {
-                        this._previousUrl = utils.pathname;
+            EventManager.on(
+                this.uid,
+                __urlChanged,
+                (ev: events.DispatchEvent, utils?: web.UrlUtils): void => {
+                    if (this._ignoreOnce) {
+                        this._ignoreOnce = false;
 
                         if (isFunction(this._resolveNavigate)) {
                             this._backNavigate = false;
                             this._resolveNavigate();
                         }
 
-                        if (headExists) {
-                            headControl.navigated(utils.href);
-                        }
+                        return;
+                    }
 
-                        EventManager.dispatch(__navigated, this, EventManager.DIRECT, [utils]);
-                    }, onFailedNavigation);
-            });
+                    previousUrl = this._previousUrl;
+
+                    ev = EventManager.dispatch(
+                        __beforeNavigate,
+                        this,
+                        EventManager.DIRECT,
+                        [utils]
+                    );
+
+                    if (ev.defaultPrevented) {
+                        onFailedNavigation(
+                            new Error(
+                                `Navigation prevented during ${__beforeNavigate} event`
+                            )
+                        );
+
+                        return;
+                    }
+
+                    this.finishNavigating()
+                        .then((): async.Promise<void> => {
+                            EventManager.dispatch(
+                                __navigating,
+                                this,
+                                EventManager.DIRECT,
+                                [utils]
+                            );
+
+                            return this._router.navigate(
+                                utils.pathname,
+                                utils.query
+                            );
+                        })
+                        .then((): void => {
+                            this._previousUrl = utils.pathname;
+
+                            if (isFunction(this._resolveNavigate)) {
+                                this._backNavigate = false;
+                                this._resolveNavigate();
+                            }
+
+                            if (headExists) {
+                                headControl.navigated(utils.href);
+                            }
+
+                            EventManager.dispatch(
+                                __navigated,
+                                this,
+                                EventManager.DIRECT,
+                                [utils]
+                            );
+                        }, onFailedNavigation);
+                }
+            );
         }
 
         /**

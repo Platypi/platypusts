@@ -1,4 +1,4 @@
-namespace tests.controls.observableAttributeControl {
+module tests.controls.observableAttributeControl {
     describe('ObservableAttributeControl Tests', () => {
         let control: plat.controls.ObservableAttributeControl;
         let parent: plat.ui.TemplateControl;

@@ -1,4 +1,4 @@
-namespace tests.controls.elementPropertyControl {
+module tests.controls.elementPropertyControl {
     describe('ElementPropertyControl Tests', () => {
         let control: plat.controls.ElementPropertyControl;
         let parent: plat.ui.TemplateControl;

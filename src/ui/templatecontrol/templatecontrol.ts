@@ -1,4 +1,4 @@
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -53,7 +53,9 @@ module plat.ui {
          * @description
          * Reference to a cache injectable that stores {@link plat.processing.ElementManager|ElementManagers}.
          */
-        protected static _managerCache: storage.Cache<processing.ElementManager>;
+        protected static _managerCache: storage.Cache<
+            processing.ElementManager
+        >;
 
         /**
          * @name _templateCache
@@ -436,31 +438,50 @@ module plat.ui {
          *
          * @returns {any} The evaluated object.
          */
-        public static evaluateExpression(expression: string | expressions.IParsedExpression,
-            control?: TemplateControl, aliases?: IObject<any>): any {
+        public static evaluateExpression(
+            expression: string | expressions.IParsedExpression,
+            control?: TemplateControl,
+            aliases?: IObject<any>
+        ): any {
             if (isEmpty(expression)) {
                 return expression;
             }
 
             if (isString(expression)) {
                 expression = TemplateControl._parser.parse(<string>expression);
-            } else if (!isFunction((<expressions.IParsedExpression>expression).evaluate)) {
+            } else if (
+                !isFunction(
+                    (<expressions.IParsedExpression>expression).evaluate
+                )
+            ) {
                 return expression;
             }
 
             if (isNull(control)) {
-                return (<expressions.IParsedExpression>expression).evaluate(null, aliases);
+                return (<expressions.IParsedExpression>expression).evaluate(
+                    null,
+                    aliases
+                );
             }
 
-            if ((<expressions.IParsedExpression>expression).aliases.length > 0) {
-                aliases = TemplateControl.getResources(control, (<expressions.IParsedExpression>expression).aliases, aliases);
+            if (
+                (<expressions.IParsedExpression>expression).aliases.length > 0
+            ) {
+                aliases = TemplateControl.getResources(
+                    control,
+                    (<expressions.IParsedExpression>expression).aliases,
+                    aliases
+                );
 
                 if (isEmpty(aliases)) {
                     return;
                 }
             }
 
-            return (<expressions.IParsedExpression>expression).evaluate(control.context, aliases);
+            return (<expressions.IParsedExpression>expression).evaluate(
+                control.context,
+                aliases
+            );
         }
 
         /**
@@ -481,7 +502,11 @@ module plat.ui {
          *
          * @returns {IObject<any>} An object representing a set of resources.
          */
-        public static getResources(control: TemplateControl, aliases: string[], resources?: IObject<any>): IObject<any> {
+        public static getResources(
+            control: TemplateControl,
+            aliases: string[],
+            resources?: IObject<any>
+        ): IObject<any> {
             if (isNull(control)) {
                 return {};
             }
@@ -490,9 +515,9 @@ module plat.ui {
             let alias: string;
             let resource: IResource;
             let resourceObj: {
-                    control: TemplateControl;
-                    resource: IResource;
-                };
+                control: TemplateControl;
+                resource: IResource;
+            };
             let cache = TemplateControl.__resourceCache[control.uid];
 
             if (isNull(cache)) {
@@ -521,11 +546,15 @@ module plat.ui {
                 if (!isNull(resources[alias])) {
                     continue;
                 } else if (!isNull(cache[alias])) {
-                    const resourceControl: TemplateControl = cache[alias].control;
+                    const resourceControl: TemplateControl =
+                        cache[alias].control;
                     const controlResources = resourceControl.resources;
 
                     if (isNull(controlResources)) {
-                        resourceObj = TemplateControl.findResource(control, alias);
+                        resourceObj = TemplateControl.findResource(
+                            control,
+                            alias
+                        );
                     } else {
                         resourceObj = {
                             control: resourceControl,
@@ -541,7 +570,9 @@ module plat.ui {
                         continue;
                     }
 
-                    TemplateControl._log.warn(`Resource alias: ${alias} is not defined.`);
+                    TemplateControl._log.warn(
+                        `Resource alias: ${alias} is not defined.`
+                    );
                     continue;
                 }
 
@@ -571,10 +602,18 @@ module plat.ui {
          * @returns {{ resource: plat.ui.IResource; control: plat.ui.TemplateControl; }} An object consisting of the
          * found resource along with its corresponding control.
          */
-        public static findResource(control: TemplateControl, alias: string): { resource: IResource; control: TemplateControl } {
+        public static findResource(
+            control: TemplateControl,
+            alias: string
+        ): { resource: IResource; control: TemplateControl } {
             let resource: IResource;
 
-            if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
+            if (
+                isNull(control) ||
+                isNull(control.resources) ||
+                !isString(alias) ||
+                isEmpty(alias)
+            ) {
                 return;
             }
 
@@ -583,7 +622,11 @@ module plat.ui {
             }
 
             const isRootContext = alias === __ROOT_CONTEXT_RESOURCE;
-            if (isRootContext || alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
+            if (
+                isRootContext ||
+                alias === __CONTEXT_RESOURCE ||
+                alias === __CONTROL_RESOURCE
+            ) {
                 if (isRootContext) {
                     control = Control.getRootControl(control);
                 }
@@ -638,7 +681,9 @@ module plat.ui {
 
             const uid = control.uid;
             const childControls = control.controls;
-            const controls = isArray(childControls) ? childControls.slice(0) : childControls;
+            const controls = isArray(childControls)
+                ? childControls.slice(0)
+                : childControls;
             const ContextManager = Control._ContextManager;
             const define = ContextManager.defineProperty;
 
@@ -677,7 +722,12 @@ module plat.ui {
 
             if ((<IInternal>control).__injectable__type === __STATIC) {
                 const injector = controlInjectors[control.type];
-                register.control(control.type, (<any>control).constructor, <[string]>injector.dependencies, true);
+                register.control(
+                    control.type,
+                    (<any>control).constructor,
+                    <[string]>injector.dependencies,
+                    true
+                );
             }
         }
 
@@ -729,7 +779,11 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public static contextChanged(control: TemplateControl, newValue: any, oldValue: any): void {
+        public static contextChanged(
+            control: TemplateControl,
+            newValue: any,
+            oldValue: any
+        ): void {
             control.context = newValue;
 
             TemplateControl.setContextResources(control);
@@ -811,9 +865,11 @@ module plat.ui {
             const element = control.element;
             let parentNode: Node;
 
-            if (control.replaceWith === null ||
-            control.replaceWith === '' ||
-            isDocumentFragment(element)) {
+            if (
+                control.replaceWith === null ||
+                control.replaceWith === '' ||
+                isDocumentFragment(element)
+            ) {
                 removeAll(control.startNode, control.endNode);
                 control.elementNodes = control.startNode = control.endNode = null;
 
@@ -846,8 +902,17 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public static setAbsoluteContextPath(control: TemplateControl, path: string): void {
-            Control._ContextManager.defineGetter(control, 'absoluteContextPath', path, false, true);
+        public static setAbsoluteContextPath(
+            control: TemplateControl,
+            path: string
+        ): void {
+            Control._ContextManager.defineGetter(
+                control,
+                'absoluteContextPath',
+                path,
+                false,
+                true
+            );
         }
 
         /**
@@ -866,7 +931,10 @@ module plat.ui {
          *
          * @returns {plat.async.Promise<DocumentFragment>} A promise that resolves to the proper template.
          */
-        public static determineTemplate(control: TemplateControl, templateUrl?: string): async.Promise<DocumentFragment> {
+        public static determineTemplate(
+            control: TemplateControl,
+            templateUrl?: string
+        ): async.Promise<DocumentFragment> {
             const templateCache = TemplateControl._templateCache;
             const dom = control.dom;
             const Promise = TemplateControl._Promise;
@@ -878,13 +946,15 @@ module plat.ui {
             } else if (!isNull(control.templateString)) {
                 const controlType = control.type;
 
-                return templateCache.read(controlType).catch((template: any): async.Promise<DocumentFragment> => {
-                    if (isNull(template)) {
-                        template = control.templateString;
-                    }
+                return templateCache
+                    .read(controlType)
+                    .catch((template: any): async.Promise<DocumentFragment> => {
+                        if (isNull(template)) {
+                            template = control.templateString;
+                        }
 
-                    return templateCache.put(controlType, template);
-                });
+                        return templateCache.put(controlType, template);
+                    });
             } else {
                 return <any>Promise.reject(null);
             }
@@ -967,7 +1037,7 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public contextChanged(newValue: any, oldValue: any): void { }
+        public contextChanged(newValue: any, oldValue: any): void {}
 
         /**
          * @name setTemplate
@@ -983,7 +1053,7 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public setTemplate(): void { }
+        public setTemplate(): void {}
 
         /**
          * @name getResources
@@ -1001,7 +1071,10 @@ module plat.ui {
          *
          * @returns {IObject<any>} The context object containing the values of the associated resources.
          */
-        public getResources(aliases: string[], resources?: IObject<any>): IObject<any> {
+        public getResources(
+            aliases: string[],
+            resources?: IObject<any>
+        ): IObject<any> {
             return TemplateControl.getResources(this, aliases, resources);
         }
 
@@ -1021,7 +1094,9 @@ module plat.ui {
          * @returns {{ resource: plat.ui.IResource; control: plat.ui.TemplateControl; }} An object consisting of the
          * found resource along with its corresponding control.
          */
-        public findResource(alias: string): { resource: IResource; control: TemplateControl } {
+        public findResource(
+            alias: string
+        ): { resource: IResource; control: TemplateControl } {
             return TemplateControl.findResource(this, alias);
         }
 
@@ -1040,8 +1115,15 @@ module plat.ui {
          *
          * @returns {any} The evaluated object/primitive.
          */
-        public evaluateExpression(expression: string | expressions.IParsedExpression, context?: any): any {
-            return TemplateControl.evaluateExpression(expression, this, context);
+        public evaluateExpression(
+            expression: string | expressions.IParsedExpression,
+            context?: any
+        ): any {
+            return TemplateControl.evaluateExpression(
+                expression,
+                this,
+                context
+            );
         }
     }
 
@@ -1056,7 +1138,8 @@ module plat.ui {
         _parser?: expressions.Parser,
         _http?: async.Http,
         _Promise?: async.IPromise,
-        _log?: debug.Log): ITemplateControlFactory {
+        _log?: debug.Log
+    ): ITemplateControlFactory {
         (<any>TemplateControl)._ResourcesFactory = _ResourcesFactory;
         (<any>TemplateControl)._BindableTemplatesFactory = _BindableTemplatesFactory;
         (<any>TemplateControl)._managerCache = _managerCache;
@@ -1069,18 +1152,28 @@ module plat.ui {
         return TemplateControl;
     }
 
-    register.injectable(__TemplateControlFactory, ITemplateControlFactory, [
-        __ResourcesFactory,
-        __BindableTemplatesFactory,
-        __ManagerCache,
-        __TemplateCache,
-        __Parser,
-        __Http,
-        __Promise,
-        __Log,
-    ], __FACTORY);
+    register.injectable(
+        __TemplateControlFactory,
+        ITemplateControlFactory,
+        [
+            __ResourcesFactory,
+            __BindableTemplatesFactory,
+            __ManagerCache,
+            __TemplateCache,
+            __Parser,
+            __Http,
+            __Promise,
+            __Log,
+        ],
+        __FACTORY
+    );
 
-    register.injectable(__TemplateControlInstance, TemplateControl, null, __INSTANCE);
+    register.injectable(
+        __TemplateControlInstance,
+        TemplateControl,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name ITemplateControlFactory
@@ -1108,7 +1201,11 @@ module plat.ui {
          *
          * @returns {any} The evaluated object.
          */
-        evaluateExpression(expression: string | expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
+        evaluateExpression(
+            expression: string | expressions.IParsedExpression,
+            control?: TemplateControl,
+            aliases?: IObject<any>
+        ): any;
 
         /**
          * @name getResources
@@ -1128,7 +1225,11 @@ module plat.ui {
          *
          * @returns {IObject<any>} An object representing a set of resources.
          */
-        getResources(control: TemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
+        getResources(
+            control: TemplateControl,
+            aliases: string[],
+            resources?: IObject<any>
+        ): IObject<any>;
 
         /**
          * @name findResource
@@ -1148,7 +1249,10 @@ module plat.ui {
          * @returns {{ resource: plat.ui.IResource; control: plat.ui.TemplateControl; }} An object consisting of the
          * found resource along with its corresponding control.
          */
-        findResource(control: TemplateControl, alias: string): { resource: IResource; control: TemplateControl };
+        findResource(
+            control: TemplateControl,
+            alias: string
+        ): { resource: IResource; control: TemplateControl };
 
         /**
          * @name dispose
@@ -1199,7 +1303,11 @@ module plat.ui {
          *
          * @returns {void}
          */
-        contextChanged(control: TemplateControl, newValue: any, oldValue: any): void;
+        contextChanged(
+            control: TemplateControl,
+            newValue: any,
+            oldValue: any
+        ): void;
 
         /**
          * @name setContextResources
@@ -1267,7 +1375,10 @@ module plat.ui {
          *
          * @returns {plat.async.Promise<DocumentFragment>} A promise that resolves to the proper template.
          */
-        determineTemplate(control: TemplateControl, templateUrl?: string): async.Promise<DocumentFragment>;
+        determineTemplate(
+            control: TemplateControl,
+            templateUrl?: string
+        ): async.Promise<DocumentFragment>;
 
         /**
          * @name detach

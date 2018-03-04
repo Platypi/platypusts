@@ -1,4 +1,4 @@
-module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -206,9 +206,16 @@ module plat.ui.animations {
                     options = <any>{};
                 }
 
-                const computedStyle = this._window.getComputedStyle(element, options.pseudo);
-                const properties = this._properties = computedStyle[<any>(`${transitionId}Property`)].split(',');
-                const durations = computedStyle[<any>(`${transitionId}Duration`)].split(',');
+                const computedStyle = this._window.getComputedStyle(
+                    element,
+                    options.pseudo
+                );
+                const properties = (this._properties = computedStyle[
+                    <any>`${transitionId}Property`
+                ].split(','));
+                const durations = computedStyle[
+                    <any>`${transitionId}Duration`
+                ].split(',');
                 let length = properties.length;
                 const propLength = length;
                 let noTransition = false;
@@ -222,7 +229,11 @@ module plat.ui.animations {
                     } else if (propLength > 1 && prop === 'all') {
                         // most likely developer error (extra comma at end of shorthand multi transition declaration)
                         // so we will splice
-                        this._log.debug(`Improper transition declaration on class "${element.className}"`);
+                        this._log.debug(
+                            `Improper transition declaration on class "${
+                                element.className
+                            }"`
+                        );
                         properties.splice(length, 1);
                     }
                 }
@@ -310,7 +321,10 @@ module plat.ui.animations {
          */
         protected _dispose(): void {
             const className = this.className;
-            removeClass(this.element, `${className} ${className}${__INIT_SUFFIX}`);
+            removeClass(
+                this.element,
+                `${className} ${className}${__INIT_SUFFIX}`
+            );
             this._animationCanceled = noop;
         }
 
@@ -335,11 +349,16 @@ module plat.ui.animations {
                 this._transitionCount += 1;
 
                 const count = this._transitionCount;
-                propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
+                propertyName = propertyName
+                    .replace(this._normalizeRegex, '')
+                    .toLowerCase();
 
-                if ((count < this._count) ||
-                    (!this._usingCss && this._normalizedKeys[propertyName] === true &&
-                        count < this._properties.length)) {
+                if (
+                    count < this._count ||
+                    (!this._usingCss &&
+                        this._normalizedKeys[propertyName] === true &&
+                        count < this._properties.length)
+                ) {
                     return;
                 }
             }
@@ -401,7 +420,9 @@ module plat.ui.animations {
                 if (currentProperty === style[key]) {
                     unchanged += 1;
                 } else {
-                    normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
+                    normalizedKeys[
+                        key.replace(normalizeRegex, '').toLowerCase()
+                    ] = true;
                 }
             }
 
@@ -453,9 +474,14 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        private __cssTransition(computedStyle: CSSStyleDeclaration, durations: string[]): void {
+        private __cssTransition(
+            computedStyle: CSSStyleDeclaration,
+            durations: string[]
+        ): void {
             const transitionId = this._animationEvents.$transition;
-            const delays = computedStyle[<any>(`${transitionId}Delay`)].split(',');
+            const delays = computedStyle[<any>`${transitionId}Delay`].split(
+                ','
+            );
             const properties = this._properties;
             const length = properties.length;
             const normalizedKeys = this._normalizedKeys;
@@ -468,25 +494,31 @@ module plat.ui.animations {
             let duration: string;
             let delay: string;
 
-            const defer = this.utils.defer.bind(this, (prop: any, computedProp: string): void => {
-                if (this._animationCanceled === noop) {
-                    // disposal has already occurred
-                    return;
-                } else if (prop === 'all' || computedStyle[prop] !== computedProp) {
-                    // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
-                    // or
-                    // we know the transition started due to the properties being different
-                    changed = true;
-                }
+            const defer = this.utils.defer.bind(
+                this,
+                (prop: any, computedProp: string): void => {
+                    if (this._animationCanceled === noop) {
+                        // disposal has already occurred
+                        return;
+                    } else if (
+                        prop === 'all' ||
+                        computedStyle[prop] !== computedProp
+                    ) {
+                        // we can't know if the transition started due to 'all' being set and have to rely on this.options.count
+                        // or
+                        // we know the transition started due to the properties being different
+                        changed = true;
+                    }
 
-                count += 1;
-                if (count < length || changed) {
-                    return;
-                }
+                    count += 1;
+                    if (count < length || changed) {
+                        return;
+                    }
 
-                this._dispose();
-                this.end();
-            });
+                    this._dispose();
+                    this.end();
+                }
+            );
 
             this._usingCss = true;
 
@@ -496,12 +528,23 @@ module plat.ui.animations {
 
             for (; i < length; i += 1) {
                 property = properties[i] = properties[i].trim();
-                duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
-                delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
-                normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
+                duration =
+                    durations.length > i
+                        ? durations[i].trim()
+                        : durations[durations.length - 1].trim();
+                delay =
+                    delays.length > i
+                        ? delays[i].trim()
+                        : delays[delays.length - 1].trim();
+                normalizedKeys[
+                    property.replace(normalizeRegex, '').toLowerCase()
+                ] = true;
                 computedProperty = computedStyle[property];
 
-                defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
+                defer(this._toMs(duration) + this._toMs(delay), [
+                    property,
+                    computedProperty,
+                ]);
             }
         }
     }
@@ -518,7 +561,8 @@ module plat.ui.animations {
      * @description
      * An interface describing the options for {@link plat.ui.animations.SimpleCssTransition|SimpleCssTransition}.
      */
-    export interface ISimpleCssTransitionOptions extends ISimpleCssAnimationOptions {
+    export interface ISimpleCssTransitionOptions
+        extends ISimpleCssAnimationOptions {
         /**
          * @name properties
          * @memberof plat.ui.animations.ISimpleCssTransitionOptions

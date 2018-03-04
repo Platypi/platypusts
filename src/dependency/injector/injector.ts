@@ -7,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to dependency injection components in platypus.
  */
-module plat.dependency {
+namespace plat.dependency {
     'use strict';
 
     /**
@@ -191,10 +191,12 @@ module plat.dependency {
          * @returns {boolean} Whether or not the object passed in is an injector.
          */
         public static isInjector(dependency: Injector<any>): boolean {
-            return isFunction(dependency.inject) &&
+            return (
+                isFunction(dependency.inject) &&
                 !isUndefined(dependency.type) &&
                 !isUndefined(dependency.name) &&
-                !isUndefined(dependency.Constructor);
+                !isUndefined(dependency.Constructor)
+            );
         }
 
         /**
@@ -219,14 +221,20 @@ module plat.dependency {
             }
 
             const Constructor = dependency;
-            const _inject = isObject(Constructor._inject) ? Constructor._inject : {};
+            const _inject = isObject(Constructor._inject)
+                ? Constructor._inject
+                : {};
 
             if (isString(Constructor.__injectorName)) {
                 dependency = Constructor.__injectorName;
             }
 
             if (!isString(dependency)) {
-                return <any>new Injector(dependency, Constructor, _inject.dependencies);
+                return <any>new Injector(
+                    dependency,
+                    Constructor,
+                    _inject.dependencies
+                );
             }
 
             let injector = Injector.__findInjector(dependency, [
@@ -250,7 +258,13 @@ module plat.dependency {
             //     find(jsAnimationInjectors);
 
             if (!isObject(injector) && isString(dependency)) {
-                injector = unregisteredInjectors[dependency] = <Injector<any>>new Injector(dependency, Constructor, Constructor._inject.dependencies);
+                injector = unregisteredInjectors[dependency] = <Injector<
+                    any
+                >>new Injector(
+                    dependency,
+                    Constructor,
+                    Constructor._inject.dependencies
+                );
             }
 
             if (isObject(injector)) {
@@ -275,7 +289,11 @@ module plat.dependency {
          *
          * @returns {any} The instantiated constructor.
          */
-        private static __construct(Constructor: any, args: any[], type?: string): any {
+        private static __construct(
+            Constructor: any,
+            args: any[],
+            type?: string
+        ): any {
             if (isNull(Constructor) || isNull(Constructor.prototype)) {
                 return Constructor;
             }
@@ -285,18 +303,23 @@ module plat.dependency {
             let toInject: any;
 
             if (isInstance) {
-                toInject = instanceInjectorDependencies[Constructor.__injectorName];
+                toInject =
+                    instanceInjectorDependencies[Constructor.__injectorName];
             }
 
             if (!isObject(toInject)) {
                 toInject = Injector.__walk(obj, Object.getPrototypeOf(obj), {});
 
                 if (isInstance) {
-                    instanceInjectorDependencies[Constructor.__injectorName] = toInject;
+                    instanceInjectorDependencies[
+                        Constructor.__injectorName
+                    ] = toInject;
                 }
             }
 
-            const dependencies = acquire(map((value: any): any => value, toInject));
+            const dependencies = acquire(
+                map((value: any): any => value, toInject)
+            );
             const keys = Object.keys(toInject);
             const length = keys.length;
 
@@ -334,12 +357,23 @@ module plat.dependency {
             let parentInject = {};
 
             if (isObject(Constructor._inject) && Constructor !== Object) {
-                parentInject = Injector.__walk(obj, Object.getPrototypeOf(proto), extendWith);
+                parentInject = Injector.__walk(
+                    obj,
+                    Object.getPrototypeOf(proto),
+                    extendWith
+                );
             }
 
             const toInject = _clone(Constructor._inject, true);
 
-            return _extend(false, false, {}, extendWith, parentInject, toInject);
+            return _extend(
+                false,
+                false,
+                {},
+                extendWith,
+                parentInject,
+                toInject
+            );
         }
 
         /**
@@ -383,7 +417,13 @@ module plat.dependency {
                         dependency = uniqueId(__Plat);
                     }
 
-                    injector = <Injector<any>>new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._injectorDependencies : []);
+                    injector = <Injector<any>>new Injector(
+                        dependency,
+                        Constructor,
+                        isObject(Constructor._inject)
+                            ? Constructor._injectorDependencies
+                            : []
+                    );
                     unregisteredInjectors[dependency] = injector;
                 } else {
                     injector = Injector.__wrap(Constructor);
@@ -407,10 +447,16 @@ module plat.dependency {
          *
          * @returns {any} The located injector.
          */
-        private static __findInjector(Constructor: any, injectorsArr: InjectorObject<any>[]): Injector<any> {
+        private static __findInjector(
+            Constructor: any,
+            injectorsArr: InjectorObject<any>[]
+        ): Injector<any> {
             if (isNull(Constructor)) {
                 return;
-            } else if (Constructor === Injector || Constructor === __InjectorStatic) {
+            } else if (
+                Constructor === Injector ||
+                Constructor === __InjectorStatic
+            ) {
                 const ret: Injector<any> = Injector.__wrap(Injector);
                 ret.name = __InjectorStatic;
 
@@ -419,8 +465,14 @@ module plat.dependency {
                 for (const injectorsObj of injectorsArr) {
                     if (!isNull(injectorsObj[Constructor])) {
                         return injectorsObj[Constructor];
-                    } else if (!isNull(injectorsObj[(<string>Constructor).toLowerCase()])) {
-                        return injectorsObj[(<string>Constructor).toLowerCase()];
+                    } else if (
+                        !isNull(
+                            injectorsObj[(<string>Constructor).toLowerCase()]
+                        )
+                    ) {
+                        return injectorsObj[
+                            (<string>Constructor).toLowerCase()
+                        ];
                     }
                 }
             }
@@ -485,7 +537,9 @@ module plat.dependency {
          *
          * @returns {string} The end of the circular dependency chain, if one exists.
          */
-        private static __findCircularReferences(injector: Injector<any>): string {
+        private static __findCircularReferences(
+            injector: Injector<any>
+        ): string {
             if (!(isObject(injector) && isArray(injector.dependencies))) {
                 return;
             }
@@ -496,10 +550,12 @@ module plat.dependency {
                 name: string;
                 dependencies: string[];
             };
-            const stack: typeof node[] = [{
-                name: source,
-                dependencies: dependencies.slice(0),
-            }];
+            const stack: typeof node[] = [
+                {
+                    name: source,
+                    dependencies: dependencies.slice(0),
+                },
+            ];
             let dependency: string;
             const locate = Injector.__locateInjector;
             let length: number;
@@ -519,7 +575,9 @@ module plat.dependency {
 
                     injector = locate(dependency);
 
-                    if (!(isObject(injector) && isArray(injector.dependencies))) {
+                    if (
+                        !(isObject(injector) && isArray(injector.dependencies))
+                    ) {
                         continue;
                     }
 
@@ -550,12 +608,19 @@ module plat.dependency {
          *
          * @returns {plat.dependency.Injector}
          */
-        constructor(name: string, Constructor: new () => T, dependencies?: any[], type: string = null) {
+        constructor(
+            name: string,
+            Constructor: new () => T,
+            dependencies?: any[],
+            type: string = null
+        ) {
             this.name = name;
             this.Constructor = Constructor;
             this.type = type;
 
-            const deps = this.dependencies = Injector.convertDependencies(dependencies);
+            const deps = (this.dependencies = Injector.convertDependencies(
+                dependencies
+            ));
             const index = deps.indexOf(__NOOP_INJECTOR);
             let circularReference: string;
 
@@ -577,18 +642,27 @@ module plat.dependency {
                 const dependency = dependencies[index];
 
                 if (isNull(dependency)) {
-                    throw new TypeError(`The dependency for ${name} at index ${index} is undefined, did you forget to include a file?`);
+                    throw new TypeError(
+                        `The dependency for ${name} at index ${index} is undefined, did you forget to include a file?`
+                    );
                 }
 
                 throw new TypeError(
-                    `Could not resolve dependency ${dependency.slice(9, dependency.indexOf('('))} for ${name}. Are you using a static injectable Type?`
+                    `Could not resolve dependency ${dependency.slice(
+                        9,
+                        dependency.indexOf('(')
+                    )} for ${name}. Are you using a static injectable Type?`
                 );
             }
 
             circularReference = Injector.__findCircularReferences(this);
 
             if (isString(circularReference)) {
-                throw new Error(`Circular dependency detected from ${this.name} to ${circularReference}.`);
+                throw new Error(
+                    `Circular dependency detected from ${
+                        this.name
+                    } to ${circularReference}.`
+                );
             }
 
             if (name === __AppStatic) {
@@ -626,7 +700,11 @@ module plat.dependency {
                 toInject.push(dependency.inject());
             }
 
-            injectable = <T>Injector.__construct(this.Constructor, toInject, type);
+            injectable = <T>Injector.__construct(
+                this.Constructor,
+                toInject,
+                type
+            );
 
             if (isString(type) && type !== __INSTANCE) {
                 this._wrapInjector(injectable);
@@ -666,7 +744,7 @@ module plat.dependency {
      * @description
      * An object whose values are all {@link plat.dependency.Injector|Injectors}.
      */
-    export interface InjectorObject<T> extends IObject<Injector<T>> { }
+    export interface InjectorObject<T> extends IObject<Injector<T>> {}
 
     /**
      * @name injectors

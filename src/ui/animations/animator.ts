@@ -1,4 +1,4 @@
-module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -85,7 +85,11 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the
          * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        public create(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimationCreation {
+        public create(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            options?: any
+        ): IAnimationCreation {
             return this._create(elements, key, options, {
                 key: null,
             });
@@ -108,7 +112,11 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        public animate(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
+        public animate(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            options?: any
+        ): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: null,
             });
@@ -135,8 +143,13 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are
          * added to the DOM and the animation is finished.
          */
-        public enter(elements: Element | DocumentFragment | NodeList | Node[],
-            key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
+        public enter(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            parent: Element,
+            refChild?: Node,
+            options?: any
+        ): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'enter',
                 parent: parent,
@@ -162,7 +175,11 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished
          * and the elements are removed from the DOM.
          */
-        public leave(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
+        public leave(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            options?: any
+        ): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'leave',
             });
@@ -191,8 +208,13 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the elements are moved and the
          * animation is finished.
          */
-        public move(elements: Element | DocumentFragment | NodeList | Node[],
-            key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable {
+        public move(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            parent: Element,
+            refChild?: Node,
+            options?: any
+        ): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'move',
                 parent: parent,
@@ -217,7 +239,11 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        public show(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
+        public show(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            options?: any
+        ): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'show',
             });
@@ -240,7 +266,11 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the animation is finished.
          */
-        public hide(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable {
+        public hide(
+            elements: Element | DocumentFragment | NodeList | Node[],
+            key: string,
+            options?: any
+        ): IAnimatingThenable {
             return this._animate(elements, key, options, {
                 key: 'hide',
             });
@@ -258,45 +288,96 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves after all the input promises resolve.
          */
         public all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>, T5 |
-                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 |
-                IAnimationThenable<T8>, T9 | IAnimationThenable<T9>, T10 | IAnimationThenable<T10>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>,
+                T5 | IAnimationThenable<T5>,
+                T6 | IAnimationThenable<T6>,
+                T7 | IAnimationThenable<T7>,
+                T8 | IAnimationThenable<T8>,
+                T9 | IAnimationThenable<T9>,
+                T10 | IAnimationThenable<T10>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
         public all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>, T5 |
-                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>, T9 | IAnimationThenable<T9>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>,
+                T5 | IAnimationThenable<T5>,
+                T6 | IAnimationThenable<T6>,
+                T7 | IAnimationThenable<T7>,
+                T8 | IAnimationThenable<T8>,
+                T9 | IAnimationThenable<T9>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
         public all<T1, T2, T3, T4, T5, T6, T7, T8>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>, T5 |
-                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>,
+                T5 | IAnimationThenable<T5>,
+                T6 | IAnimationThenable<T6>,
+                T7 | IAnimationThenable<T7>,
+                T8 | IAnimationThenable<T8>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
         public all<T1, T2, T3, T4, T5, T6, T7>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 |
-                IAnimationThenable <T4>, T5 |
-                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>,
+                T5 | IAnimationThenable<T5>,
+                T6 | IAnimationThenable<T6>,
+                T7 | IAnimationThenable<T7>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
         public all<T1, T2, T3, T4, T5, T6>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 |
-                IAnimationThenable <T4>, T5 |
-                IAnimationThenable<T5>, T6 | IAnimationThenable<T6>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>,
+                T5 | IAnimationThenable<T5>,
+                T6 | IAnimationThenable<T6>
+            ]
         ): Promise<[T1, T2, T3, T4, T5, T6]>;
         public all<T1, T2, T3, T4, T5>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 |
-                IAnimationThenable <T4>, T5 | IAnimationThenable<T5>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>,
+                T5 | IAnimationThenable<T5>
+            ]
         ): Promise<[T1, T2, T3, T4, T5]>;
         public all<T1, T2, T3, T4>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable <T4>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>,
+                T4 | IAnimationThenable<T4>
+            ]
         ): Promise<[T1, T2, T3, T4]>;
         public all<T1, T2, T3>(
-            values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>]
+            values: [
+                T1 | IAnimationThenable<T1>,
+                T2 | IAnimationThenable<T2>,
+                T3 | IAnimationThenable<T3>
+            ]
         ): Promise<[T1, T2, T3]>;
         public all<T1, T2>(
             values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>]
         ): Promise<[T1, T2]>;
-        public all<T1>(
-            values: [T1 | IAnimationThenable<T1>]
-        ): Promise<[T1]>;
-        public all<TAll>(promises: (TAll | IAnimationThenable<TAll>)[]): Promise<TAll[]> {
+        public all<T1>(values: [T1 | IAnimationThenable<T1>]): Promise<[T1]>;
+        public all<TAll>(
+            promises: (TAll | IAnimationThenable<TAll>)[]
+        ): Promise<TAll[]> {
             const length = promises.length;
             let args = <IAnimationEssentials[]>[];
             const animationPromise = new AnimationPromise((resolve): void => {
@@ -306,7 +387,9 @@ module plat.ui.animations {
             });
 
             for (let i = 0; i < length; i += 1) {
-                args = args.concat((<IAnimationThenable<TAll>>promises[i]).getInstances());
+                args = args.concat(
+                    (<IAnimationThenable<TAll>>promises[i]).getInstances()
+                );
             }
 
             animationPromise.initialize(args);
@@ -330,7 +413,7 @@ module plat.ui.animations {
             // tslint:disable-next-line
             const animationPromise = new AnimationPromise((resolve): void => {
                 resolve((): IAnimationThenable<void> => {
-                    return <IAnimationThenable<void>><any>animationPromise;
+                    return <IAnimationThenable<void>>(<any>animationPromise);
                 });
             });
 
@@ -355,8 +438,18 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimatingThenable} A promise that resolves when the current animation is finished.
          */
-        protected _animate(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimatingThenable {
-            const animation = this._create(elements, key, options, functionality);
+        protected _animate(
+            elements: any,
+            key: string,
+            options: any,
+            functionality: IAnimationFunction
+        ): IAnimatingThenable {
+            const animation = this._create(
+                elements,
+                key,
+                options,
+                functionality
+            );
             const current = animation.current;
 
             animation.previous.then((): void => {
@@ -388,20 +481,45 @@ module plat.ui.animations {
          * @returns {plat.ui.animations.IAnimationCreation} An object containing both a promise that resolves when the
          * previous animation is finished and a promise that resolves when the current animation is finished.
          */
-        protected _create(elements: any, key: string, options: any, functionality: IAnimationFunction): IAnimationCreation {
+        protected _create(
+            elements: any,
+            key: string,
+            options: any,
+            functionality: IAnimationFunction
+        ): IAnimationCreation {
             let animationInjector = animationInjectors[key];
             const animationInstances: BaseAnimation[] = [];
             const elementNodes: Element[] = [];
             let immediateResolve: IAnimationThenable<any>;
 
-            if (!this._compat.animationSupported || isUndefined(animationInjector)) {
+            if (
+                !this._compat.animationSupported ||
+                isUndefined(animationInjector)
+            ) {
                 animationInjector = jsAnimationInjectors[key];
 
                 if (isUndefined(animationInjector)) {
-                    elements = this.__constructAnimatableElements(elements, <any>{ inject: noop }, elementNodes, animationInstances);
-                    this._handlePreInitFunctionality(elements, elementNodes, functionality);
-                    this._handlePostInitFunctionality(elements, elementNodes, functionality);
-                    this._handleEndFunctionality(elements, elementNodes, functionality);
+                    elements = this.__constructAnimatableElements(
+                        elements,
+                        <any>{ inject: noop },
+                        elementNodes,
+                        animationInstances
+                    );
+                    this._handlePreInitFunctionality(
+                        elements,
+                        elementNodes,
+                        functionality
+                    );
+                    this._handlePostInitFunctionality(
+                        elements,
+                        elementNodes,
+                        functionality
+                    );
+                    this._handleEndFunctionality(
+                        elements,
+                        elementNodes,
+                        functionality
+                    );
                     immediateResolve = this.resolve();
 
                     return {
@@ -411,13 +529,30 @@ module plat.ui.animations {
                 }
             }
 
-            elements = this.__constructAnimatableElements(elements, animationInjector, elementNodes, animationInstances);
+            elements = this.__constructAnimatableElements(
+                elements,
+                animationInjector,
+                elementNodes,
+                animationInstances
+            );
 
             const length = elementNodes.length;
             if (length === 0) {
-                this._handlePreInitFunctionality(elements, elementNodes, functionality);
-                this._handlePostInitFunctionality(elements, elementNodes, functionality);
-                this._handleEndFunctionality(elements, elementNodes, functionality);
+                this._handlePreInitFunctionality(
+                    elements,
+                    elementNodes,
+                    functionality
+                );
+                this._handlePostInitFunctionality(
+                    elements,
+                    elementNodes,
+                    functionality
+                );
+                this._handleEndFunctionality(
+                    elements,
+                    elementNodes,
+                    functionality
+                );
                 immediateResolve = this.resolve();
 
                 return {
@@ -426,57 +561,97 @@ module plat.ui.animations {
                 };
             }
 
-            this._handlePreInitFunctionality(elements, elementNodes, functionality);
+            this._handlePreInitFunctionality(
+                elements,
+                elementNodes,
+                functionality
+            );
 
             const id = uniqueId('animation_');
             const previousAnimations = this.__setAnimationId(id, elementNodes);
             let previousPromise: async.Promise<void>;
-            const animationPromise = new AnimationPromise((resolve: any): void => {
-                const _Promise = this._Promise;
+            const animationPromise = new AnimationPromise(
+                (resolve: any): void => {
+                    const _Promise = this._Promise;
 
-                previousPromise = _Promise.all(<any>previousAnimations).then((): void => {
-                    const animationPromises: IAnimationThenable<any>[] = [];
+                    previousPromise = _Promise
+                        .all(<any>previousAnimations)
+                        .then((): void => {
+                            const animationPromises: IAnimationThenable<
+                                any
+                            >[] = [];
 
-                    for (let i = 0; i < length; i += 1) {
-                        animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
-                    }
+                            for (let i = 0; i < length; i += 1) {
+                                animationPromises.push(
+                                    animationInstances[i].instantiate(
+                                        elementNodes[i],
+                                        options
+                                    )
+                                );
+                            }
 
-                    this._handlePostInitFunctionality(elements, elementNodes, functionality);
+                            this._handlePostInitFunctionality(
+                                elements,
+                                elementNodes,
+                                functionality
+                            );
 
-                    const animationsFinished = _Promise.all(<any>animationPromises);
-                    const animatingParentId = this.__isParentAnimating(elementNodes);
-                    const animatedElement = this.__generateAnimatedElement(id, elementNodes, animationPromise);
+                            const animationsFinished = _Promise.all(
+                                <any>animationPromises
+                            );
+                            const animatingParentId = this.__isParentAnimating(
+                                elementNodes
+                            );
+                            const animatedElement = this.__generateAnimatedElement(
+                                id,
+                                elementNodes,
+                                animationPromise
+                            );
 
-                    if (!isNull(animatingParentId)) {
-                        this._handleEndFunctionality(elements, elementNodes, functionality);
-                        animatedElement.animationEnd(true);
+                            if (!isNull(animatingParentId)) {
+                                this._handleEndFunctionality(
+                                    elements,
+                                    elementNodes,
+                                    functionality
+                                );
+                                animatedElement.animationEnd(true);
 
-                        const parent = this._animatedElements[animatingParentId];
-                        const resolvedPromise = isPromise(parent.promise) ?
-                            (): IAnimationThenable<any> => {
-                                return parent.promise;
-                            } : (): IAnimationThenable<any> => {
-                                return <any>animationPromise;
-                            };
+                                const parent = this._animatedElements[
+                                    animatingParentId
+                                ];
+                                const resolvedPromise = isPromise(
+                                    parent.promise
+                                )
+                                    ? (): IAnimationThenable<any> => {
+                                          return parent.promise;
+                                      }
+                                    : (): IAnimationThenable<any> => {
+                                          return <any>animationPromise;
+                                      };
 
-                        animationsFinished.then((): void => {
-                            resolve(resolvedPromise);
+                                animationsFinished.then((): void => {
+                                    resolve(resolvedPromise);
+                                });
+                            }
+
+                            this.__stopChildAnimations(elementNodes);
+
+                            animatedElement.promise = <any>animationPromise;
+                            animationsFinished.then((): void => {
+                                this._handleEndFunctionality(
+                                    elements,
+                                    elementNodes,
+                                    functionality
+                                );
+                                animatedElement.animationEnd();
+
+                                resolve((): IAnimationThenable<any> => {
+                                    return <any>animationPromise;
+                                });
+                            });
                         });
-                    }
-
-                    this.__stopChildAnimations(elementNodes);
-
-                    animatedElement.promise = <any>animationPromise;
-                    animationsFinished.then((): void => {
-                        this._handleEndFunctionality(elements, elementNodes, functionality);
-                        animatedElement.animationEnd();
-
-                        resolve((): IAnimationThenable<any> => {
-                            return <any>animationPromise;
-                        });
-                    });
-                });
-            });
+                }
+            );
 
             animationPromise.initialize(animationInstances);
 
@@ -501,7 +676,11 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        protected _handlePreInitFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void {
+        protected _handlePreInitFunctionality(
+            nodes: Node[],
+            elementNodes: Element[],
+            functionality: IAnimationFunction
+        ): void {
             switch (functionality.key) {
                 case 'move':
                     for (let i = 0; i < length; i += 1) {
@@ -527,7 +706,11 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        protected _handlePostInitFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void {
+        protected _handlePostInitFunctionality(
+            nodes: Node[],
+            elementNodes: Element[],
+            functionality: IAnimationFunction
+        ): void {
             let length: number;
             let i: number;
 
@@ -578,7 +761,11 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        protected _handleEndFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void {
+        protected _handleEndFunctionality(
+            nodes: Node[],
+            elementNodes: Element[],
+            functionality: IAnimationFunction
+        ): void {
             let length: number;
             let i: number;
 
@@ -614,7 +801,10 @@ module plat.ui.animations {
          * @returns {Array<plat.ui.animations.IAnimationThenable<any>>} An Array of promises representing all current animations on
          * the elements trying to be animated.
          */
-        private __setAnimationId(id: string, elements: Element[]): IAnimationThenable<any>[] {
+        private __setAnimationId(
+            id: string,
+            elements: Element[]
+        ): IAnimationThenable<any>[] {
             const animatedElements = this._animatedElements;
             let animatedElement: IAnimatedElement;
             let _plat: ICustomElementProperty;
@@ -661,7 +851,11 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimatedElement} The object representing the newly animated collection of elements.
          */
-        private __generateAnimatedElement(id: string, elements: Element[], animationPromise: AnimationPromise): IAnimatedElement {
+        private __generateAnimatedElement(
+            id: string,
+            elements: Element[],
+            animationPromise: AnimationPromise
+        ): IAnimatedElement {
             const animatedElements = this._animatedElements;
             const removeListener = (cancel?: boolean): void => {
                 let _plat: ICustomElementProperty;
@@ -698,9 +892,9 @@ module plat.ui.animations {
                 deleteProperty(animatedElements, id);
             };
 
-            return animatedElements[id] = {
+            return (animatedElements[id] = {
                 animationEnd: removeListener,
-            };
+            });
         }
 
         /**
@@ -720,7 +914,13 @@ module plat.ui.animations {
             let animationId: string;
             let element: Node = elements[0];
 
-            while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
+            while (
+                !(
+                    isDocument((element = element.parentNode)) ||
+                    isNull(element) ||
+                    element.nodeType !== Node.ELEMENT_NODE
+                )
+            ) {
                 if (hasClass(<HTMLElement>element, __Animating)) {
                     let _plat = (<ICustomElement>element).__plat;
 
@@ -767,7 +967,9 @@ module plat.ui.animations {
             const length = elements.length;
 
             for (let i = 0; i < length; i += 1) {
-                customAnimationElements = slice.call(elements[i].querySelectorAll(`.${__Animating}`));
+                customAnimationElements = slice.call(
+                    elements[i].querySelectorAll(`.${__Animating}`)
+                );
 
                 while (customAnimationElements.length > 0) {
                     _plat = customAnimationElements.pop().__plat;
@@ -812,14 +1014,23 @@ module plat.ui.animations {
          *
          * @returns {Array<Node>} The Array of all nodes.
          */
-        private __constructAnimatableElements(elements: any, animationInjector: dependency.Injector<BaseAnimation>,
-            elementNodes: Element[], animationInstances: BaseAnimation[]): Node[] {
+        private __constructAnimatableElements(
+            elements: any,
+            animationInjector: dependency.Injector<BaseAnimation>,
+            elementNodes: Element[],
+            animationInstances: BaseAnimation[]
+        ): Node[] {
             if (!isArray(elements)) {
                 if (isDocumentFragment(elements)) {
                     elements = Array.prototype.slice.call(elements.childNodes);
                 } else if (isArrayLike(elements)) {
                     elements = Array.prototype.slice.call(elements);
-                } else if (!(isNode(elements) && elements.nodeType === Node.ELEMENT_NODE)) {
+                } else if (
+                    !(
+                        isNode(elements) &&
+                        elements.nodeType === Node.ELEMENT_NODE
+                    )
+                ) {
                     return [];
                 } else {
                     elements = [elements];
@@ -955,7 +1166,8 @@ module plat.ui.animations {
      * itself, it resolves with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for accessing
      * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
-    export class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
+    export class AnimationPromise extends async.Promise<IGetAnimatingThenable>
+        implements IAnimationEssentials, IAnimatingThenable {
         /**
          * @name _Promise
          * @memberof plat.ui.animations.AnimationPromise
@@ -1011,7 +1223,12 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.AnimationPromise}
          */
-        constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise?: any) {
+        constructor(
+            resolveFunction: (
+                resolve: (value?: IGetAnimatingThenable) => any
+            ) => void,
+            promise?: any
+        ) {
             super(resolveFunction);
             if (!isNull(promise)) {
                 this.__animationInstances = promise.__animationInstances;
@@ -1033,12 +1250,16 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        public initialize(instances: IAnimationEssentials | IAnimationEssentials[]): void {
+        public initialize(
+            instances: IAnimationEssentials | IAnimationEssentials[]
+        ): void {
             if (isEmpty(this.__animationInstances)) {
                 if (isArray(instances)) {
                     this.__animationInstances = <IAnimationEssentials[]>instances;
                 } else if (isObject(instances)) {
-                    this.__animationInstances = [<IAnimationEssentials>instances];
+                    this.__animationInstances = [
+                        <IAnimationEssentials>instances,
+                    ];
                 }
             }
         }
@@ -1221,9 +1442,11 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>}
          */
-        public then<U>(onFulfilled?: (value: any) => U | IAnimatingThenable,
-        onRejected?: (error: any) => U | IAnimatingThenable | void): AnimationPromise {
-            return <AnimationPromise><any>super.then<U>(<any>onFulfilled);
+        public then<U>(
+            onFulfilled?: (value: any) => U | IAnimatingThenable,
+            onRejected?: (error: any) => U | IAnimatingThenable | void
+        ): AnimationPromise {
+            return <AnimationPromise>(<any>super.then<U>(<any>onFulfilled));
         }
 
         /**
@@ -1242,8 +1465,10 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        public catch<U>(onRejected?: (error: any) => U | IAnimatingThenable): AnimationPromise {
-            return <AnimationPromise><any>super.catch<U>(<any>onRejected);
+        public catch<U>(
+            onRejected?: (error: any) => U | IAnimatingThenable
+        ): AnimationPromise {
+            return <AnimationPromise>(<any>super.catch<U>(<any>onRejected));
         }
     }
 
@@ -1260,7 +1485,9 @@ module plat.ui.animations {
      *
      * @typeparam {any} R The return type of the thenable.
      */
-    export interface IAnimationThenable<R> extends async.Promise<R>, IAnimationEssentials {
+    export interface IAnimationThenable<R>
+        extends async.Promise<R>,
+            IAnimationEssentials {
         /**
          * @name initialize
          * @memberof plat.ui.animations.IAnimationThenable
@@ -1375,8 +1602,10 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        then<U>(onFulfilled?: (value: R) => U | async.Promise<U>,
-        onRejected?: (error: any) => U | async.Promise<U> | void): IAnimationThenable<U>;
+        then<U>(
+            onFulfilled?: (value: R) => U | async.Promise<U>,
+            onRejected?: (error: any) => U | async.Promise<U> | void
+        ): IAnimationThenable<U>;
 
         /**
          * @name catch
@@ -1394,7 +1623,9 @@ module plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        catch<U>(onRejected: (error: any) => async.Promise<U> | U): IAnimationThenable<U>;
+        catch<U>(
+            onRejected: (error: any) => async.Promise<U> | U
+        ): IAnimationThenable<U>;
     }
 
     /**
@@ -1411,7 +1642,8 @@ module plat.ui.animations {
      * with a {@link plat.ui.animations.IGetAnimatingThenable|IGetAnimatingThenable} for accessing
      * the {@link plat.ui.animations.IAnimationThenable|IAnimationThenable} of the animating parent element.
      */
-    export interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> { }
+    export interface IAnimatingThenable
+        extends IAnimationThenable<IGetAnimatingThenable> {}
 
     /**
      * @name IAnimationCreation

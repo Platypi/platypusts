@@ -1,4 +1,4 @@
-module plat.processing {
+namespace plat.processing {
     'use strict';
 
     /**
@@ -44,14 +44,22 @@ module plat.processing {
          * @returns {plat.processing.CommentManager} The newly created {@link plat.processing.CommentManager|CommentManager}
          * responsible for the passed in Comment Node.
          */
-        public static create(node: Node, parent: ElementManager): CommentManager {
+        public static create(
+            node: Node,
+            parent: ElementManager
+        ): CommentManager {
             const manager = new CommentManager();
 
-            manager.initialize({
-                nodes: [{
-                    node: node,
-                }],
-            }, parent);
+            manager.initialize(
+                {
+                    nodes: [
+                        {
+                            node: node,
+                        },
+                    ],
+                },
+                parent
+            );
 
             return manager;
         }
@@ -86,8 +94,18 @@ module plat.processing {
         return CommentManager;
     }
 
-    register.injectable(__CommentManagerFactory, ICommentManagerFactory, null, __FACTORY);
-    register.injectable(__CommentManagerInstance, CommentManager, null, __INSTANCE);
+    register.injectable(
+        __CommentManagerFactory,
+        ICommentManagerFactory,
+        null,
+        __FACTORY
+    );
+    register.injectable(
+        __CommentManagerInstance,
+        CommentManager,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name ICommentManagerFactory

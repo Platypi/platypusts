@@ -1,4 +1,4 @@
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -94,31 +94,33 @@ module plat.ui {
              * platypus.css, you must overwrite the styles in platypus.css or create your own and
              * change the classNames in the config.
              */
-            styleConfig: <IDefaultStyle[]>[{
-                /**
-                 * The className that will be used to define the custom style for
-                 * allowing the best touch experience. This class is added to every
-                 * element that registers for a custom DOM event (denoted by a prefixed '$').
-                 */
-                className: 'plat-gesture',
-                /**
-                 * An array of string styles to be placed on an element to allow for the
-                 * best touch experience. In the format 'CSS identifier: value'
-                 * (e.g. 'width : 100px')
-                 */
-                styles: [
-                    '-moz-user-select: none',
-                    '-khtml-user-select: none',
-                    '-webkit-touch-callout: none',
-                    '-webkit-user-select: none',
-                    '-webkit-user-drag: none',
-                    '-webkit-tap-highlight-color: transparent',
-                    '-webkit-overflow-scrolling: touch',
-                    '-ms-user-select: none',
-                    '-ms-touch-action: manipulation',
-                    'touch-action: manipulation',
-                ],
-            }, {
+            styleConfig: <IDefaultStyle[]>[
+                {
+                    /**
+                     * The className that will be used to define the custom style for
+                     * allowing the best touch experience. This class is added to every
+                     * element that registers for a custom DOM event (denoted by a prefixed '$').
+                     */
+                    className: 'plat-gesture',
+                    /**
+                     * An array of string styles to be placed on an element to allow for the
+                     * best touch experience. In the format 'CSS identifier: value'
+                     * (e.g. 'width : 100px')
+                     */
+                    styles: [
+                        '-moz-user-select: none',
+                        '-khtml-user-select: none',
+                        '-webkit-touch-callout: none',
+                        '-webkit-user-select: none',
+                        '-webkit-user-drag: none',
+                        '-webkit-tap-highlight-color: transparent',
+                        '-webkit-overflow-scrolling: touch',
+                        '-ms-user-select: none',
+                        '-ms-touch-action: manipulation',
+                        'touch-action: manipulation',
+                    ],
+                },
+                {
                     /**
                      * The className that will be used to define the custom style for
                      * blocking touch action scrolling, zooming, etc on the element.
@@ -130,11 +132,9 @@ module plat.ui {
                      * In the format 'CSS identifier: value'
                      * (e.g. 'width : 100px')
                      */
-                    styles: [
-                        '-ms-touch-action: none',
-                        'touch-action: none',
-                    ],
-                }],
+                    styles: ['-ms-touch-action: none', 'touch-action: none'],
+                },
+            ],
         };
 
         /**
@@ -222,7 +222,9 @@ module plat.ui {
          * @description
          * The version of android, or -1 if not on android.
          */
-        protected _androidVersion: number = isUndefined(this._compat.ANDROID) ? -1 : this._compat.ANDROID;
+        protected _androidVersion: number = isUndefined(this._compat.ANDROID)
+            ? -1
+            : this._compat.ANDROID;
 
         /**
          * @name _onAndroid44
@@ -236,7 +238,8 @@ module plat.ui {
          * @description
          * Whether or not we're on Android 4.4.x or below.
          */
-        protected _android44orBelow: boolean = this._androidVersion > -1 && Math.floor(this._androidVersion / 10) <= 44;
+        protected _android44orBelow: boolean = this._androidVersion > -1 &&
+            Math.floor(this._androidVersion / 10) <= 44;
 
         /**
          * @name _isActive
@@ -603,7 +606,9 @@ module plat.ui {
          * @description
          * A function with a bound context that prevents default and stops propagation for delayed or phantom clicks.
          */
-        private __boundPreventDefaultClick = this.__preventDefaultClick.bind(this);
+        private __boundPreventDefaultClick = this.__preventDefaultClick.bind(
+            this
+        );
         /**
          * @name __reverseMap
          * @memberof plat.ui.DomEvents
@@ -703,8 +708,12 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
          */
-        public addEventListener(element: Node | Window, type: string,
-            listener: EventListener | IGestureListener, useCapture?: boolean): IRemoveListener {
+        public addEventListener(
+            element: Node | Window,
+            type: string,
+            listener: EventListener | IGestureListener,
+            useCapture?: boolean
+        ): IRemoveListener {
             const _compat = this._compat;
             const mappedGestures = _compat.mappedEvents;
             let mappedType = mappedGestures[type];
@@ -718,7 +727,10 @@ module plat.ui {
                 this.__registerElement(<ICustomElement>element, type);
                 mappedCount[type] += 1;
 
-                if (_compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
+                if (
+                    _compat.hasTouchEvents &&
+                    !this.__cancelRegex.test(mappedType)
+                ) {
                     mappedType = mappedType
                         .replace('touch', 'mouse')
                         .replace('start', 'down')
@@ -729,7 +741,11 @@ module plat.ui {
 
             element.addEventListener(type, listener, useCapture);
 
-            if (!isUndefined((<any>element)[`on${type}`]) || isUndefined((<any>gestures)[type]) || mappingExists) {
+            if (
+                !isUndefined((<any>element)[`on${type}`]) ||
+                isUndefined((<any>gestures)[type]) ||
+                mappingExists
+            ) {
                 return (): void => {
                     if (listenerRemoved) {
                         return;
@@ -765,7 +781,12 @@ module plat.ui {
                 }
 
                 listenerRemoved = true;
-                this.__removeEventListener(<ICustomElement>element, type, listener, useCapture);
+                this.__removeEventListener(
+                    <ICustomElement>element,
+                    type,
+                    listener,
+                    useCapture
+                );
             };
         }
 
@@ -921,8 +942,17 @@ module plat.ui {
             };
 
             if (this._android44orBelow) {
-                this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>target,
-                    [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                this.__haveSwipeSubscribers =
+                    this.__findFirstSubscribers(
+                        <ICustomElement>target,
+                        [
+                            gestures.$swipe,
+                            gestures.$swipedown,
+                            gestures.$swipeleft,
+                            gestures.$swiperight,
+                            gestures.$swipeup,
+                        ]
+                    ).length > 0;
             }
 
             const gestureCount = this._gestureCount;
@@ -953,7 +983,10 @@ module plat.ui {
 
                 return true;
             } else if (noRelease) {
-                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
+                domEvent = this.__findFirstSubscriber(
+                    <ICustomElement>ev.target,
+                    this._gestures.$hold
+                );
                 domEventFound = !isNull(domEvent);
                 if (domEventFound) {
                     subscribeFn = (): void => {
@@ -964,7 +997,10 @@ module plat.ui {
             } else {
                 this.__hasRelease = false;
                 // has both hold and release events registered
-                domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$hold);
+                domEvent = this.__findFirstSubscriber(
+                    <ICustomElement>ev.target,
+                    this._gestures.$hold
+                );
                 domEventFound = !isNull(domEvent);
                 if (domEventFound) {
                     subscribeFn = (): void => {
@@ -1024,7 +1060,13 @@ module plat.ui {
             let minMove = this.__hasMoved;
 
             if (!minMove) {
-                minMove = (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
+                minMove =
+                    this.__getDistance(
+                        swipeOrigin.clientX,
+                        x,
+                        swipeOrigin.clientY,
+                        y
+                    ) >= config.distances.minScrollDistance;
             }
 
             // if minimum distance not met
@@ -1049,16 +1091,28 @@ module plat.ui {
                 lastMove = swipeOrigin;
             }
 
-            const direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+            const direction = (evt.direction = this.__getDirection(
+                x - lastMove.clientX,
+                y - lastMove.clientY
+            ));
 
             this.__handleOriginChange(direction);
 
             const dx = Math.abs(x - swipeOrigin.clientX);
             const dy = Math.abs(y - swipeOrigin.clientY);
 
-            evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
+            evt.velocity = this.__getVelocity(
+                dx,
+                dy,
+                evt.timeStamp - swipeOrigin.xTimestamp,
+                evt.timeStamp - swipeOrigin.yTimestamp
+            );
 
-            if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
+            if (
+                !noSwiping &&
+                this._android44orBelow &&
+                this.__haveSwipeSubscribers
+            ) {
                 ev.preventDefault();
             }
 
@@ -1130,7 +1184,12 @@ module plat.ui {
                     } else if (this._inTouch === true) {
                         // immediately handle the input depending on type for more native-like experience
                         if (ev.target !== this.__focusedElement) {
-                            if (this.__handleInput(<HTMLInputElement>ev.target) && ev.cancelable === true) {
+                            if (
+                                this.__handleInput(
+                                    <HTMLInputElement>ev.target
+                                ) &&
+                                ev.cancelable === true
+                            ) {
                                 ev.preventDefault();
                             }
                         }
@@ -1212,7 +1271,10 @@ module plat.ui {
                 this.__capturedTarget = null;
 
                 return true;
-            } else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+            } else if (
+                isNull(touchDown) ||
+                touchEnd - touchDown.timeStamp > intervals.tapInterval
+            ) {
                 this.__handleMappedEvents(eventType, ev, ev);
                 this.__tapCount = 0;
                 // clear captured target
@@ -1227,9 +1289,16 @@ module plat.ui {
 
             // check if can be a double tap event by checking number of taps, distance between taps,
             // and time between taps
-            if (this.__tapCount > 0 &&
-                this.__getDistance(x, lastTouchUp.clientX, y, lastTouchUp.clientY) <= config.distances.maxDblTapDistance &&
-                ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
+            if (
+                this.__tapCount > 0 &&
+                this.__getDistance(
+                    x,
+                    lastTouchUp.clientX,
+                    y,
+                    lastTouchUp.clientY
+                ) <= config.distances.maxDblTapDistance &&
+                touchEnd - lastTouchUp.timeStamp <= intervals.dblTapInterval
+            ) {
                 // handle dbltap events
                 this.__handleDbltap(ev);
             } else {
@@ -1314,7 +1383,8 @@ module plat.ui {
             const index = this.__getTouchIndex(touches);
             const type = ev.type;
 
-            ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
+            ev =
+                index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
             this._inTouch = false;
             this.__clearTempStates();
 
@@ -1347,10 +1417,17 @@ module plat.ui {
          *
          * @returns {void}
          */
-        private __handleMappedEvents(type: string, ev: IPointerEvent, payload: IPointerEvent): void {
+        private __handleMappedEvents(
+            type: string,
+            ev: IPointerEvent,
+            payload: IPointerEvent
+        ): void {
             const mappedType = this.__reverseMap[type];
             if (this.__mappedCount[mappedType] > 0) {
-                const mappedDomEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, mappedType);
+                const mappedDomEvent = this.__findFirstSubscriber(
+                    <ICustomElement>ev.target,
+                    mappedType
+                );
 
                 if (!isNull(mappedDomEvent)) {
                     mappedDomEvent.trigger(payload);
@@ -1383,13 +1460,15 @@ module plat.ui {
 
             this.__tapCount += 1;
 
-            if (this._gestureCount.$tap <= 0 ||
+            if (
+                this._gestureCount.$tap <= 0 ||
                 isNull(touchDownTarget) ||
                 (touchDownTarget !== target &&
                     isFunction(touchDownTarget.contains) &&
                     !touchDownTarget.contains(target) &&
                     isFunction(target.contains) &&
-                    !target.contains(touchDownTarget))) {
+                    !target.contains(touchDownTarget))
+            ) {
                 return;
             }
 
@@ -1402,8 +1481,11 @@ module plat.ui {
 
             // fire tap event immediately if no dbltap zoom delay
             // or a mouse is being used
-            if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
-                ev.pointerType === 'mouse' || ev.type === 'mouseup') {
+            if (
+                DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
+                ev.pointerType === 'mouse' ||
+                ev.type === 'mouseup'
+            ) {
                 ev._buttons = touchDown._buttons;
                 domEvent.trigger(ev);
 
@@ -1443,7 +1525,10 @@ module plat.ui {
                 return;
             }
 
-            const domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$dbltap);
+            const domEvent = this.__findFirstSubscriber(
+                <ICustomElement>ev.target,
+                this._gestures.$dbltap
+            );
             if (isNull(domEvent)) {
                 return;
             }
@@ -1468,7 +1553,10 @@ module plat.ui {
          * @returns {void}
          */
         private __handleRelease(ev: IPointerEvent): void {
-            const domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$release);
+            const domEvent = this.__findFirstSubscriber(
+                <ICustomElement>ev.target,
+                this._gestures.$release
+            );
             if (!isNull(domEvent)) {
                 domEvent.trigger(ev);
             }
@@ -1502,7 +1590,12 @@ module plat.ui {
             const origin = this.__swipeOrigin;
             const dx = Math.abs(lastMove.clientX - origin.clientX);
             const dy = Math.abs(lastMove.clientY - origin.clientY);
-            const swipeSubscribers = this.__getRegisteredSwipes(lastMove.direction, lastMove.velocity, dx, dy);
+            const swipeSubscribers = this.__getRegisteredSwipes(
+                lastMove.direction,
+                lastMove.velocity,
+                dx,
+                dy
+            );
 
             while (swipeSubscribers.length > 0) {
                 swipeSubscribers.pop().trigger(lastMove);
@@ -1526,7 +1619,10 @@ module plat.ui {
          *
          * @returns {void}
          */
-        private __handleTrack(ev: IPointerEvent, originalEv: IPointerEvent): void {
+        private __handleTrack(
+            ev: IPointerEvent,
+            originalEv: IPointerEvent
+        ): void {
             const gestures = this._gestures;
             const trackGesture = gestures.$track;
             const direction = ev.direction;
@@ -1536,13 +1632,21 @@ module plat.ui {
                 eventTarget = <any>ev.target;
             }
 
-            const domEvents = this.__findFirstSubscribers(eventTarget,
-                [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
+            const domEvents = this.__findFirstSubscribers(eventTarget, [
+                trackGesture,
+                trackGesture + direction.x,
+                trackGesture + direction.y,
+            ]);
 
             if (this._android44orBelow) {
-                const anyEvents = this.__findFirstSubscribers(eventTarget,
-                    [trackGesture, gestures.$trackdown, gestures.$trackup,
-                        gestures.$trackleft, gestures.$trackright, gestures.$trackend]);
+                const anyEvents = this.__findFirstSubscribers(eventTarget, [
+                    trackGesture,
+                    gestures.$trackdown,
+                    gestures.$trackup,
+                    gestures.$trackleft,
+                    gestures.$trackright,
+                    gestures.$trackend,
+                ]);
 
                 if (anyEvents.length > 0) {
                     originalEv.preventDefault();
@@ -1584,7 +1688,10 @@ module plat.ui {
                 eventTarget = <any>ev.target;
             }
 
-            const domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
+            const domEvent = this.__findFirstSubscriber(
+                eventTarget,
+                this._gestures.$trackend
+            );
             if (isNull(domEvent)) {
                 return;
             }
@@ -1616,16 +1723,26 @@ module plat.ui {
             if (_compat.hasPointerEvents) {
                 startEvents = this._startEvents = touchEvents.$touchstart;
                 moveEvents = this._moveEvents = touchEvents.$touchmove;
-                endEvents = this._endEvents = `${touchEvents.$touchend} ${touchEvents.$touchcancel}`;
+                endEvents = this._endEvents = `${touchEvents.$touchend} ${
+                    touchEvents.$touchcancel
+                }`;
             } else if (_compat.hasTouchEvents) {
-                startEvents = this._startEvents = `${touchEvents.$touchstart} mousedown`;
-                moveEvents = this._moveEvents = `${touchEvents.$touchmove} mousemove`;
-                endEvents = this._endEvents = `${touchEvents.$touchend} mouseup ${touchEvents.$touchcancel}`;
+                startEvents = this._startEvents = `${
+                    touchEvents.$touchstart
+                } mousedown`;
+                moveEvents = this._moveEvents = `${
+                    touchEvents.$touchmove
+                } mousemove`;
+                endEvents = this._endEvents = `${
+                    touchEvents.$touchend
+                } mouseup ${touchEvents.$touchcancel}`;
             } else {
                 const cancelEvent = touchEvents.$touchcancel;
                 startEvents = this._startEvents = touchEvents.$touchstart;
                 moveEvents = this._moveEvents = touchEvents.$touchmove;
-                endEvents = this._endEvents = touchEvents.$touchend + (isEmpty(cancelEvent) ? '' : (` ${cancelEvent}`));
+                endEvents = this._endEvents =
+                    touchEvents.$touchend +
+                    (isEmpty(cancelEvent) ? '' : ` ${cancelEvent}`);
             }
 
             listeners[startEvents] = this._onTouchStart.bind(this);
@@ -1649,7 +1766,11 @@ module plat.ui {
             this.__registerType(this._endEvents);
 
             // dragstart will cause touchend to not fire
-            this._document.addEventListener('dragstart', this.__preventDefault, false);
+            this._document.addEventListener(
+                'dragstart',
+                this.__preventDefault,
+                false
+            );
         }
 
         /**
@@ -1671,7 +1792,11 @@ module plat.ui {
                 this.__detectingMove = false;
             }
 
-            this._document.removeEventListener('dragstart', this.__preventDefault, false);
+            this._document.removeEventListener(
+                'dragstart',
+                this.__preventDefault,
+                false
+            );
         }
 
         /**
@@ -1722,7 +1847,11 @@ module plat.ui {
             while (index > 0) {
                 index -= 1;
 
-                _document.removeEventListener(eventSplit[index], listener, false);
+                _document.removeEventListener(
+                    eventSplit[index],
+                    listener,
+                    false
+                );
             }
         }
 
@@ -1741,8 +1870,13 @@ module plat.ui {
          */
         private __registerMove(eventType: string): void {
             const gestureCount = this._gestureCount;
-            if (eventType === 'touchstart' || this.__mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
-                gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+            if (
+                eventType === 'touchstart' ||
+                this.__mappedCount.$touchmove > 0 ||
+                gestureCount.$track > 0 ||
+                gestureCount.$trackend > 0 ||
+                gestureCount.$swipe > 0
+            ) {
                 this.__registerType(this._moveEvents);
                 this.__detectingMove = true;
             }
@@ -1796,7 +1930,10 @@ module plat.ui {
             this._subscribers[id] = newSubscriber;
 
             if (!isUndefined((<HTMLElement>element).className)) {
-                addClass(<HTMLElement>element, DomEvents.config.styleConfig[0].className);
+                addClass(
+                    <HTMLElement>element,
+                    DomEvents.config.styleConfig[0].className
+                );
             }
             this.__removeSelections(element);
         }
@@ -1815,7 +1952,10 @@ module plat.ui {
          *
          * @returns {void}
          */
-        private __unregisterElement(element: ICustomElement, type: string): void {
+        private __unregisterElement(
+            element: ICustomElement,
+            type: string
+        ): void {
             const _plat = element.__plat;
             if (isNull(_plat) || isNull(_plat.domEvent)) {
                 return;
@@ -1859,12 +1999,16 @@ module plat.ui {
             const _compat = this._compat;
 
             if (_compat.hasPointerEvents || _compat.hasMsPointerEvents) {
-                this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
+                this.__updatePointers(
+                    ev,
+                    this.__pointerEndRegex.test(eventType)
+                );
 
                 return;
             }
 
-            ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
+            ev.pointerType =
+                eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
         }
 
         /**
@@ -1952,7 +2096,10 @@ module plat.ui {
          * with the first found element in the tree and the event type. Used to trigger the event at this
          * point in the DOM tree.
          */
-        private __findFirstSubscriber(eventTarget: ICustomElement, type: string): DomEvent {
+        private __findFirstSubscriber(
+            eventTarget: ICustomElement,
+            type: string
+        ): DomEvent {
             if (isNull(eventTarget)) {
                 return;
             }
@@ -1974,7 +2121,9 @@ module plat.ui {
                 }
 
                 return domEvent;
-            } while (!isNull(eventTarget = <ICustomElement>eventTarget.parentNode));
+            } while (
+                !isNull((eventTarget = <ICustomElement>eventTarget.parentNode))
+            );
         }
 
         /**
@@ -1994,7 +2143,10 @@ module plat.ui {
          * with the first found element in the tree and the corresponding event type. Used to trigger the events at their lowest
          * points in the DOM tree.
          */
-        private __findFirstSubscribers(eventTarget: ICustomElement, types: string[]): DomEvent[] {
+        private __findFirstSubscribers(
+            eventTarget: ICustomElement,
+            types: string[]
+        ): DomEvent[] {
             if (isNull(eventTarget)) {
                 return [];
             }
@@ -2022,8 +2174,10 @@ module plat.ui {
                         types.splice(index, 1);
                     }
                 }
-
-            } while (types.length > 0 && !isNull(eventTarget = <ICustomElement>eventTarget.parentNode));
+            } while (
+                types.length > 0 &&
+                !isNull((eventTarget = <ICustomElement>eventTarget.parentNode))
+            );
 
             return domEvents;
         }
@@ -2044,8 +2198,12 @@ module plat.ui {
          *
          * @returns {void}
          */
-        private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener,
-            useCapture?: boolean): void {
+        private __removeEventListener(
+            element: ICustomElement,
+            type: string,
+            listener: IGestureListener,
+            useCapture?: boolean
+        ): void {
             const gestures = this._gestures;
 
             element.removeEventListener(type, listener, useCapture);
@@ -2125,7 +2283,9 @@ module plat.ui {
                     ev = changedTouches[0];
                     ev.preventDefault = preventDefault;
                 } else {
-                    const changedTouchIndex = this.__getTouchIndex(changedTouches);
+                    const changedTouchIndex = this.__getTouchIndex(
+                        changedTouches
+                    );
                     if (changedTouchIndex >= 0) {
                         preventDefault = ev.preventDefault.bind(ev);
                         ev = changedTouches[changedTouchIndex];
@@ -2261,7 +2421,11 @@ module plat.ui {
                     x: ev.clientX,
                     y: ev.clientY,
                 };
-            } else if (!isUndefined(ev.offsetX) && !isUndefined(ev.offsetY) && target === ev.target) {
+            } else if (
+                !isUndefined(ev.offsetX) &&
+                !isUndefined(ev.offsetY) &&
+                target === ev.target
+            ) {
                 return {
                     x: ev.offsetX,
                     y: ev.offsetY,
@@ -2278,15 +2442,15 @@ module plat.ui {
             } else {
                 x = target.offsetLeft;
                 y = target.offsetTop;
-                while (!isNull(target = <any>target.offsetParent)) {
+                while (!isNull((target = <any>target.offsetParent))) {
                     x += target.offsetLeft;
                     y += target.offsetTop;
                 }
             }
 
             return {
-                x: (ev.clientX - x),
-                y: (ev.clientY - y),
+                x: ev.clientX - x,
+                y: ev.clientY - y,
             };
         }
 
@@ -2308,11 +2472,16 @@ module plat.ui {
          *
          * @returns {number} The distance between the points.
          */
-        private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
+        private __getDistance(
+            x1: number,
+            x2: number,
+            y1: number,
+            y2: number
+        ): number {
             const x = x2 - x1;
             const y = y2 - y1;
 
-            return Math.sqrt((x * x) + (y * y));
+            return Math.sqrt(x * x + y * y);
         }
 
         /**
@@ -2331,7 +2500,12 @@ module plat.ui {
          *
          * @returns {plat.ui.IVelocity} A velocity object containing horizontal and vertical velocities.
          */
-        private __getVelocity(dx: number, dy: number, dtx: number, dty: number): IVelocity {
+        private __getVelocity(
+            dx: number,
+            dy: number,
+            dtx: number,
+            dty: number
+        ): IVelocity {
             let x = 0;
             let y = 0;
 
@@ -2407,13 +2581,16 @@ module plat.ui {
                 primary = 'none';
             }
 
-            const horizontal = dx === 0 ? x : (dx < 0 ? 'left' : 'right');
-            const vertical = dy === 0 ? y : (dy < 0 ? 'up' : 'down');
+            const horizontal = dx === 0 ? x : dx < 0 ? 'left' : 'right';
+            const vertical = dy === 0 ? y : dy < 0 ? 'up' : 'down';
 
             return {
                 x: horizontal,
                 y: vertical,
-                primary: (distanceX === distanceY ? primary : (distanceX > distanceY ? horizontal : vertical)),
+                primary:
+                    distanceX === distanceY
+                        ? primary
+                        : distanceX > distanceY ? horizontal : vertical,
             };
         }
 
@@ -2447,7 +2624,13 @@ module plat.ui {
 
             const origin = this.__swipeOrigin;
             const gestures = this._gestures;
-            const swipes = [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup];
+            const swipes = [
+                gestures.$swipe,
+                gestures.$swipedown,
+                gestures.$swipeleft,
+                gestures.$swiperight,
+                gestures.$swipeup,
+            ];
 
             if (!xSame) {
                 origin.clientX = lastMove.clientX;
@@ -2455,7 +2638,11 @@ module plat.ui {
                 origin.xTarget = lastMove.target;
 
                 if (this._android44orBelow) {
-                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>origin.xTarget, swipes).length > 0;
+                    this.__haveSwipeSubscribers =
+                        this.__findFirstSubscribers(
+                            <ICustomElement>origin.xTarget,
+                            swipes
+                        ).length > 0;
                 }
             }
 
@@ -2465,7 +2652,11 @@ module plat.ui {
                 origin.yTarget = lastMove.target;
 
                 if (this._android44orBelow) {
-                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(<ICustomElement>origin.yTarget, swipes).length > 0;
+                    this.__haveSwipeSubscribers =
+                        this.__findFirstSubscribers(
+                            <ICustomElement>origin.yTarget,
+                            swipes
+                        ).length > 0;
                 }
             }
         }
@@ -2486,9 +2677,15 @@ module plat.ui {
          *
          * @returns {Array<plat.ui.DomEvent>} The swipe event subscribers.
          */
-        private __getRegisteredSwipes(direction: IDirection, velocity: IVelocity, dx: number, dy: number): DomEvent[] {
+        private __getRegisteredSwipes(
+            direction: IDirection,
+            velocity: IVelocity,
+            dx: number,
+            dy: number
+        ): DomEvent[] {
             const swipeGesture = this._gestures.$swipe;
-            const minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity;
+            const minSwipeVelocity =
+                DomEvents.config.velocities.minSwipeVelocity;
             const events = [swipeGesture];
             let swipeTarget: ICustomElement;
             let origin = this.__swipeOrigin;
@@ -2549,13 +2746,19 @@ module plat.ui {
 
             if (this._compat.platCss) {
                 return;
-            } else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+            } else if (
+                !isNull(_document.styleSheets) &&
+                _document.styleSheets.length > 0
+            ) {
                 const styleSheet = <CSSStyleSheet>_document.styleSheets[0];
                 styleClasses = DomEvents.config.styleConfig;
                 classLength = styleClasses.length;
                 while (classLength > 0) {
                     classLength -= 1;
-                    styleSheet.insertRule(this.__createStyle(styleClasses[classLength]), 0);
+                    styleSheet.insertRule(
+                        this.__createStyle(styleClasses[classLength]),
+                        0
+                    );
                 }
 
                 return;
@@ -2571,7 +2774,8 @@ module plat.ui {
             while (classLength > 0) {
                 classLength -= 1;
 
-                textContent = this.__createStyle(styleClasses[classLength]) + textContent;
+                textContent =
+                    this.__createStyle(styleClasses[classLength]) + textContent;
             }
             style.textContent = textContent;
             head.appendChild(style);
@@ -2625,7 +2829,8 @@ module plat.ui {
          * @returns {void}
          */
         private __blurFocusedElement(): void {
-            let focusedElement: HTMLInputElement = <HTMLInputElement>this.__focusedElement;
+            let focusedElement: HTMLInputElement = <HTMLInputElement>this
+                .__focusedElement;
 
             if (!isObject(focusedElement)) {
                 focusedElement = <any>{};
@@ -2650,13 +2855,18 @@ module plat.ui {
          * @returns {void}
          */
         private __waitForBlur(target: HTMLInputElement): void {
-            this.__blurRemover = this.addEventListener(target, 'blur', (): void => {
-                this.__blurRemover();
-                this.__blurRemover = noop;
-                if (target === this.__focusedElement) {
-                    this.__focusedElement = null;
-                }
-            }, false);
+            this.__blurRemover = this.addEventListener(
+                target,
+                'blur',
+                (): void => {
+                    this.__blurRemover();
+                    this.__blurRemover = noop;
+                    if (target === this.__focusedElement) {
+                        this.__focusedElement = null;
+                    }
+                },
+                false
+            );
         }
 
         /**
@@ -2675,9 +2885,9 @@ module plat.ui {
         private __clickTarget(target: HTMLInputElement): void {
             let clicked = false;
             const handler = (): void => {
-                    clicked = true;
-                    target.removeEventListener('click', handler, false);
-                };
+                clicked = true;
+                target.removeEventListener('click', handler, false);
+            };
 
             target.addEventListener('click', handler, false);
             postpone((): void => {
@@ -2686,7 +2896,10 @@ module plat.ui {
                 }
 
                 target.removeEventListener('click', handler, false);
-                if (this._document.body.contains(target) && isFunction(target.click)) {
+                if (
+                    this._document.body.contains(target) &&
+                    isFunction(target.click)
+                ) {
                     target.click();
                 }
             });
@@ -2790,7 +3003,11 @@ module plat.ui {
                     ignoreEvents.mouseup = false;
                 }, interval),
                 click: defer((): void => {
-                    _document.removeEventListener('click', boundPreventDefault, true);
+                    _document.removeEventListener(
+                        'click',
+                        boundPreventDefault,
+                        true
+                    );
                 }, interval),
             };
 
@@ -2816,7 +3033,11 @@ module plat.ui {
         private __preventDefaultClick(ev: Event): boolean {
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            this._document.removeEventListener('click', this.__boundPreventDefaultClick, true);
+            this._document.removeEventListener(
+                'click',
+                this.__boundPreventDefaultClick,
+                true
+            );
             this.__delayedClickRemover.click();
 
             return false;
@@ -2841,10 +3062,18 @@ module plat.ui {
             }
 
             if (!isUndefined((<any>element).onselectstart)) {
-                element.addEventListener('selectstart', this.__preventDefault, false);
+                element.addEventListener(
+                    'selectstart',
+                    this.__preventDefault,
+                    false
+                );
             }
             if (!isUndefined((<any>element).ondragstart)) {
-                element.addEventListener('dragstart', this.__preventDefault, false);
+                element.addEventListener(
+                    'dragstart',
+                    this.__preventDefault,
+                    false
+                );
             }
         }
 
@@ -2867,10 +3096,18 @@ module plat.ui {
             }
 
             if (!isUndefined((<any>element).onselectstart)) {
-                element.removeEventListener('selectstart', this.__preventDefault, false);
+                element.removeEventListener(
+                    'selectstart',
+                    this.__preventDefault,
+                    false
+                );
             }
             if (!isUndefined((<any>element).ondragstart)) {
-                element.removeEventListener('dragstart', this.__preventDefault, false);
+                element.removeEventListener(
+                    'dragstart',
+                    this.__preventDefault,
+                    false
+                );
             }
         }
 
@@ -2992,7 +3229,11 @@ module plat.ui {
          *
          * @returns {void}
          */
-        public initialize(element: Node | Window, event: string, eventType?: string): void {
+        public initialize(
+            element: Node | Window,
+            event: string,
+            eventType?: string
+        ): void {
             this.element = element;
             this.event = event;
             this.eventType = isString(eventType) ? eventType : 'CustomEvent';
@@ -3014,12 +3255,23 @@ module plat.ui {
          *
          * @returns {boolean} Whether or not the Event was cancelled in at least one Event handler.
          */
-        public trigger(eventExtension?: Object, detailArg?: any, dispatchElement?: Node): boolean {
-            const customEv = <CustomEvent>this._document.createEvent(this.eventType);
+        public trigger(
+            eventExtension?: Object,
+            detailArg?: any,
+            dispatchElement?: Node
+        ): boolean {
+            const customEv = <CustomEvent>this._document.createEvent(
+                this.eventType
+            );
             if (isObject(eventExtension)) {
                 _extend(false, false, customEv, eventExtension);
             }
-            customEv.initCustomEvent(this.event, true, true, isNull(detailArg) ? 0 : detailArg);
+            customEv.initCustomEvent(
+                this.event,
+                true,
+                true,
+                isNull(detailArg) ? 0 : detailArg
+            );
 
             if (!isNode(dispatchElement)) {
                 dispatchElement = this.element;
@@ -3100,8 +3352,10 @@ module plat.ui {
             this.__extendEventObject(customEv, ev);
             customEv.initCustomEvent(this.event, true, true, 0);
 
-            const success = isDocument(element) ||
-                element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
+            const success =
+                isDocument(element) || element.contains(target)
+                    ? target.dispatchEvent(customEv)
+                    : element.dispatchEvent(customEv);
             if (!success) {
                 ev.preventDefault();
             }
@@ -3123,7 +3377,10 @@ module plat.ui {
          *
          * @returns {void}
          */
-        private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent): void {
+        private __extendEventObject(
+            customEv: IGestureEvent,
+            ev: IPointerEvent
+        ): void {
             // not using extend function because this gets called so often for certain events.
             const pointerType = ev.pointerType;
 
@@ -3131,15 +3388,21 @@ module plat.ui {
             customEv.clientY = ev.clientY;
             customEv.offsetX = ev.offset.x;
             customEv.offsetY = ev.offset.y;
-            customEv.direction = isNull(ev.direction) ? {
-                x: 'none',
-                y: 'none',
-                primary: 'none',
-            } : ev.direction;
+            customEv.direction = isNull(ev.direction)
+                ? {
+                      x: 'none',
+                      y: 'none',
+                      primary: 'none',
+                  }
+                : ev.direction;
             customEv.touches = ev._touches;
-            customEv.velocity = isNull(ev.velocity) ? { x: 0, y: 0 } : ev.velocity;
+            customEv.velocity = isNull(ev.velocity)
+                ? { x: 0, y: 0 }
+                : ev.velocity;
             customEv.identifier = isNull(ev.identifier) ? 0 : ev.identifier;
-            customEv.pointerType = isNumber(pointerType) ? this.__convertPointerType(pointerType, ev.type) : pointerType;
+            customEv.pointerType = isNumber(pointerType)
+                ? this.__convertPointerType(pointerType, ev.type)
+                : pointerType;
             customEv.screenX = ev.screenX;
             customEv.screenY = ev.screenY;
             customEv.pageX = ev.pageX;
@@ -3161,7 +3424,10 @@ module plat.ui {
          *
          * @returns {string} The standardized pointer type.
          */
-        private __convertPointerType(pointerType: any, eventType: string): string {
+        private __convertPointerType(
+            pointerType: any,
+            eventType: string
+        ): string {
             switch (pointerType) {
                 case (<any>MSPointerEvent).MSPOINTER_TYPE_MOUSE:
                     return 'mouse';
@@ -3172,7 +3438,7 @@ module plat.ui {
                 default:
             }
 
-            return (eventType.indexOf('mouse') === -1) ? 'touch' : 'mouse';
+            return eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
         }
     }
 

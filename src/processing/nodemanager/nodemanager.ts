@@ -1,4 +1,4 @@
-module plat.processing {
+namespace plat.processing {
     'use strict';
 
     /**
@@ -180,7 +180,9 @@ module plat.processing {
          * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that
          * composes the output given a proper context.
          */
-        public static findMarkup(text: string): expressions.IParsedExpression[] {
+        public static findMarkup(
+            text: string
+        ): expressions.IParsedExpression[] {
             const startLength = __startSymbol.length;
             const endLength = __endSymbol.length;
             const endChar = __endSymbol[endLength - 1];
@@ -198,7 +200,9 @@ module plat.processing {
             end = text.indexOf(__endSymbol);
             while (start !== -1 && end !== -1) {
                 if (start !== 0) {
-                    parsedExpressions.push(wrapExpression(text.slice(0, start)));
+                    parsedExpressions.push(
+                        wrapExpression(text.slice(0, start))
+                    );
                 }
 
                 // increment with while loop instead of just += 2 for nested object literal case.
@@ -249,10 +253,14 @@ module plat.processing {
          *
          * @returns {string} The output text with all markup bound.
          */
-        public static build(expressions: expressions.IParsedExpression[], control?: ui.TemplateControl): string {
+        public static build(
+            expressions: expressions.IParsedExpression[],
+            control?: ui.TemplateControl
+        ): string {
             const length = expressions.length;
             const resources = <IObject<any>>{};
-            const evaluateExpression = NodeManager._TemplateControlFactory.evaluateExpression;
+            const evaluateExpression =
+                NodeManager._TemplateControlFactory.evaluateExpression;
             let text = '';
             let expression: expressions.IParsedExpression;
             let value: any;
@@ -267,7 +275,9 @@ module plat.processing {
                         text += JSON.stringify(value, null, 4);
                     } catch (e) {
                         if (!isNull(e.description)) {
-                            e.description = `Cannot stringify object: ${e.description}`;
+                            e.description = `Cannot stringify object: ${
+                                e.description
+                            }`;
                         }
                         e.message = `Cannot stringify object: ${e.message}`;
 
@@ -299,9 +309,14 @@ module plat.processing {
          *
          * @returns {void}
          */
-        public static observeExpressions(expressions: expressions.IParsedExpression[], control: ui.TemplateControl,
-            listener: (...args: any[]) => void): void {
-            const uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions);
+        public static observeExpressions(
+            expressions: expressions.IParsedExpression[],
+            control: ui.TemplateControl,
+            listener: (...args: any[]) => void
+        ): void {
+            const uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(
+                expressions
+            );
             const identifiers = uniqueIdentifiers.identifiers;
             const oneTimeIdentifiers = uniqueIdentifiers.oneTimeIdentifiers;
             const observableCallback = {
@@ -314,20 +329,32 @@ module plat.processing {
             let absoluteIdentifier: string;
 
             while (identifiers.length > 0) {
-                observationDetails = NodeManager.__getObservationDetails(identifiers.pop(), control);
+                observationDetails = NodeManager.__getObservationDetails(
+                    identifiers.pop(),
+                    control
+                );
                 manager = observationDetails.manager;
                 if (!isNull(manager)) {
-                    manager.observe(observationDetails.absoluteIdentifier, observableCallback);
+                    manager.observe(
+                        observationDetails.absoluteIdentifier,
+                        observableCallback
+                    );
                 }
             }
 
             while (oneTimeIdentifiers.length > 0) {
                 oneTimeIdentifier = oneTimeIdentifiers.pop();
-                observationDetails = NodeManager.__getObservationDetails(oneTimeIdentifier, control);
+                observationDetails = NodeManager.__getObservationDetails(
+                    oneTimeIdentifier,
+                    control
+                );
                 manager = observationDetails.manager;
                 if (!(isNull(manager) || observationDetails.isDefined)) {
                     absoluteIdentifier = observationDetails.absoluteIdentifier;
-                    const stopObserving = manager.observe(absoluteIdentifier, observableCallback);
+                    const stopObserving = manager.observe(
+                        absoluteIdentifier,
+                        observableCallback
+                    );
                     const stopListening = manager.observe(absoluteIdentifier, {
                         uid: control.uid,
                         listener: (): void => {
@@ -353,7 +380,9 @@ module plat.processing {
          *
          * @returns {plat.expressions.IParsedExpression} The wrapped, static expression.
          */
-        protected static _wrapExpression(text: string): expressions.IParsedExpression {
+        protected static _wrapExpression(
+            text: string
+        ): expressions.IParsedExpression {
             return {
                 evaluate: (): string => text,
                 identifiers: [],
@@ -378,7 +407,9 @@ module plat.processing {
          * @returns {plat.processing.IUniqueIdentifiers} An object containing both an array of unique identifiers for
          * one way binding as well as an array of unique identifiers for one time binding.
          */
-        private static __findUniqueIdentifiers(expressions: expressions.IParsedExpression[]): IUniqueIdentifiers {
+        private static __findUniqueIdentifiers(
+            expressions: expressions.IParsedExpression[]
+        ): IUniqueIdentifiers {
             const length = expressions.length;
             let expression: expressions.IParsedExpression;
 
@@ -432,7 +463,10 @@ module plat.processing {
 
                         if (oneTimeIdentifierObject[identifier] === true) {
                             oneTimeIdentifierObject[identifier] = false;
-                            oneTimeIdentifiers.splice(oneTimeIdentifiers.indexOf(identifier), 1);
+                            oneTimeIdentifiers.splice(
+                                oneTimeIdentifiers.indexOf(identifier),
+                                1
+                            );
                         }
                     }
                 }
@@ -462,7 +496,10 @@ module plat.processing {
          * @returns {plat.processing.IObservationDetails} An object containing information needed for observing a the given
          * identifier.
          */
-        private static __getObservationDetails(identifier: string, control: ui.TemplateControl): IObservationDetails {
+        private static __getObservationDetails(
+            identifier: string,
+            control: ui.TemplateControl
+        ): IObservationDetails {
             const _ContextManager = NodeManager._ContextManager;
             const split = identifier.split('.');
             let manager: observable.ContextManager;
@@ -471,10 +508,16 @@ module plat.processing {
 
             if (identifier[0] === '@') {
                 // we found an alias
-                const resources: IObject<{ resource: ui.IResource; control: ui.TemplateControl }> = {};
+                const resources: IObject<{
+                    resource: ui.IResource;
+                    control: ui.TemplateControl;
+                }> = {};
                 const topIdentifier = split.shift();
                 const alias = topIdentifier.slice(1);
-                let resourceObj: { resource: ui.IResource; control: ui.TemplateControl };
+                let resourceObj: {
+                    resource: ui.IResource;
+                    control: ui.TemplateControl;
+                };
 
                 if (split.length > 0) {
                     absoluteIdentifier = `.${split.join('.')}`;
@@ -483,29 +526,50 @@ module plat.processing {
                 resourceObj = resources[alias];
 
                 if (isNull(resourceObj)) {
-                    resourceObj = resources[alias] = control.findResource(alias);
+                    resourceObj = resources[alias] = control.findResource(
+                        alias
+                    );
                 }
 
                 if (!isNull(resourceObj) && !isNull(resourceObj.resource)) {
                     const type = resourceObj.resource.type;
                     if (alias === __CONTEXT_RESOURCE) {
-                        manager = _ContextManager.getManager(Control.getRootControl(control));
-                        absoluteIdentifier = control.absoluteContextPath + absoluteIdentifier;
+                        manager = _ContextManager.getManager(
+                            Control.getRootControl(control)
+                        );
+                        absoluteIdentifier =
+                            control.absoluteContextPath + absoluteIdentifier;
                     } else if (alias === __ROOT_CONTEXT_RESOURCE) {
-                        manager = _ContextManager.getManager(resources[alias].control);
+                        manager = _ContextManager.getManager(
+                            resources[alias].control
+                        );
                         absoluteIdentifier = `context${absoluteIdentifier}`;
-                    } else if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
-                        manager = _ContextManager.getManager(resources[alias].control);
+                    } else if (
+                        type === __OBSERVABLE_RESOURCE ||
+                        type === __LITERAL_RESOURCE
+                    ) {
+                        manager = _ContextManager.getManager(
+                            resources[alias].control
+                        );
                         absoluteIdentifier = `resources.${alias}.value${absoluteIdentifier}`;
                     }
                 }
             } else {
                 // look on the control.context
-                isDefined = !isUndefined(_ContextManager.getContext(control.context, split));
+                isDefined = !isUndefined(
+                    _ContextManager.getContext(control.context, split)
+                );
 
-                if (isDefined || isUndefined(_ContextManager.getContext(control, split))) {
-                    manager = _ContextManager.getManager(Control.getRootControl(control));
-                    absoluteIdentifier = `${control.absoluteContextPath}.${identifier}`;
+                if (
+                    isDefined ||
+                    isUndefined(_ContextManager.getContext(control, split))
+                ) {
+                    manager = _ContextManager.getManager(
+                        Control.getRootControl(control)
+                    );
+                    absoluteIdentifier = `${
+                        control.absoluteContextPath
+                    }.${identifier}`;
                 } else {
                     manager = null;
                 }
@@ -600,7 +664,7 @@ module plat.processing {
          *
          * @returns {void}
          */
-        public bind(): void { }
+        public bind(): void {}
     }
 
     /**
@@ -611,7 +675,8 @@ module plat.processing {
         _ContextManager?: observable.IContextManagerStatic,
         _parser?: expressions.Parser,
         _TemplateControlFactory?: ui.ITemplateControlFactory,
-        _log?: debug.Log): INodeManagerStatic {
+        _log?: debug.Log
+    ): INodeManagerStatic {
         // NOTE: This is not advised by TypeScript, but we want to do this.
         (<any>NodeManager)._markupRegex = _regex.markupRegex;
         (<any>NodeManager)._newLineRegex = _regex.newLineRegex;
@@ -623,13 +688,18 @@ module plat.processing {
         return NodeManager;
     }
 
-    register.injectable(__NodeManagerStatic, INodeManagerStatic, [
-        __Regex,
-        __ContextManagerStatic,
-        __Parser,
-        __TemplateControlFactory,
-        __Log,
-    ], __STATIC);
+    register.injectable(
+        __NodeManagerStatic,
+        INodeManagerStatic,
+        [
+            __Regex,
+            __ContextManagerStatic,
+            __Parser,
+            __TemplateControlFactory,
+            __Log,
+        ],
+        __STATIC
+    );
 
     /**
      * @name INodeManagerStatic
@@ -691,7 +761,10 @@ module plat.processing {
          *
          * @returns {string} The output text with all markup bound.
          */
-        build(expressions: expressions.IParsedExpression[], control?: ui.TemplateControl): string;
+        build(
+            expressions: expressions.IParsedExpression[],
+            control?: ui.TemplateControl
+        ): string;
 
         /**
          * @name observeExpressions
@@ -711,8 +784,11 @@ module plat.processing {
          *
          * @returns {void}
          */
-        observeExpressions(expressions: expressions.IParsedExpression[],
-            control: ui.TemplateControl, listener: (...args: any[]) => void): void;
+        observeExpressions(
+            expressions: expressions.IParsedExpression[],
+            control: ui.TemplateControl,
+            listener: (...args: any[]) => void
+        ): void;
     }
 
     /**

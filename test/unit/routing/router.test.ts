@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-namespace tests.routing.router {
+module tests.routing.router {
     'use strict';
 
     const Promise = plat.acquire(plat.async.IPromise);

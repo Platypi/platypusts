@@ -9,11 +9,11 @@
 /**
   * The entry point into the platypus library.
   */
-declare module plat {
+declare namespace plat {
     /**
       * Holds all the classes and interfaces related to registering components for platypus.
       */
-    module register {
+    namespace register {
         /**
           * Registers the IApp with the framework. The framework will instantiate the IApp
           * when needed, and wire up the Application Lifecycle events. The dependencies array corresponds to injectables that will be
@@ -108,7 +108,7 @@ declare module plat {
     /**
       * Holds classes and interfaces related to dependency injection components in platypus.
       */
-    module dependency {
+    namespace dependency {
         /**
           * The Injector class is used for dependency injection. You can create an injector object,
           * specify dependencies and a constructor for your component. When the injector object is
@@ -234,7 +234,7 @@ declare module plat {
         /**
           * Publicly exposes all the dependency injector objects.
           */
-        module injectors {
+        namespace injectors {
             /**
               * An InjectorObject of Controls.
               * Contains all the registered controls for an application.
@@ -283,7 +283,7 @@ declare module plat {
     /**
       * Holds all classes and interfaces related to debugging components in platypus.
       */
-    module debug {
+    namespace debug {
         /**
           * Handles all logging/debugging for the framework. All logs will be bubbled up to the
           * App.error event to allow for easy debugging.
@@ -924,7 +924,7 @@ declare module plat {
     /**
       * Holds classes and interfaces related to expression handling in platypus.
       */
-    module expressions {
+    namespace expressions {
         /**
           * A class for keeping track of commonly used regular expressions.
           */
@@ -1493,7 +1493,7 @@ declare module plat {
     /**
       * Holds classes and interfaces related to web components in platypus.
       */
-    module web {
+    namespace web {
         /**
           */
         function Location(_window?: Window): Location;
@@ -1770,7 +1770,7 @@ declare module plat {
     /**
       * Holds all classes and interfaces related to async components in platypus.
       */
-    module async {
+    namespace async {
         /**
           * Takes in a generic type corresponding to the fulfilled success type.
           */
@@ -1830,7 +1830,7 @@ declare module plat {
             static reject<R>(error?: any): Promise<R>;
             /**
               * Invokes the resolve function for a promise. Handles error catching.
-              * @param {plat.async.IResolveFunction<R>} resolveFunction The resolve function to invoke.
+              * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
               * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
               */
             private static __invokeResolveFunction<R>(resolveFunction, promise);
@@ -1894,9 +1894,10 @@ declare module plat {
               * An ES6 implementation of the Promise API. Useful for asynchronous programming.
               * Takes in 2 generic types corresponding to the fulfilled success and error types.
               * The error type (U) should extend Error in order to get proper stack tracing.
-              * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
+              * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
+              * A function for fulfilling/rejecting the Promise.
               */
-            constructor(resolveFunction: IResolveFunction<R>);
+            constructor(resolveFunction: (resolve: (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void);
             /**
               * Takes in two methods, called when/if the promise fulfills/rejects.
               * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
@@ -1932,13 +1933,11 @@ declare module plat {
         }
         /**
           */
-        type IResolveFunction<R> = (resolve: (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void;
-        /**
-          */
         function IPromise(_window?: any): IPromise;
         /**
           */
         interface IPromise {
+            new <R>(resolveFunction: (resolve: (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void): Promise<R>;
             all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
             all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
             all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
@@ -1952,7 +1951,6 @@ declare module plat {
             race<R>(promises: (R | IThenable<R>)[]): Promise<R>;
             resolve<R>(value?: R | IThenable<R>): Promise<R>;
             reject<R>(error?: any): Promise<R>;
-            new <R>(resolveFunction: IResolveFunction<R>): Promise<R>;
         }
         /**
           * HttpRequest provides a wrapper for the XMLHttpRequest object. Allows for
@@ -2374,7 +2372,7 @@ declare module plat {
     /**
       * Holds classes and interfaces related to storage in platypus.
       */
-    module storage {
+    namespace storage {
         /**
           * A Cache class, for use with the ICacheFactory injectable.
           * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
@@ -2606,7 +2604,7 @@ declare module plat {
     /**
       * Holds all classes and interfaces related to observable components in platypus.
       */
-    module observable {
+    namespace observable {
         /**
           * A class for managing both context inheritance and observable properties on controls and
           * facilitating in data-binding.
@@ -3127,7 +3125,7 @@ declare module plat {
     /**
       * Holds classes and interfaces related to event management components in platypus.
       */
-    module events {
+    namespace events {
         /**
           * An event class that propagates through a control tree.
           * Propagation of the event always starts at the sender, allowing a control to both
@@ -3803,7 +3801,7 @@ declare module plat {
     /**
       * Holds all the classes and interfaces related to UI components for platypus.
       */
-    module ui {
+    namespace ui {
         /**
           * The base control for any control that affects the UI. They provide properties for the control to use
           * to manage its body HTML.
@@ -5926,7 +5924,7 @@ declare module plat {
         /**
           * Holds all the classes and interfaces related to UI animation components for platypus.
           */
-        module animations {
+        namespace animations {
             /**
               * A class used for animating elements.
               */
@@ -6659,7 +6657,7 @@ declare module plat {
         /**
           * Holds classes and interfaces related to UI control components in platypus.
           */
-        module controls {
+        namespace controls {
             /**
               * A control that facilitates routing between ViewControls. A Viewport is
               * the link between a ViewControl, a Navigator, and a Router.
@@ -7998,7 +7996,7 @@ declare module plat {
     /**
       * Holds classes and interfaces related to Document processing in platypus.
       */
-    module processing {
+    namespace processing {
         /**
           * Responsible for iterating through the DOM and collecting controls.
           */
@@ -8795,7 +8793,7 @@ declare module plat {
     /**
       * Holds all classes and interfaces related to routing components in platypus.
       */
-    module routing {
+    namespace routing {
         /**
           * Ties the browser and routers together, facilitating app navigation at every router level.
           * Listens for url changes and responds accordingly. Also contains functionality for generating
@@ -9825,7 +9823,7 @@ declare module plat {
     /**
       * Holds all classes and interfaces related to attribute control components in platypus.
       */
-    module controls {
+    namespace controls {
         /**
           * Allows for assigning a name to an Element or TemplateControl and referencing it
           * from parent controls.
@@ -10392,7 +10390,7 @@ declare module plat {
             'close bracket': number;
             '}': number;
             'close brace': number;
-            '\'': number;
+            "'": number;
             'single quote': number;
             '"': number;
             'double quote': number;

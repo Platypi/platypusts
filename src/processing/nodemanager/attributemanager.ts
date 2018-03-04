@@ -1,5 +1,4 @@
-module plat.processing {
-
+namespace plat.processing {
     /**
      * @name AttributeManager
      * @memberof plat.processing
@@ -141,7 +140,9 @@ module plat.processing {
          */
         public static getInstance(): AttributeManager {
             const manager = new AttributeManager();
-            manager._NodeManager = <INodeManagerStatic>acquire(__NodeManagerStatic);
+            manager._NodeManager = <INodeManagerStatic>acquire(
+                __NodeManagerStatic
+            );
 
             return manager;
         }
@@ -164,7 +165,13 @@ module plat.processing {
          *
          * @returns {void}
          */
-        public initialize(element: Element, node: INode, parent: ui.TemplateControl, controls: Control[], replace?: boolean): void {
+        public initialize(
+            element: Element,
+            node: INode,
+            parent: ui.TemplateControl,
+            controls: Control[],
+            replace?: boolean
+        ): void {
             this.element = <HTMLElement>element;
             this.node = node;
             this.parent = parent;
@@ -197,7 +204,10 @@ module plat.processing {
             const last = this._lastValues;
             const element: HTMLElement = this.element;
             let nodeValue = attr.value;
-            let classes = nodeManager.build(node.expressions, this.parent).trim().split(/\s+/);
+            let classes = nodeManager
+                .build(node.expressions, this.parent)
+                .trim()
+                .split(/\s+/);
             let c: string;
             let length = classes.length;
             let i: number;
@@ -211,11 +221,16 @@ module plat.processing {
 
                 while (start !== -1 && end !== -1) {
                     // increment with while loop instead of just += 2 for nested object literal case.
-                    while (nodeValue[end] !== endChar || nodeValue[end + 1] === endChar) {
+                    while (
+                        nodeValue[end] !== endChar ||
+                        nodeValue[end + 1] === endChar
+                    ) {
                         end += 1;
                     }
 
-                    nodeValue = `${nodeValue.slice(0, start).trim()} ${nodeValue.slice(end).trim()}`;
+                    nodeValue = `${nodeValue
+                        .slice(0, start)
+                        .trim()} ${nodeValue.slice(end).trim()}`;
                     start = nodeValue.indexOf(__startSymbol);
                     end = nodeValue.indexOf(__endSymbol);
                 }
@@ -260,7 +275,10 @@ module plat.processing {
             const controls = this._controls;
             const node = this.node;
             const key = camelCase(node.nodeName);
-            const value = this._NodeManager.build(node.expressions, this.parent);
+            const value = this._NodeManager.build(
+                node.expressions,
+                this.parent
+            );
 
             this._notifyAttributes(key, value);
 

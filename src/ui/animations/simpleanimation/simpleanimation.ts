@@ -1,4 +1,3 @@
-
 /**
  * @name animations
  * @memberof plat.ui
@@ -8,7 +7,7 @@
  * @description
  * Holds all the classes and interfaces related to UI animation components for platypus.
  */
-module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -109,11 +108,17 @@ module plat.ui.animations {
                     options = <any>{};
                 }
 
-                const computedStyle = this._window.getComputedStyle(element, options.pseudo);
-                const animationName = computedStyle[<any>(`${animationId}Name`)];
+                const computedStyle = this._window.getComputedStyle(
+                    element,
+                    options.pseudo
+                );
+                const animationName = computedStyle[<any>`${animationId}Name`];
 
-                if (animationName === '' || animationName === 'none' ||
-                    computedStyle[<any>(`${animationId}PlayState`)] === 'paused') {
+                if (
+                    animationName === '' ||
+                    animationName === 'none' ||
+                    computedStyle[<any>`${animationId}PlayState`] === 'paused'
+                ) {
                     this._dispose();
                     this.end();
 
@@ -125,10 +130,12 @@ module plat.ui.animations {
                 }
 
                 this._cancelAnimation = this.animationEnd((): void => {
-                    this._cancelAnimation = requestAnimationFrameGlobal((): void => {
-                        this._dispose();
-                        this.end();
-                    });
+                    this._cancelAnimation = requestAnimationFrameGlobal(
+                        (): void => {
+                            this._dispose();
+                            this.end();
+                        }
+                    );
                 });
             });
         }
@@ -155,7 +162,10 @@ module plat.ui.animations {
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     if (this._cancelAnimation !== noop) {
-                        this.element.style[<any>(`${animationEvents.$animation}PlayState`)] = 'paused';
+                        this.element.style[
+                            <any>`${animationEvents.$animation}PlayState`
+                        ] =
+                            'paused';
                     }
                     resolve();
                 });
@@ -184,7 +194,10 @@ module plat.ui.animations {
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     if (this._cancelAnimation !== noop) {
-                        this.element.style[<any>(`${animationEvents.$animation}PlayState`)] = 'running';
+                        this.element.style[
+                            <any>`${animationEvents.$animation}PlayState`
+                        ] =
+                            'running';
                     }
                     resolve();
                 });
@@ -222,7 +235,10 @@ module plat.ui.animations {
          */
         protected _dispose(): void {
             const className = this.className;
-            removeClass(this.element, `${className} ${className}${__INIT_SUFFIX}`);
+            removeClass(
+                this.element,
+                `${className} ${className}${__INIT_SUFFIX}`
+            );
             this._cancelAnimation = noop;
         }
     }

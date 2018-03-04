@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -129,7 +129,9 @@ module plat.controls {
             }
 
             if (!isUndefined((<any>element)[elementProperty])) {
-                (<any>element)[elementProperty] = this._browser.urlUtils(expression);
+                (<any>element)[elementProperty] = this._browser.urlUtils(
+                    expression
+                );
             }
         }
     }
