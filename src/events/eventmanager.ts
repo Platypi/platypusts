@@ -94,7 +94,7 @@ namespace plat.events {
          * An upward-moving event will start at the sender and move
          * up the parent chain.
          */
-        public static UP: string = 'up';
+        public static UP: 'up' = 'up';
 
         /**
          * @name DOWN
@@ -110,7 +110,7 @@ namespace plat.events {
          * A downward-moving event will start at the sender and move
          * to its children and beyond.
          */
-        public static DOWN: string = 'down';
+        public static DOWN: 'down' = 'down';
 
         /**
          * @name DIRECT
@@ -125,7 +125,7 @@ namespace plat.events {
          * @description
          * Goes through all listeners for an event name, ignoring order.
          */
-        public static DIRECT: string = 'direct';
+        public static DIRECT: 'direct' = 'direct';
 
         /**
          * @name propagatingEvents
@@ -719,7 +719,7 @@ namespace plat.events {
          * An upward-moving event will start at the sender and move
          * up the parent chain.
          */
-        UP: string;
+        UP: string | 'up';
 
         /**
          * @name DOWN
@@ -735,7 +735,7 @@ namespace plat.events {
          * A downward-moving event will start at the sender and move
          * to its children and beyond.
          */
-        DOWN: string;
+        DOWN: string | 'down';
 
         /**
          * @name DIRECT
@@ -750,7 +750,7 @@ namespace plat.events {
          * @description
          * Goes through all listeners for an event name, ignoring order.
          */
-        DIRECT: string;
+        DIRECT: string | 'direct';
 
         /**
          * @name propagatingEvents

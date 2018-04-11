@@ -2895,6 +2895,7 @@ var plat;
                             case ',':
                                 this.__handleComma(char);
                                 break;
+                            // tslint:disable-next-line 
                             case "'":
                             case '"':
                                 index = this.__handleStringLiteral(index, char);
@@ -20831,6 +20832,7 @@ var plat;
             'close bracket': 221,
             '}': 221,
             'close brace': 221,
+            // tslint:disable-next-line 
             "'": 222,
             'single quote': 222,
             '"': 222,
@@ -21568,6 +21570,7 @@ var plat;
                 /**
                  * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
                  */
+                // tslint:disable-next-line 
                 _this._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
                 /**
                  * Whether or not the File API is supported.

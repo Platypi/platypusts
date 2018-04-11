@@ -3229,16 +3229,16 @@ export declare namespace events {
           * An upward-moving event will start at the sender and move
           * up the parent chain.
           */
-        static UP: string;
+        static UP: 'up';
         /**
           * A downward-moving event will start at the sender and move
           * to its children and beyond.
           */
-        static DOWN: string;
+        static DOWN: 'down';
         /**
           * Goes through all listeners for an event name, ignoring order.
           */
-        static DIRECT: string;
+        static DIRECT: 'direct';
         /**
           * Keeps track of which events are currently propagating.
           */
@@ -3340,16 +3340,16 @@ export declare namespace events {
           * An upward-moving event will start at the sender and move
           * up the parent chain.
           */
-        UP: string;
+        UP: string | 'up';
         /**
           * A downward-moving event will start at the sender and move
           * to its children and beyond.
           */
-        DOWN: string;
+        DOWN: string | 'down';
         /**
           * Goes through all listeners for an event name, ignoring order.
           */
-        DIRECT: string;
+        DIRECT: string | 'direct';
         /**
           * Keeps track of which events are currently propagating.
           */
