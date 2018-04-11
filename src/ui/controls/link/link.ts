@@ -1,4 +1,3 @@
-﻿
 /**
  * @name controls
  * @memberof plat.ui
@@ -8,7 +7,7 @@
  * @description
  * Holds classes and interfaces related to UI control components in platypus.
  */
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -19,7 +18,7 @@ module plat.ui.controls {
      * @extends {plat.ui.TemplateControl}
      *
      * @description
-     * A {@link plat.ui.TemplateControl|TemplateControl} for adding additonal
+     * A {@link plat.ui.TemplateControl|TemplateControl} for adding additional
      * functionality to a native HTML anchor tag.
      */
     export class Link extends TemplateControl {
@@ -27,7 +26,7 @@ module plat.ui.controls {
             _Router: __RouterStatic,
             _Injector: __InjectorStatic,
             _browser: __Browser,
-            _window: __Window
+            _window: __Window,
         };
 
         /**
@@ -41,7 +40,7 @@ module plat.ui.controls {
          * @description
          * Replaces the {@link plat.ui.controls.Link|Link's} element with a native anchor tag.
          */
-        replaceWith: string = 'a';
+        public replaceWith: string = 'a';
 
         /**
          * @name options
@@ -54,7 +53,7 @@ module plat.ui.controls {
          * @description
          * The options for Link, if ignore is true, anchor will ignore changing the url.
          */
-        options: observable.IObservableProperty<ILinkOptions>;
+        public options: observable.IObservableProperty<ILinkOptions>;
 
         /**
          * @name element
@@ -67,7 +66,7 @@ module plat.ui.controls {
          * @description
          * The control's anchor element.
          */
-        element: HTMLAnchorElement;
+        public element: HTMLAnchorElement;
 
         /**
          * @name _router
@@ -158,8 +157,13 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        initialize(): void {
-            this._removeClickListener = this.dom.addEventListener(this.element, 'click', this._handleClick.bind(this), false);
+        public initialize(): void {
+            this._removeClickListener = this.dom.addEventListener(
+                this.element,
+                'click',
+                this._handleClick.bind(this),
+                false
+            );
         }
 
         /**
@@ -173,16 +177,22 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
-            let options = this.options,
-                setHref = this.setHref.bind(this);
+        public loaded(): void {
+            let options = this.options;
+            const setHref = this.setHref.bind(this);
 
             if (!isObject(options)) {
-                this._log.warn('No options specified for ' + this.type +
-                    '. Please send in options of type plat.ui.controls.ILinkOptions.');
-                options = this.options = <observable.IObservableProperty<ILinkOptions>>{};
+                this._log.warn(
+                    `No options specified for ${
+                        this.type
+                    }. Please send in options of type plat.ui.controls.ILinkOptions.`
+                );
+                options = this.options = <observable.IObservableProperty<
+                    ILinkOptions
+                >>{};
                 options.value = <ILinkOptions>{ view: '' };
                 this.setHref();
+
                 return;
             } else if (!isObject(options.value)) {
                 options.value = <ILinkOptions>{ view: '' };
@@ -205,11 +215,11 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        setHref(): void {
-            let href = this.getHref();
+        public setHref(): void {
+            const href = this.getHref();
 
             if (!isEmpty(href)) {
-                let element = this.element;
+                const element = this.element;
                 element.href = href;
             }
         }
@@ -225,17 +235,17 @@ module plat.ui.controls {
          *
          * @returns {string} The href, normalized.
          */
-        getHref(): string {
+        public getHref(): string {
             if (isNull(this._router)) {
                 return;
             }
 
-            let value = this.options.value,
-                href = value.view;
+            const value = this.options.value;
+            let href = value.view;
 
             if (value.isUrl !== true) {
-                let parameters = value.parameters,
-                    query = value.query;
+                const parameters = value.parameters;
+                const query = value.query;
 
                 if (isEmpty(href)) {
                     return href;
@@ -245,6 +255,21 @@ module plat.ui.controls {
             }
 
             return this._browser.formatUrl(href);
+        }
+
+        /**
+         * @name dispose
+         * @memberof plat.ui.controls.Link
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Calls to remove the click eater after a delay.
+         *
+         * @returns {void}
+         */
+        public dispose(): void {
+            defer(this._removeClickListener, 3000);
         }
 
         /**
@@ -261,6 +286,7 @@ module plat.ui.controls {
         protected _handleClick(ev: Event): void {
             if (this._allowClick) {
                 this._allowClick = false;
+
                 return;
             }
 
@@ -292,7 +318,6 @@ module plat.ui.controls {
                         break;
                     default:
                         buttons = 1;
-                        break;
                 }
             }
 
@@ -317,39 +342,25 @@ module plat.ui.controls {
                 return;
             }
 
-            let href = this.getHref();
+            const href = this.getHref();
             if (isUndefined(href)) {
                 return;
             }
 
-            let target = this.element.target;
+            const target = this.element.target;
             if (isEmpty(target) || target === __SELF) {
                 ev.preventDefault();
 
                 requestAnimationFrameGlobal((): void => {
                     this._browser.url(href);
                 });
+
                 return;
             }
 
             this._allowClick = true;
             // force call click to handle delay
             this.element.click();
-        }
-
-        /**
-         * @name dispose
-         * @memberof plat.ui.controls.Link
-         * @kind function
-         * @access public
-         *
-         * @description
-         * Calls to remove the click eater after a delay.
-         *
-         * @returns {void}
-         */
-        dispose(): void {
-            defer(this._removeClickListener, 3000);
         }
     }
 

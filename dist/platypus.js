@@ -22,60 +22,315 @@ var __extends = (this && this.__extends) || (function () {
  * The entry point into the platypus library.
  */
 var plat;
-(function (plat_1) {
-    'use strict;';
-    /* tslint:disable:no-unused-variable */
+(function (plat) {
+    'use strict';
     /*
      */
-    var __prefix = '$', __CONTEXT = 'context', __AppStatic = __prefix + 'AppStatic', __App = __prefix + 'App', __Http = __prefix + 'Http', __HttpRequestInstance = __prefix + 'HttpRequestInstance', __HttpConfig = __prefix + 'HttpConfig', __Promise = __prefix + 'Promise', __Compat = __prefix + 'Compat', __ControlFactory = __prefix + 'ControlFactory', __AttributeControlFactory = __prefix + 'AttributeControlFactory', __Document = __prefix + 'Document', __DispatchEventInstance = __prefix + 'DispatchEventInstance', __ErrorEventStatic = __prefix + 'ErrorEventStatic', __EventManagerStatic = __prefix + 'EventManagerStatic', __LifecycleEventStatic = __prefix + 'LifecycleEventStatic', __LifecycleEventInstance = __prefix + 'LifecycleEventInstance', __Log = __prefix + 'Log', __Parser = __prefix + 'Parser', __Regex = __prefix + 'Regex', __Tokenizer = __prefix + 'Tokenizer', __NavigatorInstance = __prefix + 'NavigatorInstance', __ContextManagerStatic = __prefix + 'ContextManagerStatic', __ContextManagerInstance = __prefix + 'ContextManagerInstance', __Compiler = __prefix + 'Compiler', __CommentManagerFactory = __prefix + 'CommentManagerFactory', __CommentManagerInstance = __prefix + 'CommentManagerInstance', __ElementManagerFactory = __prefix + 'ElementManagerFactory', __ElementManagerInstance = __prefix + 'ElementManagerInstance', __NodeManagerStatic = __prefix + 'NodeManagerStatic', __TextManagerFactory = __prefix + 'TextManagerFactory', __TextManagerInstance = __prefix + 'TextManagerInstance', __CacheFactory = __prefix + 'CacheFactory', __ManagerCache = __prefix + 'ManagerCache', __TemplateCache = __prefix + 'TemplateCache', __Animator = __prefix + 'Animator', __AttributesFactory = __prefix + 'AttributesFactory', __AttributesInstance = __prefix + 'AttributesInstance', __BindableTemplatesFactory = __prefix + 'BindableTemplatesFactory', __Dom = __prefix + 'Dom', __DomEvents = __prefix + 'DomEvents', __IDomEventsConfig = __prefix + 'IDomEventsConfig', __DomEventInstance = __prefix + 'DomEventInstance', __ResourcesFactory = __prefix + 'ResourcesFactory', __ResourcesInstance = __prefix + 'ResourcesInstance', __TemplateControlFactory = __prefix + 'TemplateControlFactory', __TemplateControlInstance = __prefix + 'TemplateControlInstance', __Utils = __prefix + 'Utils', __Browser = __prefix + 'Browser', __BrowserConfig = __prefix + 'BrowserConfig', __Router = __prefix + 'Router', __RouterStatic = __prefix + 'RouterStatic', __UrlUtilsInstance = __prefix + 'UrlUtilsInstance', __Window = __prefix + 'Window', __LocalStorage = __prefix + 'LocalStorage', __SessionStorage = __prefix + 'SessionStorage', __Geolocation = __prefix + 'Geolocation', __BaseSegmentFactory = __prefix + 'BaseSegmentFactory', __BaseSegmentInstance = __prefix + 'BaseSegmentInstance', __StaticSegmentInstance = __prefix + 'StaticSegmentInstance', __VariableSegmentInstance = __prefix + 'VariableSegmentInstance', __DynamicSegmentInstance = __prefix + 'DynamicSegmentInstance', __SplatSegmentInstance = __prefix + 'SplatSegmentInstance', __StateStatic = __prefix + 'StateStatic', __StateInstance = __prefix + 'StateInstance', __RouteRecognizerInstance = __prefix + 'RouteRecognizerInstance', __InjectorStatic = __prefix + 'InjectorStatic', __History = __prefix + 'History', __Location = __prefix + 'Location', 
+    var __prefix = '$';
+    var __CONTEXT = 'context';
+    var __AppStatic = __prefix + "AppStatic";
+    var __App = __prefix + "App";
+    var __Http = __prefix + "Http";
+    var __HttpRequestInstance = __prefix + "HttpRequestInstance";
+    var __HttpConfig = __prefix + "HttpConfig";
+    var __Promise = __prefix + "Promise";
+    var __Compat = __prefix + "Compat";
+    var __ControlFactory = __prefix + "ControlFactory";
+    var __AttributeControlFactory = __prefix + "AttributeControlFactory";
+    var __Document = __prefix + "Document";
+    var __DispatchEventInstance = __prefix + "DispatchEventInstance";
+    var __ErrorEventStatic = __prefix + "ErrorEventStatic";
+    var __EventManagerStatic = __prefix + "EventManagerStatic";
+    var __LifecycleEventStatic = __prefix + "LifecycleEventStatic";
+    var __LifecycleEventInstance = __prefix + "LifecycleEventInstance";
+    var __Log = __prefix + "Log";
+    var __Parser = __prefix + "Parser";
+    var __Regex = __prefix + "Regex";
+    var __Tokenizer = __prefix + "Tokenizer";
+    var __NavigatorInstance = __prefix + "NavigatorInstance";
+    var __ContextManagerStatic = __prefix + "ContextManagerStatic";
+    var __ContextManagerInstance = __prefix + "ContextManagerInstance";
+    var __Compiler = __prefix + "Compiler";
+    var __CommentManagerFactory = __prefix + "CommentManagerFactory";
+    var __CommentManagerInstance = __prefix + "CommentManagerInstance";
+    var __ElementManagerFactory = __prefix + "ElementManagerFactory";
+    var __ElementManagerInstance = __prefix + "ElementManagerInstance";
+    var __NodeManagerStatic = __prefix + "NodeManagerStatic";
+    var __TextManagerFactory = __prefix + "TextManagerFactory";
+    var __TextManagerInstance = __prefix + "TextManagerInstance";
+    var __CacheFactory = __prefix + "CacheFactory";
+    var __ManagerCache = __prefix + "ManagerCache";
+    var __TemplateCache = __prefix + "TemplateCache";
+    var __Animator = __prefix + "Animator";
+    var __AttributesFactory = __prefix + "AttributesFactory";
+    var __AttributesInstance = __prefix + "AttributesInstance";
+    var __BindableTemplatesFactory = __prefix + "BindableTemplatesFactory";
+    var __Dom = __prefix + "Dom";
+    var __DomEvents = __prefix + "DomEvents";
+    var __IDomEventsConfig = __prefix + "IDomEventsConfig";
+    var __DomEventInstance = __prefix + "DomEventInstance";
+    var __ResourcesFactory = __prefix + "ResourcesFactory";
+    var __ResourcesInstance = __prefix + "ResourcesInstance";
+    var __TemplateControlFactory = __prefix + "TemplateControlFactory";
+    var __TemplateControlInstance = __prefix + "TemplateControlInstance";
+    var __Utils = __prefix + "Utils";
+    var __Browser = __prefix + "Browser";
+    var __BrowserConfig = __prefix + "BrowserConfig";
+    var __Router = __prefix + "Router";
+    var __RouterStatic = __prefix + "RouterStatic";
+    var __UrlUtilsInstance = __prefix + "UrlUtilsInstance";
+    var __Window = __prefix + "Window";
+    var __LocalStorage = __prefix + "LocalStorage";
+    var __SessionStorage = __prefix + "SessionStorage";
+    var __Geolocation = __prefix + "Geolocation";
+    var __BaseSegmentFactory = __prefix + "BaseSegmentFactory";
+    var __BaseSegmentInstance = __prefix + "BaseSegmentInstance";
+    var __StaticSegmentInstance = __prefix + "StaticSegmentInstance";
+    var __VariableSegmentInstance = __prefix + "VariableSegmentInstance";
+    var __DynamicSegmentInstance = __prefix + "DynamicSegmentInstance";
+    var __SplatSegmentInstance = __prefix + "SplatSegmentInstance";
+    var __StateStatic = __prefix + "StateStatic";
+    var __StateInstance = __prefix + "StateInstance";
+    var __RouteRecognizerInstance = __prefix + "RouteRecognizerInstance";
+    var __InjectorStatic = __prefix + "InjectorStatic";
+    var __History = __prefix + "History";
+    var __Location = __prefix + "Location";
     /**
      */
-    __Plat = 'plat-', __Bind = __Plat + 'bind', __Href = __Plat + 'href', __Src = __Plat + 'src', __KeyDown = __Plat + 'keydown', __KeyPress = __Plat + 'keypress', __KeyUp = __Plat + 'keyup', __CharPress = __Plat + 'charpress', __Name = __Plat + 'name', __Options = __Plat + 'options', __Checked = __Plat + 'checked', __Disabled = __Plat + 'disabled', __Selected = __Plat + 'selected', __ReadOnly = __Plat + 'readonly', __Visible = __Plat + 'visible', __Style = __Plat + 'style', __Tap = __Plat + 'tap', __Blur = __Plat + 'blur', __Change = __Plat + 'change', __Copy = __Plat + 'copy', __Cut = __Plat + 'cut', __Paste = __Plat + 'paste', __DblTap = __Plat + 'dbltap', __Focus = __Plat + 'focus', __Submit = __Plat + 'submit', __TouchStart = __Plat + 'touchstart', __TouchEnd = __Plat + 'touchend', __TouchMove = __Plat + 'touchmove', __TouchCancel = __Plat + 'touchcancel', __Hold = __Plat + 'hold', __Release = __Plat + 'release', __Swipe = __Plat + 'swipe', __SwipeLeft = __Plat + 'swipeleft', __SwipeRight = __Plat + 'swiperight', __SwipeUp = __Plat + 'swipeup', __SwipeDown = __Plat + 'swipedown', __Track = __Plat + 'track', __TrackLeft = __Plat + 'trackleft', __TrackRight = __Plat + 'trackright', __TrackUp = __Plat + 'trackup', __TrackDown = __Plat + 'trackdown', __TrackEnd = __Plat + 'trackend', __React = __Plat + 'react', __Link = __Plat + 'link', __ForEach = __Plat + 'foreach', __Html = __Plat + 'html', __If = __Plat + 'if', __Ignore = __Plat + 'ignore', __Select = __Plat + 'select', __Template = __Plat + 'template', __Routeport = __Plat + 'routeport', __Viewport = __Plat + 'viewport', __Control = __Plat + 'control', __ViewControl = __Plat + 'viewcontrol', __Resources = __Plat + 'resources', __Context = __Plat + __CONTEXT, __TemplateContext = __Template + '-' + __CONTEXT, __Callback = __Plat + 'callback', __AttributePrefix = 'data-', 
+    var __Plat = 'plat-';
+    var __Bind = __Plat + "bind";
+    var __Href = __Plat + "href";
+    var __Src = __Plat + "src";
+    var __KeyDown = __Plat + "keydown";
+    var __KeyPress = __Plat + "keypress";
+    var __KeyUp = __Plat + "keyup";
+    var __CharPress = __Plat + "charpress";
+    var __Name = __Plat + "name";
+    var __Options = __Plat + "options";
+    var __Checked = __Plat + "checked";
+    var __Disabled = __Plat + "disabled";
+    var __Selected = __Plat + "selected";
+    var __ReadOnly = __Plat + "readonly";
+    var __Visible = __Plat + "visible";
+    var __Style = __Plat + "style";
+    var __Tap = __Plat + "tap";
+    var __Blur = __Plat + "blur";
+    var __Change = __Plat + "change";
+    var __Copy = __Plat + "copy";
+    var __Cut = __Plat + "cut";
+    var __Paste = __Plat + "paste";
+    var __DblTap = __Plat + "dbltap";
+    var __Focus = __Plat + "focus";
+    var __Submit = __Plat + "submit";
+    var __TouchStart = __Plat + "touchstart";
+    var __TouchEnd = __Plat + "touchend";
+    var __TouchMove = __Plat + "touchmove";
+    var __TouchCancel = __Plat + "touchcancel";
+    var __Hold = __Plat + "hold";
+    var __Release = __Plat + "release";
+    var __Swipe = __Plat + "swipe";
+    var __SwipeLeft = __Plat + "swipeleft";
+    var __SwipeRight = __Plat + "swiperight";
+    var __SwipeUp = __Plat + "swipeup";
+    var __SwipeDown = __Plat + "swipedown";
+    var __Track = __Plat + "track";
+    var __TrackLeft = __Plat + "trackleft";
+    var __TrackRight = __Plat + "trackright";
+    var __TrackUp = __Plat + "trackup";
+    var __TrackDown = __Plat + "trackdown";
+    var __TrackEnd = __Plat + "trackend";
+    var __React = __Plat + "react";
+    var __Link = __Plat + "link";
+    var __ForEach = __Plat + "foreach";
+    var __Html = __Plat + "html";
+    var __If = __Plat + "if";
+    var __Ignore = __Plat + "ignore";
+    var __Select = __Plat + "select";
+    var __Template = __Plat + "template";
+    var __Routeport = __Plat + "routeport";
+    var __Viewport = __Plat + "viewport";
+    var __Control = __Plat + "control";
+    var __ViewControl = __Plat + "viewcontrol";
+    var __Resources = __Plat + "resources";
+    var __Context = __Plat + __CONTEXT;
+    var __TemplateContext = __Template + "-" + __CONTEXT;
+    var __Callback = __Plat + "callback";
+    var __AttributePrefix = 'data-';
     /**
      */
-    __TemplateControlCache = '__templateControlCache', __Head = 'head', __Meta = 'meta', __Title = 'title', __Description = 'description', __Author = 'author', __Creator = 'creator', __MetaLink = 'link', __MetaHref = 'href', __MetaName = 'name', __MetaProperty = 'property', __MetaImage = 'image', __MetaVideo = 'video', __MetaType = 'type', __Rel = 'rel', __Url = 'url', __Article = 'article:', __OpenGraph = 'og:', __Twitter = 'twitter:', __Content = 'content', 
+    var __TemplateControlCache = '__templateControlCache';
+    var __Head = 'head';
+    var __Meta = 'meta';
+    var __Title = 'title';
+    var __Description = 'description';
+    var __Author = 'author';
+    var __Creator = 'creator';
+    var __MetaLink = 'link';
+    var __MetaHref = 'href';
+    var __MetaName = 'name';
+    var __MetaProperty = 'property';
+    var __MetaImage = 'image';
+    var __MetaVideo = 'video';
+    var __MetaType = 'type';
+    var __Rel = 'rel';
+    var __Url = 'url';
+    var __Article = 'article:';
+    var __OpenGraph = 'og:';
+    var __Twitter = 'twitter:';
+    var __Content = 'content';
     /**
      */
-    __ready = 'ready', __suspend = 'suspend', __resume = 'resume', __online = 'online', __offline = 'offline', __error = 'error', __shutdown = 'shutdown', __exiting = 'exiting', __beforeLoad = 'beforeLoad', 
+    var __ready = 'ready';
+    var __suspend = 'suspend';
+    var __resume = 'resume';
+    var __online = 'online';
+    var __offline = 'offline';
+    var __error = 'error';
+    var __shutdown = 'shutdown';
+    var __exiting = 'exiting';
+    var __beforeLoad = 'beforeLoad';
     /**
      */
-    __beforeNavigate = 'beforeNavigate', __navigated = 'navigated', __navigating = 'navigating', __beforeRouteChange = 'beforeRouteChange', __routeChanged = 'routeChanged', __urlChanged = 'urlChanged', 
+    var __beforeNavigate = 'beforeNavigate';
+    var __navigated = 'navigated';
+    var __navigating = 'navigating';
+    var __beforeRouteChange = 'beforeRouteChange';
+    var __routeChanged = 'routeChanged';
+    var __urlChanged = 'urlChanged';
     /**
      */
-    __pause = 'pause', __deviceReady = 'deviceReady', __backButton = 'backbutton', __backClick = 'backclick', __backButtonPressed = 'backButtonPressed', 
+    var __pause = 'pause';
+    var __deviceReady = 'deviceReady';
+    var __backButton = 'backbutton';
+    var __backClick = 'backclick';
+    var __backButtonPressed = 'backButtonPressed';
     /**
      */
-    __Hide = __Plat + 'hide', __Animating = __Plat + 'animating', __SimpleAnimation = __Plat + 'animation', __SimpleTransition = __Plat + 'transition', __Enter = __Plat + 'enter', __Leave = __Plat + 'leave', __Move = __Plat + 'move', __FadeIn = __Plat + 'fadein', __FadeOut = __Plat + 'fadeout', __NavigatingBack = __Plat + 'back-nav', 
+    var __Hide = __Plat + "hide";
+    var __Animating = __Plat + "animating";
+    var __SimpleAnimation = __Plat + "animation";
+    var __SimpleTransition = __Plat + "transition";
+    var __Enter = __Plat + "enter";
+    var __Leave = __Plat + "leave";
+    var __Move = __Plat + "move";
+    var __FadeIn = __Plat + "fadein";
+    var __FadeOut = __Plat + "fadeout";
+    var __NavigatingBack = __Plat + "back-nav";
     /**
      */
-    __event_prefix = '$', __tap = __event_prefix + 'tap', __dbltap = __event_prefix + 'dbltap', __touchstart = __event_prefix + 'touchstart', __touchend = __event_prefix + 'touchend', __touchmove = __event_prefix + 'touchmove', __touchcancel = __event_prefix + 'touchcancel', __hold = __event_prefix + 'hold', __release = __event_prefix + 'release', __swipe = __event_prefix + 'swipe', __swipeleft = __event_prefix + 'swipeleft', __swiperight = __event_prefix + 'swiperight', __swipeup = __event_prefix + 'swipeup', __swipedown = __event_prefix + 'swipedown', __track = __event_prefix + 'track', __trackleft = __event_prefix + 'trackleft', __trackright = __event_prefix + 'trackright', __trackup = __event_prefix + 'trackup', __trackdown = __event_prefix + 'trackdown', __trackend = __event_prefix + 'trackend', 
+    var __event_prefix = '$';
+    var __tap = __event_prefix + "tap";
+    var __dbltap = __event_prefix + "dbltap";
+    var __touchstart = __event_prefix + "touchstart";
+    var __touchend = __event_prefix + "touchend";
+    var __touchmove = __event_prefix + "touchmove";
+    var __touchcancel = __event_prefix + "touchcancel";
+    var __hold = __event_prefix + "hold";
+    var __release = __event_prefix + "release";
+    var __swipe = __event_prefix + "swipe";
+    var __swipeleft = __event_prefix + "swipeleft";
+    var __swiperight = __event_prefix + "swiperight";
+    var __swipeup = __event_prefix + "swipeup";
+    var __swipedown = __event_prefix + "swipedown";
+    var __track = __event_prefix + "track";
+    var __trackleft = __event_prefix + "trackleft";
+    var __trackright = __event_prefix + "trackright";
+    var __trackup = __event_prefix + "trackup";
+    var __trackdown = __event_prefix + "trackdown";
+    var __trackend = __event_prefix + "trackend";
     /**
      */
-    __errorSuffix = 'Error', __platError = 'Plat' + __errorSuffix, __parseError = 'Parsing' + __errorSuffix, __bindError = 'Binding' + __errorSuffix, __compileError = 'Compiling' + __errorSuffix, __nameError = 'PlatName' + __errorSuffix, __navigationError = 'Navigating' + __errorSuffix, __templateError = 'Templating' + __errorSuffix, __contextError = 'Context' + __errorSuffix, __eventError = 'DispatchEvent' + __errorSuffix, __injectableError = 'Injectable' + __errorSuffix, __CompatError = 'Compatibility' + __errorSuffix, 
+    var __errorSuffix = 'Error';
+    var __platError = "Plat" + __errorSuffix;
+    var __parseError = "Parsing" + __errorSuffix;
+    var __bindError = "Binding" + __errorSuffix;
+    var __compileError = "Compiling" + __errorSuffix;
+    var __nameError = "PlatName" + __errorSuffix;
+    var __navigationError = "Navigating" + __errorSuffix;
+    var __templateError = "Templating" + __errorSuffix;
+    var __contextError = "Context" + __errorSuffix;
+    var __eventError = "DispatchEvent" + __errorSuffix;
+    var __injectableError = "Injectable" + __errorSuffix;
+    var __CompatError = "Compatibility" + __errorSuffix;
     /**
      */
-    __forEachAliasOptions = {
+    var __forEachAliasOptions = {
         index: 'index',
         even: 'even',
         odd: 'odd',
         first: 'first',
-        last: 'last'
-    }, 
+        last: 'last',
+    };
     /**
      */
-    __BASE_SEGMENT_TYPE = 'base', __VARIABLE_SEGMENT_TYPE = 'variable', __STATIC_SEGMENT_TYPE = 'static', __SPLAT_SEGMENT_TYPE = 'splat', __DYNAMIC_SEGMENT_TYPE = 'dynamic', 
+    var __BASE_SEGMENT_TYPE = 'base';
+    var __VARIABLE_SEGMENT_TYPE = 'variable';
+    var __STATIC_SEGMENT_TYPE = 'static';
+    var __SPLAT_SEGMENT_TYPE = 'splat';
+    var __DYNAMIC_SEGMENT_TYPE = 'dynamic';
     /**
      */
-    __CONTEXT_CHANGED_PRIORITY = 1000, __startSymbol = '{{', __endSymbol = '}}', __STATIC = 'static', __SINGLETON = 'singleton', __INSTANCE = 'instance', __FACTORY = 'factory', __CLASS = 'class', __CSS = 'css', __COMPILED = '-compiled', __BOUND_PREFIX = '-@', __INIT_SUFFIX = '-init', __START_NODE = ': start node', __END_NODE = ': end node', __POPSTATE = 'popstate', __HASHCHANGE = 'hashchange', __WRAPPED_INJECTOR = 'wrapped', __JSONP_CALLBACK = 'plat_callback', __JS = 'js', __NOOP_INJECTOR = 'noop', __APP = '__app__', __RESOURCE = 'resource', __RESOURCES = __RESOURCE + 's', __ALIAS = 'alias', __ALIASES = __ALIAS + 'es', __OBSERVABLE_RESOURCE = 'observable', __INJECTABLE_RESOURCE = 'injectable', __OBJECT_RESOURCE = 'object', __FUNCTION_RESOURCE = 'function', __LITERAL_RESOURCE = 'literal', __ROOT_RESOURCE = 'root', __ROOT_CONTEXT_RESOURCE = 'rootContext', __CONTROL_RESOURCE = 'control', __SELF = '_self', __CONTEXT_RESOURCE = __CONTEXT;
-    /* tslint:disable:no-unused-variable */
-    var ___Promise, ___compat, __camelCaseRegex, __capitalCaseRegex, __nativeIsArray = !!Array.isArray;
-    var __uids = {}, __objToString = Object.prototype.toString, __toStringClass = '[object ', __errorClass = __toStringClass + 'Error]', __fileClass = __toStringClass + 'File]', __arrayClass = __toStringClass + 'Array]', __boolClass = __toStringClass + 'Boolean]', __dateClass = __toStringClass + 'Date]', __funcClass = __toStringClass + 'Function]', __numberClass = __toStringClass + 'Number]', __objectClass = __toStringClass + 'Object]', __regexpClass = __toStringClass + 'RegExp]', __stringClass = __toStringClass + 'String]', __promiseClass = __toStringClass + 'Promise]', __objectTypes = {
-        'boolean': false,
-        'function': true,
-        'object': true,
-        'number': false,
-        'string': false,
-        'undefined': false
+    var __CONTEXT_CHANGED_PRIORITY = 1000;
+    var __startSymbol = '{{';
+    var __endSymbol = '}}';
+    var __STATIC = 'static';
+    var __SINGLETON = 'singleton';
+    var __INSTANCE = 'instance';
+    var __FACTORY = 'factory';
+    var __CLASS = 'class';
+    var __CSS = 'css';
+    var __COMPILED = '-compiled';
+    var __BOUND_PREFIX = '-@';
+    var __INIT_SUFFIX = '-init';
+    var __START_NODE = ': start node';
+    var __END_NODE = ': end node';
+    var __POPSTATE = 'popstate';
+    var __HASHCHANGE = 'hashchange';
+    var __WRAPPED_INJECTOR = 'wrapped';
+    var __JSONP_CALLBACK = 'plat_callback';
+    var __JS = 'js';
+    var __NOOP_INJECTOR = 'noop';
+    var __APP = '__app__';
+    var __RESOURCE = 'resource';
+    var __RESOURCES = __RESOURCE + "s";
+    var __ALIAS = 'alias';
+    var __ALIASES = __ALIAS + "es";
+    var __OBSERVABLE_RESOURCE = 'observable';
+    var __INJECTABLE_RESOURCE = 'injectable';
+    var __OBJECT_RESOURCE = 'object';
+    var __FUNCTION_RESOURCE = 'function';
+    var __LITERAL_RESOURCE = 'literal';
+    var __ROOT_RESOURCE = 'root';
+    var __ROOT_CONTEXT_RESOURCE = 'rootContext';
+    var __CONTROL_RESOURCE = 'control';
+    var __SELF = '_self';
+    var __CONTEXT_RESOURCE = __CONTEXT;
+    var ___Promise;
+    var ___compat;
+    var __camelCaseRegex;
+    var __capitalCaseRegex;
+    var __nativeIsArray = typeof Array.isArray === 'function';
+    var __uids = {};
+    var __objToString = Object.prototype.toString;
+    var __toStringClass = '[object ';
+    var __errorClass = __toStringClass + "Error]";
+    var __fileClass = __toStringClass + "File]";
+    var __arrayClass = __toStringClass + "Array]";
+    var __boolClass = __toStringClass + "Boolean]";
+    var __dateClass = __toStringClass + "Date]";
+    var __funcClass = __toStringClass + "Function]";
+    var __numberClass = __toStringClass + "Number]";
+    var __objectClass = __toStringClass + "Object]";
+    var __regexpClass = __toStringClass + "RegExp]";
+    var __stringClass = __toStringClass + "String]";
+    var __promiseClass = __toStringClass + "Promise]";
+    var __objectTypes = {
+        boolean: false,
+        function: true,
+        object: true,
+        number: false,
+        string: false,
+        undefined: false,
     };
     function noop() { }
     function _defineProperty(obj, key, value, enumerable, configurable, writable) {
@@ -83,14 +338,14 @@ var plat;
             value: value,
             enumerable: enumerable === true,
             configurable: configurable === true,
-            writable: writable === true
+            writable: writable === true,
         });
     }
     function _defineGetter(obj, key, value, enumerable, configurable) {
         Object.defineProperty(obj, key, {
             get: function () { return value; },
             enumerable: enumerable === true,
-            configurable: configurable === true
+            configurable: configurable === true,
         });
     }
     function _extend(deep, redefine, destination) {
@@ -101,7 +356,9 @@ var plat;
         if (isNull(destination)) {
             return destination;
         }
-        var keys, property, define;
+        var keys;
+        var property;
+        var define;
         if (isFunction(redefine)) {
             define = redefine;
         }
@@ -127,7 +384,10 @@ var plat;
                 property = source[key];
                 if (deep) {
                     if (isArray(property)) {
-                        _extend(deep, define, destination[key] || (destination[key] = []), property);
+                        if (!isArray(destination[key])) {
+                            destination[key] = [];
+                        }
+                        _extend(deep, define, destination[key], property);
                         return;
                     }
                     else if (isDate(property)) {
@@ -147,7 +407,10 @@ var plat;
                         return;
                     }
                     else if (isObject(property)) {
-                        _extend(deep, define, destination[key] || (destination[key] = {}), property);
+                        if (!isObject(destination[key])) {
+                            destination[key] = {};
+                        }
+                        _extend(deep, define, destination[key], property);
                         return;
                     }
                 }
@@ -175,14 +438,14 @@ var plat;
         else if (isError(obj)) {
             return new obj.constructor(obj.message);
         }
-        var type = {};
+        var destination = {};
         if (isArray(obj)) {
-            type = [];
+            destination = [];
         }
         if (isBoolean(deep) && deep) {
-            return _extend(true, false, type, obj);
+            return _extend(true, false, destination, obj);
         }
-        return _extend(false, false, type, obj);
+        return _extend(false, false, destination, obj);
     }
     function isError(obj) {
         return __objToString.call(obj) === __errorClass;
@@ -264,8 +527,8 @@ var plat;
         if (isFunction(obj.filter)) {
             return obj.filter(iterator, context);
         }
-        forEach(function (value, key, obj) {
-            if (iterator(value, key, obj)) {
+        forEach(function (value, key, o) {
+            if (iterator(value, key, o)) {
                 arr.push(value);
             }
         }, obj);
@@ -274,7 +537,7 @@ var plat;
     function where(properties, obj) {
         return filter(function (value) {
             return !some(function (property, key) {
-                return value[key] !== property;
+                return (value)[key] !== property;
             }, properties);
         }, obj);
     }
@@ -282,12 +545,15 @@ var plat;
         if (isNull(obj) || !(isObject(obj) || isArrayLike(obj))) {
             return obj;
         }
-        var i, key, length;
+        var i;
+        var key;
+        var length;
         if (isFunction(obj.forEach)) {
             return obj.forEach(iterator, context);
         }
         else if (isArrayLike(obj)) {
-            for (i = 0, length = obj.length; i < length; ++i) {
+            length = obj.length;
+            for (i = 0; i < length; i += 1) {
                 iterator.call(context, obj[i], i, obj);
             }
         }
@@ -315,19 +581,24 @@ var plat;
         return arr;
     }
     function mapAsync(iterator, obj, context) {
-        ___Promise = ___Promise || plat.acquire(__Promise);
-        return ___Promise.all(map(iterator, obj, context));
+        if (!isObject(___Promise)) {
+            ___Promise = plat.acquire(__Promise);
+        }
+        var promises = map(iterator, obj, context);
+        return ___Promise.all(promises);
     }
     function mapAsyncWithOrder(iterator, array, context, descending) {
-        ___Promise = ___Promise || plat.acquire(__Promise);
+        if (!isObject(___Promise)) {
+            ___Promise = plat.acquire(__Promise);
+        }
         var initialValue = ___Promise.resolve([]);
         if (!isArray(array)) {
             return initialValue;
         }
         iterator = iterator.bind(context);
-        var inOrder = function (previousValue, nextValue, nextIndex, array) {
+        var inOrder = function (previousValue, nextValue, nextIndex, arr) {
             return previousValue.then(function (items) {
-                return iterator(nextValue, nextIndex, array).then(function (moreItems) {
+                return iterator(nextValue, nextIndex, arr).then(function (moreItems) {
                     return items.concat(moreItems);
                 });
             });
@@ -350,12 +621,16 @@ var plat;
         if (isNull(obj) || isFunction(obj)) {
             return false;
         }
-        var i, key, length, ret;
+        var i;
+        var key;
+        var length;
+        var ret;
         if (isFunction(obj.some)) {
             return obj.some(iterator, context);
         }
         else if (isArrayLike(obj)) {
-            for (i = 0, length = obj.length; i < length; ++i) {
+            length = obj.length;
+            for (i = 0; i < length; i += 1) {
                 ret = iterator.call(context, obj[i], i, obj);
                 if (ret === true) {
                     return true;
@@ -397,14 +672,20 @@ var plat;
         };
     }
     function requestAnimationFrameGlobal(method, context) {
-        ___compat = ___compat || (plat.acquire(__Compat));
+        if (!isObject(___compat)) {
+            ___compat = plat.acquire(__Compat);
+        }
         var requestAnimFrame = ___compat.requestAnimationFrame;
         if (isUndefined(requestAnimFrame)) {
             return postpone(function () {
                 method.call(context, Date.now());
             });
         }
-        var animationId = requestAnimFrame(method.bind(context)), cancelAnimFrame = ___compat.cancelAnimationFrame || noop;
+        var animationId = requestAnimFrame(method.bind(context));
+        var cancelAnimFrame = ___compat.cancelAnimationFrame;
+        if (!isFunction(cancelAnimFrame)) {
+            cancelAnimFrame = noop;
+        }
         return function () {
             cancelAnimFrame(animationId);
         };
@@ -417,8 +698,10 @@ var plat;
         if (isNull(puid)) {
             puid = __uids[prefix] = ['0', '/'];
         }
-        var index = puid.length, charCode;
-        while (index--) {
+        var index = puid.length;
+        var charCode;
+        while (index > 0) {
+            index -= 1;
             charCode = puid[index].charCodeAt(0);
             // '9' 
             if (charCode === 57) {
@@ -450,9 +733,11 @@ var plat;
             return str;
         }
         str = str.charAt(0).toLowerCase() + str.slice(1);
-        __camelCaseRegex = __camelCaseRegex || plat.acquire(__Regex).camelCaseRegex;
+        if (!isRegExp(__camelCaseRegex)) {
+            __camelCaseRegex = plat.acquire(__Regex).camelCaseRegex;
+        }
         return str.replace(__camelCaseRegex, function (match, delimiter, char, index) {
-            return index ? char.toUpperCase() : char;
+            return (isNumber(index) && index > 0) ? char.toUpperCase() : char;
         });
     }
     function delimit(str, delimiter) {
@@ -462,16 +747,16 @@ var plat;
         else if (isNull(delimiter)) {
             delimiter = '';
         }
-        __capitalCaseRegex = __capitalCaseRegex || plat.acquire(__Regex).capitalCaseRegex;
+        if (!isRegExp(__capitalCaseRegex)) {
+            __capitalCaseRegex = plat.acquire(__Regex).capitalCaseRegex;
+        }
         return str.replace(__capitalCaseRegex, function (match, index) {
-            return index ? delimiter + match.toLowerCase() : match.toLowerCase();
+            return (isNumber(index) && index > 0) ? delimiter + match.toLowerCase() : match.toLowerCase();
         });
     }
     function deleteProperty(obj, property) {
         if (!isNull(obj)) {
-            /* tslint:disable:no-unused-expression */
             delete obj[property];
-            /* tslint:enable:no-unused-expression */
         }
         return obj;
     }
@@ -486,8 +771,11 @@ var plat;
             return;
         }
         search = search.replace(/^\?+/, '');
-        var split = search.split('&'), query = {}, length = split.length, item;
-        for (var i = 0; i < length; ++i) {
+        var split = search.split('&');
+        var query = {};
+        var length = split.length;
+        var item;
+        for (var i = 0; i < length; i += 1) {
             item = split[i].split('=');
             query[item[0]] = item[1];
         }
@@ -496,10 +784,10 @@ var plat;
     function serializeQuery(query) {
         var q = '';
         q += map(function (value, key) {
-            return key + '=' + value;
+            return key + "=" + value;
         }, query).join('&');
         if (!isEmpty(q)) {
-            q = '?' + q;
+            q = "?" + q;
         }
         return q;
     }
@@ -511,10 +799,17 @@ var plat;
             return prev && current !== false;
         }, true);
     }
-    /* tslint:enable:no-unused-variable */
-    /* tslint:disable:no-unused-variable */
-    var ___document, ___templateCache, ___http, ___log;
-    var __nodeNameRegex = /<([\w:]+)/, __whiteSpaceRegex = /\s+/g, __option = [1, '<select multiple="multiple">', '</select>'], __table = [1, '<table>', '</table>'], __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'], __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'], __innerTableWrappers = {
+    var ___document;
+    var ___templateCache;
+    var ___http;
+    var ___log;
+    var __nodeNameRegex = /<([\w:]+)/;
+    var __whiteSpaceRegex = /\s+/g;
+    var __option = [1, '<select multiple="multiple">', '</select>'];
+    var __table = [1, '<table>', '</table>'];
+    var __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
+    var __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'];
+    var __innerTableWrappers = {
         thead: __table,
         tbody: __table,
         tfoot: __table,
@@ -523,8 +818,9 @@ var plat;
         tr: [2, '<table><tbody>', '</tbody></table>'],
         col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
         td: __tableData,
-        th: __tableData
-    }, __innerHtmlWrappers = _extend(false, false, {}, __innerTableWrappers, {
+        th: __tableData,
+    };
+    var __innerHtmlWrappers = _extend(false, false, {}, __innerTableWrappers, {
         option: __option,
         optgroup: __option,
         legend: [1, '<fieldset>', '</fieldset>'],
@@ -538,25 +834,31 @@ var plat;
         polygon: __svg,
         polyline: __svg,
         rect: __svg,
-        _default: [0, '', '']
+        _default: [0, '', ''],
     });
     function appendChildren(nodeList, root, clone) {
-        var isFragment = isDocumentFragment(root), nullRoot = !isNode(root), fragment = isFragment ?
-            root :
-            (___document || (___document = plat.acquire(__Document))).createDocumentFragment();
+        if (!isObject(___document)) {
+            ___document = plat.acquire(__Document);
+        }
+        var isFragment = isDocumentFragment(root);
+        var nullRoot = !isNode(root);
+        var fragment = isFragment ?
+            root : ___document.createDocumentFragment();
         if (nullRoot) {
             root = fragment;
         }
-        var list = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList), length = list.length, i;
+        var list = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList);
+        var length = list.length;
+        var i;
         if (clone === true) {
             var item = void 0;
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 item = list[i].cloneNode(true);
                 fragment.insertBefore(item, null);
             }
         }
         else {
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 fragment.insertBefore(list[i], null);
             }
         }
@@ -596,9 +898,14 @@ var plat;
     }
     function stringToNode(html) {
         // ___compat is a global variable in utilsglobal 
-        ___compat = ___compat || (___compat = plat.acquire(__Compat));
-        ___document = ___document || (___document = plat.acquire(__Document));
-        var nodeName = __nodeNameRegex.exec(html), element = ___document.createElement('div');
+        if (!isObject(___compat)) {
+            ___compat = plat.acquire(__Compat);
+        }
+        if (!isObject(___document)) {
+            ___document = plat.acquire(__Document);
+        }
+        var nodeName = __nodeNameRegex.exec(html);
+        var element = ___document.createElement('div');
         if (isNull(nodeName)) {
             element = innerHtml(element, html);
             return element.removeChild(element.lastChild);
@@ -606,16 +913,23 @@ var plat;
         // trim html string 
         html = html.trim();
         var mapTag = nodeName[1];
-        if (___compat.pushState && isUndefined(__innerTableWrappers[mapTag])) {
+        var wrapper = __innerHtmlWrappers[mapTag];
+        if (___compat.pushState && isUndefined(wrapper)) {
             return innerHtml(element, html);
         }
         else if (mapTag === 'body') {
             element = innerHtml(___document.createElement('html'), html);
             return element.removeChild(element.lastChild);
         }
-        var wrapper = __innerHtmlWrappers[mapTag] || __innerHtmlWrappers._default, depth = wrapper[0], parentStart = wrapper[1], parentEnd = wrapper[2];
-        element = innerHtml(element, parentStart + html + parentEnd);
-        while (depth-- > 0) {
+        if (!isArray(wrapper)) {
+            wrapper = __innerHtmlWrappers._default;
+        }
+        var depth = wrapper[0];
+        var parentStart = wrapper[1];
+        var parentEnd = wrapper[2];
+        element = innerHtml(element, "" + parentStart + html + parentEnd);
+        while (depth > 0) {
+            depth -= 1;
             element = element.lastChild;
         }
         return element;
@@ -651,17 +965,20 @@ var plat;
         if (!isFunction(nodes.push)) {
             nodes = Array.prototype.slice.call(nodes);
         }
-        ___document = ___document || (___document = plat.acquire(__Document));
+        if (!isObject(___document)) {
+            ___document = plat.acquire(__Document);
+        }
         var length = nodes.length;
         fragment = ___document.createDocumentFragment();
-        for (var i = 0; i < length; ++i) {
+        for (var i = 0; i < length; i += 1) {
             fragment.insertBefore(nodes[i], null);
         }
         parent.insertBefore(fragment, endNode);
         return nodes;
     }
     function replace(node) {
-        var parent = node.parentNode, nodes = insertBefore(parent, node.childNodes, node);
+        var parent = node.parentNode;
+        var nodes = insertBefore(parent, node.childNodes, node);
         parent.removeChild(node);
         return nodes;
     }
@@ -670,8 +987,10 @@ var plat;
             return newNode;
         }
         if (node.nodeType === Node.ELEMENT_NODE) {
-            var attributes = node.attributes, length_1 = attributes.length, attribute = void 0;
-            for (var i = 0; i < length_1; ++i) {
+            var attributes = node.attributes;
+            var length_1 = attributes.length;
+            var attribute = void 0;
+            for (var i = 0; i < length_1; i += 1) {
                 attribute = attributes[i];
                 newNode.setAttribute(attribute.name, attribute.value);
             }
@@ -682,7 +1001,9 @@ var plat;
         return newNode;
     }
     function serializeHtml(html) {
-        ___document = ___document || (___document = plat.acquire(__Document));
+        if (!isObject(___document)) {
+            ___document = plat.acquire(__Document);
+        }
         var templateElement = ___document.createDocumentFragment();
         if (!isEmpty(html)) {
             setInnerHtml(templateElement, html);
@@ -693,7 +1014,9 @@ var plat;
         if (isNull(startNode)) {
             return;
         }
-        var currentNode = startNode.nextSibling, parentNode = startNode.parentNode, tempNode;
+        var currentNode = startNode.nextSibling;
+        var parentNode = startNode.parentNode;
+        var tempNode;
         if (isNull(endNode)) {
             endNode = null;
         }
@@ -717,13 +1040,18 @@ var plat;
     /**
      */
     function innerHtml(element, html) {
-        ___compat = ___compat || (___compat = plat.acquire(__Compat));
+        if (!isObject(___compat)) {
+            ___compat = plat.acquire(__Compat);
+        }
         if (___compat.msApp) {
+            // tslint:disable-next-line 
             MSApp.execUnsafeLocalFunction(function () {
+                // tslint:disable-next-line 
                 element.innerHTML = html;
             });
         }
         else {
+            // tslint:disable-next-line 
             element.innerHTML = html;
         }
         return element;
@@ -738,11 +1066,16 @@ var plat;
         }
     }
     function addClass(element, className) {
-        var cName = (element || {}).className;
+        if (!isObject(element)) {
+            element = {};
+        }
+        var cName = element.className;
         if (!isString(cName) || !isString(className) || className === '') {
             return;
         }
-        var split = className.split(__whiteSpaceRegex), name, classNameRegex;
+        var split = className.split(__whiteSpaceRegex);
+        var name;
+        var classNameRegex;
         if (isUndefined(element.classList)) {
             if (isEmpty(cName)) {
                 element.className = className;
@@ -751,9 +1084,9 @@ var plat;
             while (split.length > 0) {
                 name = split.shift();
                 if (name !== '') {
-                    classNameRegex = new RegExp('^' + name + '\\s+|\\s+' + name + '$|\\s+' + name + '\\s+', 'g');
+                    classNameRegex = new RegExp("^" + name + "\\s+|\\s+" + name + "$|\\s+" + name + "\\s+", 'g');
                     if (!classNameRegex.test(cName)) {
-                        element.className += ' ' + name;
+                        element.className += " " + name;
                     }
                 }
             }
@@ -767,11 +1100,15 @@ var plat;
         }
     }
     function removeClass(element, className) {
-        var cName = (element || {}).className;
+        if (!isObject(element)) {
+            element = {};
+        }
+        var cName = element.className;
         if (!isString(cName) || !isString(className) || className === '') {
             return;
         }
-        var split = className.split(__whiteSpaceRegex), name;
+        var split = className.split(__whiteSpaceRegex);
+        var name;
         if (isUndefined(element.classList)) {
             if (cName === className) {
                 element.className = '';
@@ -781,7 +1118,7 @@ var plat;
                 name = split.shift();
                 if (name !== '') {
                     element.className = cName = cName
-                        .replace(new RegExp('^' + name + '\\s+|\\s+' + name + '$|\\s+' + name + '\\s+', 'g'), '');
+                        .replace(new RegExp("^" + name + "\\s+|\\s+" + name + "$|\\s+" + name + "\\s+", 'g'), '');
                 }
             }
             return;
@@ -794,11 +1131,15 @@ var plat;
         }
     }
     function toggleClass(element, className) {
-        var cName = (element || {}).className;
+        if (!isObject(element)) {
+            element = {};
+        }
+        var cName = element.className;
         if (!isString(cName) || !isString(className) || className === '') {
             return;
         }
-        var split = className.split(__whiteSpaceRegex), name;
+        var split = className.split(__whiteSpaceRegex);
+        var name;
         if (isUndefined(element.classList)) {
             var classNameRegex = void 0;
             if (cName === '') {
@@ -811,12 +1152,12 @@ var plat;
             while (split.length > 0) {
                 name = split.shift();
                 if (name !== '') {
-                    classNameRegex = new RegExp('^' + name + '\\s+|\\s+' + name + '$|\\s+' + name + '\\s+', 'g');
+                    classNameRegex = new RegExp("^" + name + "\\s+|\\s+" + name + "$|\\s+" + name + "\\s+", 'g');
                     if (classNameRegex.test(cName)) {
                         element.className = cName = cName.replace(classNameRegex, '');
                         continue;
                     }
-                    element.className += ' ' + name;
+                    element.className += " " + name;
                 }
             }
             return;
@@ -829,26 +1170,35 @@ var plat;
         }
     }
     function replaceClass(element, oldClass, newClass) {
-        var cName = (element || {}).className;
+        if (!isObject(element)) {
+            element = {};
+        }
+        var cName = element.className;
         if (!isString(cName) || !isString(newClass) || newClass === '') {
             return;
         }
         if (isUndefined(element.classList)) {
-            var startRegex = new RegExp('^' + oldClass + '\\s+', 'g'), midRegex = new RegExp('\\s+' + oldClass + '\\s+', 'g'), endRegex = new RegExp('\\s+' + oldClass + '$', 'g');
-            element.className = cName.replace(startRegex, newClass + ' ')
-                .replace(midRegex, ' ' + newClass + ' ')
-                .replace(endRegex, ' ' + newClass);
+            var startRegex = new RegExp("^" + oldClass + "\\s+", 'g');
+            var midRegex = new RegExp("\\s+" + oldClass + "\\s+", 'g');
+            var endRegex = new RegExp("\\s+" + oldClass + "$", 'g');
+            element.className = cName.replace(startRegex, newClass + " ")
+                .replace(midRegex, " " + newClass + " ")
+                .replace(endRegex, " " + newClass);
             return;
         }
         element.classList.add(newClass);
         element.classList.remove(oldClass);
     }
     function hasClass(element, className) {
-        var cName = (element || {}).className;
+        if (!isObject(element)) {
+            element = {};
+        }
+        var cName = element.className;
         if (!isString(cName) || !isString(className) || className === '') {
             return false;
         }
-        var split = className.split(__whiteSpaceRegex), name;
+        var split = className.split(__whiteSpaceRegex);
+        var name;
         if (isUndefined(element.classList)) {
             if (cName === '') {
                 return false;
@@ -858,7 +1208,7 @@ var plat;
             }
             while (split.length > 0) {
                 name = split.shift();
-                if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '\\s', 'g').test(cName))) {
+                if (!(name === '' || new RegExp("^" + name + "\\s|\\s" + name + "$|\\s" + name + "\\s", 'g').test(cName))) {
                     return false;
                 }
             }
@@ -873,8 +1223,12 @@ var plat;
         return true;
     }
     function getTemplate(templateUrl) {
-        ___templateCache = ___templateCache || (___templateCache = plat.acquire(__TemplateCache));
-        ___http = ___http || (___http = plat.acquire(__Http));
+        if (!isObject(___templateCache)) {
+            ___templateCache = plat.acquire(__TemplateCache);
+        }
+        if (!isObject(___http)) {
+            ___http = plat.acquire(__Http);
+        }
         return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
             .catch(function (error) {
             if (isNull(error)) {
@@ -885,8 +1239,10 @@ var plat;
                 return ___templateCache.put(templateUrl, success);
             }
             else if (!isObject(success) || !isString(success.response)) {
-                ___log = ___log || (___log = plat.acquire(__Log));
-                ___log.warn('No template found at ' + templateUrl);
+                if (!isObject(___log)) {
+                    ___log = plat.acquire(__Log);
+                }
+                ___log.warn("No template found at " + templateUrl);
                 return ___templateCache.put(templateUrl);
             }
             var templateString = success.response;
@@ -896,24 +1252,31 @@ var plat;
             return ___templateCache.put(templateUrl, templateString);
         }).catch(function (error) {
             postpone(function () {
-                ___log = ___log || (___log = plat.acquire(__Log));
-                ___log.error(new Error('Failure to get template from ' + templateUrl + '.'));
+                if (!isObject(___log)) {
+                    ___log = plat.acquire(__Log);
+                }
+                ___log.error(new Error("Failure to get template from " + templateUrl + "."));
             });
             return error;
         }));
     }
     function whenPresent(cb, element) {
         if (!isNode(element)) {
-            ___log = ___log || (___log = plat.acquire(__Log));
+            if (!isObject(___log)) {
+                ___log = plat.acquire(__Log);
+            }
             ___log.error(new Error('Attempting to check DOM presence of something that isn\'t a Node.'));
             return noop;
         }
-        ___document = ___document || (___document = plat.acquire(__Document));
+        if (!isObject(___document)) {
+            ___document = plat.acquire(__Document);
+        }
         var body = ___document.body;
         if (isNode(element.parentElement) && body.contains(element)) {
             cb();
             return noop;
         }
+        // tslint:disable-next-line 
         var remove = setIntervalGlobal(function () {
             if (isNode(element.parentElement) && body.contains(element)) {
                 remove();
@@ -924,13 +1287,17 @@ var plat;
     }
     function whenVisible(cb, element) {
         if (!isNode(element)) {
-            ___log = ___log || (___log = plat.acquire(__Log));
+            if (!isObject(___log)) {
+                ___log = plat.acquire(__Log);
+            }
             ___log.error(new Error('Attempting to check visibility of something that isn\'t a Node.'));
             return noop;
         }
         var clientWidth = element.clientWidth, clientHeight = element.clientHeight;
         if (!(isNumber(clientWidth) && isNumber(clientHeight))) {
-            ___log = ___log || (___log = plat.acquire(__Log));
+            if (!isObject(___log)) {
+                ___log = plat.acquire(__Log);
+            }
             ___log.error(new Error('Attempting to check visibility of something that isn\'t an Element.'));
             return noop;
         }
@@ -938,6 +1305,7 @@ var plat;
             cb();
             return noop;
         }
+        // tslint:disable-next-line 
         var remove = setIntervalGlobal(function () {
             if (element.clientWidth > 0 && element.clientHeight > 0) {
                 remove();
@@ -946,8 +1314,14 @@ var plat;
         }, 100);
         return remove;
     }
-    /* tslint:enable:no-unused-variable */
-    var controlInjectors = {}, viewControlInjectors = {}, instanceInjectorDependencies = {}, injectableInjectors = {}, unregisteredInjectors = {}, staticInjectors = {}, animationInjectors = {}, jsAnimationInjectors = {};
+    var controlInjectors = {};
+    var viewControlInjectors = {};
+    var instanceInjectorDependencies = {};
+    var injectableInjectors = {};
+    var unregisteredInjectors = {};
+    var staticInjectors = {};
+    var animationInjectors = {};
+    var jsAnimationInjectors = {};
     /**
      * Holds all the classes and interfaces related to registering components for platypus.
      */
@@ -967,7 +1341,7 @@ var plat;
          * @param {boolean} isStatic The injectable type is a static type.
          */
         function add(obj, name, Type, dependencies, injectableType, isStatic) {
-            var injector = obj[name] = new dependency.Injector(name, Type, dependencies, injectableType);
+            var injector = (obj[name] = new dependency.Injector(name, Type, dependencies, injectableType));
             if (isStatic === true) {
                 staticInjectors[name] = injector;
             }
@@ -981,12 +1355,12 @@ var plat;
          * @param {new (...args: any[]) => plat.App} Type The constructor for the IApp.
          * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the app injector.
          */
-        function app(name, Type, dependencies) {
-            var _Injector = acquire(__InjectorStatic), _AppStatic = acquire(__AppStatic);
+        register.app = function (name, Type, dependencies) {
+            var _Injector = acquire(__InjectorStatic);
+            var _AppStatic = acquire(__AppStatic);
             _AppStatic.registerApp(new _Injector(name, Type, dependencies));
             return register;
-        }
-        register.app = app;
+        };
         /**
          * Registers an Control with the framework. The framework will instantiate the
          * Control when needed. The dependencies array corresponds to injectables that
@@ -996,7 +1370,7 @@ var plat;
          * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the Control
          * injector.
          */
-        function control(name, Type, dependencies, isStatic) {
+        register.control = function (name, Type, dependencies, isStatic) {
             if (isString(name)) {
                 name = name.toLowerCase();
             }
@@ -1007,8 +1381,7 @@ var plat;
                 isStatic = true;
             }
             return add(controlInjectors, name, Type, dependencies, isStatic ? __STATIC : undefined);
-        }
-        register.control = control;
+        };
         /**
          * Registers an ViewControl with the framework. The framework will
          * instantiate the control when needed. The dependencies array corresponds to injectables that will be
@@ -1019,7 +1392,7 @@ var plat;
          * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
          * ViewControl injector.
          */
-        function viewControl(name, Type, dependencies) {
+        register.viewControl = function (name, Type, dependencies) {
             if (isString(name)) {
                 name = name.toLowerCase();
             }
@@ -1027,81 +1400,92 @@ var plat;
                 throw new Error('A ViewControl must be registered with a string name');
             }
             return add(viewControlInjectors, name, Type, dependencies);
-        }
-        register.viewControl = viewControl;
-        function injectable(name, Type, dependencies, injectableType) {
+        };
+        /**
+         * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
+         * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
+         * @param {string} name The name of the injector, used when another component is specifying dependencies.
+         * @param {(...args: any[]) => any} method A method that returns the injectable.
+         * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the injectable's injector.
+         * @param {string} injectableType? Specifies the type of injectable, either SINGLETON,
+         * STATIC, INSTANCE,
+         * FACTORY, CLASS
+         * (defaults to SINGLETON).
+         */
+        register.injectable = function (name, Type, dependencies, injectableType) {
             if (!isString(injectableType)) {
                 injectableType = __SINGLETON;
             }
             else {
                 injectableType = injectableType.toLowerCase();
-                if (injectableType === __FACTORY || injectableType === __STATIC || injectableType === __CLASS) {
+                if (injectableType === __FACTORY ||
+                    injectableType === __STATIC ||
+                    injectableType === __CLASS) {
                     return add(injectableInjectors, name, Type, dependencies, injectableType, true);
                 }
-                else if (!(injectableType === __SINGLETON || injectableType === __INSTANCE)) {
-                    throw new Error('Invalid injectable type ' + injectableType + ' during injectable registration.');
+                else if (!(injectableType === __SINGLETON ||
+                    injectableType === __INSTANCE)) {
+                    throw new Error("Invalid injectable type " + injectableType + " during injectable registration.");
                 }
             }
             return add(injectableInjectors, name, Type, dependencies, injectableType, false);
-        }
-        register.injectable = injectable;
+        };
         /**
-         * Contains constants for injectable type.
+         * Static injectables will be injected before the application loads. This provides a way to create
+         * a static constructor and load dependencies into static class properties.
          */
-        (function (injectable) {
-            /**
-             * Static injectables will be injected before the application loads. This provides a way to create
-             * a static constructor and load dependencies into static class properties.
-             */
-            injectable.STATIC = __STATIC;
-            /**
-             * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and
-             * used throughout the application lifetime. It will be instantiated when another component is injected
-             * and lists it as a dependency.
-             */
-            injectable.SINGLETON = __SINGLETON;
-            /**
-             * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times
-             * throughout the application lifetime. It will be instantiated whenever another component is injected
-             * and lists it as a dependency.
-             */
-            injectable.INSTANCE = __INSTANCE;
-            /**
-             * Factory injectables will not contain a constructor but will instead contain a method for obtaining an
-             * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static
-             * injectable.
-             */
-            injectable.FACTORY = __FACTORY;
-            /**
-             * Class injectables are essentially a direct reference to a class's constructor. It may contain both
-             * static and instance methods as well as a constructor for creating a new instance.
-             */
-            injectable.CLASS = __CLASS;
-        })(injectable = register.injectable || (register.injectable = {}));
-        function animation(name, Type, dependencies, animationType) {
+        register.injectable.STATIC = __STATIC;
+        /**
+         * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and
+         * used throughout the application lifetime. It will be instantiated when another component is injected
+         * and lists it as a dependency.
+         */
+        register.injectable.SINGLETON = __SINGLETON;
+        /**
+         * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times
+         * throughout the application lifetime. It will be instantiated whenever another component is injected
+         * and lists it as a dependency.
+         */
+        register.injectable.INSTANCE = __INSTANCE;
+        /**
+         * Factory injectables will not contain a constructor but will instead contain a method for obtaining an
+         * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static
+         * injectable.
+         */
+        register.injectable.FACTORY = __FACTORY;
+        /**
+         * Class injectables are essentially a direct reference to a class's constructor. It may contain both
+         * static and instance methods as well as a constructor for creating a new instance.
+         */
+        register.injectable.CLASS = __CLASS;
+        /**
+         * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
+         * is desired.
+         * @param {string} name The unique identifer of the animation.
+         * @param {new (...args: any[]) => plat.ui.animations.BaseAnimation} Type The constructor for the custom animation.
+         * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at
+         * instantiation.
+         * @param {string} animationType The type of animation. Both the intended type and default value are
+         * JS.
+         */
+        register.animation = function (name, Type, dependencies, animationType) {
             if (isString(animationType)) {
                 animationType = animationType.toLowerCase();
                 if (!(animationType === __CSS || animationType === __JS)) {
-                    throw new Error('Invalid animationType "' + animationType + '" during animation registration.');
+                    throw new Error("Invalid animationType \"" + animationType + "\" during animation registration.");
                 }
             }
-            return add((animationType === __JS ? jsAnimationInjectors : animationInjectors), name, Type, dependencies, register.injectable.INSTANCE);
-        }
-        register.animation = animation;
+            return add(animationType === __JS ? jsAnimationInjectors : animationInjectors, name, Type, dependencies, register.injectable.INSTANCE);
+        };
         /**
-         * Contains constants for animation type.
+         * A CSS animation.
          */
-        (function (animation) {
-            /**
-             * A CSS animation.
-             */
-            animation.CSS = __CSS;
-            /**
-             * A JavaScript animation.
-             */
-            animation.JS = __JS;
-        })(animation = register.animation || (register.animation = {}));
-    })(register = plat_1.register || (plat_1.register = {}));
+        register.animation.CSS = __CSS;
+        /**
+         * A JavaScript animation.
+         */
+        register.animation.JS = __JS;
+    })(register = plat.register || (plat.register = {}));
     /**
      * Holds classes and interfaces related to dependency injection components in platypus.
      */
@@ -1126,38 +1510,35 @@ var plat;
              */
             function Injector(name, Constructor, dependencies, type) {
                 if (type === void 0) { type = null; }
+                this.type = null;
                 this.name = name;
                 this.Constructor = Constructor;
                 this.type = type;
-                var deps = this.dependencies = Injector.convertDependencies(dependencies), index = deps.indexOf(__NOOP_INJECTOR), circularReference;
+                var deps = (this.dependencies = Injector.convertDependencies(dependencies));
+                var index = deps.indexOf(__NOOP_INJECTOR);
+                var circularReference;
                 Object.defineProperty(Constructor, '__injectorName', {
                     value: name,
                     enumerable: false,
                     configurable: true,
-                    writable: true
+                    writable: true,
                 });
                 Object.defineProperty(Constructor, '__injectorDependencies', {
                     value: deps.slice(0),
                     enumerable: false,
                     configurable: true,
-                    writable: true
+                    writable: true,
                 });
                 if (index > -1) {
                     var dependency_2 = dependencies[index];
                     if (isNull(dependency_2)) {
-                        throw new TypeError('The dependency for ' +
-                            name + ' at index ' +
-                            index + ' is undefined, did you forget to include a file?');
+                        throw new TypeError("The dependency for " + name + " at index " + index + " is undefined, did you forget to include a file?");
                     }
-                    throw new TypeError('Could not resolve dependency ' +
-                        dependency_2.slice(9, dependency_2.indexOf('(')) +
-                        ' for ' +
-                        name +
-                        '. Are you using a static injectable Type?');
+                    throw new TypeError("Could not resolve dependency " + dependency_2.slice(9, dependency_2.indexOf('(')) + " for " + name + ". Are you using a static injectable Type?");
                 }
                 circularReference = Injector.__findCircularReferences(this);
                 if (isString(circularReference)) {
-                    throw new Error('Circular dependency detected from ' + this.name + ' to ' + circularReference + '.');
+                    throw new Error("Circular dependency detected from " + this.name + " to " + circularReference + ".");
                 }
                 if (name === __AppStatic) {
                     var App_1 = this.inject();
@@ -1169,9 +1550,11 @@ var plat;
              * Initializes all static injectors.
              */
             Injector.initialize = function () {
-                var injectors = staticInjectors, keys = Object.keys(injectors), length = keys.length;
-                for (var i = 0; i < length; ++i) {
-                    injectors[keys[i]].inject();
+                var statics = staticInjectors;
+                var keys = Object.keys(statics);
+                var length = keys.length;
+                for (var i = 0; i < length; i += 1) {
+                    statics[keys[i]].inject();
                 }
                 staticInjectors = {};
             };
@@ -1184,8 +1567,9 @@ var plat;
                 if (isNull(dependencies) || isEmpty(dependencies)) {
                     return [];
                 }
-                var deps = [], length = dependencies.length;
-                for (var i = 0; i < length; ++i) {
+                var deps = [];
+                var length = dependencies.length;
+                for (var i = 0; i < length; i += 1) {
                     deps.push(Injector.getDependency(dependencies[i]));
                 }
                 return deps;
@@ -1214,8 +1598,10 @@ var plat;
                 if (!isArray(dependencies)) {
                     return [];
                 }
-                var convert = Injector.convertDependency, deps = [], length = dependencies.length;
-                for (var i = 0; i < length; ++i) {
+                var convert = Injector.convertDependency;
+                var deps = [];
+                var length = dependencies.length;
+                for (var i = 0; i < length; i += 1) {
                     deps.push(convert(dependencies[i]));
                 }
                 return deps;
@@ -1238,10 +1624,10 @@ var plat;
              * @param {plat.dependency.Injector<any>} dependency The object to check.
              */
             Injector.isInjector = function (dependency) {
-                return isFunction(dependency.inject) &&
+                return (isFunction(dependency.inject) &&
                     !isUndefined(dependency.type) &&
                     !isUndefined(dependency.name) &&
-                    !isUndefined(dependency.Constructor);
+                    !isUndefined(dependency.Constructor));
             };
             /**
              * Gets the string name related to an injector.
@@ -1254,20 +1640,34 @@ var plat;
                 else if (isString(dependency)) {
                     return dependency;
                 }
-                var Constructor = dependency, _inject = isObject(Constructor._inject) ? Constructor._inject : {};
+                var Constructor = dependency;
+                var _inject = isObject(Constructor._inject)
+                    ? Constructor._inject
+                    : {};
                 if (isString(Constructor.__injectorName)) {
                     dependency = Constructor.__injectorName;
                 }
                 if (!isString(dependency)) {
                     return new Injector(dependency, Constructor, _inject.dependencies);
                 }
-                var find = Injector.__findInjector.bind(Injector, dependency), injector = find(injectableInjectors) ||
-                    find(unregisteredInjectors) ||
-                    find(staticInjectors) ||
-                    find(viewControlInjectors) ||
-                    find(controlInjectors) ||
-                    find(animationInjectors) ||
-                    find(jsAnimationInjectors);
+                var injector = Injector.__findInjector(dependency, [
+                    injectableInjectors,
+                    unregisteredInjectors,
+                    staticInjectors,
+                    viewControlInjectors,
+                    controlInjectors,
+                    animationInjectors,
+                    jsAnimationInjectors,
+                ]);
+                // let find: (injectors: InjectorObject<any>) => Injector<any> = 
+                //     Injector.__findInjector.bind(Injector, dependency), 
+                //     injector = find(injectableInjectors) || 
+                //     find(unregisteredInjectors) || 
+                //     find(staticInjectors) || 
+                //     find(viewControlInjectors) || 
+                //     find(controlInjectors) || 
+                //     find(animationInjectors) || 
+                //     find(jsAnimationInjectors); 
                 if (!isObject(injector) && isString(dependency)) {
                     injector = unregisteredInjectors[dependency] = new Injector(dependency, Constructor, Constructor._inject.dependencies);
                 }
@@ -1285,9 +1685,12 @@ var plat;
                 if (isNull(Constructor) || isNull(Constructor.prototype)) {
                     return Constructor;
                 }
-                var obj = Object.create(Constructor.prototype), isInstance = type === __INSTANCE, toInject;
+                var obj = Object.create(Constructor.prototype);
+                var isInstance = type === __INSTANCE;
+                var toInject;
                 if (isInstance) {
-                    toInject = instanceInjectorDependencies[Constructor.__injectorName];
+                    toInject =
+                        instanceInjectorDependencies[Constructor.__injectorName];
                 }
                 if (!isObject(toInject)) {
                     toInject = Injector.__walk(obj, Object.getPrototypeOf(obj), {});
@@ -1295,8 +1698,10 @@ var plat;
                         instanceInjectorDependencies[Constructor.__injectorName] = toInject;
                     }
                 }
-                var dependencies = acquire(map(function (value) { return value; }, toInject)), keys = Object.keys(toInject), length = keys.length;
-                for (var i = 0; i < length; ++i) {
+                var dependencies = acquire(map(function (value) { return value; }, toInject));
+                var keys = Object.keys(toInject);
+                var length = keys.length;
+                for (var i = 0; i < length; i += 1) {
                     obj[keys[i]] = dependencies[i];
                 }
                 var ret = obj.constructor.apply(obj, args);
@@ -1312,7 +1717,8 @@ var plat;
              * @param {any} proto the prototype of the object.
              */
             Injector.__walk = function (obj, proto, extendWith) {
-                var Constructor = proto.constructor, parentInject = {};
+                var Constructor = proto.constructor;
+                var parentInject = {};
                 if (isObject(Constructor._inject) && Constructor !== Object) {
                     parentInject = Injector.__walk(obj, Object.getPrototypeOf(proto), extendWith);
                 }
@@ -1331,19 +1737,23 @@ var plat;
                 if (isString(Constructor.__injectorName)) {
                     dependency = Constructor.__injectorName;
                 }
-                var find = Injector.__findInjector.bind(Injector, dependency), injector = find(injectableInjectors) ||
-                    find(unregisteredInjectors) ||
-                    find(staticInjectors) ||
-                    find(controlInjectors) ||
-                    find(viewControlInjectors) ||
-                    find(animationInjectors) ||
-                    find(jsAnimationInjectors);
+                var injector = Injector.__findInjector(dependency, [
+                    injectableInjectors,
+                    unregisteredInjectors,
+                    staticInjectors,
+                    viewControlInjectors,
+                    controlInjectors,
+                    animationInjectors,
+                    jsAnimationInjectors,
+                ]);
                 if (!isObject(injector)) {
                     if (isFunction(Constructor)) {
                         if (!isString(dependency)) {
                             dependency = uniqueId(__Plat);
                         }
-                        injector = new Injector(dependency, Constructor, isObject(Constructor._inject) ? Constructor._injectorDependencies : []);
+                        injector = new Injector(dependency, Constructor, isObject(Constructor._inject)
+                            ? Constructor._injectorDependencies
+                            : []);
                         unregisteredInjectors[dependency] = injector;
                     }
                     else {
@@ -1356,17 +1766,26 @@ var plat;
              * Finds an injector object with the associated constructor in the given InjectorObject.
              * @param {Function} Constructor The Function
              */
-            Injector.__findInjector = function (Constructor, injectors) {
+            Injector.__findInjector = function (Constructor, injectorsArr) {
                 if (isNull(Constructor)) {
                     return;
                 }
-                else if (Constructor === Injector || Constructor === __InjectorStatic) {
+                else if (Constructor === Injector ||
+                    Constructor === __InjectorStatic) {
                     var ret = Injector.__wrap(Injector);
                     ret.name = __InjectorStatic;
                     return ret;
                 }
                 else if (isString(Constructor)) {
-                    return injectors[Constructor] || injectors[Constructor.toLowerCase()];
+                    for (var _i = 0, injectorsArr_1 = injectorsArr; _i < injectorsArr_1.length; _i++) {
+                        var injectorsObj = injectorsArr_1[_i];
+                        if (!isNull(injectorsObj[Constructor])) {
+                            return injectorsObj[Constructor];
+                        }
+                        else if (!isNull(injectorsObj[Constructor.toLowerCase()])) {
+                            return injectorsObj[Constructor.toLowerCase()];
+                        }
+                    }
                 }
             };
             /**
@@ -1378,7 +1797,7 @@ var plat;
                     inject: function () { return value; },
                     name: __WRAPPED_INJECTOR,
                     dependencies: [],
-                    Constructor: value
+                    Constructor: value,
                 };
             };
             /**
@@ -1390,7 +1809,7 @@ var plat;
                     type: __NOOP_INJECTOR,
                     name: __NOOP_INJECTOR,
                     dependencies: [],
-                    Constructor: noop
+                    Constructor: noop,
                 };
             };
             /**
@@ -1401,15 +1820,23 @@ var plat;
                 if (!(isObject(injector) && isArray(injector.dependencies))) {
                     return;
                 }
-                var source = injector.name, dependencies = injector.dependencies, node, stack = [{
+                var source = injector.name;
+                var dependencies = injector.dependencies;
+                var node;
+                var stack = [
+                    {
                         name: source,
-                        dependencies: dependencies.slice(0)
-                    }], dependency, locate = Injector.__locateInjector, length;
+                        dependencies: dependencies.slice(0),
+                    },
+                ];
+                var dependency;
+                var locate = Injector.__locateInjector;
+                var length;
                 while (stack.length > 0) {
                     node = stack.pop();
                     dependencies = node.dependencies;
                     length = dependencies.length;
-                    for (var i = 0; i < length; ++i) {
+                    for (var i = 0; i < length; i += 1) {
                         dependency = dependencies[i];
                         if (dependency === source) {
                             return node.name;
@@ -1420,7 +1847,7 @@ var plat;
                         }
                         stack.push({
                             name: injector.name,
-                            dependencies: injector.dependencies.slice(0)
+                            dependencies: injector.dependencies.slice(0),
                         });
                     }
                 }
@@ -1432,9 +1859,13 @@ var plat;
              * as a SINGLE type it will only inject that injectable once.
              */
             Injector.prototype.inject = function () {
-                var toInject = [], type = this.type;
-                var dependencies = this.dependencies, length = dependencies.length, dependency, injectable;
-                for (var i = 0; i < length; ++i) {
+                var toInject = [];
+                var type = this.type;
+                var dependencies = this.dependencies;
+                var length = dependencies.length;
+                var dependency;
+                var injectable;
+                for (var i = 0; i < length; i += 1) {
                     dependency = Injector.getDependency(dependencies[i]);
                     toInject.push(dependency.inject());
                 }
@@ -1460,7 +1891,7 @@ var plat;
         }());
         dependency_1.Injector = Injector;
         /**
-         * Publically exposes all the dependency injector objects.
+         * Publicly exposes all the dependency injector objects.
          */
         var injectors;
         (function (injectors) {
@@ -1493,7 +1924,7 @@ var plat;
              */
             injectors.jsAnimation = jsAnimationInjectors;
         })(injectors = dependency_1.injectors || (dependency_1.injectors = {}));
-    })(dependency = plat_1.dependency || (plat_1.dependency = {}));
+    })(dependency = plat.dependency || (plat.dependency = {}));
     if (!isUndefined(window)) {
         if (isUndefined(window.plat)) {
             window.plat = plat;
@@ -1503,15 +1934,17 @@ var plat;
         }
     }
     function acquire(dependencies) {
-        var deps, array = isArray(dependencies);
+        var array = isArray(dependencies);
+        var deps;
         if (array) {
             deps = dependency.Injector.getDependencies(dependencies);
         }
         else {
             deps = dependency.Injector.getDependencies([dependencies]);
         }
-        var length = deps.length, output = [];
-        for (var i = 0; i < length; ++i) {
+        var length = deps.length;
+        var output = [];
+        for (var i = 0; i < length; i += 1) {
             output.push(deps[i].inject());
         }
         if (!array) {
@@ -1519,7 +1952,7 @@ var plat;
         }
         return output;
     }
-    plat_1.acquire = acquire;
+    plat.acquire = acquire;
     /**
      * Holds all classes and interfaces related to debugging components in platypus.
      */
@@ -1565,18 +1998,40 @@ var plat;
                 this._log(error, this.ERROR);
                 throw error;
             };
+            /**
+             * Logs at the warn level.
+             * @param {Error} message The message to log.
+             */
             Log.prototype.warn = function (message) {
                 this._log(message, this.WARN);
             };
+            /**
+             * Logs at the info level.
+             * @param {string} message The message to log.
+             */
             Log.prototype.info = function (message) {
                 this._log(message, this.INFO);
             };
+            /**
+             * Logs at the debug level.
+             * @param {string} message The message to log.
+             */
             Log.prototype.debug = function (message) {
                 this._log(message, this.DEBUG);
             };
+            /**
+             * Logs at the trace level.
+             * @param {string} message The message to log.
+             */
             Log.prototype.trace = function (message) {
                 this._log(message, this.TRACE);
             };
+            /**
+             * Sets the log level level.
+             * @param {string} level A string related to the log level to set (e.g. 'error'). It will be mapped to
+             * the proper number. If the corresponding number level is not found, INFO
+             * will be used.
+             */
             Log.prototype.setLogLevel = function (level) {
                 if (isString(level)) {
                     level = this[level.toUpperCase()];
@@ -1593,6 +2048,10 @@ var plat;
                         this._level = this.INFO;
                 }
             };
+            /**
+             * Dispatches an ErrorEvent to the app.
+             * @param {number} level The log level denoting the severity of the message.
+             */
             Log.prototype._log = function (message, level) {
                 if (!this._shouldLog(level)) {
                     return;
@@ -1607,7 +2066,7 @@ var plat;
                 _ErrorEvent.dispatch(__error, Log, message, level);
             };
             /**
-             * Detemines whether or not a log level is at or above the current minimum log level.
+             * Determines whether or not a log level is at or above the current minimum log level.
              * @param {number} level The log level to check against the current minimum log level.
              */
             Log.prototype._shouldLog = function (level) {
@@ -1620,7 +2079,7 @@ var plat;
         }());
         debug.Log = Log;
         register.injectable(__Log, Log);
-    })(debug = plat_1.debug || (plat_1.debug = {}));
+    })(debug = plat.debug || (plat.debug = {}));
     /**
      * A class containing boolean values signifying browser
      * and/or platform compatibilities.
@@ -1644,14 +2103,15 @@ var plat;
          * @param {string} event The event to check the existence of.
          */
         Compat.prototype.hasEvent = function (event) {
-            var events = this.__events, eventExists = events[event];
+            var events = this.__events;
+            var eventExists = events[event];
             if (isUndefined(eventExists)) {
                 var element = this._document.createElement('div');
                 if (event === 'input' && this.IE === 9) {
                     eventExists = events[event] = false;
                 }
                 else {
-                    eventExists = events[event] = !isUndefined(element[('on' + event)]);
+                    eventExists = events[event] = !isUndefined(element["on" + event]);
                 }
             }
             return eventExists;
@@ -1660,16 +2120,38 @@ var plat;
          * Define booleans.
          */
         Compat.prototype.__defineBooleans = function () {
-            var _window = this._window, navigator = _window.navigator || {}, userAgent = (navigator.userAgent || '').toLowerCase(), history = this._history, def = _window.define, msA = _window.MSApp, winJs = _window.WinJS, android = (/android ((?:\d|\.)+)/.exec(userAgent) || [])[1];
+            var _window = this._window;
+            var history = this._history;
+            var def = _window.define;
+            var msA = _window.MSApp;
+            var winJs = _window.WinJS;
+            var navigator = _window.navigator;
+            if (!isObject(navigator)) {
+                navigator = {};
+            }
+            var userAgent = navigator.userAgent;
+            if (!isString(userAgent)) {
+                userAgent = '';
+            }
+            userAgent = userAgent.toLowerCase();
+            var androidExec = /android ((?:\d|\.)+)/.exec(userAgent);
+            if (!isArrayLike(androidExec)) {
+                androidExec = [];
+            }
+            var android = androidExec[1];
             if (isString(android) && !/iemobile/i.test(userAgent)) {
                 android = parseInt(android.replace(/\./g, ''), 10);
             }
-            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
+            this.isCompatible =
+                isFunction(Object.defineProperty) &&
+                    isFunction(this._document.querySelector);
             this.cordova = !isNull(_window.cordova);
             this.pushState = !(isNull(history) || isNull(history.pushState));
-            this.fileSupported = !(isUndefined(_window.File) || isUndefined(_window.FormData));
+            this.fileSupported = !(isUndefined(_window.File) ||
+                isUndefined(_window.FormData));
             this.amd = isFunction(def) && !isNull(def.amd);
-            this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.msApp =
+                isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
             this.winJs = isObject(winJs) && isObject(winJs.Application);
             this.indexedDb = !isNull(_window.indexedDB);
             this.proto = isObject({}.__proto__);
@@ -1682,8 +2164,18 @@ var plat;
                 this.ANDROID = android;
                 return;
             }
-            var ie = parseInt((/msie (\d+)/.exec(userAgent) || [])[1], 10) ||
-                parseInt((/trident\/.*; rv:(\d+)/.exec(userAgent) || [])[1], 10);
+            var msieExec = /msie (\d+)/.exec(userAgent);
+            var tridentExec = /trident\/.*; rv:(\d+)/.exec(userAgent);
+            if (!isArrayLike(msieExec)) {
+                msieExec = [];
+            }
+            if (!isArrayLike(tridentExec)) {
+                tridentExec = [];
+            }
+            var ie = parseInt(msieExec[1], 10);
+            if (!isNumber(ie)) {
+                ie = parseInt(tridentExec[1], 10);
+            }
             if (isNumber(ie)) {
                 this.IE = ie;
             }
@@ -1697,7 +2189,7 @@ var plat;
                     $touchstart: 'pointerdown',
                     $touchend: 'pointerup',
                     $touchmove: 'pointermove',
-                    $touchcancel: 'pointercancel'
+                    $touchcancel: 'pointercancel',
                 };
             }
             else if (this.hasMsPointerEvents) {
@@ -1705,7 +2197,7 @@ var plat;
                     $touchstart: 'MSPointerDown',
                     $touchend: 'MSPointerUp',
                     $touchmove: 'MSPointerMove',
-                    $touchcancel: 'MSPointerCancel'
+                    $touchcancel: 'MSPointerCancel',
                 };
             }
             else if (this.hasTouchEvents) {
@@ -1713,7 +2205,7 @@ var plat;
                     $touchstart: 'touchstart',
                     $touchend: 'touchend',
                     $touchmove: 'touchmove',
-                    $touchcancel: 'touchcancel'
+                    $touchcancel: 'touchcancel',
                 };
             }
             else {
@@ -1721,7 +2213,7 @@ var plat;
                     $touchstart: 'mousedown',
                     $touchend: 'mouseup',
                     $touchmove: 'mousemove',
-                    $touchcancel: null
+                    $touchcancel: null,
                 };
             }
         };
@@ -1730,12 +2222,23 @@ var plat;
          * dependencies.
          */
         Compat.prototype.__defineVendorDependencies = function () {
-            var _window = this._window, documentElement = this._document.documentElement, styles = _window.getComputedStyle(documentElement, ''), matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/), prefix, dom, css, jsSyntax;
-            if ((isArray(matches) && matches.length > 1)) {
-                prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
+            var _window = this._window;
+            var documentElement = this._document.documentElement;
+            var styles = _window.getComputedStyle(documentElement, '');
+            var matches = Array.prototype.slice
+                .call(styles)
+                .join('')
+                .match(/-(moz|webkit|ms)-/);
+            var prefix;
+            var dom;
+            var css;
+            var jsSyntax;
+            if (isArray(matches) && matches.length > 1) {
+                prefix =
+                    isArray(matches) && matches.length > 1 ? matches[1] : '';
                 jsSyntax = prefix[0].toUpperCase() + prefix.slice(1);
-                dom = ('WebKit|Moz|MS').match(new RegExp('(' + prefix + ')', 'i'))[1];
-                css = '-' + prefix + '-';
+                dom = 'WebKit|Moz|MS'.match(new RegExp("(" + prefix + ")", 'i'))[1];
+                css = "-" + prefix + "-";
             }
             else if (!isUndefined(styles.OLink)) {
                 prefix = 'o';
@@ -1749,16 +2252,24 @@ var plat;
                 dom: dom,
                 lowerCase: prefix,
                 css: css,
-                upperCase: jsSyntax
+                upperCase: jsSyntax,
             };
-            this.requestAnimationFrame = _window.requestAnimationFrame || _window[prefix + 'RequestAnimationFrame'];
-            this.cancelAnimationFrame = _window.cancelAnimationFrame ||
-                _window[prefix + 'CancelRequestAnimationFrame'] ||
-                _window[prefix + 'CancelAnimationFrame'];
+            this.requestAnimationFrame = _window.requestAnimationFrame;
+            if (!isFunction(this.requestAnimationFrame)) {
+                this.requestAnimationFrame = _window[prefix + "RequestAnimationFrame"];
+            }
+            this.cancelAnimationFrame = _window.cancelAnimationFrame;
+            if (!isFunction(this.cancelAnimationFrame)) {
+                this.cancelAnimationFrame = _window[prefix + "CancelRequestAnimationFrame"];
+            }
+            if (!isFunction(this.cancelAnimationFrame)) {
+                this.cancelAnimationFrame = _window[prefix + "CancelAnimationFrame"];
+            }
             var style = documentElement.style;
             // handle Android issue where style.transition exists but transition events still need vendor prefix 
             // should only affect version 4.1 but we will handle for < 4.4. 
-            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
+            if ((isUndefined(this.ANDROID) ||
+                Math.floor(this.ANDROID / 10) >= 44) &&
                 !(isUndefined(style.animation) || isUndefined(style.transition))) {
                 this.animationSupported = true;
                 this.animationEvents = {
@@ -1768,21 +2279,24 @@ var plat;
                     $animationIteration: 'animationiteration',
                     $transition: 'transition',
                     $transitionStart: 'transitionstart',
-                    $transitionEnd: 'transitionend'
+                    $transitionEnd: 'transitionend',
                 };
             }
-            else if (!(isUndefined(style[jsSyntax + 'Animation']) || isUndefined(style[jsSyntax + 'Transition'])) ||
-                !(isUndefined(style[prefix + 'Animation']) || isUndefined(style[prefix + 'Transition'])) ||
-                !(isUndefined(style[dom + 'Animation']) || isUndefined(style[dom + 'Transition']))) {
+            else if (!(isUndefined(style[jsSyntax + "Animation"]) ||
+                isUndefined(style[jsSyntax + "Transition"])) ||
+                !(isUndefined(style[prefix + "Animation"]) ||
+                    isUndefined(style[prefix + "Transition"])) ||
+                !(isUndefined(style[dom + "Animation"]) ||
+                    isUndefined(style[dom + "Transition"]))) {
                 this.animationSupported = true;
                 this.animationEvents = {
-                    $animation: prefix + 'Animation',
-                    $animationStart: prefix + 'AnimationStart',
-                    $animationEnd: prefix + 'AnimationEnd',
-                    $animationIteration: prefix + 'AnimationIteration',
-                    $transition: prefix + 'Transition',
-                    $transitionStart: prefix + 'TransitionStart',
-                    $transitionEnd: prefix + 'TransitionEnd'
+                    $animation: prefix + "Animation",
+                    $animationStart: prefix + "AnimationStart",
+                    $animationEnd: prefix + "AnimationEnd",
+                    $animationIteration: prefix + "AnimationIteration",
+                    $transition: prefix + "Transition",
+                    $transitionStart: prefix + "TransitionStart",
+                    $transitionEnd: prefix + "TransitionEnd",
                 };
             }
         };
@@ -1790,21 +2304,25 @@ var plat;
          * Determines whether or not platypus css styles exist.
          */
         Compat.prototype.__determineCss = function () {
-            var _document = this._document, head = _document.head, element = _document.createElement('div');
+            var _document = this._document;
+            var head = _document.head;
+            var element = _document.createElement('div');
             element.setAttribute(__Hide, '');
             head.insertBefore(element, null);
-            var computedStyle = this._window.getComputedStyle(element), display = computedStyle.display, visibility = computedStyle.visibility;
+            var computedStyle = this._window.getComputedStyle(element);
+            var display = computedStyle.display;
+            var visibility = computedStyle.visibility;
             this.platCss = display === 'none' || visibility === 'hidden';
             head.removeChild(element);
         };
         Compat._inject = {
             _window: __Window,
             _history: __History,
-            _document: __Document
+            _document: __Document,
         };
         return Compat;
     }());
-    plat_1.Compat = Compat;
+    plat.Compat = Compat;
     register.injectable(__Compat, Compat);
     /**
      * An extensible class defining common utilities and helper functions.
@@ -1990,7 +2508,7 @@ var plat;
         };
         /**
          * Takes in a list and object containing key/value pairs to search for in the list.
-         * @param {Object} properties An object containing key/value pairs to match with obj's values.
+         * @param {Object} properties An object containing key/value pairs to match with object's values.
          * @param {Array<T>} array The list used for searching for properties.
          */
         Utils.prototype.where = function (properties, array) {
@@ -2009,7 +2527,7 @@ var plat;
          * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
          * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
          * the iterator until the previous promise fulfills.
-         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {plat.IListIterator<T, plat.async.Promise<R>>} iterator The transformation function.
          * @param {Array<T>} array An Array.
          * @param {any} context? An optional context to bind to the iterator.
          */
@@ -2020,7 +2538,7 @@ var plat;
          * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
          * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
          * the iterator until the previous promise fulfills.
-         * @param {plat.IListIterator<T, plat.async.IThenable<R>>} iterator The transformation function.
+         * @param {plat.IListIterator<T, plat.async.Promise<R>>} iterator The transformation function.
          * @param {Array<T>} array An Array.
          * @param {any} context? An optional context to bind to the iterator.
          */
@@ -2080,9 +2598,9 @@ var plat;
             return requestAnimationFrameGlobal(method, context);
         };
         /**
-         * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
+         * Takes in a prefix and returns a unique identifier string with the prefix prepended. If no prefix
          * is specified, none will be prepended.
-         * @param {string} prefix? A string prefix to prepend tothe unique ID.
+         * @param {string} prefix? A string prefix to prepend to the unique ID.
          */
         Utils.prototype.uniqueId = function (prefix) {
             return uniqueId(prefix);
@@ -2090,7 +2608,7 @@ var plat;
         /**
          * Takes in a spinal-case, dot.case, or snake_case string and returns
          * a camelCase string. Also can turn a string into camelCase with space
-         * as a delimeter.
+         * as a delimiter.
          * @param {string} str The spinal-case, dot.case, or snake_case string.
          */
         Utils.prototype.camelCase = function (str) {
@@ -2106,21 +2624,21 @@ var plat;
         };
         return Utils;
     }());
-    plat_1.Utils = Utils;
+    plat.Utils = Utils;
     register.injectable(__Utils, Utils);
     /**
      */
     function Window() {
         return window;
     }
-    plat_1.Window = Window;
+    plat.Window = Window;
     register.injectable(__Window, Window);
     /**
      */
     function Document(_window) {
         return _window.document;
     }
-    plat_1.Document = Document;
+    plat.Document = Document;
     register.injectable(__Document, Document, [__Window]);
     /**
      * Holds classes and interfaces related to expression handling in platypus.
@@ -2135,7 +2653,7 @@ var plat;
                 /**
                  * A regular expression for finding markup in a string.
                  */
-                this.markupRegex = new RegExp(__startSymbol + '[\\S\\s]*' + __endSymbol);
+                this.markupRegex = new RegExp(__startSymbol + "[\\S\\s]*" + __endSymbol);
                 /**
                  * Finds the arguments in a method expression.
                  */
@@ -2146,7 +2664,7 @@ var plat;
                  */
                 this.initialUrlRegex = /\/[^\/]*\.(?:html|htm)/;
                 /**
-                 * Finds a protocol delimeter in a string (e.g. ://).
+                 * Finds a protocol delimiter in a string (e.g. ://).
                  */
                 this.protocolRegex = /:\/\//;
                 /**
@@ -2168,7 +2686,7 @@ var plat;
                 /**
                  * Determines if an email address is valid.
                  */
-                this.validateEmail = new RegExp('^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|' +
+                this.validateEmail = new RegExp('^(([^<>()[\\]\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\"]+)*)|' +
                     '(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|' +
                     '(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
                 /**
@@ -2237,9 +2755,9 @@ var plat;
             });
             Object.defineProperty(Regex.prototype, "camelCaseRegex", {
                 /**
-                 * Finds delimeters for spinal-case, snake_case, and dot.case.
+                 * Finds delimiters for spinal-case, snake_case, and dot.case.
                  * useful for converting to camelCase. Also can turn a string
-                 * into camelCase with space as a delimeter.
+                 * into camelCase with space as a delimiter.
                  */
                 get: function () {
                     return /([\-_\.\s])(\w+?)/g;
@@ -2296,7 +2814,8 @@ var plat;
                 /**
                  * A regular expression for determining if a potential variable is valid syntax.
                  */
-                this.__variableRegex = acquire(__Regex).invalidVariableRegex;
+                this.__variableRegex = acquire(__Regex)
+                    .invalidVariableRegex;
                 /**
                  * A queue used for determining the output of the tokenization.
                  */
@@ -2335,15 +2854,20 @@ var plat;
                     return [];
                 }
                 this._input = input;
-                var char, length = input.length, ternary = 0, ternaryFound = false, isSpace = this._isSpace, isAlphaNumeric = this._isAlphaNumeric;
-                for (var index = 0; index < length; index++) {
+                var length = input.length;
+                var isSpace = this._isSpace;
+                var isAlphaNumeric = this._isAlphaNumeric;
+                var char;
+                var ternary = 0;
+                var ternaryFound = false;
+                for (var index = 0; index < length; index += 1) {
                     char = input[index];
                     // space 
                     if (isSpace(char)) {
                         continue;
                     }
                     else if (isAlphaNumeric(char)) {
-                        index = this.__handleAplhaNumeric(index, char);
+                        index = this.__handleAlphaNumeric(index, char);
                     }
                     else if (isDelimiter(char)) {
                         switch (char) {
@@ -2371,17 +2895,19 @@ var plat;
                             case ',':
                                 this.__handleComma(char);
                                 break;
-                            case '\'':
+                            // tslint:disable-next-line 
+                            case "'":
                             case '"':
                                 index = this.__handleStringLiteral(index, char);
                                 break;
+                            default:
                         }
                     }
                     else if (isOperator(char)) {
                         switch (char) {
                             case '?':
                                 ternaryFound = true;
-                                ternary++;
+                                ternary += 1;
                                 this.__handleQuestion(char);
                                 break;
                             case ':':
@@ -2394,17 +2920,14 @@ var plat;
                     }
                     else if (char === ';') {
                         this._throwError('Unexpected semicolon');
-                        return [];
                     }
                     this.__previousChar = char;
                 }
-                if (ternaryFound && (ternary > 0)) {
+                if (ternaryFound && ternary > 0) {
                     this._throwError('Improper ternary expression');
-                    return [];
                 }
                 else if (this.__objArgCount.length > 0) {
                     this._throwError('Improper object literal');
-                    return [];
                 }
                 this.__popRemainingOperators();
                 var output = this.__outputQueue;
@@ -2429,8 +2952,11 @@ var plat;
              * @param {boolean} isNumberLike Whether or not the character resembles a number.
              */
             Tokenizer.prototype._lookAhead = function (char, index, isNumberLike) {
-                var ch, input = this._input, maxLength = input.length;
-                while (++index < maxLength) {
+                var input = this._input;
+                var maxLength = input.length;
+                var ch;
+                index += 1;
+                while (index < maxLength) {
                     ch = input[index];
                     if (this._checkType(ch, isNumberLike)) {
                         char += ch;
@@ -2438,6 +2964,7 @@ var plat;
                     else {
                         break;
                     }
+                    index += 1;
                 }
                 return char;
             };
@@ -2448,8 +2975,12 @@ var plat;
              * @param {number} index The current index in the expression string.
              */
             Tokenizer.prototype._lookAheadForOperatorFn = function (char, index) {
-                var ch, fn = char, input = this._input, maxLength = input.length;
-                while (++index < maxLength) {
+                var input = this._input;
+                var maxLength = input.length;
+                var ch;
+                var fn = char;
+                index += 1;
+                while (index < maxLength) {
                     ch = input[index];
                     fn += ch;
                     if (isOperator(fn)) {
@@ -2458,6 +2989,7 @@ var plat;
                     else {
                         break;
                     }
+                    index += 1;
                 }
                 return char;
             };
@@ -2470,9 +3002,16 @@ var plat;
              * @param {number} index The current index in the expression string.
              */
             Tokenizer.prototype._lookAheadForDelimiter = function (endChar, index) {
-                var char = '', ch, input = this._input, maxLength = input.length;
-                while ((++index < maxLength) && (ch = input[index]) !== endChar) {
+                var input = this._input;
+                var maxLength = input.length;
+                var char = '';
+                var ch;
+                index += 1;
+                ch = input[index];
+                while (index < maxLength && ch !== endChar) {
                     char += ch;
+                    index += 1;
+                    ch = input[index];
                 }
                 return char;
             };
@@ -2485,12 +3024,13 @@ var plat;
              * is invalid.
              */
             Tokenizer.prototype._popStackForVal = function (topOperator, char, error) {
-                var outputQueue = this.__outputQueue, operatorStack = this.__operatorStack;
+                var outputQueue = this.__outputQueue;
+                var operatorStack = this.__operatorStack;
                 while (topOperator.val !== char) {
                     outputQueue.push(operatorStack.shift());
                     topOperator = operatorStack[0];
                     if (operatorStack.length === 0) {
-                        return this._throwError(error);
+                        this._throwError(error);
                     }
                 }
             };
@@ -2544,14 +3084,14 @@ var plat;
              * @param {string} error The error message to throw.
              */
             Tokenizer.prototype._throwError = function (error) {
-                this._log.error(new Error(error + ' in ' + this._input));
+                this._log.error(new Error(error + " in " + this._input));
             };
             /**
              * Checks if a single character is numeric.
              * @param {string} char The character to check.
              */
             Tokenizer.prototype._isNumeric = function (char) {
-                return ('0' <= char && char <= '9');
+                return char >= '0' && char <= '9';
             };
             /**
              * Checks if a single character is a space.
@@ -2570,12 +3110,12 @@ var plat;
              * @param {string} char The character to check.
              */
             Tokenizer.prototype._isAlphaNumeric = function (char) {
-                return ('a' <= char && char <= 'z' ||
-                    'A' <= char && char <= 'Z' ||
-                    '0' <= char && char <= '9' ||
-                    '@' === char ||
-                    '_' === char ||
-                    '$' === char);
+                return ((char >= 'a' && char <= 'z') ||
+                    (char >= 'A' && char <= 'Z') ||
+                    (char >= '0' && char <= '9') ||
+                    char === '@' ||
+                    char === '_' ||
+                    char === '$');
             };
             /**
              * Checks if a string has proper JavaScript variable syntax.
@@ -2589,10 +3129,12 @@ var plat;
              * @param {number} index The current index in the string being tokenized.
              * @param {string} char The current char.
              */
-            Tokenizer.prototype.__handleAplhaNumeric = function (index, char) {
-                var isNumberLike = this._isNumeric(char), lookAhead = this._lookAhead(char, index, isNumberLike);
-                this.__outputQueue.push(isNumberLike ? ({ val: Number(lookAhead), args: 0 }) :
-                    ({ val: lookAhead, args: -1 }));
+            Tokenizer.prototype.__handleAlphaNumeric = function (index, char) {
+                var isNumberLike = this._isNumeric(char);
+                var lookAhead = this._lookAhead(char, index, isNumberLike);
+                this.__outputQueue.push(isNumberLike
+                    ? { val: Number(lookAhead), args: 0 }
+                    : { val: lookAhead, args: -1 });
                 return index + lookAhead.length - 1;
             };
             /**
@@ -2601,7 +3143,11 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handlePeriod = function (index, char) {
-                var outputQueue = this.__outputQueue, operatorStack = this.__operatorStack, topOutputLength = outputQueue.length - 1, previousChar = this.__previousChar, lookAhead;
+                var outputQueue = this.__outputQueue;
+                var operatorStack = this.__operatorStack;
+                var topOutputLength = outputQueue.length - 1;
+                var previousChar = this.__previousChar;
+                var lookAhead;
                 // if output queue is null OR space or operator or ( or , before . 
                 if (topOutputLength < 0 ||
                     this._isSpace(previousChar) ||
@@ -2642,9 +3188,11 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleRightBrace = function (char) {
-                var operatorStack = this.__operatorStack, topOperator = operatorStack[0], lastArgCount = this.__objArgCount.pop();
+                var operatorStack = this.__operatorStack;
+                var topOperator = operatorStack[0];
+                var lastArgCount = this.__objArgCount.pop();
                 if (isNull(topOperator)) {
-                    return this._throwError('Improper object literal');
+                    this._throwError('Improper object literal');
                 }
                 this._popStackForVal(topOperator, '{', 'Improper object literal');
                 // pop left brace off stack 
@@ -2658,7 +3206,8 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleLeftBracket = function (char) {
-                var previousChar = this.__previousChar, operatorStack = this.__operatorStack;
+                var previousChar = this.__previousChar;
+                var operatorStack = this.__operatorStack;
                 if (this._isValEqual(operatorStack[0], '.')) {
                     this.__outputQueue.push(operatorStack.shift());
                 }
@@ -2667,7 +3216,7 @@ var plat;
                     num: 0,
                     isArray: !(previousChar === ']' ||
                         previousChar === ')' ||
-                        this._isAlphaNumeric(previousChar))
+                        this._isAlphaNumeric(previousChar)),
                 });
                 this.__lastCommaChar.push(char);
             };
@@ -2676,12 +3225,14 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleRightBracket = function (char) {
-                var operatorStack = this.__operatorStack, topOperator = operatorStack[0], lastArgCountObj = this.__argCount.pop();
+                var operatorStack = this.__operatorStack;
+                var topOperator = operatorStack[0];
+                var lastArgCountObj = this.__argCount.pop();
                 if (isNull(topOperator) || isNull(lastArgCountObj)) {
-                    return this._throwError('Brackets mismatch');
+                    this._throwError('Brackets mismatch');
                 }
                 if (!lastArgCountObj.isArray) {
-                    lastArgCountObj.num--;
+                    lastArgCountObj.num -= 1;
                 }
                 this._popStackForVal(topOperator, '[', 'Brackets mismatch');
                 // pop left bracket off stack 
@@ -2690,7 +3241,9 @@ var plat;
                 // check if function on top of stack 
                 this.__outputQueue.push({
                     val: '[]',
-                    args: (this.__previousChar === '[') ? -1 : lastArgCountObj.num + 1
+                    args: this.__previousChar === '['
+                        ? -1
+                        : lastArgCountObj.num + 1,
                 });
             };
             /**
@@ -2698,9 +3251,15 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleLeftParenthesis = function (char) {
-                var previousChar = this.__previousChar, operatorStack = this.__operatorStack, args;
-                if (this._isAlphaNumeric(previousChar) || previousChar === ']' || previousChar === ')') {
-                    var outputQueue = this.__outputQueue, topOutput = outputQueue[outputQueue.length - 1], val = isNull(topOutput) ? undefined : topOutput.val;
+                var previousChar = this.__previousChar;
+                var operatorStack = this.__operatorStack;
+                var args;
+                if (this._isAlphaNumeric(previousChar) ||
+                    previousChar === ']' ||
+                    previousChar === ')') {
+                    var outputQueue = this.__outputQueue;
+                    var topOutput = outputQueue[outputQueue.length - 1];
+                    var val = isNull(topOutput) ? undefined : topOutput.val;
                     if (val === '[]') {
                         operatorStack.unshift(outputQueue.pop());
                         operatorStack.unshift(outputQueue.pop());
@@ -2722,9 +3281,11 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleRightParenthesis = function (char) {
-                var operatorStack = this.__operatorStack, topOperator = operatorStack[0], localArgCountObj = this.__argCount.pop();
+                var operatorStack = this.__operatorStack;
+                var topOperator = operatorStack[0];
+                var localArgCountObj = this.__argCount.pop();
                 if (isNull(topOperator)) {
-                    return this._throwError('Parentheses mismatch');
+                    this._throwError('Parentheses mismatch');
                 }
                 this._popStackForVal(topOperator, '(', 'Parentheses mismatch');
                 // pop left parenthesis off stack 
@@ -2737,14 +3298,14 @@ var plat;
                         if (this.__removeFnFromStack(localArgNum)) {
                             this.__outputQueue.push({
                                 val: '()',
-                                args: 0
+                                args: 0,
                             });
                         }
                     }
                     else if (this.__removeFnFromStack(localArgNum + 1)) {
                         this.__outputQueue.push({
                             val: '()',
-                            args: (localArgNum + 1)
+                            args: localArgNum + 1,
                         });
                     }
                 }
@@ -2754,20 +3315,22 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleComma = function (char) {
-                var lastCommaArray = this.__lastCommaChar, lastCommaArg = lastCommaArray[lastCommaArray.length - 1];
+                var lastCommaArray = this.__lastCommaChar;
+                var lastCommaArg = lastCommaArray[lastCommaArray.length - 1];
                 if (lastCommaArg === '(' || lastCommaArg === '[') {
-                    var argCountArray = this.__argCount, length_2 = argCountArray.length;
+                    var argCountArray = this.__argCount;
+                    var length_2 = argCountArray.length;
                     if (length_2 > 0) {
                         // increment deepest fn count (don't need to increment obj count because we increment with colon) 
-                        argCountArray[length_2 - 1].num++;
+                        argCountArray[length_2 - 1].num += 1;
                     }
                     else {
-                        return this._throwError('Mismatch with ' + lastCommaArg);
+                        this._throwError("Mismatch with " + lastCommaArg);
                     }
                 }
                 var topOperator = this.__operatorStack[0];
                 if (isNull(topOperator)) {
-                    return this._throwError('Unexpected comma');
+                    this._throwError('Unexpected comma');
                 }
                 this._popStackForVal(topOperator, lastCommaArg, 'Unexpected comma');
             };
@@ -2777,8 +3340,12 @@ var plat;
              * @param {string} char The current char.
              */
             Tokenizer.prototype.__handleStringLiteral = function (index, char) {
-                var lookAhead = this._lookAheadForDelimiter(char, index), operatorStack = this.__operatorStack, topOperator = operatorStack[0];
-                if (!isNull(topOperator) && (topOperator.val === '[' || (topOperator.val === '(' && topOperator.args >= 0))) {
+                var lookAhead = this._lookAheadForDelimiter(char, index);
+                var operatorStack = this.__operatorStack;
+                var topOperator = operatorStack[0];
+                if (!isNull(topOperator) &&
+                    (topOperator.val === '[' ||
+                        (topOperator.val === '(' && topOperator.args >= 0))) {
                     operatorStack.unshift({ val: lookAhead, args: 0 });
                 }
                 else {
@@ -2801,14 +3368,16 @@ var plat;
              * decrements when a ternary is completed. It can be very useful when there is nested ternaries.
              */
             Tokenizer.prototype.__handleColon = function (char, ternary) {
-                var lastColonCharArray = this.__lastColonChar, lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1], outputQueue = this.__outputQueue;
+                var lastColonCharArray = this.__lastColonChar;
+                var lastColonCharacter = lastColonCharArray[lastColonCharArray.length - 1];
+                var outputQueue = this.__outputQueue;
                 if (lastColonCharacter === '?') {
-                    var operatorStack = this.__operatorStack, topOperator = operatorStack[0];
+                    var operatorStack = this.__operatorStack;
+                    var topOperator = operatorStack[0];
                     if (isNull(topOperator)) {
                         this._throwError('Ternary mismatch');
-                        return;
                     }
-                    ternary--;
+                    ternary -= 1;
                     // pop latest colon char off queue 
                     lastColonCharArray.pop();
                     this._popStackForVal(topOperator, '?', 'Ternary mismatch');
@@ -2816,17 +3385,16 @@ var plat;
                     operatorStack.unshift({ val: char, args: -2 });
                 }
                 else if (lastColonCharacter === '{') {
-                    var objArgCount = this.__objArgCount, outputLast = outputQueue.length - 1;
-                    objArgCount[objArgCount.length - 1]++;
+                    var objArgCount = this.__objArgCount;
+                    var outputLast = outputQueue.length - 1;
+                    objArgCount[objArgCount.length - 1] += 1;
                     if (outputLast < 0) {
                         this._throwError('Unexpected colon');
-                        return;
                     }
                     outputQueue[outputLast].args = 1;
                 }
                 else {
                     this._throwError('Unexpected colon');
-                    return;
                 }
                 return ternary;
             };
@@ -2845,12 +3413,15 @@ var plat;
              * checking for mismatches.
              */
             Tokenizer.prototype.__popRemainingOperators = function () {
-                var outputQueue = this.__outputQueue, operatorStack = this.__operatorStack, topOperator, topOperatorVal;
+                var outputQueue = this.__outputQueue;
+                var operatorStack = this.__operatorStack;
+                var topOperator;
+                var topOperatorVal;
                 while (operatorStack.length > 0) {
                     topOperator = operatorStack.shift();
                     topOperatorVal = topOperator.val;
                     if (topOperatorVal === '(' || topOperatorVal === ')') {
-                        return this._throwError('Parentheses mismatch');
+                        this._throwError('Parentheses mismatch');
                     }
                     outputQueue.push(topOperator);
                 }
@@ -2863,8 +3434,9 @@ var plat;
                 switch (operator) {
                     case '+':
                     case '-':
-                        if (this.__outputQueue.length === 0 || isOperator(this.__previousChar)) {
-                            return OPERATORS['u' + operator];
+                        if (this.__outputQueue.length === 0 ||
+                            isOperator(this.__previousChar)) {
+                            return OPERATORS["u" + operator];
                         }
                     default:
                         return OPERATORS[operator];
@@ -2876,9 +3448,18 @@ var plat;
              * @param {string} operator The operator whose precedence is being determined.
              */
             Tokenizer.prototype.__determinePrecedence = function (operator) {
-                var operatorFn = this.__determineOperator(operator), operatorPrecedence = operatorFn.precedence, isLtR = operatorFn.associativity === 'ltr', operatorStack = this.__operatorStack, outputQueue = this.__outputQueue, firstArrayOperator, firstArrayVal;
+                var operatorFn = this.__determineOperator(operator);
+                var operatorPrecedence = operatorFn.precedence;
+                var isLtR = operatorFn.associativity === 'ltr';
+                var operatorStack = this.__operatorStack;
+                var outputQueue = this.__outputQueue;
+                var firstArrayOperator;
+                var firstArrayVal;
                 if (operatorStack.length === 0) {
-                    operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                    operatorStack.unshift({
+                        val: operator,
+                        args: operatorFn.fn.length - 2,
+                    });
                     return;
                 }
                 do {
@@ -2889,16 +3470,25 @@ var plat;
                     }
                     firstArrayOperator = OPERATORS[firstArrayVal];
                     if (!(isNull(firstArrayOperator) ||
-                        !(firstArrayOperator.precedence < operatorPrecedence ||
-                            (isLtR && firstArrayOperator.precedence === operatorPrecedence)))) {
+                        !(firstArrayOperator.precedence <
+                            operatorPrecedence ||
+                            (isLtR &&
+                                firstArrayOperator.precedence ===
+                                    operatorPrecedence)))) {
                         outputQueue.push(operatorStack.shift());
                     }
                     else {
-                        operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                        operatorStack.unshift({
+                            val: operator,
+                            args: operatorFn.fn.length - 2,
+                        });
                         return;
                     }
                 } while (operatorStack.length > 0);
-                operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                operatorStack.unshift({
+                    val: operator,
+                    args: operatorFn.fn.length - 2,
+                });
             };
             /**
              * Removes a reference to a function that is present in the operator stack and places
@@ -2907,7 +3497,13 @@ var plat;
              * arrays, and object literals.
              */
             Tokenizer.prototype.__removeFnFromStack = function (argCount) {
-                var outputQueue = this.__outputQueue, operatorStack = this.__operatorStack, topOperator = operatorStack[0], isValEqual = this._isValEqual, isValUnequal = this._isValUnequal, fnToken, atLeastOne = false;
+                var outputQueue = this.__outputQueue;
+                var operatorStack = this.__operatorStack;
+                var topOperator = operatorStack[0];
+                var isValEqual = this._isValEqual;
+                var isValUnequal = this._isValUnequal;
+                var fnToken;
+                var atLeastOne = false;
                 while (!isNull(topOperator) &&
                     isValUnequal(topOperator, '([') &&
                     (this._isStringValidVariable(topOperator.val) ||
@@ -2921,13 +3517,14 @@ var plat;
                     topOperator = operatorStack[0];
                     atLeastOne = true;
                 }
-                if (!(atLeastOne || isValUnequal(outputQueue[outputQueue.length - argCount - 1], '()'))) {
+                if (!(atLeastOne ||
+                    isValUnequal(outputQueue[outputQueue.length - argCount - 1], '()'))) {
                     atLeastOne = true;
                 }
                 return atLeastOne;
             };
             Tokenizer._inject = {
-                _log: __Log
+                _log: __Log,
             };
             return Tokenizer;
         }());
@@ -2964,7 +3561,7 @@ var plat;
                  */
                 this.__aliases = {};
                 /**
-                 * The constant that needs to be prepended to every dyanmic eval function.
+                 * The constant that needs to be prepended to every dynamic eval function.
                  */
                 this.__fnEvalConstant = 'var initialContext;return ';
             }
@@ -2979,7 +3576,7 @@ var plat;
                         expression: parsedObject.expression,
                         identifiers: parsedObject.identifiers.slice(0),
                         aliases: parsedObject.aliases.slice(0),
-                        evaluate: parsedObject.evaluate
+                        evaluate: parsedObject.evaluate,
                     };
                 }
                 this._tokens = this._tokenizer.createTokens(expression);
@@ -3010,8 +3607,15 @@ var plat;
              * @param {string} expression The JavaScript expression to evaluate.
              */
             Parser.prototype._evaluate = function (expression) {
-                var tokens = this._tokens, length = tokens.length, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, useLocalContext = false, tokenObj, token, args;
-                for (var index = 0; index < length; index++) {
+                var tokens = this._tokens;
+                var length = tokens.length;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var useLocalContext = false;
+                var tokenObj;
+                var token;
+                var args;
+                for (var index = 0; index < length; index += 1) {
                     tokenObj = tokens[index];
                     token = tokenObj.val;
                     args = tokenObj.args;
@@ -3039,7 +3643,6 @@ var plat;
                                 else {
                                     useLocalContext = this.__indexIntoObject(index, token, useLocalContext);
                                 }
-                                break;
                         }
                         // check if its an operator 
                     }
@@ -3059,11 +3662,10 @@ var plat;
                                 case '+':
                                 case '-':
                                     if (args === 1) {
-                                        token = 'u' + token;
+                                        token = "u" + token;
                                     }
                                 default:
                                     this.__handleOperator(token, args);
-                                    break;
                             }
                         }
                         // its either function, object, or primitive 
@@ -3081,13 +3683,15 @@ var plat;
                 }
                 // move the rest of the tempIdentifiers to the identifiers 
                 this._popRemainingIdentifiers();
-                // make the identifiers array unqiue entries only 
+                // make the identifiers array unique entries only 
                 this._makeIdentifiersUnique();
                 var parsedExpression = {
-                    evaluate: new Function(__CONTEXT, __ALIASES, this.__fnEvalConstant + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
+                    evaluate: new Function(__CONTEXT, __ALIASES, "" + this.__fnEvalConstant + (codeArray.length === 0
+                        ? "\"" + expression + "\""
+                        : codeArray.join('')) + ";"),
                     expression: expression,
                     identifiers: this.__identifiers.slice(0),
-                    aliases: Object.keys(this.__aliases)
+                    aliases: Object.keys(this.__aliases),
                 };
                 // reset parser's properties 
                 this._resetParser();
@@ -3113,7 +3717,9 @@ var plat;
              * Evaluate and remove the leftover identifiers.
              */
             Parser.prototype._popRemainingIdentifiers = function () {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, last;
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var last;
                 while (tempIdentifiers.length > 0) {
                     last = tempIdentifiers.pop();
                     if (last !== '.') {
@@ -3125,7 +3731,10 @@ var plat;
              * Remove duplicate identifiers.
              */
             Parser.prototype._makeIdentifiersUnique = function () {
-                var identifiers = this.__identifiers, uniqueIdentifiers = [], uniqueIdentifierObject = {}, identifier;
+                var identifiers = this.__identifiers;
+                var uniqueIdentifiers = [];
+                var uniqueIdentifierObject = {};
+                var identifier;
                 while (identifiers.length > 0) {
                     identifier = identifiers.pop();
                     if (!uniqueIdentifierObject[identifier]) {
@@ -3195,20 +3804,21 @@ var plat;
                     this.__tempIdentifiers.push('.');
                     return token;
                 }
-                var castTokenIsNumberLike = isNumber(Number(token)), peek = this._peek(index), isPeekIndexer = !(isNull(peek) || peek.args >= 1), isValEqual = this._isValEqual;
+                var castTokenIsNumberLike = isNumber(Number(token));
+                var peek = this._peek(index);
+                var isPeekIndexer = !(isNull(peek) || peek.args >= 1);
+                var isValEqual = this._isValEqual;
                 if (isKeyword(token) ||
                     (isString(token) &&
                         (castTokenIsNumberLike ||
                             this._isValUnequal(peek, '[]()') ||
-                            (isValEqual(peek, '[]') &&
-                                !isPeekIndexer)))) {
+                            (isValEqual(peek, '[]') && !isPeekIndexer)))) {
                     this.__tempIdentifiers.push('.');
-                    return '"' + token + '"';
+                    return "\"" + token + "\"";
                 }
                 else {
                     if (!castTokenIsNumberLike ||
-                        (isValEqual(peek, '.[]') &&
-                            isPeekIndexer)) {
+                        (isValEqual(peek, '.[]') && isPeekIndexer)) {
                         this.__tempIdentifiers.push(token);
                     }
                     else {
@@ -3231,8 +3841,10 @@ var plat;
                     this.__tempIdentifiers.push('.');
                     return token;
                 }
-                var nextToken = this._peek(index), isValEqual = this._isValEqual;
-                if (isValEqual(this._tokens[index - 1], '()') && isValEqual(nextToken, '.[]')) {
+                var nextToken = this._peek(index);
+                var isValEqual = this._isValEqual;
+                if (isValEqual(this._tokens[index - 1], '()') &&
+                    isValEqual(nextToken, '.[]')) {
                     this.__tempIdentifiers.push('.');
                 }
                 else {
@@ -3245,13 +3857,12 @@ var plat;
                             return token;
                         default:
                             if (!useLocalContext) {
-                                return '(initialContext = (' + this.__findInitialContext.toString() + ')(context,aliases,"' + token + '"))';
+                                return "(initialContext = (" + this.__findInitialContext.toString() + ")(context,aliases,\"" + token + "\"))";
                             }
-                            break;
                     }
                 }
                 else {
-                    return '(initialContext = (' + this.__findInitialContext.toString() + ')(context,aliases,"' + token + '"))';
+                    return "(initialContext = (" + this.__findInitialContext.toString() + ")(context,aliases,\"" + token + "\"))";
                 }
             };
             /**
@@ -3259,11 +3870,19 @@ var plat;
              * @param {number} args The current IToken args.
              */
             Parser.prototype.__convertObject = function (args) {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, j = 0, key, codeStr = '{', tempIdentifier, temp;
-                while (j++ < args) {
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var j = 0;
+                var key;
+                var codeStr = '{';
+                var tempIdentifier;
+                var temp;
+                while (j < args) {
+                    j += 1;
                     temp = codeArray.pop();
                     key = codeArray.pop();
-                    codeStr += ',"' + key + '":' + temp;
+                    codeStr += ",\"" + key + "\":" + temp;
                     if (tempIdentifiers.length > 1) {
                         tempIdentifier = tempIdentifiers.pop();
                         // pop the key's tempIdentifier 
@@ -3273,16 +3892,22 @@ var plat;
                         }
                     }
                 }
-                return codeStr.replace(',', '') + '}';
+                return codeStr.replace(',', '') + "}";
             };
             /**
              * Handles an Array literal.
              * @param {number} args The current IToken args.
              */
             Parser.prototype.__convertArrayLiteral = function (args) {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, j = 0, tempStr = '', tempIdentifier;
-                while (j++ < args) {
-                    tempStr = codeArray.pop() + ',' + tempStr;
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var j = 0;
+                var tempStr = '';
+                var tempIdentifier;
+                while (j < args) {
+                    j += 1;
+                    tempStr = codeArray.pop() + "," + tempStr;
                     if (tempIdentifiers.length > 0) {
                         tempIdentifier = tempIdentifiers.pop();
                         if (tempIdentifier !== '.') {
@@ -3290,7 +3915,7 @@ var plat;
                         }
                     }
                 }
-                return '[' + tempStr.slice(0, -1) + ']';
+                return "[" + tempStr.slice(0, -1) + "]";
             };
             /**
              * Handles an accessor type function token "()".
@@ -3299,13 +3924,27 @@ var plat;
              * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
              */
             Parser.prototype.__handleFunction = function (index, args, useLocalContext) {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, j = 0, previousToken = this._lookBack(index), grabFnName = !isNull(previousToken) && (previousToken.args === -2 || this._isValEqual(previousToken, '.[]')), tempStr = '', tempIdentifier, fnName = '', identifierFnName = '', codeStr, pushedIdentifier = false;
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var previousToken = this._lookBack(index);
+                var grabFnName = !isNull(previousToken) &&
+                    (previousToken.args === -2 ||
+                        this._isValEqual(previousToken, '.[]'));
+                var j = 0;
+                var tempStr = '';
+                var tempIdentifier;
+                var fnName = '';
+                var identifierFnName = '';
+                var codeStr;
+                var pushedIdentifier = false;
                 if (grabFnName) {
                     fnName = codeArray.pop();
                     identifierFnName = tempIdentifiers.pop();
                 }
-                while (j++ < args) {
-                    tempStr = codeArray.pop() + ',' + tempStr;
+                while (j < args) {
+                    j += 1;
+                    tempStr = codeArray.pop() + "," + tempStr;
                     if (tempIdentifiers.length > 0) {
                         tempIdentifier = tempIdentifiers.pop();
                         if (tempIdentifier !== '.') {
@@ -3315,7 +3954,7 @@ var plat;
                     }
                 }
                 if (args > 0) {
-                    codeStr = '.call(initialContext || context,' + tempStr.slice(0, tempStr.length - 1) + ')';
+                    codeStr = ".call(initialContext || context," + tempStr.slice(0, tempStr.length - 1) + ")";
                 }
                 else {
                     codeStr = '.call(initialContext || context)';
@@ -3323,9 +3962,12 @@ var plat;
                 if (useLocalContext) {
                     useLocalContext = false;
                     if (codeArray.length > 0) {
-                        var context = codeArray.pop(), lastIndex = tempIdentifiers.length - 1;
-                        if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
-                            tempIdentifiers[lastIndex] += '.' + identifierFnName;
+                        var context = codeArray.pop();
+                        var lastIndex = tempIdentifiers.length - 1;
+                        if (!(lastIndex < 0 ||
+                            tempIdentifiers[lastIndex] === '.' ||
+                            identifierFnName === '')) {
+                            tempIdentifiers[lastIndex] += "." + identifierFnName;
                             identifiers.push(tempIdentifiers.pop());
                             // check fn name is not null, pushed an identifier, and the context is not an array literal 
                         }
@@ -3333,14 +3975,13 @@ var plat;
                             !pushedIdentifier ||
                             context[0] === '[' ||
                             context[context.length - 1] === ']')) {
-                            identifiers[identifiers.length - 1] += '.' + identifierFnName;
+                            identifiers[identifiers.length - 1] += "." + identifierFnName;
                         }
                         if (isEmpty(fnName)) {
                             codeStr = context + codeStr;
                         }
                         else {
-                            codeStr = '((' + this.__indexIntoContext.toString() + ')(' + context + ',"' +
-                                fnName + '") || (function () {}))' + codeStr;
+                            codeStr = "((" + this.__indexIntoContext.toString() + ")(" + context + ",\"" + fnName + "\") || (function () {}))" + codeStr;
                         }
                     }
                     else {
@@ -3349,8 +3990,7 @@ var plat;
                 }
                 else {
                     if (grabFnName) {
-                        codeStr = '(initialContext = ((' + this.__findInitialContext.toString() + ')(context,aliases,"' +
-                            fnName + '") || (function () {}))' + codeStr + ')';
+                        codeStr = "(initialContext = ((" + this.__findInitialContext.toString() + ")(context,aliases,\"" + fnName + "\") || (function () {}))" + codeStr + ")";
                         identifiers.push(fnName);
                     }
                     else {
@@ -3359,7 +3999,9 @@ var plat;
                 }
                 codeArray.push(codeStr);
                 var length = tempIdentifiers.length;
-                if (this._isValEqual(this._peek(index), '[]') && length > 0 && tempIdentifiers[length - 1] !== '.') {
+                if (this._isValEqual(this._peek(index), '[]') &&
+                    length > 0 &&
+                    tempIdentifiers[length - 1] !== '.') {
                     identifiers.push(tempIdentifiers.pop());
                 }
                 return useLocalContext;
@@ -3375,20 +4017,28 @@ var plat;
                 if (isValEqual(this._peek(index), '()')) {
                     return true;
                 }
-                var codeArray = this.__codeArray, codeStr = codeArray.pop(), identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, previousToken = this._lookBack(index), identifierIndexer = tempIdentifiers.pop(), hasIdentifierIndexer = !isNull(identifierIndexer), lastIndex;
+                var codeArray = this.__codeArray;
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var previousToken = this._lookBack(index);
+                var identifierIndexer = tempIdentifiers.pop();
+                var hasIdentifierIndexer = !isNull(identifierIndexer);
+                var codeStr = codeArray.pop();
+                var lastIndex;
                 if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
+                    codeStr = "(" + this.__indexIntoContext.toString() + ")(" + codeArray.pop() + "," + codeStr + ")";
                     identifiers.push(identifierIndexer);
                     if (tempIdentifiers.length > 0) {
                         identifiers.push(tempIdentifiers.pop());
                     }
                 }
                 else if (isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
+                    codeStr = "(" + this.__indexIntoContext.toString() + ")(" + codeArray.pop() + "," + codeStr + ")";
                     tempIdentifiers.push('.');
                 }
-                else if (token === '[]' && !(isNull(previousToken) || previousToken.args >= 0)) {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
+                else if (token === '[]' &&
+                    !(isNull(previousToken) || previousToken.args >= 0)) {
+                    codeStr = "(" + this.__indexIntoContext.toString() + ")(" + codeArray.pop() + "," + codeStr + ")";
                     lastIndex = tempIdentifiers.length - 1;
                     if (lastIndex >= 0) {
                         if (tempIdentifiers[lastIndex] !== '.') {
@@ -3398,14 +4048,16 @@ var plat;
                     identifiers.push(identifierIndexer);
                 }
                 else {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',"' + codeStr + '")';
+                    codeStr = "(" + this.__indexIntoContext.toString() + ")(" + codeArray.pop() + ",\"" + codeStr + "\")";
                     lastIndex = tempIdentifiers.length - 1;
                     if (lastIndex >= 0) {
                         if (tempIdentifiers[lastIndex] !== '.') {
-                            tempIdentifiers[lastIndex] += '.' + identifierIndexer;
+                            tempIdentifiers[lastIndex] += "." + identifierIndexer;
                         }
                     }
-                    else if (hasIdentifierIndexer && identifierIndexer !== '.' && token !== '.') {
+                    else if (hasIdentifierIndexer &&
+                        identifierIndexer !== '.' &&
+                        token !== '.') {
                         identifiers.push(identifierIndexer);
                     }
                 }
@@ -3416,8 +4068,12 @@ var plat;
              * Handles the "?" operator.
              */
             Parser.prototype.__handleQuestion = function () {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, temp = codeArray.pop(), tempIdentifier;
-                for (var i = 0; i < 2; i++) {
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var temp = codeArray.pop();
+                var tempIdentifier;
+                for (var i = 0; i < 2; i += 1) {
                     if (tempIdentifiers.length > 0) {
                         tempIdentifier = tempIdentifiers.pop();
                         if (tempIdentifier !== '.') {
@@ -3428,14 +4084,18 @@ var plat;
                         break;
                     }
                 }
-                codeArray.push(codeArray.pop() + '?' + temp);
+                codeArray.push(codeArray.pop() + "?" + temp);
             };
             /**
              * Handles the ":" operator.
              */
             Parser.prototype.__handleColon = function () {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, temp = codeArray.pop(), tempIdentifier;
-                for (var i = 0; i < 2; i++) {
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var temp = codeArray.pop();
+                var tempIdentifier;
+                for (var i = 0; i < 2; i += 1) {
                     if (tempIdentifiers.length > 0) {
                         tempIdentifier = tempIdentifiers.pop();
                         if (tempIdentifier !== '.') {
@@ -3446,7 +4106,7 @@ var plat;
                         break;
                     }
                 }
-                codeArray.push(codeArray.pop() + ':' + temp);
+                codeArray.push(codeArray.pop() + ":" + temp);
             };
             /**
              * Handles all other operators.
@@ -3454,9 +4114,15 @@ var plat;
              * @param {number} args The current IToken args.
              */
             Parser.prototype.__handleOperator = function (token, args) {
-                var identifiers = this.__identifiers, tempIdentifiers = this.__tempIdentifiers, codeArray = this.__codeArray, j = 0, tempStr = '', tempIdentifier;
-                while (j++ < args) {
-                    tempStr = 'function (context, aliases) { return ' + codeArray.pop() + '; }' + ',' + tempStr;
+                var identifiers = this.__identifiers;
+                var tempIdentifiers = this.__tempIdentifiers;
+                var codeArray = this.__codeArray;
+                var j = 0;
+                var tempStr = '';
+                var tempIdentifier;
+                while (j < args) {
+                    j += 1;
+                    tempStr = "function (context, aliases) { return " + codeArray.pop() + "; }," + tempStr;
                     if (tempIdentifiers.length > 0) {
                         tempIdentifier = tempIdentifiers.pop();
                         if (tempIdentifier !== '.') {
@@ -3466,7 +4132,7 @@ var plat;
                 }
                 // push identifier for new result of operator 
                 tempIdentifiers.push('.');
-                codeArray.push('(' + OPERATORS[token].fn.toString() + ')(context, aliases,' + tempStr.slice(0, tempStr.length - 1) + ')');
+                codeArray.push("(" + OPERATORS[token].fn.toString() + ")(context, aliases," + tempStr.slice(0, tempStr.length - 1) + ")");
             };
             /**
              * Safely finds an initial context.
@@ -3475,7 +4141,9 @@ var plat;
              * @param {string} token The property used to find the initial context.
              */
             Parser.prototype.__findInitialContext = function (context, aliases, token) {
-                if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
+                if (token[0] === '@' &&
+                    aliases !== null &&
+                    typeof aliases === 'object') {
                     return aliases[token.slice(1)];
                 }
                 else if (context !== null && typeof context === 'object') {
@@ -3494,13 +4162,13 @@ var plat;
             };
             Parser._inject = {
                 _tokenizer: __Tokenizer,
-                _log: __Log
+                _log: __Log,
             };
             return Parser;
         }());
         expressions.Parser = Parser;
         register.injectable(__Parser, Parser);
-    })(expressions = plat_1.expressions || (plat_1.expressions = {}));
+    })(expressions = plat.expressions || (plat.expressions = {}));
     /**
      * Holds classes and interfaces related to web components in platypus.
      */
@@ -3551,7 +4219,11 @@ var plat;
                 this._EventManager.dispose(this.uid);
                 this.__initializing = true;
                 acquire(__UrlUtilsInstance);
-                var url = this.url(), trimmedUrl = url, changed = this._urlChanged.bind(this), _dom = this._dom, _window = this._window;
+                var url = this.url();
+                var trimmedUrl = url;
+                var changed = this._urlChanged.bind(this);
+                var _dom = this._dom;
+                var _window = this._window;
                 if (trimmedUrl !== url) {
                     this.url(trimmedUrl, true);
                 }
@@ -3575,7 +4247,10 @@ var plat;
                     }
                     this._setUrl(url, replace);
                 }
-                return this.__currentUrl || location.href;
+                if (!isEmpty(this.__currentUrl)) {
+                    return this.__currentUrl;
+                }
+                return location.href;
             };
             /**
              * Navigates back in the browser history
@@ -3610,10 +4285,17 @@ var plat;
              * instance.
              */
             Browser.prototype.urlUtils = function (url) {
-                url = url || this.url();
-                var _urlUtils = acquire(__UrlUtilsInstance), _config = Browser.config;
+                if (!isString(url)) {
+                    url = this.url();
+                }
+                var _urlUtils = acquire(__UrlUtilsInstance);
+                var _config = Browser.config;
+                var hashPrefix = _config.hashPrefix;
+                if (!isString(hashPrefix)) {
+                    hashPrefix = '';
+                }
                 if (_config.routingType === _config.HASH) {
-                    url = url.replace(new RegExp('#' + (_config.hashPrefix || '') + '/?'), '');
+                    url = url.replace(new RegExp("#" + hashPrefix + "/?"), '');
                 }
                 _urlUtils.initialize(url);
                 return _urlUtils;
@@ -3626,40 +4308,50 @@ var plat;
                 if (!isString(url)) {
                     return false;
                 }
-                var urlUtils = this.urlUtils(url), locationUtils = this.urlUtils();
+                var urlUtils = this.urlUtils(url);
+                var locationUtils = this.urlUtils();
                 // check for protocol:host:port mismatch 
-                return urlUtils.protocol !== locationUtils.protocol ||
+                return (urlUtils.protocol !== locationUtils.protocol ||
                     urlUtils.hostname !== locationUtils.hostname ||
-                    urlUtils.port !== locationUtils.port;
+                    urlUtils.port !== locationUtils.port);
             };
             /**
              * Formats the URL in the case of HASH routing.
              * @param url The URL to format.
              */
             Browser.prototype.formatUrl = function (url) {
-                var config = Browser.config, baseUrl = config.baseUrl;
+                var config = Browser.config;
+                var baseUrl = config.baseUrl;
                 if (!isString(url)) {
                     return '';
                 }
                 if (url === baseUrl) {
                     return url;
                 }
-                var isLocal = !this._regex.fullUrlRegex.test(url) || url.indexOf(baseUrl) > -1;
+                var isLocal = !this._regex.fullUrlRegex.test(url) ||
+                    url.indexOf(baseUrl) > -1;
                 if (url[0] === '/') {
                     url = url.slice(1);
                 }
                 if (isLocal) {
                     if (config.routingType === config.HASH) {
-                        var hasProtocol = url.indexOf(this.__protocol + ':') === 0, prefix = config.hashPrefix || '', append = '#' + prefix, hashRegex = new RegExp(append + '|#/');
-                        if (url[url.length - 1] !== '/' && url.indexOf('?') === -1) {
+                        var hasProtocol = url.indexOf(this.__protocol + ":") === 0;
+                        var prefix = config.hashPrefix;
+                        if (!isString(prefix)) {
+                            prefix = '';
+                        }
+                        var append = "#" + prefix;
+                        var hashRegex = new RegExp(append + "|#/");
+                        if (url[url.length - 1] !== '/' &&
+                            url.indexOf('?') === -1) {
                             url += '/';
                         }
                         if (!hashRegex.test(url)) {
                             if (hasProtocol) {
-                                url = url + append + '/';
+                                url = "" + url + append + "/";
                             }
                             else {
-                                url = append + ((url[0] !== '/') ? '/' : '') + url;
+                                url = append + (url[0] !== '/' ? '/' : '') + url;
                             }
                         }
                     }
@@ -3680,14 +4372,15 @@ var plat;
                     return;
                 }
                 this.__currentUrl = null;
-                var utils = this.urlUtils(), $config = Browser.config, url = this._trimSlashes(utils.href);
+                var utils = this.urlUtils();
+                var url = this._trimSlashes(utils.href);
                 if (this.__lastUrl === url) {
                     return;
                 }
                 this.__lastUrl = url;
-                var $manager = this._EventManager;
+                var _EventManager = this._EventManager;
                 postpone(function () {
-                    $manager.dispatch(__urlChanged, _this, $manager.DIRECT, [utils]);
+                    _EventManager.dispatch(__urlChanged, _this, _EventManager.DIRECT, [utils]);
                 });
             };
             /**
@@ -3699,7 +4392,10 @@ var plat;
              */
             Browser.prototype._setUrl = function (url, replace) {
                 url = this.formatUrl(url);
-                var utils = this.urlUtils(url), baseUrl = Browser.config.baseUrl, _history = this._history, _location = this._location;
+                var utils = this.urlUtils(url);
+                var baseUrl = Browser.config.baseUrl;
+                var _history = this._history;
+                var _location = this._location;
                 if (utils.href.indexOf(baseUrl) === -1) {
                     _location.href = url;
                     return;
@@ -3715,12 +4411,12 @@ var plat;
                             state = {};
                         }
                         _history.replaceState({
-                            previousLocation: state.previousLocation
+                            previousLocation: state.previousLocation,
                         }, '', url);
                     }
                     else {
                         _history.pushState({
-                            previousLocation: this.urlUtils().pathname
+                            previousLocation: this.urlUtils().pathname,
                         }, '', url);
                     }
                     if (!this.__initializing) {
@@ -3768,7 +4464,7 @@ var plat;
                 _window: __Window,
                 _location: __Location,
                 _history: __History,
-                _dom: __Dom
+                _dom: __Dom,
             };
             /**
              * The IBrowserConfig injectable object.
@@ -3778,7 +4474,7 @@ var plat;
                 STATE: 'state',
                 routingType: 'hash',
                 hashPrefix: '!',
-                baseUrl: ''
+                baseUrl: '',
             };
             return Browser;
         }());
@@ -3801,9 +4497,11 @@ var plat;
              * Handles parsing the initial URL and obtain the base URL if necessary.
              */
             function UrlUtils() {
-                var config = this._browserConfig, baseUrl = config.baseUrl;
+                var config = this._browserConfig;
+                var baseUrl = config.baseUrl;
                 if (isEmpty(baseUrl) || !this._regex.fullUrlRegex.test(baseUrl)) {
-                    var url = this._window.location.href, trimmedUrl = url.replace(this._regex.initialUrlRegex, '/');
+                    var url = this._window.location.href;
+                    var trimmedUrl = url.replace(this._regex.initialUrlRegex, '/');
                     if (isString(baseUrl)) {
                         if (baseUrl.indexOf('/') === 0) {
                             baseUrl = baseUrl.slice(1);
@@ -3816,7 +4514,7 @@ var plat;
                     while (baseUrl[baseUrl.length - 1] === '/') {
                         baseUrl = baseUrl.slice(0, -1);
                     }
-                    config.baseUrl = baseUrl + '/';
+                    config.baseUrl = baseUrl + "/";
                 }
             }
             /**
@@ -3831,15 +4529,21 @@ var plat;
              * @param {string} url The initial URL passed into the Browser.
              */
             UrlUtils.__getBaseUrl = function (url) {
-                var _regex = acquire(__Regex), _location = acquire(__Location), origin = _location.origin, protocol = _location.protocol, host = _location.host;
-                if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
+                var _regex = acquire(__Regex);
+                var _location = acquire(__Location);
+                var protocol = _location.protocol;
+                var host = _location.host;
+                var origin = _location.origin;
+                if (protocol === 'file:' ||
+                    protocol.indexOf('wmapp') > -1 ||
+                    protocol.indexOf('ms-appx') > -1) {
                     origin = _location.href;
                 }
                 else if (isUndefined(origin)) {
-                    origin = _location.protocol + '//' + _location.host;
+                    origin = _location.protocol + "//" + _location.host;
                 }
                 origin = origin.replace(_regex.initialUrlRegex, '');
-                return origin.split('?')[0].split('#')[0] + '/';
+                return origin.split('?')[0].split('#')[0] + "/";
             };
             /**
              * Initializes and defines properties using
@@ -3847,9 +4551,14 @@ var plat;
              * @param {string} url The input to associate with this UrlUtils instance.
              */
             UrlUtils.prototype.initialize = function (url) {
-                url = url || '';
-                var element = UrlUtils.__urlUtilsElement ||
-                    (UrlUtils.__urlUtilsElement = this._document.createElement('a')), _browserConfig = this._browserConfig;
+                if (!isString(url)) {
+                    url = '';
+                }
+                if (!isNode(UrlUtils.__urlUtilsElement)) {
+                    UrlUtils.__urlUtilsElement = this._document.createElement('a');
+                }
+                var element = UrlUtils.__urlUtilsElement;
+                var _browserConfig = this._browserConfig;
                 // always make local urls relative to start page. 
                 if (url[0] === '/' && url.indexOf('//') !== 0) {
                     url = url.slice(1);
@@ -3860,14 +4569,20 @@ var plat;
                 }
                 element.setAttribute('href', url);
                 url = element.href;
-                // we need to do this twice for cerain browsers (e.g. win8) 
+                // we need to do this twice for certain browsers (e.g. win8) 
                 element.setAttribute('href', url);
                 url = element.href;
                 this.href = url;
-                this.protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
+                this.protocol = isString(element.protocol)
+                    ? element.protocol.replace(/:$/, '')
+                    : '';
                 this.host = element.host;
-                this.search = element.search ? element.search.replace(/^\?/, '') : '';
-                this.hash = element.hash ? element.hash.replace(/^#/, '') : '';
+                this.search = isString(element.search)
+                    ? element.search.replace(/^\?/, '')
+                    : '';
+                this.hash = isString(element.hash)
+                    ? element.hash.replace(/^#/, '')
+                    : '';
                 this.hostname = element.hostname;
                 this.port = element.port;
                 var path;
@@ -3875,9 +4590,10 @@ var plat;
                     path = url.replace(_browserConfig.baseUrl, '/');
                 }
                 else {
-                    path = (element.pathname.charAt(0) === '/')
-                        ? element.pathname
-                        : '/' + element.pathname;
+                    path =
+                        element.pathname.charAt(0) === '/'
+                            ? element.pathname
+                            : "/" + element.pathname;
                 }
                 path = path.replace(this._regex.initialUrlRegex, '/');
                 this.pathname = path.split('?')[0].split('#')[0];
@@ -3895,22 +4611,29 @@ var plat;
                 _window: __Window,
                 _compat: __Compat,
                 _regex: __Regex,
-                _browserConfig: __BrowserConfig
+                _browserConfig: __BrowserConfig,
             };
             return UrlUtils;
         }());
         web.UrlUtils = UrlUtils;
         register.injectable(__UrlUtilsInstance, UrlUtils, null, __INSTANCE);
-    })(web = plat_1.web || (plat_1.web = {}));
+    })(web = plat.web || (plat.web = {}));
+    // tslint:disable:promise-must-complete 
     /**
      * Holds all classes and interfaces related to async components in platypus.
      */
     var async;
     (function (async) {
-        var __promiseQueue = [], browserGlobal = (typeof window !== 'undefined') ? window : {}, BrowserMutationObserver = browserGlobal.MutationObserver || browserGlobal.WebKitMutationObserver, scheduleFlush;
-        var process = process;
+        var __promiseQueue = [];
+        var browserGlobal = typeof window !== 'undefined' ? window : {};
+        var BrowserMutationObserver = browserGlobal.MutationObserver;
+        if (!isObject(BrowserMutationObserver)) {
+            BrowserMutationObserver = browserGlobal.WebKitMutationObserver;
+        }
+        var scheduleFlush;
         // decide what async method to use to triggering processing of queued callbacks: 
-        if (typeof process !== 'undefined' && {}.toString.call(process) === '[object process]') {
+        if (typeof process !== 'undefined' &&
+            {}.toString.call(process) === '[object process]') {
             scheduleFlush = useNextTick();
         }
         else if (BrowserMutationObserver) {
@@ -3920,14 +4643,15 @@ var plat;
             scheduleFlush = useSetTimeout();
         }
         /**
-         * Takes in a generic type corresponding to the fullfilled success type.
+         * Takes in a generic type corresponding to the fulfilled success type.
          */
         var Promise = /** @class */ (function () {
             /**
              * An ES6 implementation of the Promise API. Useful for asynchronous programming.
-             * Takes in 2 generic types corresponding to the fullfilled success and error types.
+             * Takes in 2 generic types corresponding to the fulfilled success and error types.
              * The error type (U) should extend Error in order to get proper stack tracing.
-             * @param {plat.async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
+             * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
+             * A function for fulfilling/rejecting the Promise.
              */
             function Promise(resolveFunction) {
                 if (!isFunction(resolveFunction)) {
@@ -3940,12 +4664,14 @@ var plat;
                 this.__subscribers = [];
                 Promise.__invokeResolveFunction(resolveFunction, this);
             }
-            Promise.all = function (promises) {
-                if (!isArray(promises)) {
-                    return Promise.all([promises]);
+            Promise.all = function (values) {
+                if (!isArray(values)) {
+                    return Promise.all([values]);
                 }
                 return new Promise(function (resolve, reject) {
-                    var results = [], remaining = promises.length, promise;
+                    var results = [];
+                    var remaining = values.length;
+                    var promise;
                     if (remaining === 0) {
                         resolve([]);
                     }
@@ -3954,12 +4680,13 @@ var plat;
                     }
                     function resolveAll(index, value) {
                         results[index] = value;
-                        if (--remaining === 0) {
+                        remaining -= 1;
+                        if (remaining === 0) {
                             resolve(results);
                         }
                     }
-                    for (var i = 0; i < promises.length; i++) {
-                        promise = promises[i];
+                    for (var i = 0; i < values.length; i += 1) {
+                        promise = values[i];
                         if (isPromise(promise)) {
                             promise.then(resolver(i), reject);
                         }
@@ -3969,15 +4696,22 @@ var plat;
                     }
                 });
             };
+            /**
+             * Returns a promise that fulfills as soon as any of the promises fulfill,
+             * or rejects as soon as any of the promises reject (whichever happens first).
+             * @param {Array<R>} promises An Array of anything to 'race'. Objects that aren't promises will
+             * be cast.
+             */
             Promise.race = function (promises) {
                 if (!isArray(promises)) {
                     return Promise.race([promises]);
                 }
                 return new Promise(function (resolve, reject) {
                     var promise;
-                    for (var i = 0; i < promises.length; i++) {
+                    for (var i = 0; i < promises.length; i += 1) {
                         promise = promises[i];
-                        if (promise && typeof promise.then === 'function') {
+                        if (isObject(promise) &&
+                            typeof promise.then === 'function') {
                             promise.then(resolve, reject);
                         }
                         else {
@@ -3986,6 +4720,10 @@ var plat;
                     }
                 });
             };
+            /**
+             * Returns a promise that resolves with the input value.
+             * @param {R} value The value to resolve.
+             */
             Promise.resolve = function (value) {
                 return new Promise(function (resolve, reject) {
                     resolve(value);
@@ -4002,7 +4740,7 @@ var plat;
             };
             /**
              * Invokes the resolve function for a promise. Handles error catching.
-             * @param {plat.async.IResolveFunction<R>} resolveFunction The resolve function to invoke.
+             * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
              * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
              */
             Promise.__invokeResolveFunction = function (resolveFunction, promise) {
@@ -4027,7 +4765,11 @@ var plat;
              * @param {any} detail The details to pass to the callback.
              */
             Promise.__invokeCallback = function (settled, promise, callback, detail) {
-                var hasCallback = isFunction(callback), value, error, succeeded, failed;
+                var hasCallback = isFunction(callback);
+                var value;
+                var error;
+                var succeeded;
+                var failed;
                 if (hasCallback) {
                     try {
                         value = callback(detail);
@@ -4064,7 +4806,10 @@ var plat;
              * @param {plat.async.State} settled The state of the promise.
              */
             Promise.__publish = function (promise, settled) {
-                var subscribers = promise.__subscribers, detail = promise.__detail, child, callback;
+                var subscribers = promise.__subscribers;
+                var detail = promise.__detail;
+                var child;
+                var callback;
                 for (var i = 0; i < subscribers.length; i += 3) {
                     child = subscribers[i];
                     callback = subscribers[i + settled];
@@ -4077,14 +4822,14 @@ var plat;
              * @param {any} promise The promise object.
              */
             Promise.__publishFulfillment = function (promise) {
-                Promise.__publish(promise, promise.__state = State.FULFILLED);
+                Promise.__publish(promise, (promise.__state = State.FULFILLED));
             };
             /**
              * Publishes a promises that has been rejected.
              * @param {any} promise The promise object.
              */
             Promise.__publishRejection = function (promise) {
-                Promise.__publish(promise, promise.__state = State.REJECTED);
+                Promise.__publish(promise, (promise.__state = State.REJECTED));
             };
             /**
              * Asynchronously rejects a promise
@@ -4172,7 +4917,7 @@ var plat;
              * Adds a child promise to the parent's subscribers.
              * @param {plat.async.Promise<any>} parent The parent promise.
              * @param {plat.async.Promise<any>} value The child promise.
-             * @param {(success: any) => any} onFullfilled The fulfilled method for the child.
+             * @param {(success: any) => any} onfulfilled The fulfilled method for the child.
              * @param {(error: any) => any} onRejected The rejected method for the child.
              */
             Promise.__subscribe = function (parent, child, onFulfilled, onRejected) {
@@ -4182,10 +4927,18 @@ var plat;
                 subscribers[length + State.FULFILLED] = onFulfilled;
                 subscribers[length + State.REJECTED] = onRejected;
             };
+            /**
+             * Takes in two methods, called when/if the promise fulfills/rejects.
+             * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
+             * onFulfilled method in the promise chain will be called.
+             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * onRejected method in the promise chain will be called.
+             */
             Promise.prototype.then = function (onFulfilled, onRejected) {
+                // tslint:disable-next-line 
                 var promise = this;
                 var thenPromise = new this.constructor(noop, this);
-                if (this.__state) {
+                if (!isNull(this.__state)) {
                     var callbacks_1 = arguments;
                     Promise.config.async(function () {
                         Promise.__invokeCallback(promise.__state, thenPromise, callbacks_1[promise.__state - 1], promise.__detail);
@@ -4196,6 +4949,11 @@ var plat;
                 }
                 return thenPromise;
             };
+            /**
+             * A wrapper method for Promise.then(undefined, onRejected);
+             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * onRejected method in the promise chain will be called.
+             */
             Promise.prototype.catch = function (onRejected) {
                 return this.then(null, onRejected);
             };
@@ -4216,19 +4974,18 @@ var plat;
                     if (length === 1) {
                         scheduleFlush();
                     }
-                }
+                },
             };
             return Promise;
         }());
         async.Promise = Promise;
         var State;
         (function (State) {
-            State[State["PENDING"] = (void 0)] = "PENDING";
+            State[State["PENDING"] = void 0] = "PENDING";
             State[State["SEALED"] = 0] = "SEALED";
             State[State["FULFILLED"] = 1] = "FULFILLED";
             State[State["REJECTED"] = 2] = "REJECTED";
         })(State || (State = {}));
-        ;
         // node 
         function useNextTick() {
             return function () {
@@ -4236,7 +4993,10 @@ var plat;
             };
         }
         function useMutationObserver() {
-            var observer = new BrowserMutationObserver(flush), _document = acquire(__Document), _window = acquire(__Window), element = _document.createElement('div');
+            var _document = acquire(__Document);
+            var _window = acquire(__Window);
+            var element = _document.createElement('div');
+            var observer = new BrowserMutationObserver(flush);
             observer.observe(element, { attributes: true });
             _window.addEventListener('unload', function () {
                 observer.disconnect();
@@ -4252,9 +5012,10 @@ var plat;
             };
         }
         function flush() {
-            var tuple, callback, arg;
-            for (var i = 0; i < __promiseQueue.length; i++) {
-                tuple = __promiseQueue[i];
+            var callback;
+            var arg;
+            for (var _i = 0, __promiseQueue_1 = __promiseQueue; _i < __promiseQueue_1.length; _i++) {
+                var tuple = __promiseQueue_1[_i];
                 callback = tuple[0];
                 arg = tuple[1];
                 callback(arg);
@@ -4299,12 +5060,14 @@ var plat;
              * Executes an XMLHttpRequest and resolves an IAjaxPromise upon completion.
              */
             HttpRequest.prototype.execute = function () {
-                var options = this.__options, url = options.url;
+                var options = this.__options;
+                var url = options.url;
                 if (!isString(url) || isEmpty(url.trim())) {
                     return this._invalidOptions();
                 }
                 options.url = this._browser.urlUtils(url).toString();
-                var isCrossDomain = options.isCrossDomain || false, xDomain = false;
+                var isCrossDomain = options.isCrossDomain || false;
+                var xDomain = false;
                 // check if forced cross domain call or cors is not supported (IE9) 
                 if (isCrossDomain) {
                     xDomain = true;
@@ -4317,7 +5080,10 @@ var plat;
                 }
                 if (xDomain) {
                     this.xhr = null;
-                    this.jsonpCallback = options.jsonpCallback || uniqueId(__JSONP_CALLBACK);
+                    this.jsonpCallback = options.jsonpCallback;
+                    if (isNull(this.jsonpCallback)) {
+                        this.jsonpCallback = uniqueId(__JSONP_CALLBACK);
+                    }
                     return this.executeJsonp();
                 }
                 return this._sendXhrRequest();
@@ -4327,17 +5093,28 @@ var plat;
              */
             HttpRequest.prototype.executeJsonp = function () {
                 var _this = this;
-                var options = this.__options, url = options.url;
+                var options = this.__options;
+                var url = options.url;
                 if (!isString(url) || isEmpty(url.trim())) {
                     return this._invalidOptions();
                 }
                 options.url = this._browser.urlUtils(url).toString();
                 if (isNull(this.jsonpCallback)) {
-                    this.jsonpCallback = options.jsonpCallback || uniqueId(__Callback);
+                    this.jsonpCallback = options.jsonpCallback;
+                    if (isNull(this.jsonpCallback)) {
+                        this.jsonpCallback = uniqueId(__Callback);
+                    }
                 }
                 var promise = new AjaxPromise(function (resolve, reject) {
-                    var _window = _this._window, _document = _this._document, scriptTag = _document.createElement('script'), jsonpCallback = _this.jsonpCallback, jsonpIdentifier = options.jsonpIdentifier || 'callback';
-                    scriptTag.src = url + ((url.indexOf('?') > -1) ? '&' : '?') + jsonpIdentifier + '=' + jsonpCallback;
+                    var _window = _this._window;
+                    var _document = _this._document;
+                    var scriptTag = _document.createElement('script');
+                    var jsonpCallback = _this.jsonpCallback;
+                    var jsonpIdentifier = options.jsonpIdentifier;
+                    if (!isString(jsonpIdentifier)) {
+                        jsonpIdentifier = 'callback';
+                    }
+                    scriptTag.src = "" + url + (url.indexOf('?') > -1 ? '&' : '?') + jsonpIdentifier + "=" + jsonpCallback;
                     var oldValue = _window[jsonpCallback];
                     _window[jsonpCallback] = function (response) {
                         // clean up 
@@ -4355,7 +5132,7 @@ var plat;
                         resolve({
                             response: response,
                             // ok 
-                            status: 200
+                            status: 200,
                         });
                     };
                     _document.head.appendChild(scriptTag);
@@ -4366,9 +5143,9 @@ var plat;
                         _this.clearTimeout = postpone(function () {
                             _this.clearTimeout = defer(function () {
                                 reject(new AjaxError({
-                                    response: 'Request timed out in ' + timeout + 'ms for ' + url,
+                                    response: "Request timed out in " + timeout + "ms for " + url,
                                     // request timeout 
-                                    status: 408
+                                    status: 408,
                                 }));
                                 _window[jsonpCallback] = noop;
                             }, timeout - 1);
@@ -4415,7 +5192,11 @@ var plat;
              */
             HttpRequest.prototype._sendXhrRequest = function () {
                 var _this = this;
-                var xhr = this.xhr, options = this.__options, method = options.method, url = options.url, promise = new AjaxPromise(function (resolve, reject) {
+                var xhr = this.xhr;
+                var options = this.__options;
+                var method = options.method;
+                var url = options.url;
+                var promise = new AjaxPromise(function (resolve, reject) {
                     xhr.onreadystatechange = function () {
                         var success = _this._xhrOnReadyStateChange();
                         if (isNull(success)) {
@@ -4438,7 +5219,9 @@ var plat;
                     // synchronous XHR not supported 
                     true, options.user, options.password);
                     var responseType = options.responseType;
-                    if (!(_this.__fileSupported || responseType === '' || responseType === 'text')) {
+                    if (!(_this.__fileSupported ||
+                        responseType === '' ||
+                        responseType === 'text')) {
                         responseType = '';
                     }
                     // Android < 4.4 will throw a DOM Exception 12 if responseType is set to json. 
@@ -4452,7 +5235,8 @@ var plat;
                         }
                     }
                     xhr.withCredentials = options.withCredentials;
-                    var mimeType = options.overrideMimeType, data = options.data;
+                    var mimeType = options.overrideMimeType;
+                    var data = options.data;
                     if (isString(mimeType) && !isEmpty(mimeType)) {
                         xhr.overrideMimeType(mimeType);
                     }
@@ -4462,11 +5246,17 @@ var plat;
                         xhr.send();
                     }
                     else {
-                        var transforms = options.transforms || [], length_3 = transforms.length, contentType = options.contentType, contentTypeExists = isString(contentType) && !isEmpty(contentType);
+                        var transforms = options.transforms;
+                        if (!isArrayLike(transforms)) {
+                            transforms = [];
+                        }
+                        var length_3 = transforms.length;
+                        var contentType = options.contentType;
+                        var contentTypeExists = isString(contentType) && !isEmpty(contentType);
                         if (length_3 > 0) {
                             // if data transforms defined, assume they're going to take care of 
                             // any and all transformations. 
-                            for (var i = 0; i < length_3; ++i) {
+                            for (var i = 0; i < length_3; i += 1) {
                                 data = transforms[i](data, xhr);
                             }
                             // if contentType exists, assume they did not set it in 
@@ -4543,10 +5333,12 @@ var plat;
                         _this.clearTimeout = postpone(function () {
                             _this.clearTimeout = defer(function () {
                                 reject(new AjaxError({
-                                    response: 'Request timed out in ' + timeout + 'ms for ' + options.url,
+                                    response: "Request timed out in " + timeout + "ms for " + options.url,
                                     status: 408,
-                                    getAllResponseHeaders: function () { return xhr.getAllResponseHeaders(); },
-                                    xhr: xhr
+                                    getAllResponseHeaders: function () {
+                                        return xhr.getAllResponseHeaders();
+                                    },
+                                    xhr: xhr,
                                 }));
                                 xhr.onreadystatechange = null;
                                 xhr.abort();
@@ -4569,7 +5361,7 @@ var plat;
                         response: 'Attempting a request without specifying a url',
                         status: null,
                         getAllResponseHeaders: null,
-                        xhr: null
+                        xhr: null,
                     }));
                 });
             };
@@ -4579,7 +5371,9 @@ var plat;
              * @param {boolean} success Signifies if the response was a success
              */
             HttpRequest.prototype._formatResponse = function (responseType, success) {
-                var xhr = this.xhr, status = xhr.status, response = xhr.response;
+                var xhr = this.xhr;
+                var status = xhr.status;
+                var response = xhr.response;
                 // need to try, catch instead of boolean short circuit because chrome doesn't like checking 
                 // responseText when the responseType is anything other than empty or 'text' 
                 if (isNull(response)) {
@@ -4606,16 +5400,26 @@ var plat;
                 return {
                     response: response,
                     status: status,
-                    getAllResponseHeaders: function () { return xhr.getAllResponseHeaders(); },
-                    xhr: xhr
+                    getAllResponseHeaders: function () {
+                        return xhr.getAllResponseHeaders();
+                    },
+                    xhr: xhr,
                 };
             };
             /**
              * Sets the headers for an XMLHttpRequest
              */
             HttpRequest.prototype.__setHeaders = function () {
-                var headers = this.__options.headers, keys = Object.keys(headers || {}), xhr = this.xhr, length = keys.length, key, i;
-                for (i = 0; i < length; ++i) {
+                var headers = this.__options.headers;
+                if (!isObject(headers)) {
+                    headers = {};
+                }
+                var keys = Object.keys(headers);
+                var xhr = this.xhr;
+                var length = keys.length;
+                var key;
+                var i;
+                for (i = 0; i < length; i += 1) {
                     key = keys[i];
                     xhr.setRequestHeader(key, headers[key]);
                 }
@@ -4624,7 +5428,11 @@ var plat;
              * Serializes multipart form data in an XMLHttpRequest as a string.
              */
             HttpRequest.prototype.__serializeFormData = function () {
-                var data = this.__options.data, keys = Object.keys(data), key, val, formBuffer = [];
+                var data = this.__options.data;
+                var keys = Object.keys(data);
+                var formBuffer = [];
+                var key;
+                var val;
                 while (keys.length > 0) {
                     key = keys.pop();
                     val = data[key];
@@ -4637,16 +5445,16 @@ var plat;
                         }
                         else if (isFile(val)) {
                             // cannot parse file this way 
-                            this._log.warn('Invalid File entry with key "' + key + '"');
+                            this._log.warn("Invalid File entry with key \"" + key + "\"");
                             val = '[object File]';
                         }
                         else {
                             // may throw a fatal error but this is an invalid case 
-                            this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
+                            this._log.warn("Invalid form entry with key \"" + key + "\" and value \"" + val + "\"");
                             val = JSON.stringify(val);
                         }
                     }
-                    formBuffer.push(encodeURIComponent(key) + '=' + encodeURIComponent(val));
+                    formBuffer.push(encodeURIComponent(key) + "=" + encodeURIComponent(val));
                 }
                 return formBuffer.join('&').replace(/%20/g, '+');
             };
@@ -4654,7 +5462,11 @@ var plat;
              * Creates FormData to add to the XMLHttpRequest.
              */
             HttpRequest.prototype.__appendFormData = function () {
-                var data = this.__options.data, formData = new FormData(), keys = Object.keys(data), key, val;
+                var data = this.__options.data;
+                var formData = new FormData();
+                var keys = Object.keys(data);
+                var key;
+                var val;
                 while (keys.length > 0) {
                     key = keys.pop();
                     val = data[key];
@@ -4666,11 +5478,18 @@ var plat;
                             formData.append(key, val.toISOString());
                         }
                         else if (isFile(val)) {
-                            formData.append(key, val, val.name || val.fileName || 'blob');
+                            var fileName = val.name;
+                            if (!isString(fileName)) {
+                                fileName = val.fileName;
+                            }
+                            if (!isString(fileName)) {
+                                fileName = 'blob';
+                            }
+                            formData.append(key, val, fileName);
                         }
                         else {
                             // may throw a fatal error but this is an invalid case 
-                            this._log.warn('Invalid form entry with key "' + key + '" and value "' + val);
+                            this._log.warn("Invalid form entry with key \"" + key + "\" and value \"" + val + "\"");
                             formData.append(key, JSON.stringify(val));
                         }
                     }
@@ -4685,7 +5504,17 @@ var plat;
              */
             HttpRequest.prototype.__submitFramedFormData = function () {
                 var _this = this;
-                var options = this.__options, data = options.data, url = options.url, _document = this._document, $body = _document.body, Promise = acquire(__Promise), form = _document.createElement('form'), iframe = _document.createElement('iframe'), iframeName = uniqueId('iframe_target'), keys = Object.keys(data), key;
+                var options = this.__options;
+                var data = options.data;
+                var url = options.url;
+                var _document = this._document;
+                var $body = _document.body;
+                var Promise = acquire(__Promise);
+                var form = _document.createElement('form');
+                var iframe = _document.createElement('iframe');
+                var iframeName = uniqueId('iframe_target');
+                var keys = Object.keys(data);
+                var key;
                 iframe.name = form.target = iframeName;
                 iframe.src = 'javascript:false;';
                 form.enctype = form.encoding = 'multipart/form-data';
@@ -4710,7 +5539,7 @@ var plat;
                         resolve({
                             response: content,
                             status: 200,
-                            getAllResponseHeaders: function () { return ''; }
+                            getAllResponseHeaders: function () { return ''; },
                         });
                         _this.xhr = iframe.onload = null;
                     };
@@ -4723,7 +5552,8 @@ var plat;
              * Creates input for form data submissions.
              */
             HttpRequest.prototype.__createInput = function (key, val) {
-                var _document = this._document, input = _document.createElement('input');
+                var _document = this._document;
+                var input = _document.createElement('input');
                 input.type = 'hidden';
                 input.name = key;
                 if (isNull(val)) {
@@ -4731,12 +5561,13 @@ var plat;
                 }
                 else if (isObject(val)) {
                     // check if val is an pseudo File 
-                    if (isFunction(val.slice) && !(isUndefined(val.name) || isUndefined(val.path))) {
-                        var fileList = _document.querySelectorAll('input[type="file"][name="' + key + '"]'), length_4 = fileList.length;
+                    if (isFunction(val.slice) &&
+                        !(isUndefined(val.name) || isUndefined(val.path))) {
+                        var fileList = _document.querySelectorAll("input[type=\"file\"][name=\"" + key + "\"]");
+                        var length_4 = fileList.length;
                         // if no inputs found, stringify the data 
                         if (length_4 === 0) {
-                            this._log.info('Could not find input[type="file"] with [name="' + key +
-                                '"]. Stringifying data instead.');
+                            this._log.info("Could not find input[type=\"file\"] with [name=\"" + key + "\"]. Stringifying data instead.");
                             input.value = JSON.stringify(val);
                         }
                         else if (length_4 === 1) {
@@ -4748,8 +5579,10 @@ var plat;
                         else {
                             // rare case but may have multiple forms with file inputs 
                             // that have the same name 
-                            var fileInput = void 0, path = val.path;
-                            while (length_4-- > 0) {
+                            var fileInput = void 0;
+                            var path = val.path;
+                            while (length_4 > 0) {
+                                length_4 -= 1;
                                 fileInput = fileList[length_4];
                                 if (fileInput.value === path) {
                                     input = fileInput;
@@ -4761,15 +5594,14 @@ var plat;
                             }
                             // could not find the right file 
                             if (length_4 === -1) {
-                                this._log.info('Could not find input[type="file"] with [name="' + key + '"] and [value="' +
-                                    val.path + '"]. Stringifying data instead.');
+                                this._log.info("Could not find input[type=\"file\"] with [name=\"" + key + "\"] and [value=\"" + val.path + "\"]. Stringifying data instead.");
                                 input.value = JSON.stringify(val);
                             }
                         }
                     }
                     else {
                         // may throw a fatal error but this is an invalid case 
-                        this._log.info('Invalid form entry with key "' + key + '" and value "' + val);
+                        this._log.info("Invalid form entry with key \"" + key + "\" and value \"" + val + "\"");
                         input.value = JSON.stringify(val);
                     }
                 }
@@ -4783,7 +5615,7 @@ var plat;
                 _window: __Window,
                 _document: __Document,
                 _config: __HttpConfig,
-                _log: __Log
+                _log: __Log,
             };
             return HttpRequest;
         }());
@@ -4811,11 +5643,12 @@ var plat;
              * Outputs a formatted string describing the AjaxError.
              */
             AjaxError.prototype.toString = function () {
-                var response = this.response, responseText = response;
+                var response = this.response;
+                var responseText = response;
                 if (isObject(response) && !response.hasOwnProperty('toString')) {
                     responseText = JSON.stringify(response);
                 }
-                return 'Request failed with status: ' + this.status + ' and response: ' + responseText;
+                return "Request failed with status: " + this.status + " and response: " + responseText;
             };
             return AjaxError;
         }());
@@ -4828,6 +5661,11 @@ var plat;
          */
         var AjaxPromise = /** @class */ (function (_super) {
             __extends(AjaxPromise, _super);
+            /**
+             * The constructor method for the {@link plat.async.AjaxPromise}.
+             * @param {plat.async.IAjaxResolveFunction} resolveFunction The promise resolve function.
+             * @param {any} promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
+             */
             function AjaxPromise(resolveFunction, promise) {
                 var _this = _super.call(this, resolveFunction) || this;
                 /**
@@ -4853,7 +5691,9 @@ var plat;
              * A method to cancel the AJAX call associated with this AjaxPromise.
              */
             AjaxPromise.prototype.cancel = function () {
-                var http = this.__http, xhr = http.xhr, jsonpCallback = http.jsonpCallback;
+                var http = this.__http;
+                var xhr = http.xhr;
+                var jsonpCallback = http.jsonpCallback;
                 if (isFunction(http.clearTimeout)) {
                     http.clearTimeout();
                 }
@@ -4867,9 +5707,21 @@ var plat;
                 }
                 this.__subscribers = [];
             };
+            /**
+             * Takes in two methods, called when/if the promise fulfills/rejects.
+             * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills.
+             * If undefined the next onFulfilled method in the promise chain will be called.
+             * @param {(error: plat.async.AjaxError) => U} onRejected A method called when/if the promise rejects.
+             * If undefined the next onRejected method in the promise chain will be called.
+             */
             AjaxPromise.prototype.then = function (onFulfilled, onRejected) {
                 return _super.prototype.then.call(this, onFulfilled, onRejected);
             };
+            /**
+             * A wrapper method for Promise.then(undefined, onRejected);
+             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * onRejected method in the promise chain will be called.
+             */
             AjaxPromise.prototype.catch = function (onRejected) {
                 return _super.prototype.catch.call(this, onRejected);
             };
@@ -4891,7 +5743,7 @@ var plat;
                     BLOB: 'blob',
                     DOCUMENT: 'document',
                     JSON: 'json',
-                    TEXT: 'text'
+                    TEXT: 'text',
                 };
                 /**
                  * Provides Content-Type mappings for Http POST requests.
@@ -4903,7 +5755,7 @@ var plat;
                     OCTET_STREAM: 'application/octet-stream;charset=utf-8',
                     XML: 'application/xml;charset=utf-8',
                     PLAIN_TEXT: 'text/plain',
-                    HTML: 'text/html'
+                    HTML: 'text/html',
                 };
             }
             /**
@@ -4950,7 +5802,7 @@ var plat;
                 withCredentials: false,
                 timeout: null,
                 jsonpIdentifier: 'callback',
-                contentType: 'application/json;charset=utf-8'
+                contentType: 'application/json;charset=utf-8',
             };
             return Http;
         }());
@@ -4964,7 +5816,8 @@ var plat;
         }
         async.IHttpConfig = IHttpConfig;
         register.injectable(__HttpConfig, IHttpConfig);
-    })(async = plat_1.async || (plat_1.async = {}));
+    })(async = plat.async || (plat.async = {}));
+    //tslint:enable:promise-must-complete 
     /**
      * Holds classes and interfaces related to storage in platypus.
      */
@@ -4974,11 +5827,11 @@ var plat;
          * The keyed collection of all created Caches in the
          * ICacheFactory.
          */
-        var caches = {}, 
+        var caches = {};
         /**
          * Internal storage for all the items stored in each Cache.
          */
-        internalCaches = {};
+        var internalCaches = {};
         /**
          * A Cache class, for use with the ICacheFactory injectable.
          * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
@@ -4995,7 +5848,7 @@ var plat;
                 this.__size = 0;
                 if (isNull(options)) {
                     this.__options = {
-                        timeout: 0
+                        timeout: 0,
                     };
                 }
                 internalCaches[uid] = {};
@@ -5026,8 +5879,9 @@ var plat;
              * Clears the ICacheFactory and all of its caches.
              */
             Cache.clear = function () {
-                var keys = Object.keys(caches), length = keys.length;
-                for (var i = 0; i < length; ++i) {
+                var keys = Object.keys(caches);
+                var length = keys.length;
+                for (var i = 0; i < length; i += 1) {
                     caches[keys[i]].clear();
                 }
                 caches = {};
@@ -5040,7 +5894,7 @@ var plat;
                 return {
                     uid: this.__uid,
                     size: this.__size,
-                    options: this.__options
+                    options: this.__options,
                 };
             };
             /**
@@ -5052,7 +5906,7 @@ var plat;
                 var val = internalCaches[this.__uid][key];
                 internalCaches[this.__uid][key] = value;
                 if (isUndefined(val)) {
-                    this.__size++;
+                    this.__size += 1;
                 }
                 var timeout = this.__options.timeout;
                 if (isNumber(timeout) && timeout > 0) {
@@ -5073,7 +5927,7 @@ var plat;
              */
             Cache.prototype.remove = function (key) {
                 deleteProperty(internalCaches[this.__uid], key);
-                this.__size--;
+                this.__size -= 1;
             };
             /**
              * Method for clearing an Cache, removing all of its keys.
@@ -5123,6 +5977,12 @@ var plat;
             function TemplateCache() {
                 return _super.call(this, '__templateCache') || this;
             }
+            /**
+             * Stores a IPromise in the cache.
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {plat.async.Promise<Node>} value Promise that
+             * should resolve with a Node.
+             */
             TemplateCache.prototype.put = function (key, value) {
                 var Promise = this._Promise;
                 _super.prototype.put.call(this, key, Promise.resolve(value));
@@ -5153,13 +6013,13 @@ var plat;
                 return promise.then(function (node) {
                     return _this.put(key, node);
                 }, function (error) {
-                    _this._log.warn('Error retrieving template, ' + key + ', from promise.');
+                    _this._log.warn("Error retrieving template, " + key + ", from promise.");
                     return null;
                 });
             };
             TemplateCache._inject = {
                 _Promise: __Promise,
-                _log: __Log
+                _log: __Log,
             };
             return TemplateCache;
         }(Cache));
@@ -5255,176 +6115,173 @@ var plat;
         }(BaseStorage));
         storage_1.SessionStorage = SessionStorage;
         register.injectable(__SessionStorage, SessionStorage);
-    })(storage = plat_1.storage || (plat_1.storage = {}));
-    /* tslint:disable:no-unused-variable */
+    })(storage = plat.storage || (plat.storage = {}));
     /**
      * An object used to create ITokenDetails for every operator.
      */
     var OPERATORS = {
         'u+': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) { return +a(context, aliases); }
+            fn: function (context, aliases, a) { return +a(context, aliases); },
         },
         '+': {
             precedence: 6, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) + b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) + b(context, aliases); },
         },
         'u-': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) { return -a(context, aliases); }
+            fn: function (context, aliases, a) { return -a(context, aliases); },
         },
         '-': {
             precedence: 6, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) - b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) - b(context, aliases); },
         },
         '*': {
             precedence: 5, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) * b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) * b(context, aliases); },
         },
         '/': {
             precedence: 5, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) / b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) / b(context, aliases); },
         },
         '%': {
             precedence: 5, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) % b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) % b(context, aliases); },
         },
         '?': {
             precedence: 15, associativity: 'rtl',
-            fn: function () { return undefined; }
+            fn: function () { return undefined; },
         },
         ':': {
             precedence: 15, associativity: 'rtl',
-            fn: function () { return undefined; }
+            fn: function () { return undefined; },
         },
         '>': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) > b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) > b(context, aliases); },
         },
         '<': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) < b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) < b(context, aliases); },
         },
         '!': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) { return !a(context, aliases); }
+            fn: function (context, aliases, a) { return !a(context, aliases); },
         },
         '~': {
             precedence: 4, associativity: 'rtl',
-            fn: function (context, aliases, a) { return ~a(context, aliases); }
+            fn: function (context, aliases, a) { return ~a(context, aliases); },
         },
         '&': {
             precedence: 10, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) & b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) & b(context, aliases); },
         },
         '|': {
             precedence: 12, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) | b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) | b(context, aliases); },
         },
         '>>': {
             precedence: 7, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) >> b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) >> b(context, aliases); },
         },
         '<<': {
             precedence: 7, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) << b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) << b(context, aliases); },
         },
         '>>>': {
             precedence: 7, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) >>> b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) >>> b(context, aliases); },
         },
         '&&': {
             precedence: 13, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) && b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) && b(context, aliases); },
         },
         '||': {
             precedence: 14, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) || b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) || b(context, aliases); },
         },
         '==': {
             precedence: 9, associativity: 'ltr',
             /* tslint:disable:triple-equals */
-            fn: function (context, aliases, a, b) { return a(context, aliases) == b(context, aliases); }
-            /* tslint:enable:triple-equals */
+            fn: function (context, aliases, a, b) { return a(context, aliases) == b(context, aliases); },
         },
         '===': {
             precedence: 9, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) === b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) === b(context, aliases); },
         },
         '!=': {
             precedence: 9, associativity: 'ltr',
             /* tslint:disable:triple-equals */
-            fn: function (context, aliases, a, b) { return a(context, aliases) != b(context, aliases); }
-            /* tslint:enable:triple-equals */
+            fn: function (context, aliases, a, b) { return a(context, aliases) != b(context, aliases); },
         },
         '!==': {
             precedence: 9, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) !== b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) !== b(context, aliases); },
         },
         '>=': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) >= b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) >= b(context, aliases); },
         },
         '<=': {
             precedence: 8, associativity: 'ltr',
-            fn: function (context, aliases, a, b) { return a(context, aliases) <= b(context, aliases); }
+            fn: function (context, aliases, a, b) { return a(context, aliases) <= b(context, aliases); },
         },
         '=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '++': {
             precedence: 3, associativity: '',
             fn: function (context, aliases, a) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '--': {
             precedence: 3, associativity: '',
             fn: function (context, aliases, a) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '+=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '-=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '*=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '/=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
+            },
         },
         '%=': {
             precedence: 17, associativity: 'rtl',
             fn: function (context, aliases, a, b) {
                 var _log = plat.acquire(__Log);
                 _log.error(new Error('Assignment operators are not supported'));
-            }
-        }
+            },
+        },
     };
     /**
      * An object used to create ITokenDetails for every accessor.
@@ -5433,7 +6290,7 @@ var plat;
         '()': { precedence: 2, associativity: null, fn: null },
         '[]': { precedence: 2, associativity: null, fn: null },
         '.': { precedence: 2, associativity: null, fn: null },
-        '{}': { precedence: 1, associativity: null, fn: null }
+        '{}': { precedence: 1, associativity: null, fn: null },
     };
     /**
      * An object used to create ITokenDetails for every delimiter.
@@ -5448,7 +6305,7 @@ var plat;
         '.': { precedence: 2, associativity: null, fn: null },
         ',': { precedence: 18, associativity: null, fn: null },
         '\'': { precedence: 0, associativity: null, fn: null },
-        '"': { precedence: 0, associativity: null, fn: null }
+        '"': { precedence: 0, associativity: null, fn: null },
     };
     /**
      * An object used to get literal values from string values of false, true, and undefined
@@ -5457,7 +6314,7 @@ var plat;
         false: false,
         true: true,
         null: null,
-        undefined: 'undefined'
+        undefined: 'undefined',
     };
     /**
      * Checks if a string is in the DELIMITERS array.
@@ -5487,7 +6344,6 @@ var plat;
     function isKeyword(key) {
         return !isUndefined(KEYWORDS[key]);
     }
-    /* tslint:enable:no-unused-variable */
     /**
      * Holds all classes and interfaces related to observable components in platypus.
      */
@@ -5496,7 +6352,15 @@ var plat;
         /**
          * The array methods to be overwritten if it is to be observed.
          */
-        var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+        var arrayMethods = [
+            'push',
+            'pop',
+            'reverse',
+            'shift',
+            'sort',
+            'splice',
+            'unshift',
+        ];
         /**
          * A class for managing both context inheritance and observable properties on controls and
          * facilitating in data-binding.
@@ -5535,7 +6399,10 @@ var plat;
              * @param {plat.Control} control The control on which to locate the ContextManager.
              */
             ContextManager.getManager = function (control) {
-                var contextManager, managers = ContextManager.__managers, uid = control.uid, manager = managers[uid];
+                var managers = ContextManager.__managers;
+                var uid = control.uid;
+                var manager = managers[uid];
+                var contextManager;
                 if (!isNull(manager)) {
                     contextManager = manager;
                     return contextManager;
@@ -5548,12 +6415,20 @@ var plat;
                 if (isNull(control)) {
                     return;
                 }
-                var uid = control.uid, controls = ContextManager.__controls, identifiers = controls[uid] || {}, managers = ContextManager.__managers, manager = managers[uid];
+                var uid = control.uid;
+                var controls = ContextManager.__controls;
+                var managers = ContextManager.__managers;
+                var manager = managers[uid];
+                var identifiers = controls[uid];
+                if (!isObject(identifiers)) {
+                    identifiers = {};
+                }
                 if (!isNull(manager)) {
                     manager.dispose();
                     deleteProperty(managers, uid);
                 }
-                var keys = Object.keys(identifiers), listeners;
+                var keys = Object.keys(identifiers);
+                var listeners;
                 while (keys.length > 0) {
                     listeners = identifiers[keys.shift()];
                     while (listeners.length > 0) {
@@ -5629,7 +6504,9 @@ var plat;
              * @param {plat.IRemoveListener} listener The function for removing the observed property.
              */
             ContextManager.pushRemoveListener = function (identifier, uid, listener) {
-                var controls = ContextManager.__controls, control = controls[uid], listeners;
+                var controls = ContextManager.__controls;
+                var control = controls[uid];
+                var listeners;
                 if (isNull(control)) {
                     control = controls[uid] = {};
                 }
@@ -5646,7 +6523,9 @@ var plat;
              * @param {plat.IRemoveListener} listener The function for removing the observed property.
              */
             ContextManager.spliceRemoveListener = function (identifier, uid, listener) {
-                var controls = ContextManager.__controls, control = controls[uid], listeners;
+                var controls = ContextManager.__controls;
+                var control = controls[uid];
+                var listeners;
                 if (isNull(control)) {
                     return;
                 }
@@ -5669,8 +6548,10 @@ var plat;
              * @param {string} identifier The identifier to stop observing.
              */
             ContextManager.removeIdentifier = function (uids, identifier) {
-                var length = uids.length, controls = ContextManager.__controls, identifiers;
-                for (var i = 0; i < length; ++i) {
+                var length = uids.length;
+                var controls = ContextManager.__controls;
+                var identifiers;
+                for (var i = 0; i < length; i += 1) {
                     identifiers = controls[uids[i]];
                     if (isNull(identifiers)) {
                         continue;
@@ -5698,7 +6579,9 @@ var plat;
                         return;
                     }
                 }
-                var split = identifier.split('.'), property, temp;
+                var split = identifier.split('.');
+                var property;
+                var temp;
                 while (split.length > 0) {
                     property = split.shift();
                     temp = context[property];
@@ -5736,7 +6619,7 @@ var plat;
              * Given a period-delimited identifier, observes an object and calls the given listener when the
              * object changes.
              * @param {string} absoluteIdentifier The period-delimited identifier noting the property to be observed.
-             * @param {plat.observable.IListener} observableListener An object implmenting IObservableListener. The listener will be
+             * @param {plat.observable.IListener} observableListener An object implementing IObservableListener. The listener will be
              * notified of object changes.
              */
             ContextManager.prototype.observe = function (absoluteIdentifier, observableListener) {
@@ -5744,7 +6627,13 @@ var plat;
                 if (isEmpty(absoluteIdentifier)) {
                     return noop;
                 }
-                var split = absoluteIdentifier.split('.'), key = split.pop(), isLength = key === 'length', hasIdentifier = this._hasIdentifier(absoluteIdentifier), hasObservableListener = !isNull(observableListener), join, context;
+                var split = absoluteIdentifier.split('.');
+                var key = split.pop();
+                var isLength = key === 'length';
+                var hasObservableListener = !isNull(observableListener);
+                var hasIdentifier = this._hasIdentifier(absoluteIdentifier);
+                var join;
+                var context;
                 if (split.length > 0) {
                     join = split.join('.');
                     context = this._getContext(join, split, true);
@@ -5769,12 +6658,15 @@ var plat;
                 this.__observedIdentifier = null;
                 this.__contextObjects[absoluteIdentifier] = context[key];
                 // if observedIdentifier is not null, the primitive is already being watched 
-                var observedIdentifier = this.__observedIdentifier, isObserved = !isNull(observedIdentifier), removeCallback = noop;
+                var observedIdentifier = this.__observedIdentifier;
+                var isObserved = !isNull(observedIdentifier);
+                var removeCallback = noop;
                 if (isObserved) {
                     hasIdentifier = true;
                 }
                 if (hasObservableListener) {
-                    var removeObservedCallback_1 = noop, removeAbsoluteCallback_1 = this._addObservableListener(absoluteIdentifier, observableListener, isLength);
+                    var removeAbsoluteCallback_1 = this._addObservableListener(absoluteIdentifier, observableListener, isLength);
+                    var removeObservedCallback_1 = noop;
                     if (isObserved && absoluteIdentifier !== observedIdentifier) {
                         removeObservedCallback_1 = this._addObservableListener(observedIdentifier, observableListener, isLength);
                     }
@@ -5783,9 +6675,13 @@ var plat;
                         removeObservedCallback_1();
                     };
                 }
-                var parentIsArray = isArray(context), removeObservableListener = removeCallback, removeListener = noop, removeArrayObserve = noop, numKey = Number(key);
+                var parentIsArray = isArray(context);
+                var removeObservableListener = removeCallback;
+                var numKey = Number(key);
+                var removeListener = noop;
+                var removeArrayObserve = noop;
                 if (parentIsArray && numKey >= context.length) {
-                    removeListener = this.observe(join + '.length', {
+                    removeListener = this.observe(join + ".length", {
                         uid: observableListener.uid,
                         listener: function (newValue, oldValue) {
                             if (numKey >= newValue) {
@@ -5793,7 +6689,7 @@ var plat;
                             }
                             removeListener();
                             _this._define(absoluteIdentifier, context, key);
-                        }
+                        },
                     });
                     removeCallback = function () {
                         removeObservableListener();
@@ -5803,7 +6699,8 @@ var plat;
                 else if (!hasIdentifier) {
                     // check if value is defined and context manager hasn't seen this identifier 
                     if (parentIsArray && isLength) {
-                        var property = split.pop(), parentContext = this.getContext(split, false);
+                        var property = split.pop();
+                        var parentContext = this.getContext(split, false);
                         this.__observedIdentifier = null;
                         access(parentContext, property);
                         if (isString(this.__observedIdentifier)) {
@@ -5817,7 +6714,7 @@ var plat;
                                 listener: function (newValue, oldValue) {
                                     removeListener();
                                     removeListener = _this.observeArrayMutation(uid_1, noop, join, newValue, oldValue);
-                                }
+                                },
                             });
                         }
                         removeCallback = function () {
@@ -5850,7 +6747,9 @@ var plat;
                 if (isNull(array)) {
                     return noop;
                 }
-                var split = absoluteIdentifier.split('.'), property = split.pop(), context = this.getContext(split, false);
+                var split = absoluteIdentifier.split('.');
+                var property = split.pop();
+                var context = this.getContext(split, false);
                 this.__observedIdentifier = null;
                 access(context, property);
                 if (isString(this.__observedIdentifier)) {
@@ -5883,7 +6782,8 @@ var plat;
              * @param {(changes: Array<plat.observable.IArrayChanges<any>>) => void} listener The Array mutation listener.
              */
             ContextManager.prototype._pushArrayListener = function (uid, absoluteIdentifier, listener) {
-                var arrayListeners = ContextManager.arrayChangeListeners, arrayCallbacks = arrayListeners[absoluteIdentifier];
+                var arrayListeners = ContextManager.arrayChangeListeners;
+                var arrayCallbacks = arrayListeners[absoluteIdentifier];
                 if (isNull(arrayCallbacks)) {
                     arrayCallbacks = arrayListeners[absoluteIdentifier] = {};
                 }
@@ -5891,7 +6791,8 @@ var plat;
                 if (isNull(callbacks)) {
                     callbacks = arrayCallbacks[uid] = [];
                 }
-                var listenerRemoved = false, removeListener = function () {
+                var listenerRemoved = false;
+                var removeListener = function () {
                     if (listenerRemoved) {
                         return;
                     }
@@ -5926,8 +6827,9 @@ var plat;
                     array.__proto__ = Object.create(Array.prototype);
                 }
                 else {
-                    var length_5 = arrayMethods.length, method = void 0;
-                    for (var i = 0; i < length_5; ++i) {
+                    var length_5 = arrayMethods.length;
+                    var method = void 0;
+                    for (var i = 0; i < length_5; i += 1) {
                         method = arrayMethods[i];
                         array[method] = Array.prototype[method];
                     }
@@ -5939,10 +6841,13 @@ var plat;
              * @param {Array<any>} array The array to overwrite.
              */
             ContextManager.prototype._overwriteArray = function (absoluteIdentifier, array) {
-                var _compat = this._compat, length = arrayMethods.length, method, i;
+                var _compat = this._compat;
+                var length = arrayMethods.length;
+                var method;
+                var i;
                 if (_compat.proto) {
                     var obj = Object.create(Array.prototype);
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         method = arrayMethods[i];
                         obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
                     }
@@ -5954,7 +6859,7 @@ var plat;
                     }
                     return;
                 }
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     method = arrayMethods[i];
                     ContextManager.defineProperty(array, method, this._overwriteArrayFunction(absoluteIdentifier, method), false, true, true);
                 }
@@ -5997,7 +6902,7 @@ var plat;
             /**
              * Gets the immediate context of identifier by splitting on "."
              * and observes the objects along the way.
-             * @param {Array<string>} split The identifier's split string array containing properties
+             * @param {Array<string>} split The identifier split string array containing properties
              * used to index into the context.
              * @param {string} identifier The identifier being observed.
              */
@@ -6015,7 +6920,9 @@ var plat;
              * @param {any} oldRootContext The old context.
              */
             ContextManager.prototype._getValues = function (split, newRootContext, oldRootContext) {
-                var property, doNew = isObject(newRootContext), doOld = isObject(oldRootContext);
+                var property;
+                var doNew = isObject(newRootContext);
+                var doOld = isObject(oldRootContext);
                 while (split.length > 1) {
                     property = split.shift();
                     if (doNew) {
@@ -6035,7 +6942,8 @@ var plat;
                     }
                 }
                 property = split[0];
-                var newValue, oldValue;
+                var newValue;
+                var oldValue;
                 if (!isNull(newRootContext)) {
                     newValue = newRootContext[property];
                 }
@@ -6044,7 +6952,7 @@ var plat;
                 }
                 return {
                     newValue: newValue,
-                    oldValue: oldValue
+                    oldValue: oldValue,
                 };
             };
             /**
@@ -6057,48 +6965,72 @@ var plat;
              */
             ContextManager.prototype._notifyChildProperties = function (identifier, newValue, oldValue, mappings) {
                 var _this = this;
-                mappings = mappings || Object.keys(this.__identifierHash[identifier] || {});
-                var length = mappings.length, binding, property, parentProperty, split, values = {}, value, period = '.', lengthStr = 'length', key, keyIsLength, start = identifier.length + 1, newParent, oldParent, newChild, oldChild;
-                for (var i = 0; i < length; ++i) {
+                if (!isObject(mappings)) {
+                    var hash = this.__identifierHash[identifier];
+                    if (!isObject(hash)) {
+                        hash = {};
+                    }
+                    mappings = Object.keys(hash);
+                }
+                var length = mappings.length;
+                var period = '.';
+                var lengthStr = 'length';
+                var start = identifier.length + 1;
+                var values = {};
+                var value;
+                var key;
+                var keyIsLength;
+                var newParent;
+                var oldParent;
+                var newChild;
+                var oldChild;
+                var binding;
+                var property;
+                var parentProperty;
+                var split;
+                var _loop_1 = function (i) {
                     binding = mappings[i];
                     property = binding.slice(start);
                     split = property.split(period);
                     key = split.pop();
-                    keyIsLength = (key === lengthStr);
+                    keyIsLength = key === lengthStr;
                     parentProperty = split.join(period);
                     if (isEmpty(parentProperty)) {
                         newParent = newValue;
                         oldParent = oldValue;
                         newChild = isNull(newParent) ? undefined : newParent[key];
                         oldChild = isNull(oldParent) ? undefined : oldParent[key];
-                        if (keyIsLength && !isArray(oldParent) && isArray(newParent)) {
-                            var lengthListener = this.__lengthListeners[binding];
+                        if (keyIsLength &&
+                            !isArray(oldParent) &&
+                            isArray(newParent)) {
+                            var lengthListener = this_1.__lengthListeners[binding];
                             if (!isNull(lengthListener)) {
-                                var uid = lengthListener.uid;
-                                var arraySplit = identifier.split(period), arrayKey = arraySplit.pop();
-                                var join = arraySplit.join(period);
-                                var arrayParent = this._getContext(join, arraySplit, false);
-                                this.__observedIdentifier = null;
+                                var uid_2 = lengthListener.uid;
+                                var arraySplit = identifier.split(period);
+                                var arrayKey = arraySplit.pop();
+                                var join_1 = arraySplit.join(period);
+                                var arrayParent = this_1._getContext(join_1, arraySplit, false);
+                                this_1.__observedIdentifier = null;
                                 access(arrayParent, arrayKey);
-                                if (isString(this.__observedIdentifier)) {
-                                    join = this.__observedIdentifier;
+                                if (isString(this_1.__observedIdentifier)) {
+                                    join_1 = this_1.__observedIdentifier;
                                 }
-                                var removeListener = this.observeArrayMutation(uid, noop, join, newParent, null);
-                                this.observe(join, {
-                                    uid: uid,
+                                var removeListener_1 = this_1.observeArrayMutation(uid_2, noop, join_1, newParent, null);
+                                this_1.observe(join_1, {
+                                    uid: uid_2,
                                     listener: function (nValue, oValue) {
-                                        removeListener();
-                                        removeListener = _this.observeArrayMutation(uid, noop, join, nValue, oValue);
-                                    }
+                                        removeListener_1();
+                                        removeListener_1 = _this.observeArrayMutation(uid_2, noop, join_1, nValue, oValue);
+                                    },
                                 });
-                                deleteProperty(this.__lengthListeners, binding);
+                                deleteProperty(this_1.__lengthListeners, binding);
                             }
                         }
                     }
                     else {
                         value = values[parentProperty];
                         if (isNull(value)) {
-                            value = values[parentProperty] = this._getValues(split, newValue, oldValue);
+                            value = values[parentProperty] = this_1._getValues(split, newValue, oldValue);
                         }
                         newParent = value.newValue;
                         oldParent = value.oldValue;
@@ -6107,12 +7039,17 @@ var plat;
                     }
                     values[property] = {
                         newValue: newChild,
-                        oldValue: oldChild
+                        oldValue: oldChild,
                     };
-                    if (isObject(newParent) && (!isArray(newParent) || newParent.length > key)) {
-                        this._define(binding, newParent, key);
+                    if (isObject(newParent) &&
+                        (!isArray(newParent) || newParent.length > key)) {
+                        this_1._define(binding, newParent, key);
                     }
-                    this._execute(binding, newChild, oldChild);
+                    this_1._execute(binding, newChild, oldChild);
+                };
+                var this_1 = this;
+                for (var i = 0; i < length; i += 1) {
+                    _loop_1(i);
                 }
                 values = null;
             };
@@ -6129,17 +7066,21 @@ var plat;
                     var split = absoluteIdentifier.split('.');
                     // pop length key 
                     split.pop();
-                    var property = split.pop(), context = this.getContext(split, false);
+                    var property = split.pop();
+                    var context = this.getContext(split, false);
                     if (isObject(context)) {
                         this.__observedIdentifier = null;
                         access(context, property);
                         if (isString(this.__observedIdentifier)) {
-                            absoluteIdentifier = this.__observedIdentifier + (isLength === true ? '.length' : '');
+                            absoluteIdentifier =
+                                this.__observedIdentifier +
+                                    (isLength === true ? '.length' : '');
                         }
                     }
                 }
                 this.__add(absoluteIdentifier, observableListener);
-                var uid = observableListener.uid, remove = function () {
+                var uid = observableListener.uid;
+                var remove = function () {
                     ContextManager.spliceRemoveListener(absoluteIdentifier, uid, remove);
                     _this._removeCallback(absoluteIdentifier, observableListener);
                 };
@@ -6167,14 +7108,31 @@ var plat;
              * @param {string} method The array method being called.
              */
             ContextManager.prototype._overwriteArrayFunction = function (absoluteIdentifier, method) {
-                var callbackObjects = ContextManager.arrayChangeListeners[absoluteIdentifier] || {}, _this = this;
+                // tslint:disable-next-line 
+                var _this = this;
+                var callbackObjects = ContextManager.arrayChangeListeners[absoluteIdentifier];
+                if (!isObject(callbackObjects)) {
+                    callbackObjects = {};
+                }
                 // we can't use a fat-arrow function here because we need the array context. 
                 return function observedArrayFn() {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
-                    var oldLength = this.length, originalArray = _clone(this, true), returnValue, isUnshift = method === 'unshift', isShift = method === 'shift', isSplice = method === 'splice', selfNotify = isShift || isUnshift || isSplice, isUpdate = method === 'sort' || method === 'reverse', oldArray, addedCount, index, newLength, removed;
+                    var oldLength = this.length;
+                    var originalArray = _clone(this, true);
+                    var isUnshift = method === 'unshift';
+                    var isShift = method === 'shift';
+                    var isSplice = method === 'splice';
+                    var selfNotify = isShift || isUnshift || isSplice;
+                    var isUpdate = method === 'sort' || method === 'reverse';
+                    var oldArray;
+                    var addedCount;
+                    var index;
+                    var newLength;
+                    var removed;
+                    var returnValue;
                     if (selfNotify) {
                         _this.__isArrayFunction = true;
                         returnValue = Array.prototype[method].apply(this, args);
@@ -6215,26 +7173,33 @@ var plat;
                     if (isShift || isSplice || method === 'pop') {
                         ContextManager.unObserve(returnValue);
                     }
-                    var keys = Object.keys(callbackObjects), length = keys.length, callbacks, jLength, i, j;
-                    for (i = 0; i < length; ++i) {
+                    var keys = Object.keys(callbackObjects);
+                    var length = keys.length;
+                    var callbacks;
+                    var jLength;
+                    var i;
+                    var j;
+                    for (i = 0; i < length; i += 1) {
                         callbacks = callbackObjects[keys[i]];
                         jLength = callbacks.length;
-                        for (j = 0; j < jLength; ++j) {
-                            callbacks[j]([{
+                        for (j = 0; j < jLength; j += 1) {
+                            callbacks[j]([
+                                {
                                     object: this,
                                     type: method,
                                     index: index,
                                     removed: removed,
                                     addedCount: addedCount,
-                                    oldArray: oldArray
-                                }]);
+                                    oldArray: oldArray,
+                                },
+                            ]);
                         }
                     }
                     if (selfNotify) {
                         _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
                     }
                     else {
-                        _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
+                        _this._execute(absoluteIdentifier + ".length", newLength, oldLength);
                     }
                     return returnValue;
                 };
@@ -6287,8 +7252,9 @@ var plat;
                 if (value === oldValue || isNull(observableListeners)) {
                     return;
                 }
-                var listeners = observableListeners.slice(0), length = listeners.length;
-                for (var i = 0; i < length; ++i) {
+                var listeners = observableListeners.slice(0);
+                var length = listeners.length;
+                for (var i = 0; i < length; i += 1) {
                     listeners[i].listener(value, oldValue);
                 }
             };
@@ -6318,7 +7284,9 @@ var plat;
                             return;
                         }
                         ContextManager.unObserve(oldValue);
-                        var props = _this.__identifierHash[identifier], childPropertiesExist = false, mappings;
+                        var props = _this.__identifierHash[identifier];
+                        var childPropertiesExist = false;
+                        var mappings;
                         if (isObject(props)) {
                             mappings = Object.keys(props);
                             childPropertiesExist = mappings.length > 0;
@@ -6336,7 +7304,7 @@ var plat;
                         else if (!isObject(value)) {
                             _this.__definePrimitive(identifier, immediateContext, key);
                         }
-                    }
+                    },
                 });
             };
             /**
@@ -6347,7 +7315,8 @@ var plat;
              */
             ContextManager.prototype.__definePrimitive = function (identifier, immediateContext, key) {
                 var _this = this;
-                var value = immediateContext[key], isDefined = !isNull(value);
+                var value = immediateContext[key];
+                var isDefined = !isNull(value);
                 if (isArray(immediateContext) && key === 'length') {
                     return;
                 }
@@ -6367,13 +7336,16 @@ var plat;
                         if (_this.__isArrayFunction && isArray(immediateContext)) {
                             return;
                         }
-                        var props = _this.__identifierHash[identifier], childPropertiesExist = false, mappings;
+                        var props = _this.__identifierHash[identifier];
+                        var childPropertiesExist = false;
+                        var mappings;
                         if (isObject(props)) {
                             mappings = Object.keys(props);
                             childPropertiesExist = mappings.length > 0;
                         }
                         _this._execute(identifier, newValue, oldValue);
-                        if (!childPropertiesExist && isEmpty(_this.__identifiers[identifier])) {
+                        if (!childPropertiesExist &&
+                            isEmpty(_this.__identifiers[identifier])) {
                             ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                         }
                         else if (isObject(value)) {
@@ -6386,7 +7358,7 @@ var plat;
                             _this.__definePrimitive(identifier, immediateContext, key);
                             isDefined = true;
                         }
-                    }
+                    },
                 });
             };
             /**
@@ -6395,13 +7367,15 @@ var plat;
              * @param {plat.observable.IListener} observableListener The listener being added.
              */
             ContextManager.prototype.__add = function (identifier, observableListener) {
-                var callbacks = this.__identifiers[identifier], priority = observableListener.priority, found = false;
+                var priority = observableListener.priority;
+                var callbacks = this.__identifiers[identifier];
+                var found = false;
                 if (isNull(callbacks)) {
                     callbacks = this.__identifiers[identifier] = [];
                 }
                 if (isNumber(priority)) {
                     var length_6 = callbacks.length;
-                    for (var i = 0; i < length_6; ++i) {
+                    for (var i = 0; i < length_6; i += 1) {
                         if (priority > callbacks[i].priority) {
                             callbacks.splice(i, 0, observableListener);
                             found = true;
@@ -6428,8 +7402,15 @@ var plat;
                     return;
                 }
                 identifierHash[identifier] = {};
-                var index, period = '.', ident = identifier, hashValue, previous = [], i, length;
-                while ((index = ident.lastIndexOf(period)) !== -1) {
+                var period = '.';
+                var previous = [];
+                var index;
+                var ident = identifier;
+                var hashValue;
+                var i;
+                var length;
+                index = ident.lastIndexOf(period);
+                while (index !== -1) {
                     ident = ident.slice(0, index);
                     hashValue = identifierHash[ident];
                     length = previous.length;
@@ -6437,10 +7418,11 @@ var plat;
                         hashValue = identifierHash[ident] = {};
                     }
                     hashValue[identifier] = true;
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         hashValue[previous[i]] = true;
                     }
                     previous.push(ident);
+                    index = ident.lastIndexOf(period);
                 }
             };
             /**
@@ -6465,11 +7447,9 @@ var plat;
             return ContextManager;
         }
         observable.IContextManagerStatic = IContextManagerStatic;
-        register.injectable(__ContextManagerStatic, IContextManagerStatic, [
-            __Log
-        ], __STATIC);
+        register.injectable(__ContextManagerStatic, IContextManagerStatic, [__Log], __STATIC);
         register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
-    })(observable = plat_1.observable || (plat_1.observable = {}));
+    })(observable = plat.observable || (plat.observable = {}));
     /**
      * Holds classes and interfaces related to event management components in platypus.
      */
@@ -6495,9 +7475,20 @@ var plat;
                  */
                 this.stopped = false;
             }
+            /**
+             * Initializes the event, populating its public properties.
+             * @param {string} name The name of the event.
+             * @param {any} sender The object that initiated the event.
+             * @param {string} direction The direction of propagation
+             */
             DispatchEvent.prototype.initialize = function (name, sender, direction) {
                 this.name = name;
-                this.direction = direction || this._EventManager.UP;
+                if (!isString(direction)) {
+                    this.direction = this._EventManager.UP;
+                }
+                else {
+                    this.direction = direction;
+                }
                 this.sender = sender;
             };
             /**
@@ -6520,7 +7511,7 @@ var plat;
             };
             DispatchEvent._inject = {
                 _EventManager: __EventManagerStatic,
-                _ContextManager: __ContextManagerStatic
+                _ContextManager: __ContextManagerStatic,
             };
             return DispatchEvent;
         }());
@@ -6578,34 +7569,45 @@ var plat;
                     return;
                 }
                 EventManager.__initialized = true;
-                var lifecycleListeners = EventManager.__lifecycleEventListeners, _compat = EventManager._compat, _document = EventManager._document, _window = EventManager._window, _dom = EventManager._dom, dispatch = LifecycleEvent.dispatch, listener;
+                var lifecycleListeners = EventManager.__lifecycleEventListeners;
+                var _compat = EventManager._compat;
+                var _document = EventManager._document;
+                var _window = EventManager._window;
+                var _dom = EventManager._dom;
+                var dispatch = LifecycleEvent.dispatch;
+                var listener;
                 while (lifecycleListeners.length > 0) {
                     listener = lifecycleListeners.pop();
                     _document.removeEventListener(listener.name, listener.value, false);
                 }
                 if (_compat.cordova) {
-                    var eventNames = [__resume, __online, __offline], winJs_1 = _compat.winJs, length_7 = eventNames.length, event_1, dispatcher = function (ev) { return function () {
+                    var eventNames = [__resume, __online, __offline];
+                    var winJs_1 = _compat.winJs;
+                    var length_7 = eventNames.length;
+                    var dispatcher = function (ev) { return function () {
                         dispatch(ev, EventManager);
-                    }; }, fn = void 0;
-                    for (var i = 0; i < length_7; ++i) {
+                    }; };
+                    var event_1;
+                    var fn = void 0;
+                    for (var i = 0; i < length_7; i += 1) {
                         event_1 = eventNames[i];
                         fn = dispatcher(event_1);
                         lifecycleListeners.push({
                             name: event_1,
-                            value: fn
+                            value: fn,
                         });
                         _dom.addEventListener(_document, event_1, fn, false);
                     }
                     fn = dispatcher(__suspend);
                     lifecycleListeners.push({
                         name: __pause,
-                        value: fn
+                        value: fn,
                     });
                     _dom.addEventListener(_document, __pause, fn, false);
                     fn = dispatcher(__ready);
                     lifecycleListeners.push({
                         name: __deviceReady,
-                        value: fn
+                        value: fn,
                     });
                     _dom.addEventListener(_document, __deviceReady, fn, false);
                     fn = function () {
@@ -6616,7 +7618,7 @@ var plat;
                     };
                     lifecycleListeners.push({
                         name: __backButton,
-                        value: fn
+                        value: fn,
                     });
                     _dom.addEventListener(_document, __backButton, fn, false);
                     if (winJs_1) {
@@ -6626,7 +7628,7 @@ var plat;
                         };
                         lifecycleListeners.push({
                             name: __backClick,
-                            value: fn
+                            value: fn,
                         });
                         _window.WinJS.Application.addEventListener(__backClick, fn, false);
                     }
@@ -6649,7 +7651,8 @@ var plat;
                 deleteProperty(EventManager.__eventsListeners, uid);
             };
             /**
-             * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
+             * Registers a listener for a DispatchEvent.
+             * The listener will be called when a DispatchEvent is
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * @param {string} uid A unique id to associate with the object registering the listener.
              * @param {string} eventName The name of the event to listen to.
@@ -6661,7 +7664,7 @@ var plat;
                 if (isNull(eventsListener)) {
                     eventsListener = EventManager.__eventsListeners[uid] = {
                         listeners: {},
-                        context: context
+                        context: context,
                     };
                 }
                 var eventListeners = eventsListener.listeners[eventName];
@@ -6677,6 +7680,14 @@ var plat;
                     eventListeners.splice(index, 1);
                 };
             };
+            /**
+             * Looks for listeners to a given event name, and fires the listeners using the specified
+             * event direction.
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction The direction in which to send the event.
+             * @param {Array<any>} args? The arguments to send to the listeners.
+             */
             EventManager.dispatch = function (name, sender, direction, args) {
                 var _dispatchEvent = acquire(__DispatchEventInstance);
                 _dispatchEvent.initialize(name, sender, direction);
@@ -6698,10 +7709,12 @@ var plat;
              * @param {Array<any>} args The arguments associated with the event
              */
             EventManager.sendEvent = function (event, args) {
-                var name = event.name, direction = event.direction;
-                args = args || [];
+                var name = event.name;
+                var direction = event.direction;
+                if (!isArray(args)) {
+                    args = [];
+                }
                 EventManager.propagatingEvents[name] = true;
-                args = args || [];
                 switch (direction) {
                     case EventManager.UP:
                         EventManager._dispatchUp(event, args);
@@ -6712,6 +7725,7 @@ var plat;
                     case EventManager.DIRECT:
                         EventManager._dispatchDirect(event, args);
                         break;
+                    default:
                 }
                 deleteProperty(EventManager.propagatingEvents, name);
             };
@@ -6721,7 +7735,8 @@ var plat;
              * @param {Array<any>} args The arguments associated with the event.
              */
             EventManager._dispatchUp = function (event, args) {
-                var name = event.name, parent = event.sender;
+                var name = event.name;
+                var parent = event.sender;
                 while (!isNull(parent) && EventManager.propagatingEvents[name]) {
                     if (isNull(parent.uid)) {
                         parent = parent.parent;
@@ -6737,9 +7752,12 @@ var plat;
              * @param {Array<any>} args The arguments associated with the event.
              */
             EventManager._dispatchDown = function (event, args) {
-                var controls = [], control, name = event.name;
+                var name = event.name;
+                var controls = [];
+                var control;
                 controls.push(event.sender);
-                while (controls.length && EventManager.propagatingEvents[name]) {
+                while (!isEmpty(controls.length) &&
+                    EventManager.propagatingEvents[name]) {
                     control = controls.pop();
                     if (isNull(control.uid)) {
                         continue;
@@ -6757,13 +7775,17 @@ var plat;
              * @param {Array<any>} args The arguments associated with the event.
              */
             EventManager._dispatchDirect = function (event, args) {
-                var uids = Object.keys(EventManager.__eventsListeners), length = uids.length, name = event.name, eventsListener;
-                for (var i = 0; i < length; ++i) {
+                var uids = Object.keys(EventManager.__eventsListeners);
+                var length = uids.length;
+                var name = event.name;
+                var eventsListener;
+                for (var i = 0; i < length; i += 1) {
                     if (!EventManager.propagatingEvents[name]) {
                         break;
                     }
                     eventsListener = EventManager.__eventsListeners[uids[i]];
-                    if (isNull(eventsListener) || isNull(eventsListener.listeners[name])) {
+                    if (isNull(eventsListener) ||
+                        isNull(eventsListener.listeners[name])) {
                         continue;
                     }
                     EventManager.__callListeners(eventsListener.context, event, eventsListener.listeners[name], args);
@@ -6780,7 +7802,8 @@ var plat;
                 if (isNull(eventsListener)) {
                     return;
                 }
-                var context = eventsListener.context, listeners = eventsListener.listeners[ev.name];
+                var context = eventsListener.context;
+                var listeners = eventsListener.listeners[ev.name];
                 if (isNull(listeners)) {
                     return;
                 }
@@ -6794,15 +7817,19 @@ var plat;
              * @param {Array<any>} args The arguments to send to the listeners.
              */
             EventManager.__callListeners = function (context, ev, listeners, args) {
-                var name = ev.name, length = listeners.length, index = -1;
+                var name = ev.name;
+                var length = listeners.length;
+                var index = -1;
                 args = [ev].concat(args);
-                while (++index < length && EventManager.propagatingEvents[name]) {
+                index += 1;
+                while (index < length && EventManager.propagatingEvents[name]) {
                     try {
                         listeners[index].apply(context, args);
                     }
                     catch (e) {
                         EventManager._log.debug(e);
                     }
+                    index += 1;
                 }
             };
             /**
@@ -6849,13 +7876,7 @@ var plat;
             return EventManager;
         }
         events.IEventManagerStatic = IEventManagerStatic;
-        register.injectable(__EventManagerStatic, IEventManagerStatic, [
-            __Log,
-            __Compat,
-            __Document,
-            __Window,
-            __Dom
-        ], __STATIC);
+        register.injectable(__EventManagerStatic, IEventManagerStatic, [__Log, __Compat, __Document, __Window, __Dom], __STATIC);
         /**
          * Represents an internal Error Event. This is used for any
          * internal errors (both fatal and warnings). All error events are
@@ -6880,6 +7901,13 @@ var plat;
                 ErrorEvent._EventManager.sendEvent(event);
                 return event;
             };
+            /**
+             * Initializes the event, populating its public properties.
+             * @param {string} name The name of the event.
+             * @param {any} sender The sender of the event.
+             * @param {string} direction This is always a direct event.
+             * @param {E} error The error that occurred, resulting in the event.
+             */
             ErrorEvent.prototype.initialize = function (name, sender, direction, error) {
                 _super.prototype.initialize.call(this, name, sender, this._EventManager.DIRECT);
                 this.error = error;
@@ -6895,7 +7923,7 @@ var plat;
         }
         events.IErrorEventStatic = IErrorEventStatic;
         register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
-    })(events = plat_1.events || (plat_1.events = {}));
+    })(events = plat.events || (plat.events = {}));
     /**
      * Used for facilitating data and DOM manipulation. Contains lifecycle events
      * as well as properties for communicating with other controls. This is the base
@@ -6947,8 +7975,7 @@ var plat;
                 control = control.parent;
             }
             if (!control.hasOwnContext && isObject(control.context)) {
-                Control._log.debug('Root control: ' + control.type + ' found that sets its context to an Object but does not set the hasOwnContext ' +
-                    'flag to true. Please set the flag if the control intends to use its own context.');
+                Control._log.debug("Root control: " + control.type + " found that sets its context to an Object but does not set the this.hasOwnContext = true.");
             }
             return control;
         };
@@ -6970,7 +7997,7 @@ var plat;
                         priority: __CONTEXT_CHANGED_PRIORITY,
                         listener: function (newValue, oldValue) {
                             ui.TemplateControl.contextChanged(control, newValue, oldValue);
-                        }
+                        },
                     });
                     if (isFunction(ctrl.zCC__plat)) {
                         ctrl.zCC__plat();
@@ -7034,7 +8061,11 @@ var plat;
             if (isNull(parent)) {
                 return;
             }
-            var controls = parent.controls || [], index = controls.indexOf(control);
+            var controls = parent.controls;
+            if (!isArray(controls)) {
+                controls = [];
+            }
+            var index = controls.indexOf(control);
             if (index !== -1) {
                 controls.splice(index, 1);
             }
@@ -7048,11 +8079,13 @@ var plat;
             if (isNull(control)) {
                 return;
             }
-            var removeListeners = Control.__eventListeners, uid = control.uid;
+            var removeListeners = Control.__eventListeners;
+            var uid = control.uid;
             var listeners = removeListeners[uid];
             if (isArray(listeners)) {
                 var index = listeners.length;
-                while (index-- > 0) {
+                while (index > 0) {
+                    index -= 1;
                     listeners[index]();
                 }
                 deleteProperty(removeListeners, uid);
@@ -7084,7 +8117,8 @@ var plat;
          * @param {plat.IRemoveListener} listener The remove function to add.
          */
         Control.__spliceRemoveListener = function (uid, listener) {
-            var removeListeners = Control.__eventListeners, controlListeners = removeListeners[uid];
+            var removeListeners = Control.__eventListeners;
+            var controlListeners = removeListeners[uid];
             if (isArray(controlListeners)) {
                 var index = controlListeners.indexOf(listener);
                 if (index === -1) {
@@ -7100,7 +8134,9 @@ var plat;
          * @param {string} value The expected value used to find similar controls.
          */
         Control.__getControls = function (control, key, value) {
-            var controls = [], root = Control.getRootControl(control), child;
+            var controls = [];
+            var root = Control.getRootControl(control);
+            var child;
             if (!isNull(root) && root[key] === value) {
                 controls.push(root);
             }
@@ -7142,28 +8178,52 @@ var plat;
         Control.prototype.getControlsByName = function (name) {
             return Control.__getControls(this, 'name', name);
         };
+        /**
+         * Retrieves all the controls of the specified type.
+         * @param {new () => T} Constructor The constructor used to find controls.
+         */
         Control.prototype.getControlsByType = function (type) {
             if (isString(type)) {
                 return Control.__getControls(this, 'type', type);
             }
             return Control.__getControls(this, 'constructor', type);
         };
+        /**
+         * Adds an event listener of the specified type to the specified element. Removal of the
+         * event is handled automatically upon disposal.
+         * @param {EventTarget} element The element to add the event listener to.
+         * @param {string}  type The type of event to listen to.
+         * @param {EventListener} listener The listener to fire when the event occurs.
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
+         * of event propagation.
+         */
         Control.prototype.addEventListener = function (element, type, listener, useCapture) {
             if (!isFunction(listener)) {
                 this._log.warn('"Control.addEventListener" must take a function as the third argument.');
                 return noop;
             }
             listener = listener.bind(this);
-            var removeListener = this.dom.addEventListener(element, type, listener, useCapture), uid = this.uid;
+            var removeListener = this.dom.addEventListener(element, type, listener, useCapture);
+            var uid = this.uid;
             Control.__addRemoveListener(uid, removeListener);
             return function () {
                 removeListener();
                 Control.__spliceRemoveListener(uid, removeListener);
             };
         };
+        /**
+         * Allows a Control to observe any property on its context and receive updates when
+         * the property is changed.
+         * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method
+         * will have its 'this' context set to the control instance.
+         * @param {number} index? The index that denotes the item in the context if the context is an Array.
+         */
         Control.prototype.observe = function (listener, identifier) {
             var _this = this;
-            var control = isObject(this.context) ? this : this.parent, root = Control.getRootControl(control);
+            var control = isObject(this.context)
+                ? this
+                : this.parent;
+            var root = Control.getRootControl(control);
             if (isNull(control)) {
                 return noop;
             }
@@ -7172,17 +8232,24 @@ var plat;
                 return noop;
             }
             var absoluteIdentifier;
+            var _parser = Control._parser;
+            if (!isObject(_parser)) {
+                _parser = acquire(__Parser);
+            }
             if (isEmpty(identifier)) {
                 absoluteIdentifier = control.absoluteContextPath;
             }
             else if (isString(identifier)) {
-                var identifierExpression = (Control._parser || acquire(__Parser)).parse(identifier), identifiers = identifierExpression.identifiers;
+                var identifierExpression = _parser.parse(identifier);
+                var identifiers = identifierExpression.identifiers;
                 if (identifiers.length > 1) {
                     this._log.warn('Only a single identifier can be observed when calling the function plat.Control.observe');
                 }
                 var expression = identifierExpression.identifiers[0];
                 if (expression[0] === '@') {
-                    var split = expression.split('.'), start = split.shift().slice(1), join = split.length > 0 ? ('.' + split.join('.')) : '';
+                    var split = expression.split('.');
+                    var start = split.shift().slice(1);
+                    var join = split.length > 0 ? "." + split.join('.') : '';
                     if (start === __ROOT_CONTEXT_RESOURCE) {
                         absoluteIdentifier = __CONTEXT + join;
                     }
@@ -7190,42 +8257,54 @@ var plat;
                         absoluteIdentifier = control.absoluteContextPath + join;
                     }
                     else {
-                        absoluteIdentifier = control.absoluteContextPath + '.' + expression;
+                        absoluteIdentifier = control.absoluteContextPath + "." + expression;
                     }
                 }
                 else {
-                    absoluteIdentifier = control.absoluteContextPath + '.' + expression;
+                    absoluteIdentifier = control.absoluteContextPath + "." + expression;
                 }
             }
             else {
-                absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
+                absoluteIdentifier = control.absoluteContextPath + "." + identifier;
             }
-            var _ContextManager = Control._ContextManager || acquire(__ContextManagerStatic), contextManager = _ContextManager.getManager(root);
+            var _ContextManager = Control._ContextManager;
+            if (!isObject(_ContextManager)) {
+                _ContextManager = acquire(__ContextManagerStatic);
+            }
+            var contextManager = _ContextManager.getManager(root);
             return contextManager.observe(absoluteIdentifier, {
                 listener: function (newValue, oldValue) {
                     listener.call(_this, newValue, oldValue, identifier);
                 },
-                uid: this.uid
+                uid: this.uid,
             });
         };
         Control.prototype.observeArray = function (listener, identifier) {
-            var control = isObject(this.context) ? this : this.parent, context = control.context;
+            var control = isObject(this.context)
+                ? this
+                : this.parent;
+            var context = control.context;
             if (isNull(control) || !isObject(context)) {
                 return noop;
             }
-            var array, absoluteIdentifier;
+            var array;
+            var absoluteIdentifier;
+            var _parser = Control._parser;
+            if (!isObject(_parser)) {
+                _parser = acquire(__Parser);
+            }
             if (isEmpty(identifier)) {
                 array = context;
                 absoluteIdentifier = control.absoluteContextPath;
             }
             else if (isString(identifier)) {
-                var identifierExpression = (Control._parser || acquire(__Parser)).parse(identifier);
+                var identifierExpression = _parser.parse(identifier);
                 array = identifierExpression.evaluate(context);
-                absoluteIdentifier = control.absoluteContextPath + '.' + identifierExpression.identifiers[0];
+                absoluteIdentifier = control.absoluteContextPath + "." + identifierExpression.identifiers[0];
             }
             else {
                 array = context[identifier];
-                absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
+                absoluteIdentifier = control.absoluteContextPath + "." + identifier;
             }
             if (!isArray(array)) {
                 return noop;
@@ -7235,65 +8314,106 @@ var plat;
                 return noop;
             }
             listener = listener.bind(this);
-            var ContextManager = Control._ContextManager || acquire(__ContextManagerStatic), contextManager = ContextManager.getManager(Control.getRootControl(control)), uid = this.uid, callback = function (changes) {
+            var _ContextManager = Control._ContextManager;
+            if (!isObject(_ContextManager)) {
+                _ContextManager = acquire(__ContextManagerStatic);
+            }
+            var contextManager = _ContextManager.getManager(Control.getRootControl(control));
+            var uid = this.uid;
+            var callback = function (changes) {
                 listener(changes, identifier);
-            }, removeListener = contextManager.observeArrayMutation(uid, callback, absoluteIdentifier, array, null), removeCallback = contextManager.observe(absoluteIdentifier, {
+            };
+            var removeListener = contextManager.observeArrayMutation(uid, callback, absoluteIdentifier, array, null);
+            var removeCallback = contextManager.observe(absoluteIdentifier, {
                 listener: function (newValue, oldValue) {
                     removeListener();
-                    removeListener = contextManager
-                        .observeArrayMutation(uid, callback, absoluteIdentifier, newValue, oldValue);
+                    removeListener = contextManager.observeArrayMutation(uid, callback, absoluteIdentifier, newValue, oldValue);
                 },
-                uid: uid
+                uid: uid,
             });
             return function () {
                 removeListener();
                 removeCallback();
             };
         };
+        /**
+         * Using a IParsedExpression observes any associated identifiers. When an identifier
+         * value changes, the listener will be called.
+         * @param {plat.IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
+         * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
+         */
         Control.prototype.observeExpression = function (listener, expression) {
             var _this = this;
             if (isEmpty(expression)) {
                 return noop;
             }
+            var _parser = Control._parser;
+            if (!isObject(_parser)) {
+                _parser = acquire(__Parser);
+            }
             if (isString(expression)) {
-                expression = (Control._parser || acquire(__Parser)).parse(expression);
+                expression = _parser.parse(expression);
             }
             else if (!isFunction(expression.evaluate)) {
                 return noop;
             }
-            var control = !isNull(this.resources) ?
-                this :
-                this.parent;
+            var control = !isNull(this.resources)
+                ? this
+                : this.parent;
             if (isNull(control) || !isString(control.absoluteContextPath)) {
                 return noop;
             }
-            var aliases = expression.aliases, alias, length = aliases.length, resources = {}, resourceObj, ContextManager = Control._ContextManager || acquire(__ContextManagerStatic), getManager = ContextManager.getManager, TemplateControl = ui.TemplateControl, findResource = TemplateControl.findResource, evaluateExpression = TemplateControl.evaluateExpression, type, i;
-            for (i = 0; i < length; ++i) {
+            var _ContextManager = Control._ContextManager;
+            if (!isObject(_ContextManager)) {
+                _ContextManager = acquire(__ContextManagerStatic);
+            }
+            var aliases = expression.aliases;
+            var resources = {};
+            var getManager = _ContextManager.getManager;
+            var TemplateControl = ui.TemplateControl;
+            var findResource = TemplateControl.findResource;
+            var evaluateExpression = TemplateControl.evaluateExpression;
+            var alias;
+            var length = aliases.length;
+            var resourceObj;
+            var type;
+            var i;
+            for (i = 0; i < length; i += 1) {
                 alias = aliases[i];
                 resourceObj = findResource(control, alias);
                 if (!isNull(resourceObj)) {
                     type = resourceObj.resource.type;
-                    if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                    if (type === __OBSERVABLE_RESOURCE ||
+                        type === __LITERAL_RESOURCE) {
                         resources[alias] = getManager(resourceObj.control);
                     }
                 }
             }
-            var identifiers = expression.identifiers, contextManager = getManager(Control.getRootControl(control)), identifier, split = [], topIdentifier, absoluteContextPath = control.absoluteContextPath, absolutePath = absoluteContextPath + '.', managers = {};
+            var contextManager = getManager(Control.getRootControl(control));
+            var absoluteContextPath = control.absoluteContextPath;
+            var absolutePath = absoluteContextPath + ".";
+            var managers = {};
+            var identifiers = expression
+                .identifiers;
+            var identifier;
+            var split = [];
+            var topIdentifier;
             length = identifiers.length;
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 identifier = identifiers[i];
                 split = identifier.split('.');
                 topIdentifier = split[0];
                 if (identifier[0] === '@') {
                     alias = topIdentifier.slice(1);
                     if (alias === __CONTEXT_RESOURCE) {
-                        managers[absoluteContextPath + identifier.replace(topIdentifier, '')] = contextManager;
+                        managers[absoluteContextPath +
+                            identifier.replace(topIdentifier, '')] = contextManager;
                     }
                     else if (alias === __ROOT_CONTEXT_RESOURCE) {
                         managers[identifier.replace(topIdentifier, 'context')] = contextManager;
                     }
                     else {
-                        identifier = identifier.replace(topIdentifier, 'resources.' + alias + '.value');
+                        identifier = identifier.replace(topIdentifier, "resources." + alias + ".value");
                         if (!isNull(resources[alias])) {
                             managers[identifier] = resources[alias];
                         }
@@ -7304,25 +8424,33 @@ var plat;
             }
             identifiers = Object.keys(managers);
             length = identifiers.length;
-            var oldValue = evaluateExpression(expression, control), listeners = [], uid = this.uid, observableListener = function () {
+            var oldValue = evaluateExpression(expression, control);
+            var listeners = [];
+            var uid = this.uid;
+            var observableListener = function () {
                 var value = evaluateExpression(expression, control);
                 listener.call(_this, value, oldValue, expression.expression);
                 oldValue = value;
             };
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 identifier = identifiers[i];
                 listeners.push(managers[identifier].observe(identifier, {
                     uid: uid,
-                    listener: observableListener
+                    listener: observableListener,
                 }));
             }
             return function () {
-                var length = listeners.length;
-                for (var i_1 = 0; i_1 < length; ++i_1) {
-                    listeners[i_1]();
+                var len = listeners.length;
+                for (var j = 0; j < len; j += 1) {
+                    listeners[j]();
                 }
             };
         };
+        /**
+         * Evaluates an IParsedExpression using the control.parent.context.
+         * @param {string} expression The expression string to evaluate.
+         * @param {IObject<any>} aliases Optional alias values to parse with the expression
+         */
         Control.prototype.evaluateExpression = function (expression, aliases) {
             return ui.TemplateControl.evaluateExpression(expression, this.parent, aliases);
         };
@@ -7334,7 +8462,12 @@ var plat;
          * If nothing is passed in, then the control calling the method will be the starting point.
          */
         Control.prototype.findProperty = function (property, control) {
-            var expression = (Control._parser || acquire(__Parser)).parse(property), value;
+            var _parser = Control._parser;
+            if (!isObject(_parser)) {
+                _parser = acquire(__Parser);
+            }
+            var expression = _parser.parse(property);
+            var value;
             if (isNull(control)) {
                 control = this;
             }
@@ -7342,42 +8475,60 @@ var plat;
                 value = expression.evaluate(control);
                 if (!isNull(value)) {
                     return {
-                        expresssion: expression,
+                        expression: expression,
                         control: control,
-                        value: value
+                        value: value,
                     };
                 }
                 control = control.parent;
             }
         };
+        /**
+         * Creates a new DispatchEvent and propagates it to controls based on the
+         * provided direction mechanism. Controls in the propagation chain that registered
+         * the event using the control.on() method will receive the event. Propagation will
+         * always start with the sender, so the sender can both produce and consume the same
+         * event.
+         * @param {string} name The name of the event to send, coincides with the name used in the
+         * control.on() method.
+         * @param {string} direction The direction in which to send the event.
+         * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
+         */
         Control.prototype.dispatchEvent = function (name, direction) {
             var args = [];
             for (var _i = 2; _i < arguments.length; _i++) {
                 args[_i - 2] = arguments[_i];
             }
-            var manager = Control._EventManager || acquire(__EventManagerStatic);
-            if (!manager.hasDirection(direction)) {
+            var _EventManager = Control._EventManager;
+            if (!isObject(_EventManager)) {
+                _EventManager = acquire(__EventManagerStatic);
+            }
+            if (!_EventManager.hasDirection(direction)) {
                 if (!isUndefined(direction)) {
                     args.unshift(direction);
                 }
-                direction = manager.UP;
+                direction = _EventManager.UP;
             }
+            // tslint:disable-next-line 
             var sender = this;
             if (!isNull(sender.templateControl)) {
                 sender = sender.templateControl;
             }
-            manager.dispatch(name, sender, direction, args);
+            _EventManager.dispatch(name, sender, direction, args);
         };
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when a
          * DispatchEvent is propagating over the control. Any number of listeners can exist
          * for a single event name.
-         * @param {string} name The name of the event, cooinciding with the DispatchEvent name.
+         * @param {string} name The name of the event, coinciding with the DispatchEvent name.
          * @param {(ev: plat.events.DispatchEvent, ...args: Array<any>) => void} listener The method called when the
          * DispatchEvent is fired.
          */
         Control.prototype.on = function (name, listener) {
-            var _EventManager = Control._EventManager || acquire(__EventManagerStatic);
+            var _EventManager = Control._EventManager;
+            if (!isObject(_EventManager)) {
+                _EventManager = acquire(__EventManagerStatic);
+            }
             return _EventManager.on(this.uid, name, listener, this);
         };
         /**
@@ -7391,7 +8542,7 @@ var plat;
         Control.__eventListeners = {};
         return Control;
     }());
-    plat_1.Control = Control;
+    plat.Control = Control;
     /**
      */
     function IControlFactory(_parser, _ContextManager, _EventManager, _Promise, _dom, _log) {
@@ -7403,14 +8554,14 @@ var plat;
         Control._log = _log;
         return Control;
     }
-    plat_1.IControlFactory = IControlFactory;
+    plat.IControlFactory = IControlFactory;
     register.injectable(__ControlFactory, IControlFactory, [
         __Parser,
         __ContextManagerStatic,
         __EventManagerStatic,
         __Promise,
         __Dom,
-        __Log
+        __Log,
     ], __FACTORY);
     /**
      * A type of control that can be used as an attribute but will
@@ -7445,13 +8596,13 @@ var plat;
         };
         return AttributeControl;
     }(Control));
-    plat_1.AttributeControl = AttributeControl;
+    plat.AttributeControl = AttributeControl;
     /**
      */
     function IAttributeControlFactory() {
         return AttributeControl;
     }
-    plat_1.IAttributeControlFactory = IAttributeControlFactory;
+    plat.IAttributeControlFactory = IAttributeControlFactory;
     register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
     /**
      * Holds all the classes and interfaces related to UI components for platypus.
@@ -7498,6 +8649,14 @@ var plat;
                 _this.replaceWith = 'any';
                 return _this;
             }
+            /**
+             * Evaluates an expression string with a given control and optional control's context and aliases.
+             * @param {plat.expressions.IParsedExpression} expression A parsed expression object created using the
+             * plat.expressions.Parser injectable.
+             * @param {plat.ui.TemplateControl} control? The control used for evaluation context.
+             * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
+             * not include the `@` character).
+             */
             TemplateControl.evaluateExpression = function (expression, control, aliases) {
                 if (isEmpty(expression)) {
                     return expression;
@@ -7531,12 +8690,18 @@ var plat;
                 if (isNull(control)) {
                     return {};
                 }
-                var length = aliases.length, alias, resource, resourceObj, cache = TemplateControl.__resourceCache[control.uid];
+                var length = aliases.length;
+                var alias;
+                var resource;
+                var resourceObj;
+                var cache = TemplateControl.__resourceCache[control.uid];
                 if (isNull(cache)) {
                     cache = TemplateControl.__resourceCache[control.uid] = {};
                 }
-                resources = resources || {};
-                for (var i = 0; i < length; ++i) {
+                if (!isObject(resources)) {
+                    resources = {};
+                }
+                for (var i = 0; i < length; i += 1) {
                     alias = aliases[i];
                     if (alias[0] === '@') {
                         alias = alias.slice(1);
@@ -7553,14 +8718,15 @@ var plat;
                         continue;
                     }
                     else if (!isNull(cache[alias])) {
-                        var resourceControl = cache[alias].control, controlResources = resourceControl.resources;
+                        var resourceControl = cache[alias].control;
+                        var controlResources = resourceControl.resources;
                         if (isNull(controlResources)) {
                             resourceObj = TemplateControl.findResource(control, alias);
                         }
                         else {
                             resourceObj = {
                                 control: resourceControl,
-                                resource: controlResources[alias]
+                                resource: controlResources[alias],
                             };
                         }
                     }
@@ -7571,7 +8737,7 @@ var plat;
                         if (control.type.indexOf(__COMPILED) !== -1) {
                             continue;
                         }
-                        TemplateControl._log.warn('Resource alias: ' + alias + ' is not defined.');
+                        TemplateControl._log.warn("Resource alias: " + alias + " is not defined.");
                         continue;
                     }
                     cache[alias] = resourceObj;
@@ -7589,32 +8755,41 @@ var plat;
              */
             TemplateControl.findResource = function (control, alias) {
                 var resource;
-                if (isNull(control) || isNull(control.resources) || !isString(alias) || isEmpty(alias)) {
+                if (isNull(control) ||
+                    isNull(control.resources) ||
+                    !isString(alias) ||
+                    isEmpty(alias)) {
                     return;
                 }
                 if (alias[0] === '@') {
                     alias = alias.slice(1);
                 }
                 var isRootContext = alias === __ROOT_CONTEXT_RESOURCE;
-                if (isRootContext || alias === __CONTEXT_RESOURCE || alias === __CONTROL_RESOURCE) {
+                if (isRootContext ||
+                    alias === __CONTEXT_RESOURCE ||
+                    alias === __CONTROL_RESOURCE) {
                     if (isRootContext) {
                         control = Control.getRootControl(control);
                     }
-                    resource = (control.resources || {})[alias];
+                    if (isObject(control.resources)) {
+                        resource = control.resources[alias];
+                    }
                     if (isNull(resource)) {
                         return;
                     }
                     return {
                         resource: resource,
-                        control: control
+                        control: control,
                     };
                 }
                 while (!isNull(control)) {
-                    resource = (control.resources || {})[alias];
+                    if (isObject(control.resources)) {
+                        resource = control.resources[alias];
+                    }
                     if (!isNull(resource)) {
                         return {
                             resource: resource,
-                            control: control
+                            control: control,
                         };
                     }
                     control = control.parent;
@@ -7628,10 +8803,16 @@ var plat;
                 if (isNull(control)) {
                     return;
                 }
-                var uid = control.uid, childControls = control.controls, controls = (childControls && childControls.slice(0)), ContextManager = Control._ContextManager, define = ContextManager.defineProperty;
+                var uid = control.uid;
+                var childControls = control.controls;
+                var controls = isArray(childControls)
+                    ? childControls.slice(0)
+                    : childControls;
+                var ContextManager = Control._ContextManager;
+                var define = ContextManager.defineProperty;
                 if (!isNull(controls)) {
                     var length_8 = controls.length - 1;
-                    for (var i = length_8; i >= 0; --i) {
+                    for (var i = length_8; i >= 0; i -= 1) {
                         Control.dispose(controls[i]);
                     }
                 }
@@ -7663,8 +8844,10 @@ var plat;
              * @param {plat.ui.TemplateControl} control The control serving as the root control to load.
              */
             TemplateControl.loadControl = function (control) {
-                var children = control.controls, length = children.length, child;
-                for (var i = 0; i < length; ++i) {
+                var children = control.controls;
+                var length = children.length;
+                var child;
+                for (var i = 0; i < length; i += 1) {
                     child = children[i];
                     if (!isNull(child.controls)) {
                         TemplateControl.loadControl(child);
@@ -7705,8 +8888,8 @@ var plat;
                         control.resources.add({
                             root: {
                                 type: __OBSERVABLE_RESOURCE,
-                                value: value
-                            }
+                                value: value,
+                            },
                         });
                     }
                     else {
@@ -7717,8 +8900,8 @@ var plat;
                     control.resources.add({
                         context: {
                             type: __OBSERVABLE_RESOURCE,
-                            value: value
-                        }
+                            value: value,
+                        },
                     });
                     return;
                 }
@@ -7732,7 +8915,8 @@ var plat;
                 if (isNull(control)) {
                     return;
                 }
-                var element = control.element, parentNode;
+                var element = control.element;
+                var parentNode;
                 if (control.replaceWith === null ||
                     control.replaceWith === '' ||
                     isDocumentFragment(element)) {
@@ -7764,7 +8948,9 @@ var plat;
              * @param {string} templateUrl? The potential template URL to use to grab the template.
              */
             TemplateControl.determineTemplate = function (control, templateUrl) {
-                var templateCache = TemplateControl._templateCache, dom = control.dom, Promise = TemplateControl._Promise;
+                var templateCache = TemplateControl._templateCache;
+                var dom = control.dom;
+                var Promise = TemplateControl._Promise;
                 if (!isNull(templateUrl)) {
                     // do nothing 
                 }
@@ -7772,12 +8958,14 @@ var plat;
                     templateUrl = control.templateUrl;
                 }
                 else if (!isNull(control.templateString)) {
-                    var type_1 = control.type;
-                    return templateCache.read(type_1).catch(function (template) {
+                    var controlType_1 = control.type;
+                    return templateCache
+                        .read(controlType_1)
+                        .catch(function (template) {
                         if (isNull(template)) {
                             template = control.templateString;
                         }
-                        return templateCache.put(type_1, template);
+                        return templateCache.put(controlType_1, template);
                     });
                 }
                 else {
@@ -7794,8 +8982,9 @@ var plat;
                 if (isNull(control) || isNull(control.controls)) {
                     return;
                 }
-                var controls = control.controls.slice(0), length = controls.length;
-                for (var i = 0; i < length; ++i) {
+                var controls = control.controls.slice(0);
+                var length = controls.length;
+                for (var i = 0; i < length; i += 1) {
                     Control.dispose(controls[i]);
                 }
                 Control.removeEventListeners(control);
@@ -7848,6 +9037,12 @@ var plat;
             TemplateControl.prototype.findResource = function (alias) {
                 return TemplateControl.findResource(this, alias);
             };
+            /**
+             * Evaluates an expression string, using the input context or control.context.
+             * @param {plat.expressions.IParsedExpression} expression The previously parsed expression to evaluate.
+             * @param {any} context? An optional context with which to parse. If
+             * no context is specified, the control.context will be used.
+             */
             TemplateControl.prototype.evaluateExpression = function (expression, context) {
                 return TemplateControl.evaluateExpression(expression, this, context);
             };
@@ -7880,7 +9075,7 @@ var plat;
             __Parser,
             __Http,
             __Promise,
-            __Log
+            __Log,
         ], __FACTORY);
         register.injectable(__TemplateControlInstance, TemplateControl, null, __INSTANCE);
         /**
@@ -7922,7 +9117,7 @@ var plat;
              * A function that allows this control to observe both the bound property itself as well as
              * potential child properties if being bound to an object.
              * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
-             * databinding.
+             * data-binding.
              */
             BindControl.prototype.observeProperties = function (binder) { };
             /**
@@ -7934,8 +9129,9 @@ var plat;
                 if (newValue === oldValue) {
                     return;
                 }
-                var listeners = this._listeners, length = listeners.length;
-                for (var i = 0; i < length; ++i) {
+                var listeners = this._listeners;
+                var length = listeners.length;
+                for (var i = 0; i < length; i += 1) {
                     listeners[i](newValue, oldValue);
                 }
             };
@@ -7982,13 +9178,13 @@ var plat;
             /**
              * Allows a ViewControl to asynchronously decide if the app is able to navigate away from the
              * current view. A possible use of this method might be to popup a confirmation modal. You can
-             * return a boolean or IThenable<boolean> to accept/reject navigation.
+             * return a boolean or Promise<boolean> to accept/reject navigation.
              * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
              */
             ViewControl.prototype.canNavigateFrom = function () { };
             /**
              * Allows a ViewControl to asynchronously decide if it can be navigated to with the given parameters/query.
-             * You can return a boolean or IThenable<boolean> to accept/reject navigation.
+             * You can return a boolean or Promise<boolean> to accept/reject navigation.
              * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
              */
             ViewControl.prototype.canNavigateTo = function (parameters, query) { };
@@ -8015,12 +9211,34 @@ var plat;
                  */
                 this._domEvents = acquire(__DomEvents);
             }
+            /**
+             * Adds an event listener of the specified type to the specified element.
+             * @param {Window} element The window object.
+             * @param {string} type The type of event to listen to.
+             * @param {EventListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
+             * of event propagation.
+             */
             Dom.prototype.addEventListener = function (element, type, listener, useCapture) {
                 return this._domEvents.addEventListener(element, type, listener, useCapture);
             };
+            /**
+             * Takes a NodeList and either adds it to the passed in Node,
+             * or creates a DocumentFragment and adds the NodeList to the
+             * Fragment.
+             * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+             * @param {Node} root? An optional Node to append the nodeList.
+             */
             Dom.prototype.appendChildren = function (nodeList, root) {
                 return appendChildren(nodeList, root);
             };
+            /**
+             * Takes a NodeList, clones the nodes, and either adds it to the passed in Node,
+             * or creates a DocumentFragment and adds the NodeList to the
+             * Fragment.
+             * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+             * @param {Node} root? An optional Node to append the nodeList.
+             */
             Dom.prototype.cloneChildren = function (nodeList, root) {
                 return appendChildren(nodeList, root, true);
             };
@@ -8029,10 +9247,10 @@ var plat;
              * @param {Node} node The DOM Node to clear.
              */
             Dom.prototype.clearNode = function (node) {
-                return clearNode(node);
+                clearNode(node);
             };
             Dom.prototype.clearNodeBlock = function (nodeList, parent) {
-                return clearNodeBlock(nodeList, parent);
+                clearNodeBlock(nodeList, parent);
             };
             /**
              * Sets the innerHTML of a Node. Can take in a Node rather than an Element
@@ -8044,6 +9262,12 @@ var plat;
             Dom.prototype.setInnerHtml = function (node, html) {
                 return setInnerHtml(node, html);
             };
+            /**
+             * Inserts a Node before the designated end Node.
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {Node} node The Node to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
+             */
             Dom.prototype.insertBefore = function (parent, nodes, endNode) {
                 return insertBefore(parent, nodes, endNode);
             };
@@ -8074,7 +9298,7 @@ var plat;
              * @param {Node} endNode The ending node, which will not be removed.
              */
             Dom.prototype.removeBetween = function (startNode, endNode) {
-                return removeBetween(startNode, endNode);
+                removeBetween(startNode, endNode);
             };
             /**
              * Takes in a startNode and endNode, each having the same parentNode.
@@ -8085,7 +9309,7 @@ var plat;
              * @param {Node} endNode The last node to remove.
              */
             Dom.prototype.removeAll = function (startNode, endNode) {
-                return removeAll(startNode, endNode);
+                removeAll(startNode, endNode);
             };
             /**
              * Adds a class or multiple classes to the specified element.
@@ -8093,7 +9317,7 @@ var plat;
              * @param {string} className The class name or space delimited class names to add to the element.
              */
             Dom.prototype.addClass = function (element, className) {
-                return addClass(element, className);
+                addClass(element, className);
             };
             /**
              * Removes a class or multiple classes from the specified element.
@@ -8101,7 +9325,7 @@ var plat;
              * @param {string} className The class name or space delimited class names to remove from the element.
              */
             Dom.prototype.removeClass = function (element, className) {
-                return removeClass(element, className);
+                removeClass(element, className);
             };
             /**
              * Toggles a class or multiple classes from the specified element.
@@ -8109,7 +9333,7 @@ var plat;
              * @param {string} className The class name or space delimited class names to toggle on the element.
              */
             Dom.prototype.toggleClass = function (element, className) {
-                return toggleClass(element, className);
+                toggleClass(element, className);
             };
             /**
              * Replaces a single class with another class.
@@ -8118,7 +9342,7 @@ var plat;
              * @param {string} newClass The class name doing the replacing.
              */
             Dom.prototype.replaceClass = function (element, oldClass, newClass) {
-                return replaceClass(element, oldClass, newClass);
+                replaceClass(element, oldClass, newClass);
             };
             /**
              * Returns whether or not an element has a particular class or classes assigned to it.
@@ -8153,7 +9377,7 @@ var plat;
                 return whenVisible(cb, element);
             };
             Dom._inject = {
-                _domEvents: __DomEvents
+                _domEvents: __DomEvents,
             };
             return Dom;
         }());
@@ -8271,6 +9495,17 @@ var plat;
                 }
                 return control.type.indexOf(parent.type + __BOUND_PREFIX) === 0;
             };
+            /**
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * @param {string} template A template string representing the DOM template.
+             * @param {number} relativeIdentifier? The identifier number relative to this control's context
+             * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+             * controls created in the template.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+             * controls created in the template.
+             */
             BindableTemplates.prototype.once = function (template, relativeIdentifier, resources) {
                 var _this = this;
                 var fragment;
@@ -8295,12 +9530,17 @@ var plat;
                         return this._Promise.resolve(fragment);
                     }
                 }
-                if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                    this._log.warn(this.control.type + ' cannot bind template with relativeIdentifier: ' + relativeIdentifier +
-                        '. Identifier must be either a string or number');
+                if (!(isNull(relativeIdentifier) ||
+                    isNumber(relativeIdentifier) ||
+                    isString(relativeIdentifier))) {
+                    this._log.warn(this.control.type + " using relativeIdentifier: " + relativeIdentifier + ", need a string or number");
                     return;
                 }
-                var parent = this.control, controlManager = this._managerCache.read(parent.uid), manager = this._ElementManagerFactory.getInstance(), control = this._createBoundControl('', fragment, relativeIdentifier, resources), nodeMap = this._createNodeMap(control, fragment, relativeIdentifier);
+                var parent = this.control;
+                var controlManager = this._managerCache.read(parent.uid);
+                var manager = this._ElementManagerFactory.getInstance();
+                var control = this._createBoundControl('', fragment, relativeIdentifier, resources);
+                var nodeMap = this._createNodeMap(control, fragment, relativeIdentifier);
                 parent.controls.push(control);
                 controlManager.children = [];
                 manager.initialize(nodeMap, controlManager);
@@ -8312,12 +9552,29 @@ var plat;
                     return fragment;
                 });
             };
+            /**
+             * Method for linking a compiled template to a data context and returning a clone of the template,
+             * with all new Controls created if the template contains controls. If no data context
+             * is specified, it will be inherited.
+             * @param {string} key The key used to retrieve the template.
+             * @param {number} relativeIdentifier? The identifier number relative to this control's context
+             * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+             * controls created in the template.
+             */
             BindableTemplates.prototype.bind = function (key, relativeIdentifier, resources) {
                 return this._bind(key, relativeIdentifier, resources);
             };
+            /**
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * @param {string} key The key used to store the template.
+             * @param {string} template A template string representing the DOM template.
+             * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
+             */
             BindableTemplates.prototype.add = function (key, template, overwrite) {
                 if (isEmpty(key)) {
-                    this._log.debug(this.control.type + ' must use a valid key to add a template to BindableTemplates.');
+                    this._log.debug(this.control.type + " must use a valid key to add a template to BindableTemplates.");
                     return;
                 }
                 var templatePromise = this.templates[key];
@@ -8347,18 +9604,27 @@ var plat;
                 }
                 this._compile(key, fragment);
             };
+            /**
+             * Replaces the bound TemplateControl in the child control Array
+             * specified by the index with another bound control generated by the template key, relative context
+             * identifier, and resources.
+             * @param {number} index The index of the bound TemplateControl
+             * in the child control Array to replace.
+             * @param {string} key The key used to retrieve the template.
+             * @param {number} relativeIdentifier? The identifier number relative to this control's context
+             * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level
+             * controls created in the template.
+             */
             BindableTemplates.prototype.replace = function (index, key, relativeIdentifier, resources) {
                 var control = this.control.controls[index];
                 if (!BindableTemplates.isBoundControl(control)) {
-                    this._log.warn('The child control of ' + this.control.type + ' at the specified index: ' + index +
-                        ' is not a bound control and thus cannot be replaced by BindableTemplates.');
+                    this._log.warn("The child control of " + this.control.type + " at the specified index: " + index + " is not a bound control.");
                     return this._Promise.resolve([]);
                 }
                 var endNode = control.endNode;
                 if (!(isNode(endNode) && isNode(endNode.parentNode))) {
-                    this._log.warn('The child control of ' + this.control.type + ' at the specified index: ' + index +
-                        ' had either no placeholding comment nodes or its comment nodes had no parent and thus ' +
-                        'cannot be replaced by BindableTemplates.');
+                    this._log.warn("The child control of " + this.control.type + " at the specified index: " + index + " needs place-holding comment nodes.");
                     return this._Promise.resolve([]);
                 }
                 return this._bind(key, relativeIdentifier, resources, index);
@@ -8367,8 +9633,10 @@ var plat;
              * Clears the memory being held by this instance.
              */
             BindableTemplates.prototype.dispose = function () {
-                var dispose = this._TemplateControlFactory.dispose, compiledControls = this.__compiledControls, length = compiledControls.length;
-                for (var i = 0; i < length; ++i) {
+                var dispose = this._TemplateControlFactory.dispose;
+                var compiledControls = this.__compiledControls;
+                var length = compiledControls.length;
+                for (var i = 0; i < length; i += 1) {
                     dispose(compiledControls[i]);
                 }
                 this.__compiledControls = [];
@@ -8392,30 +9660,41 @@ var plat;
              */
             BindableTemplates.prototype._bind = function (key, relativeIdentifier, resources, index) {
                 var _this = this;
-                var templatePromise = this.templates[key], noIndex = isNull(index);
+                var templatePromise = this.templates[key];
+                var noIndex = isNull(index);
                 if (isNull(templatePromise)) {
-                    this._log.error(new Error(this.control.type + ' cannot bind template, no template stored with key: ' + key));
+                    this._log.error(new Error(this.control.type + " cannot bind template, no template stored with key: " + key));
                     return;
                 }
-                if (!(isNull(relativeIdentifier) || isNumber(relativeIdentifier) || isString(relativeIdentifier))) {
-                    this._log.warn(this.control.type + ' cannot bind template with relativeIdentifier: ' + relativeIdentifier +
-                        '. Identifier must be either a string or number');
+                if (!(isNull(relativeIdentifier) ||
+                    isNumber(relativeIdentifier) ||
+                    isString(relativeIdentifier))) {
+                    this._log.warn(this.control.type + " trying to bind: " + relativeIdentifier + ". Identifier must be either a string or number");
                     return;
                 }
                 templatePromise = templatePromise.then(function (result) {
-                    var template = result.cloneNode(true), control = _this._createBoundControl(key, template, relativeIdentifier, resources), nodeMap = _this._createNodeMap(control, template, relativeIdentifier);
+                    var template = result.cloneNode(true);
+                    var control = _this._createBoundControl(key, template, relativeIdentifier, resources);
+                    var nodeMap = _this._createNodeMap(control, template, relativeIdentifier);
                     if (noIndex) {
                         _this.control.controls.push(control);
                     }
                     return _this._bindTemplate(key, nodeMap);
                 });
                 if (!noIndex) {
-                    return templatePromise.then(function (fragment) {
-                        var childNodes = Array.prototype.slice.call(fragment.childNodes), oldControl = _this.control.controls[index], endNode = oldControl.endNode, parentNode = endNode.parentNode, nextSibling = endNode.nextSibling;
+                    return templatePromise
+                        .then(function (fragment) {
+                        var childNodes = Array.prototype.slice.call(fragment.childNodes);
+                        var oldControl = _this.control
+                            .controls[index];
+                        var endNode = oldControl.endNode;
+                        var parentNode = endNode.parentNode;
+                        var nextSibling = endNode.nextSibling;
                         _this._TemplateControlFactory.dispose(oldControl);
                         parentNode.insertBefore(fragment, nextSibling);
                         return childNodes;
-                    }).then(null, function (error) {
+                    })
+                        .then(null, function (error) {
                         postpone(function () {
                             if (isString(error)) {
                                 error = new Error(error);
@@ -8443,14 +9722,19 @@ var plat;
              */
             BindableTemplates.prototype._bindTemplate = function (key, nodeMap) {
                 var _this = this;
-                var control = nodeMap.uiControlNode.control, disposed = false, dispose = isFunction(control.dispose) ? control.dispose.bind(control) : noop;
+                var control = nodeMap.uiControlNode.control;
+                var disposed = false;
+                var dispose = isFunction(control.dispose)
+                    ? control.dispose.bind(control)
+                    : noop;
                 control.dispose = function () {
                     disposed = true;
                     dispose();
                     control.dispose = dispose;
                 };
                 return this._bindNodeMap(key, nodeMap).then(function () {
-                    var _document = _this._document, template = nodeMap.element;
+                    var _document = _this._document;
+                    var template = nodeMap.element;
                     if (disposed) {
                         return _document.createDocumentFragment();
                     }
@@ -8475,7 +9759,10 @@ var plat;
              * @param {plat.processing.INodeMap} nodeMap The node map to bind.
              */
             BindableTemplates.prototype._bindNodeMap = function (key, nodeMap) {
-                var manager = this.cache[key], child = nodeMap.uiControlNode.control, template = nodeMap.element, _managerCache = this._managerCache;
+                var manager = this.cache[key];
+                var child = nodeMap.uiControlNode.control;
+                var template = nodeMap.element;
+                var _managerCache = this._managerCache;
                 manager.clone(template, _managerCache.read(this.control.uid), nodeMap);
                 return _managerCache.read(child.uid).bindAndLoad();
             };
@@ -8486,7 +9773,8 @@ var plat;
              * @param {DocumentFragment} template The HTML template being bound.
              */
             BindableTemplates.prototype._compile = function (key, template) {
-                var control = this._createBoundControl(key + __COMPILED, template), nodeMap = this._createNodeMap(control, template);
+                var control = this._createBoundControl(key + __COMPILED, template);
+                var nodeMap = this._createNodeMap(control, template);
                 this.__compiledControls.push(control);
                 this._compileNodeMap(control, nodeMap, key);
             };
@@ -8499,14 +9787,21 @@ var plat;
              */
             BindableTemplates.prototype._compileNodeMap = function (control, nodeMap, key) {
                 var _this = this;
-                var manager = this._ElementManagerFactory.getInstance(), promises = [];
+                var manager = this._ElementManagerFactory.getInstance();
+                var promises = [];
                 manager.isClone = true;
                 manager.initialize(nodeMap, null);
                 manager.setUiControlTemplate();
                 this.cache[key] = manager;
                 promises.push(manager.fulfillTemplate());
-                this.templates[key] = this._Promise.all(promises).then(function () {
-                    var element = nodeMap.element, clone = element.cloneNode(true), _document = _this._document, startNode = control.startNode = _document.createComment(control.type + __START_NODE), endNode = control.endNode = _document.createComment(control.type + __END_NODE);
+                this.templates[key] = this._Promise
+                    .all(promises)
+                    .then(function () {
+                    var element = nodeMap.element;
+                    var clone = element.cloneNode(true);
+                    var _document = _this._document;
+                    var startNode = (control.startNode = _document.createComment(control.type + __START_NODE));
+                    var endNode = (control.endNode = _document.createComment(control.type + __END_NODE));
                     element.insertBefore(startNode, element.firstChild);
                     element.insertBefore(endNode, null);
                     return clone;
@@ -8529,8 +9824,8 @@ var plat;
                         control: uiControl,
                         nodeName: uiControl.type,
                         expressions: [],
-                        injector: null
-                    }
+                        injector: null,
+                    },
                 };
             };
             /**
@@ -8542,7 +9837,13 @@ var plat;
              * compile/bind this template.
              */
             BindableTemplates.prototype._createBoundControl = function (key, template, childContext, resources) {
-                var _TemplateControlFactory = this._TemplateControlFactory, control = _TemplateControlFactory.getInstance(), _ResourcesFactory = this._ResourcesFactory, parent = this.control, compiledManager = this.cache[key], isCompiled = isObject(compiledManager), _resources = _ResourcesFactory.getInstance();
+                var _TemplateControlFactory = this._TemplateControlFactory;
+                var control = _TemplateControlFactory.getInstance();
+                var _ResourcesFactory = this._ResourcesFactory;
+                var parent = this.control;
+                var compiledManager = this.cache[key];
+                var isCompiled = isObject(compiledManager);
+                var _resources = _ResourcesFactory.getInstance();
                 if (isCompiled) {
                     var compiledControl = compiledManager.getUiControl();
                     _resources.initialize(control, compiledControl.resources);
@@ -8561,9 +9862,12 @@ var plat;
                 control.root = this._ControlFactory.getRootControl(control);
                 if (isCompiled) {
                     var contextManager = this._ContextManager.getManager(control.root);
-                    control.absoluteContextPath = parent.absoluteContextPath || __CONTEXT;
+                    control.absoluteContextPath = parent.absoluteContextPath;
+                    if (!isString(control.absoluteContextPath)) {
+                        control.absoluteContextPath = __CONTEXT;
+                    }
                     if (!isNull(childContext)) {
-                        control.absoluteContextPath += '.' + childContext;
+                        control.absoluteContextPath += "." + childContext;
                     }
                     control.context = contextManager.getContext(control.absoluteContextPath.split('.'), false);
                 }
@@ -8602,8 +9906,11 @@ var plat;
              */
             Attributes.prototype.initialize = function (control, attributes) {
                 this.__control = control;
-                var keys = Object.keys(attributes), attributeListeners = this.__listeners, key, length = keys.length;
-                for (var i = 0; i < length; ++i) {
+                var keys = Object.keys(attributes);
+                var attributeListeners = this.__listeners;
+                var key;
+                var length = keys.length;
+                for (var i = 0; i < length; i += 1) {
                     key = keys[i];
                     this[key] = attributes[key];
                     attributeListeners[key] = [];
@@ -8636,8 +9943,9 @@ var plat;
              * @param {any} oldValue The previous value of the attribute.
              */
             Attributes.prototype._attributeChanged = function (key, newValue, oldValue) {
-                var listeners = this.__listeners[camelCase(key)], length = listeners.length;
-                for (var i = 0; i < length; ++i) {
+                var listeners = this.__listeners[camelCase(key)];
+                var length = listeners.length;
+                for (var i = 0; i < length; i += 1) {
                     listeners[i](newValue, oldValue);
                 }
             };
@@ -8703,12 +10011,11 @@ var plat;
                                 resource.value = value.bind(control);
                             }
                             else {
-                                Resources._log.warn('Attempted to create a "function" ' +
-                                    'type Resource, but the function ' + value + 'cannot be found on your control.');
+                                Resources._log.warn("Attempted to create a \"function\" type Resource, but the function " + value + " cannot be found on your control.");
                                 resource.value = noop;
                             }
                         }
-                        break;
+                    default:
                 }
                 return resource;
             };
@@ -8721,12 +10028,12 @@ var plat;
                 control.resources.add({
                     context: {
                         value: control.context,
-                        type: __OBSERVABLE_RESOURCE
+                        type: __OBSERVABLE_RESOURCE,
                     },
                     control: {
                         value: control,
-                        type: __OBJECT_RESOURCE
-                    }
+                        type: __OBJECT_RESOURCE,
+                    },
                 });
                 if (control.hasOwnContext) {
                     Resources.__addRoot(control);
@@ -8737,8 +10044,12 @@ var plat;
                 if (isNull(resources)) {
                     return;
                 }
-                var control = resourcesInstance.__controlInstance, aliases = Object.keys(resources), controlResources = Resources.__controlResources, length = aliases.length, alias;
-                for (var i = 0; i < length; ++i) {
+                var control = resourcesInstance.__controlInstance;
+                var aliases = Object.keys(resources);
+                var controlResources = Resources.__controlResources;
+                var length = aliases.length;
+                var alias;
+                for (var i = 0; i < length; i += 1) {
                     alias = aliases[i];
                     if (controlResources[alias] === true) {
                         continue;
@@ -8760,12 +10071,20 @@ var plat;
                 if (isNull(resources)) {
                     return;
                 }
-                var keys = Object.keys(resources.__resources), key, length = keys.length, define = Resources._ContextManager.defineProperty, resource;
-                for (var i = 0; i < length; ++i) {
+                var keys = Object.keys(resources.__resources);
+                var length = keys.length;
+                var define = Resources._ContextManager.defineProperty;
+                var key;
+                var resource;
+                for (var i = 0; i < length; i += 1) {
                     key = keys[i];
                     resource = resources[key];
-                    if (!isNull(resource) && (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE)) {
-                        define(resources, key, persist ? _clone(resource, true) : null, true, true, true);
+                    if (!isNull(resource) &&
+                        (resource.type === __OBSERVABLE_RESOURCE ||
+                            resource.type === __LITERAL_RESOURCE)) {
+                        define(resources, key, persist
+                            ? _clone(resource, true)
+                            : null, true, true, true);
                     }
                 }
                 Resources._removeListeners(resources.__controlInstance);
@@ -8776,7 +10095,18 @@ var plat;
              * @param {Element} element The resources element to parse.
              */
             Resources.parseElement = function (element) {
-                var children = Array.prototype.slice.call(element.children), child, _regex = Resources._regex, whiteSpaceRegex = _regex.whiteSpaceRegex, quotationRegex = _regex.quotationRegex, resources = {}, resource, types = Resources.__resourceTypes, attrs, attr, nodeName, text;
+                var children = Array.prototype.slice.call(element.children);
+                var _regex = Resources._regex;
+                var whiteSpaceRegex = _regex.whiteSpaceRegex;
+                var quotationRegex = _regex.quotationRegex;
+                var resources = {};
+                var types = Resources.__resourceTypes;
+                var child;
+                var resource;
+                var attrs;
+                var attr;
+                var nodeName;
+                var text;
                 while (children.length > 0) {
                     child = children.pop();
                     nodeName = child.nodeName.toLowerCase();
@@ -8794,8 +10124,11 @@ var plat;
                     if (isEmpty(text)) {
                         continue;
                     }
-                    resource.value = (nodeName === __INJECTABLE_RESOURCE || nodeName === __LITERAL_RESOURCE) ?
-                        text.replace(quotationRegex, '') : text;
+                    resource.value =
+                        nodeName === __INJECTABLE_RESOURCE ||
+                            nodeName === __LITERAL_RESOURCE
+                            ? text.replace(quotationRegex, '')
+                            : text;
                     resource.type = nodeName;
                     resources[resource.alias] = resource;
                 }
@@ -8813,7 +10146,9 @@ var plat;
              * @param {plat.ui.IResource} resource The resource to observe.
              */
             Resources._observeResource = function (control, resource) {
-                var value = resource.value, uid = control.uid, removeListeners = Resources.__observableResourceRemoveListeners[uid];
+                var uid = control.uid;
+                var value = resource.value;
+                var removeListeners = Resources.__observableResourceRemoveListeners[uid];
                 if (isNull(removeListeners)) {
                     removeListeners = Resources.__observableResourceRemoveListeners[uid] = [];
                 }
@@ -8839,10 +10174,11 @@ var plat;
                 if (isNull(control)) {
                     return;
                 }
-                var uid = control.uid, removeListeners = Resources.__observableResourceRemoveListeners[uid];
+                var uid = control.uid;
+                var removeListeners = Resources.__observableResourceRemoveListeners[uid];
                 if (isArray(removeListeners)) {
                     var length_9 = removeListeners.length;
-                    for (var i = 0; i < length_9; ++i) {
+                    for (var i = 0; i < length_9; i += 1) {
                         removeListeners[i]();
                     }
                 }
@@ -8858,15 +10194,21 @@ var plat;
                     root: {
                         value: control,
                         type: __OBJECT_RESOURCE,
-                        alias: __ROOT_RESOURCE
+                        alias: __ROOT_RESOURCE,
                     },
                     rootContext: {
                         value: control.context,
                         type: __OBSERVABLE_RESOURCE,
-                        alias: __ROOT_CONTEXT_RESOURCE
-                    }
+                        alias: __ROOT_CONTEXT_RESOURCE,
+                    },
                 });
             };
+            /**
+             * Initializes this Resources instance.
+             * @param {plat.ui.TemplateControl} control The control containing this Resources instance.
+             * @param {plat.ui.Resources} resources? An optional Resources object used to populate initial
+             * IResource objects.
+             */
             Resources.prototype.initialize = function (controlInstance, resources) {
                 this.__controlInstance = controlInstance;
                 if (isNull(resources)) {
@@ -8879,12 +10221,18 @@ var plat;
                     resources = resources.resources;
                 }
                 this.__resources = resources;
-                var keys = Object.keys(resources), key, length = keys.length;
-                for (var i = 0; i < length; ++i) {
+                var keys = Object.keys(resources);
+                var key;
+                var length = keys.length;
+                for (var i = 0; i < length; i += 1) {
                     key = keys[i];
                     this[key] = resources[key];
                 }
             };
+            /**
+             * Used for programmatically adding IResource objects.
+             * @param {Element} element An Element containing resource element children.
+             */
             Resources.prototype.add = function (resources) {
                 if (isNull(resources)) {
                     return;
@@ -8892,12 +10240,20 @@ var plat;
                 else if (isNode(resources)) {
                     resources = Resources.parseElement(resources);
                 }
-                var keys = Object.keys(resources), length = keys.length, resource, control = this.__controlInstance, bound = this.__bound, key, create = Resources.create;
-                for (var i = 0; i < length; ++i) {
+                var keys = Object.keys(resources);
+                var length = keys.length;
+                var control = this.__controlInstance;
+                var bound = this.__bound;
+                var create = Resources.create;
+                var resource;
+                var key;
+                for (var i = 0; i < length; i += 1) {
                     key = keys[i];
                     resource = resources[key];
                     resource.alias = key;
-                    this[key] = this.__resources[key] = bound ? create(control, resource) : resource;
+                    this[key] = this.__resources[key] = bound
+                        ? create(control, resource)
+                        : resource;
                 }
             };
             /**
@@ -8936,7 +10292,8 @@ var plat;
             Resources._ContextManager = _ContextManager;
             Resources._regex = _regex;
             Resources._log = _log;
-            var controlResources = {}, resourceTypes = {};
+            var controlResources = {};
+            var resourceTypes = {};
             controlResources[__CONTROL_RESOURCE] = controlResources[__CONTEXT_RESOURCE] = controlResources[__ROOT_RESOURCE] = controlResources[__ROOT_CONTEXT_RESOURCE] = true;
             resourceTypes[__INJECTABLE_RESOURCE] = resourceTypes[__OBJECT_RESOURCE] = resourceTypes[__OBSERVABLE_RESOURCE] = resourceTypes[__FUNCTION_RESOURCE] = resourceTypes[__LITERAL_RESOURCE] = true;
             Resources.__controlResources = controlResources;
@@ -8944,11 +10301,7 @@ var plat;
             return Resources;
         }
         ui.IResourcesFactory = IResourcesFactory;
-        register.injectable(__ResourcesFactory, IResourcesFactory, [
-            __ContextManagerStatic,
-            __Regex,
-            __Log
-        ], __FACTORY);
+        register.injectable(__ResourcesFactory, IResourcesFactory, [__ContextManagerStatic, __Regex, __Log], __FACTORY);
         register.injectable(__ResourcesInstance, Resources, null, __INSTANCE);
         /**
          * A class for managing DOM event registration and handling.
@@ -8966,11 +10319,14 @@ var plat;
                 /**
                  * The version of android, or -1 if not on android.
                  */
-                this._androidVersion = isUndefined(this._compat.ANDROID) ? -1 : this._compat.ANDROID;
+                this._androidVersion = isUndefined(this._compat.ANDROID)
+                    ? -1
+                    : this._compat.ANDROID;
                 /**
                  * Whether or not we're on Android 4.4.x or below.
                  */
-                this._android44orBelow = this._androidVersion > -1 && Math.floor(this._androidVersion / 10) <= 44;
+                this._android44orBelow = this._androidVersion > -1 &&
+                    Math.floor(this._androidVersion / 10) <= 44;
                 /**
                  * Whether or not the user is using mouse when touch events are present.
                  */
@@ -8991,7 +10347,7 @@ var plat;
                     $release: 0,
                     $swipe: 0,
                     $track: 0,
-                    $trackend: 0
+                    $trackend: 0,
                 };
                 /**
                  * Whether or not the user moved while in touch.
@@ -9023,11 +10379,11 @@ var plat;
                  */
                 this.__cancelDeferredHold = noop;
                 /**
-                 * A regular expressino for determining a "cancel" event.
+                 * A regular expression for determining a "cancel" event.
                  */
                 this.__cancelRegex = /cancel/i;
                 /**
-                 * A regular expressino for determining a pointer end event.
+                 * A regular expression for determining a pointer end event.
                  */
                 this.__pointerEndRegex = /up|cancel/i;
                 /**
@@ -9058,7 +10414,7 @@ var plat;
                     $touchstart: 0,
                     $touchmove: 0,
                     $touchend: 0,
-                    $touchcancel: 0
+                    $touchcancel: 0,
                 };
                 /**
                  * A hash of the current pointer touch points on the page.
@@ -9075,14 +10431,28 @@ var plat;
                 this.__getTypes();
                 this.initialize();
             }
+            /**
+             * Add an event listener for the specified event type on the specified element.
+             * @param {Window} element The window object.
+             * @param {string} type The type of event being listened to.
+             * @param {EventListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             */
             DomEvents.prototype.addEventListener = function (element, type, listener, useCapture) {
                 var _this = this;
-                var _compat = this._compat, mappedGestures = _compat.mappedEvents, mappedType = mappedGestures[type], mappingExists = !isNull(mappedType), mappedCount = this.__mappedCount, gestures = this._gestures, listenerRemoved = false;
+                var _compat = this._compat;
+                var mappedGestures = _compat.mappedEvents;
+                var mappedType = mappedGestures[type];
+                var mappingExists = !isNull(mappedType);
+                var mappedCount = this.__mappedCount;
+                var gestures = this._gestures;
+                var listenerRemoved = false;
                 if (mappingExists) {
                     this.__reverseMap[mappedType] = type;
                     this.__registerElement(element, type);
-                    mappedCount[type]++;
-                    if (_compat.hasTouchEvents && !this.__cancelRegex.test(mappedType)) {
+                    mappedCount[type] += 1;
+                    if (_compat.hasTouchEvents &&
+                        !this.__cancelRegex.test(mappedType)) {
                         mappedType = mappedType
                             .replace('touch', 'mouse')
                             .replace('start', 'down')
@@ -9091,14 +10461,16 @@ var plat;
                     }
                 }
                 element.addEventListener(type, listener, useCapture);
-                if (!isUndefined(element['on' + type]) || isUndefined(gestures[type]) || mappingExists) {
+                if (!isUndefined(element["on" + type]) ||
+                    isUndefined(gestures[type]) ||
+                    mappingExists) {
                     return function () {
                         if (listenerRemoved) {
                             return;
                         }
                         else if (mappingExists) {
                             if (mappedCount[type] > 0) {
-                                mappedCount[type]--;
+                                mappedCount[type] -= 1;
                             }
                             _this.__unregisterElement(element, type);
                         }
@@ -9106,7 +10478,9 @@ var plat;
                         element.removeEventListener(type, listener, useCapture);
                     };
                 }
-                var swipeGesture = gestures.$swipe, trackGesture = gestures.$track, countType = type;
+                var swipeGesture = gestures.$swipe;
+                var trackGesture = gestures.$track;
+                var countType = type;
                 if (type.indexOf(trackGesture) !== -1) {
                     var trackend = gestures.$trackend;
                     countType = type === trackend ? trackend : trackGesture;
@@ -9114,7 +10488,7 @@ var plat;
                 else if (type.indexOf(swipeGesture) !== -1) {
                     countType = swipeGesture;
                 }
-                this._gestureCount[countType]++;
+                this._gestureCount[countType] += 1;
                 this.__registerElement(element, type);
                 return function () {
                     if (listenerRemoved) {
@@ -9155,13 +10529,13 @@ var plat;
                     $release: 0,
                     $swipe: 0,
                     $track: 0,
-                    $trackend: 0
+                    $trackend: 0,
                 };
                 this.__mappedCount = {
                     $touchstart: 0,
                     $touchmove: 0,
                     $touchend: 0,
-                    $touchcancel: 0
+                    $touchcancel: 0,
                 };
                 this._isActive = false;
                 this._subscribers = {};
@@ -9193,9 +10567,11 @@ var plat;
                     }
                     return true;
                 }
-                else if (this.__touchCount++ > 0) {
+                else if (this.__touchCount > 0) {
+                    this.__touchCount += 1;
                     return true;
                 }
+                this.__touchCount += 1;
                 if (eventType !== 'mousedown') {
                     this._inTouch = true;
                 }
@@ -9214,14 +10590,18 @@ var plat;
                 // set last move back to null and hasMoved to false 
                 this.__lastMoveEvent = null;
                 this.__hasMoved = false;
-                var clientX = ev.clientX, clientY = ev.clientY, timeStamp = ev.timeStamp, target = ev.target, gestures = this._gestures;
+                var clientX = ev.clientX;
+                var clientY = ev.clientY;
+                var timeStamp = ev.timeStamp;
+                var target = ev.target;
+                var gestures = this._gestures;
                 this.__lastTouchDown = {
                     _buttons: ev._buttons,
                     clientX: clientX,
                     clientY: clientY,
                     timeStamp: timeStamp,
                     target: target,
-                    identifier: ev.identifier
+                    identifier: ev.identifier,
                 };
                 this.__swipeOrigin = {
                     clientX: clientX,
@@ -9229,19 +10609,31 @@ var plat;
                     xTimestamp: timeStamp,
                     yTimestamp: timeStamp,
                     xTarget: target,
-                    yTarget: target
+                    yTarget: target,
                 };
                 if (this._android44orBelow) {
-                    this.__haveSwipeSubscribers = this.__findFirstSubscribers(target, [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup]).length > 0;
+                    this.__haveSwipeSubscribers =
+                        this.__findFirstSubscribers(target, [
+                            gestures.$swipe,
+                            gestures.$swipedown,
+                            gestures.$swipeleft,
+                            gestures.$swiperight,
+                            gestures.$swipeup,
+                        ]).length > 0;
                 }
-                var gestureCount = this._gestureCount, noHolds = gestureCount.$hold <= 0, noRelease = gestureCount.$release <= 0;
+                var gestureCount = this._gestureCount;
+                var noHolds = gestureCount.$hold <= 0;
+                var noRelease = gestureCount.$release <= 0;
                 // return if no hold or release events are registered 
                 if (noHolds && noRelease) {
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__registerMove(eventType);
                     return true;
                 }
-                var holdInterval = DomEvents.config.intervals.holdInterval, domEvent, subscribeFn, domEventFound;
+                var holdInterval = DomEvents.config.intervals.holdInterval;
+                var domEvent;
+                var subscribeFn;
+                var domEventFound;
                 if (noHolds) {
                     this.__hasRelease = false;
                     this.__cancelDeferredHold = defer(function () {
@@ -9253,7 +10645,8 @@ var plat;
                 }
                 else if (noRelease) {
                     domEvent = this.__findFirstSubscriber(ev.target, this._gestures.$hold);
-                    if ((domEventFound = !isNull(domEvent))) {
+                    domEventFound = !isNull(domEvent);
+                    if (domEventFound) {
                         subscribeFn = function () {
                             domEvent.trigger(ev);
                             _this.__cancelDeferredHold = noop;
@@ -9264,7 +10657,8 @@ var plat;
                     this.__hasRelease = false;
                     // has both hold and release events registered 
                     domEvent = this.__findFirstSubscriber(ev.target, this._gestures.$hold);
-                    if ((domEventFound = !isNull(domEvent))) {
+                    domEventFound = !isNull(domEvent);
+                    if (domEventFound) {
                         subscribeFn = function () {
                             domEvent.trigger(ev);
                             _this.__hasRelease = true;
@@ -9297,8 +10691,18 @@ var plat;
                 if (isNull(evt)) {
                     return true;
                 }
-                var gestureCount = this._gestureCount, noTracking = gestureCount.$track <= 0, noSwiping = gestureCount.$swipe <= 0, config = DomEvents.config, swipeOrigin = this.__swipeOrigin, x = evt.clientX, y = evt.clientY, minMove = this.__hasMoved ||
-                    (this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance);
+                var gestureCount = this._gestureCount;
+                var noTracking = gestureCount.$track <= 0;
+                var noSwiping = gestureCount.$swipe <= 0;
+                var config = DomEvents.config;
+                var swipeOrigin = this.__swipeOrigin;
+                var x = evt.clientX;
+                var y = evt.clientY;
+                var minMove = this.__hasMoved;
+                if (!minMove) {
+                    minMove =
+                        this.__getDistance(swipeOrigin.clientX, x, swipeOrigin.clientY, y) >= config.distances.minScrollDistance;
+                }
                 // if minimum distance not met 
                 if (!minMove) {
                     this.__handleMappedEvents(eventType, ev, evt);
@@ -9310,11 +10714,18 @@ var plat;
                     this.__handleMappedEvents(eventType, ev, evt);
                     return true;
                 }
-                var lastMove = this.__lastMoveEvent || swipeOrigin, direction = evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY);
+                var lastMove = this.__lastMoveEvent;
+                if (!isObject(lastMove)) {
+                    lastMove = swipeOrigin;
+                }
+                var direction = (evt.direction = this.__getDirection(x - lastMove.clientX, y - lastMove.clientY));
                 this.__handleOriginChange(direction);
-                var dx = Math.abs(x - swipeOrigin.clientX), dy = Math.abs(y - swipeOrigin.clientY);
+                var dx = Math.abs(x - swipeOrigin.clientX);
+                var dy = Math.abs(y - swipeOrigin.clientY);
                 evt.velocity = this.__getVelocity(dx, dy, evt.timeStamp - swipeOrigin.xTimestamp, evt.timeStamp - swipeOrigin.yTimestamp);
-                if (!noSwiping && this._android44orBelow && this.__haveSwipeSubscribers) {
+                if (!noSwiping &&
+                    this._android44orBelow &&
+                    this.__haveSwipeSubscribers) {
                     ev.preventDefault();
                 }
                 // if tracking events exist 
@@ -9339,7 +10750,11 @@ var plat;
                             ev.preventDefault();
                         }
                         postpone(function () {
-                            var target = (_this.__lastTouchUp || {}).target;
+                            var ltu = _this.__lastTouchUp;
+                            if (!isObject(ltu)) {
+                                ltu = {};
+                            }
+                            var target = ltu.target;
                             if (_this._document.body.contains(target)) {
                                 _this.__handleInput(target);
                             }
@@ -9348,7 +10763,8 @@ var plat;
                     }
                     return true;
                 }
-                var hasMoved = this.__hasMoved, notMouseUp = eventType !== 'mouseup';
+                var hasMoved = this.__hasMoved;
+                var notMouseUp = eventType !== 'mouseup';
                 if (notMouseUp) {
                     // all non mouse cases 
                     if (eventType === 'touchend') {
@@ -9363,7 +10779,8 @@ var plat;
                         else if (this._inTouch === true) {
                             // immediately handle the input depending on type for more native-like experience 
                             if (ev.target !== this.__focusedElement) {
-                                if (this.__handleInput(ev.target) && ev.cancelable === true) {
+                                if (this.__handleInput(ev.target) &&
+                                    ev.cancelable === true) {
                                     ev.preventDefault();
                                 }
                             }
@@ -9400,7 +10817,7 @@ var plat;
                     this.__touchCount = 0;
                 }
                 else {
-                    this.__touchCount--;
+                    this.__touchCount -= 1;
                 }
                 // standardizeEventObject creates touches 
                 ev = this.__standardizeEventObject(ev);
@@ -9421,7 +10838,10 @@ var plat;
                 }
                 // handle swipe events 
                 this.__handleSwipe();
-                var config = DomEvents.config, intervals = config.intervals, touchEnd = ev.timeStamp, touchDown = this.__lastTouchDown;
+                var config = DomEvents.config;
+                var intervals = config.intervals;
+                var touchEnd = ev.timeStamp;
+                var touchDown = this.__lastTouchDown;
                 // if the user moved their finger (for scroll) we handle $trackend and return, 
                 // else if they had their finger down too long to be considered a tap, we want to return 
                 if (hasMoved) {
@@ -9432,19 +10852,22 @@ var plat;
                     this.__capturedTarget = null;
                     return true;
                 }
-                else if (isNull(touchDown) || ((touchEnd - touchDown.timeStamp) > intervals.tapInterval)) {
+                else if (isNull(touchDown) ||
+                    touchEnd - touchDown.timeStamp > intervals.tapInterval) {
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__tapCount = 0;
                     // clear captured target 
                     this.__capturedTarget = null;
                     return true;
                 }
-                var lastTouchUp = this.__lastTouchUp, x = ev.clientX, y = ev.clientY;
+                var lastTouchUp = this.__lastTouchUp;
+                var x = ev.clientX;
+                var y = ev.clientY;
                 // check if can be a double tap event by checking number of taps, distance between taps, 
                 // and time between taps 
                 if (this.__tapCount > 0 &&
                     this.__getDistance(x, lastTouchUp.clientX, y, lastTouchUp.clientY) <= config.distances.maxDblTapDistance &&
-                    ((touchEnd - lastTouchUp.timeStamp) <= intervals.dblTapInterval)) {
+                    touchEnd - lastTouchUp.timeStamp <= intervals.dblTapInterval) {
                     // handle dbltap events 
                     this.__handleDbltap(ev);
                 }
@@ -9487,8 +10910,14 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch cancel event object.
              */
             DomEvents.prototype.__handleCanceled = function (ev) {
-                var touches = ev.touches || this.__pointerEvents, index = this.__getTouchIndex(touches), type = ev.type;
-                ev = index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
+                var touches = ev.touches;
+                if (!isObject(touches)) {
+                    touches = this.__pointerEvents;
+                }
+                var index = this.__getTouchIndex(touches);
+                var type = ev.type;
+                ev =
+                    index >= 0 ? touches[index] : this.__standardizeEventObject(ev);
                 this._inTouch = false;
                 this.__clearTempStates();
                 if (this.__hasMoved) {
@@ -9523,8 +10952,13 @@ var plat;
              */
             DomEvents.prototype.__handleTap = function (ev) {
                 var _this = this;
-                var target = ev.target, touchDown = this.__lastTouchDown || {}, touchDownTarget = touchDown.target;
-                this.__tapCount++;
+                var target = ev.target;
+                var touchDown = this.__lastTouchDown;
+                if (!isObject(touchDown)) {
+                    touchDown = {};
+                }
+                var touchDownTarget = touchDown.target;
+                this.__tapCount += 1;
                 if (this._gestureCount.$tap <= 0 ||
                     isNull(touchDownTarget) ||
                     (touchDownTarget !== target &&
@@ -9534,14 +10968,16 @@ var plat;
                         !target.contains(touchDownTarget))) {
                     return;
                 }
-                var gestures = this._gestures, domEvent = this.__findFirstSubscriber(target, gestures.$tap);
+                var gestures = this._gestures;
+                var domEvent = this.__findFirstSubscriber(target, gestures.$tap);
                 if (isNull(domEvent)) {
                     return;
                 }
                 // fire tap event immediately if no dbltap zoom delay 
                 // or a mouse is being used 
                 if (DomEvents.config.intervals.dblTapZoomDelay <= 0 ||
-                    ev.pointerType === 'mouse' || ev.type === 'mouseup') {
+                    ev.pointerType === 'mouse' ||
+                    ev.type === 'mouseup') {
                     ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
                     return;
@@ -9598,7 +11034,10 @@ var plat;
                 if (isNull(lastMove)) {
                     return;
                 }
-                var origin = this.__swipeOrigin, dx = Math.abs(lastMove.clientX - origin.clientX), dy = Math.abs(lastMove.clientY - origin.clientY), swipeSubscribers = this.__getRegisteredSwipes(lastMove.direction, lastMove.velocity, dx, dy);
+                var origin = this.__swipeOrigin;
+                var dx = Math.abs(lastMove.clientX - origin.clientX);
+                var dy = Math.abs(lastMove.clientY - origin.clientY);
+                var swipeSubscribers = this.__getRegisteredSwipes(lastMove.direction, lastMove.velocity, dx, dy);
                 while (swipeSubscribers.length > 0) {
                     swipeSubscribers.pop().trigger(lastMove);
                 }
@@ -9611,11 +11050,27 @@ var plat;
              * used for preventing default in the case of an ANDROID device.
              */
             DomEvents.prototype.__handleTrack = function (ev, originalEv) {
-                var gestures = this._gestures, trackGesture = gestures.$track, direction = ev.direction, eventTarget = this.__capturedTarget || ev.target;
-                var domEvents = this.__findFirstSubscribers(eventTarget, [trackGesture, (trackGesture + direction.x), (trackGesture + direction.y)]);
+                var gestures = this._gestures;
+                var trackGesture = gestures.$track;
+                var direction = ev.direction;
+                var eventTarget = this.__capturedTarget;
+                if (!isObject(eventTarget)) {
+                    eventTarget = ev.target;
+                }
+                var domEvents = this.__findFirstSubscribers(eventTarget, [
+                    trackGesture,
+                    trackGesture + direction.x,
+                    trackGesture + direction.y,
+                ]);
                 if (this._android44orBelow) {
-                    var anyEvents = this.__findFirstSubscribers(eventTarget, [trackGesture, gestures.$trackdown, gestures.$trackup,
-                        gestures.$trackleft, gestures.$trackright, gestures.$trackend]);
+                    var anyEvents = this.__findFirstSubscribers(eventTarget, [
+                        trackGesture,
+                        gestures.$trackdown,
+                        gestures.$trackup,
+                        gestures.$trackleft,
+                        gestures.$trackright,
+                        gestures.$trackend,
+                    ]);
                     if (anyEvents.length > 0) {
                         originalEv.preventDefault();
                     }
@@ -9637,7 +11092,11 @@ var plat;
                 if (this._gestureCount.$trackend <= 0) {
                     return;
                 }
-                var eventTarget = this.__capturedTarget || ev.target, domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
+                var eventTarget = this.__capturedTarget;
+                if (!isObject(eventTarget)) {
+                    eventTarget = ev.target;
+                }
+                var domEvent = this.__findFirstSubscriber(eventTarget, this._gestures.$trackend);
                 if (isNull(domEvent)) {
                     return;
                 }
@@ -9648,22 +11107,29 @@ var plat;
              * A function for determining the proper touch events.
              */
             DomEvents.prototype.__getTypes = function () {
-                var _compat = this._compat, touchEvents = _compat.mappedEvents, listeners = this.__listeners, startEvents, moveEvents, endEvents;
+                var _compat = this._compat;
+                var touchEvents = _compat.mappedEvents;
+                var listeners = this.__listeners;
+                var startEvents;
+                var moveEvents;
+                var endEvents;
                 if (_compat.hasPointerEvents) {
                     startEvents = this._startEvents = touchEvents.$touchstart;
                     moveEvents = this._moveEvents = touchEvents.$touchmove;
-                    endEvents = this._endEvents = touchEvents.$touchend + ' ' + touchEvents.$touchcancel;
+                    endEvents = this._endEvents = touchEvents.$touchend + " " + touchEvents.$touchcancel;
                 }
                 else if (_compat.hasTouchEvents) {
-                    startEvents = this._startEvents = touchEvents.$touchstart + ' mousedown';
-                    moveEvents = this._moveEvents = touchEvents.$touchmove + ' mousemove';
-                    endEvents = this._endEvents = touchEvents.$touchend + ' mouseup ' + touchEvents.$touchcancel;
+                    startEvents = this._startEvents = touchEvents.$touchstart + " mousedown";
+                    moveEvents = this._moveEvents = touchEvents.$touchmove + " mousemove";
+                    endEvents = this._endEvents = touchEvents.$touchend + " mouseup " + touchEvents.$touchcancel;
                 }
                 else {
                     var cancelEvent = touchEvents.$touchcancel;
                     startEvents = this._startEvents = touchEvents.$touchstart;
                     moveEvents = this._moveEvents = touchEvents.$touchmove;
-                    endEvents = this._endEvents = touchEvents.$touchend + (!cancelEvent ? '' : (' ' + cancelEvent));
+                    endEvents = this._endEvents =
+                        touchEvents.$touchend +
+                            (isEmpty(cancelEvent) ? '' : " " + cancelEvent);
                 }
                 listeners[startEvents] = this._onTouchStart.bind(this);
                 listeners[moveEvents] = this._onTouchMove.bind(this);
@@ -9679,7 +11145,7 @@ var plat;
                 this._document.addEventListener('dragstart', this.__preventDefault, false);
             };
             /**
-             * Unregisters for and stops listening to all touch events on the document.
+             * Un-registers for and stops listening to all touch events on the document.
              */
             DomEvents.prototype.__unregisterTypes = function () {
                 this.__unregisterType(this._startEvents);
@@ -9695,18 +11161,26 @@ var plat;
              * @param {string} events The events to begin listening for.
              */
             DomEvents.prototype.__registerType = function (events) {
-                var listener = this.__listeners[events], _document = this._document, eventSplit = events.split(' '), index = eventSplit.length;
-                while (index-- > 0) {
+                var listener = this.__listeners[events];
+                var _document = this._document;
+                var eventSplit = events.split(' ');
+                var index = eventSplit.length;
+                while (index > 0) {
+                    index -= 1;
                     _document.addEventListener(eventSplit[index], listener, false);
                 }
             };
             /**
-             * Unregisters for and stops listening to a particular touch event type.
+             * Un-registers for and stops listening to a particular touch event type.
              * @param {string} events The events to stop listening for.
              */
             DomEvents.prototype.__unregisterType = function (events) {
-                var listener = this.__listeners[events], _document = this._document, eventSplit = events.split(' '), index = eventSplit.length;
-                while (index-- > 0) {
+                var listener = this.__listeners[events];
+                var _document = this._document;
+                var eventSplit = events.split(' ');
+                var index = eventSplit.length;
+                while (index > 0) {
+                    index -= 1;
                     _document.removeEventListener(eventSplit[index], listener, false);
                 }
             };
@@ -9716,8 +11190,11 @@ var plat;
              */
             DomEvents.prototype.__registerMove = function (eventType) {
                 var gestureCount = this._gestureCount;
-                if (eventType === 'touchstart' || this.__mappedCount.$touchmove > 0 || gestureCount.$track > 0 ||
-                    gestureCount.$trackend > 0 || gestureCount.$swipe > 0) {
+                if (eventType === 'touchstart' ||
+                    this.__mappedCount.$touchmove > 0 ||
+                    gestureCount.$track > 0 ||
+                    gestureCount.$trackend > 0 ||
+                    gestureCount.$swipe > 0) {
                     this.__registerType(this._moveEvents);
                     this.__detectingMove = true;
                 }
@@ -9728,11 +11205,12 @@ var plat;
              * @param {string} type The type of event.
              */
             DomEvents.prototype.__registerElement = function (element, type) {
-                var id, _plat = element.__plat;
+                var id;
+                var _plat = element.__plat;
                 if (isNull(_plat)) {
                     id = uniqueId('domEvent_');
                     element.__plat = _plat = {
-                        domEvent: id
+                        domEvent: id,
                     };
                 }
                 else if (isNull(_plat.domEvent)) {
@@ -9747,9 +11225,9 @@ var plat;
                         subscriber[type] = _domEvent;
                     }
                     else {
-                        subscriber[type].count++;
+                        subscriber[type].count += 1;
                     }
-                    subscriber.gestureCount++;
+                    subscriber.gestureCount += 1;
                     return;
                 }
                 var newSubscriber = { gestureCount: 1 };
@@ -9762,7 +11240,7 @@ var plat;
                 this.__removeSelections(element);
             };
             /**
-             * Unregisters and disassociates an element with an event.
+             * Un-registers and disassociates an element with an event.
              * @param {plat.ui.ICustomElement} element The element being disassociated with the given custom event.
              * @param {string} type The type of event.
              */
@@ -9771,15 +11249,17 @@ var plat;
                 if (isNull(_plat) || isNull(_plat.domEvent)) {
                     return;
                 }
-                var domEventId = _plat.domEvent, eventSubscriber = this._subscribers[domEventId], domEvent = eventSubscriber[type];
+                var domEventId = _plat.domEvent;
+                var eventSubscriber = this._subscribers[domEventId];
+                var domEvent = eventSubscriber[type];
                 if (isNull(domEvent)) {
                     return;
                 }
-                domEvent.count--;
+                domEvent.count -= 1;
                 if (domEvent.count === 0) {
                     deleteProperty(eventSubscriber, type);
                 }
-                eventSubscriber.gestureCount--;
+                eventSubscriber.gestureCount -= 1;
                 if (eventSubscriber.gestureCount === 0) {
                     deleteProperty(this._subscribers, domEventId);
                     this.__removeElement(element);
@@ -9790,12 +11270,14 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The current point being touched.
              */
             DomEvents.prototype.__setTouchPoint = function (ev) {
-                var eventType = ev.type, _compat = this._compat;
+                var eventType = ev.type;
+                var _compat = this._compat;
                 if (_compat.hasPointerEvents || _compat.hasMsPointerEvents) {
                     this.__updatePointers(ev, this.__pointerEndRegex.test(eventType));
                     return;
                 }
-                ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
+                ev.pointerType =
+                    eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
             };
             /**
              * Sets the captured target.
@@ -9812,7 +11294,10 @@ var plat;
              * @param {boolean} remove Whether to remove the touch point or add it.
              */
             DomEvents.prototype.__updatePointers = function (ev, remove) {
-                var id = ev.pointerId, pointerHash = this.__pointerHash, pointer = pointerHash[id], index;
+                var id = ev.pointerId;
+                var pointerHash = this.__pointerHash;
+                var pointer = pointerHash[id];
+                var index;
                 if (remove) {
                     if (!isUndefined(pointer)) {
                         index = this.__pointerEvents.indexOf(pointer);
@@ -9828,7 +11313,8 @@ var plat;
                         return;
                     }
                     ev.identifier = ev.pointerId;
-                    if (isUndefined(pointer) || (index = this.__pointerEvents.indexOf(pointer)) < 0) {
+                    index = this.__pointerEvents.indexOf(pointer);
+                    if (isUndefined(pointer) || index < 0) {
                         this.__pointerEvents.push(ev);
                     }
                     else {
@@ -9848,7 +11334,9 @@ var plat;
                 if (isNull(eventTarget)) {
                     return;
                 }
-                var _plat, subscriber, domEvent;
+                var _plat;
+                var subscriber;
+                var domEvent;
                 do {
                     _plat = eventTarget.__plat;
                     if (isUndefined(_plat) || isUndefined(_plat.domEvent)) {
@@ -9860,7 +11348,7 @@ var plat;
                         continue;
                     }
                     return domEvent;
-                } while (!isNull(eventTarget = eventTarget.parentNode));
+                } while (!isNull((eventTarget = eventTarget.parentNode)));
             };
             /**
              * Searches from the EventTarget up the DOM tree looking for all elements with the
@@ -9872,7 +11360,12 @@ var plat;
                 if (isNull(eventTarget)) {
                     return [];
                 }
-                var _plat, subscriber, subscriberKeys, subscriberKey, domEvents = [], index;
+                var domEvents = [];
+                var _plat;
+                var subscriber;
+                var subscriberKeys;
+                var subscriberKey;
+                var index;
                 do {
                     _plat = eventTarget.__plat;
                     if (isUndefined(_plat) || isUndefined(_plat.domEvent)) {
@@ -9888,7 +11381,8 @@ var plat;
                             types.splice(index, 1);
                         }
                     }
-                } while (types.length > 0 && !isNull(eventTarget = eventTarget.parentNode));
+                } while (types.length > 0 &&
+                    !isNull((eventTarget = eventTarget.parentNode)));
                 return domEvents;
             };
             /**
@@ -9901,7 +11395,9 @@ var plat;
             DomEvents.prototype.__removeEventListener = function (element, type, listener, useCapture) {
                 var gestures = this._gestures;
                 element.removeEventListener(type, listener, useCapture);
-                var swipeGesture = gestures.$swipe, trackGesture = gestures.$track, countType = type;
+                var swipeGesture = gestures.$swipe;
+                var trackGesture = gestures.$track;
+                var countType = type;
                 if (type.indexOf(trackGesture) !== -1) {
                     var trackend = gestures.$trackend;
                     countType = type === trackend ? trackend : trackGesture;
@@ -9909,7 +11405,7 @@ var plat;
                 else if (type.indexOf(swipeGesture) !== -1) {
                     countType = swipeGesture;
                 }
-                this._gestureCount[countType]--;
+                this._gestureCount[countType] -= 1;
                 this.__unregisterElement(element, type);
             };
             /**
@@ -9921,9 +11417,9 @@ var plat;
                 if (!isUndefined(element.className)) {
                     removeClass(element, DomEvents.config.styleConfig[0].className);
                 }
-                var plat = element.__plat;
-                deleteProperty(plat, 'domEvent');
-                if (isEmpty(plat)) {
+                var _plat = element.__plat;
+                deleteProperty(_plat, 'domEvent');
+                if (isEmpty(_plat)) {
                     deleteProperty(element, '__plat');
                 }
             };
@@ -9933,7 +11429,15 @@ var plat;
              */
             DomEvents.prototype.__standardizeEventObject = function (ev) {
                 this.__setTouchPoint(ev);
-                var isStart = this._startEvents.indexOf(ev.type) !== -1, touches = ev.touches || this.__pointerEvents, changedTouches = ev.changedTouches, changedTouchesExist = !isUndefined(changedTouches), preventDefault, timeStamp = ev.timeStamp;
+                var isStart = this._startEvents.indexOf(ev.type) !== -1;
+                var changedTouches = ev.changedTouches;
+                var changedTouchesExist = !isUndefined(changedTouches);
+                var timeStamp = ev.timeStamp;
+                var preventDefault;
+                var touches = ev.touches;
+                if (!isObject(touches)) {
+                    touches = this.__pointerEvents;
+                }
                 if (changedTouchesExist) {
                     if (isStart) {
                         preventDefault = ev.preventDefault.bind(ev);
@@ -9966,7 +11470,7 @@ var plat;
                 return ev;
             };
             /**
-             * Normalizes the 'buttons' property on an IExetendedEvent.
+             * Normalizes the 'buttons' property on an IExtendedEvent.
              * @param {plat.ui.IExtendedEvent} ev The event.
              */
             DomEvents.prototype.__normalizeButtons = function (ev) {
@@ -9999,7 +11503,6 @@ var plat;
                             break;
                         default:
                             buttons = 1;
-                            break;
                     }
                 }
                 ev._buttons = buttons;
@@ -10011,8 +11514,13 @@ var plat;
              * to search through.
              */
             DomEvents.prototype.__getTouchIndex = function (touches) {
-                var identifier = (this.__lastTouchDown || {}).identifier, length = touches.length;
-                for (var i = 0; i < length; ++i) {
+                var lastTouchDown = this.__lastTouchDown;
+                if (!isObject(lastTouchDown)) {
+                    lastTouchDown = {};
+                }
+                var identifier = lastTouchDown.identifier;
+                var length = touches.length;
+                for (var i = 0; i < length; i += 1) {
                     if (touches[i].identifier === identifier) {
                         return i;
                     }
@@ -10024,20 +11532,26 @@ var plat;
              * @param {plat.ui.IExtendedEvent} ev The current event object.
              */
             DomEvents.prototype.__getOffset = function (ev) {
-                var target = this.__capturedTarget || ev.target;
+                var target = this.__capturedTarget;
+                if (!isObject(target)) {
+                    target = ev.target;
+                }
                 if (isDocument(target)) {
                     return {
                         x: ev.clientX,
-                        y: ev.clientY
+                        y: ev.clientY,
                     };
                 }
-                else if (!isUndefined(ev.offsetX) && !isUndefined(ev.offsetY) && target === ev.target) {
+                else if (!isUndefined(ev.offsetX) &&
+                    !isUndefined(ev.offsetY) &&
+                    target === ev.target) {
                     return {
                         x: ev.offsetX,
-                        y: ev.offsetY
+                        y: ev.offsetY,
                     };
                 }
-                var x, y;
+                var x;
+                var y;
                 if (isFunction(target.getBoundingClientRect)) {
                     var rect = target.getBoundingClientRect();
                     x = rect.left;
@@ -10046,14 +11560,14 @@ var plat;
                 else {
                     x = target.offsetLeft;
                     y = target.offsetTop;
-                    while (!isNull(target = target.offsetParent)) {
+                    while (!isNull((target = target.offsetParent))) {
                         x += target.offsetLeft;
                         y += target.offsetTop;
                     }
                 }
                 return {
-                    x: (ev.clientX - x),
-                    y: (ev.clientY - y)
+                    x: ev.clientX - x,
+                    y: ev.clientY - y,
                 };
             };
             // utility methods 
@@ -10065,8 +11579,9 @@ var plat;
              * @param {number} y2 The y-coordinate of the second point.
              */
             DomEvents.prototype.__getDistance = function (x1, x2, y1, y2) {
-                var x = x2 - x1, y = y2 - y1;
-                return Math.sqrt((x * x) + (y * y));
+                var x = x2 - x1;
+                var y = y2 - y1;
+                return Math.sqrt(x * x + y * y);
             };
             /**
              * Calculates the velocity between two (x, y) coordinate points over a given time.
@@ -10076,16 +11591,23 @@ var plat;
              * @param {number} dty The change in time in y direction.
              */
             DomEvents.prototype.__getVelocity = function (dx, dy, dtx, dty) {
-                var x = 0, y = 0;
+                var x = 0;
+                var y = 0;
                 if (dtx > 0) {
-                    x = (dx / dtx) || 0;
+                    x = dx / dtx;
                 }
                 if (dty > 0) {
-                    y = (dy / dty) || 0;
+                    y = dy / dty;
+                }
+                if (!isFinite(x)) {
+                    x = 0;
+                }
+                if (!isFinite(y)) {
+                    y = 0;
                 }
                 return {
                     x: x,
-                    y: y
+                    y: y,
                 };
             };
             /**
@@ -10094,34 +11616,74 @@ var plat;
              * @param {number} dy The change in y position.
              */
             DomEvents.prototype.__getDirection = function (dx, dy) {
-                var distanceX = Math.abs(dx), distanceY = Math.abs(dy), lastDirection = (this.__lastMoveEvent || {}).direction || {}, horizontal = dx === 0 ? (lastDirection.x || 'none') : (dx < 0 ? 'left' : 'right'), vertical = dy === 0 ? (lastDirection.y || 'none') : (dy < 0 ? 'up' : 'down');
+                var distanceX = Math.abs(dx);
+                var distanceY = Math.abs(dy);
+                var lastMoveEvent = this.__lastMoveEvent;
+                if (!isObject(lastMoveEvent)) {
+                    lastMoveEvent = {};
+                }
+                var lastDirection = lastMoveEvent.direction;
+                if (isObject(lastDirection)) {
+                    lastDirection = {
+                        x: 'none',
+                        y: 'none',
+                        primary: 'none',
+                    };
+                }
+                var x = lastDirection.x;
+                var y = lastDirection.y;
+                var primary = lastDirection.primary;
+                if (isEmpty(x)) {
+                    x = 'none';
+                }
+                if (isEmpty(y)) {
+                    y = 'none';
+                }
+                if (isEmpty(primary)) {
+                    primary = 'none';
+                }
+                var horizontal = dx === 0 ? x : dx < 0 ? 'left' : 'right';
+                var vertical = dy === 0 ? y : dy < 0 ? 'up' : 'down';
                 return {
                     x: horizontal,
                     y: vertical,
-                    primary: (distanceX === distanceY ? (lastDirection.primary || 'none') : (distanceX > distanceY ? horizontal : vertical))
+                    primary: distanceX === distanceY
+                        ? primary
+                        : distanceX > distanceY ? horizontal : vertical,
                 };
             };
             /**
              * Checks to see if a swipe direction has changed to recalculate
              * an origin point.
-             * @param {plat.ui.IDirection} direction The current vertical and horiztonal directions of movement.
+             * @param {plat.ui.IDirection} direction The current vertical and horizontal directions of movement.
              */
             DomEvents.prototype.__handleOriginChange = function (direction) {
                 var lastMove = this.__lastMoveEvent;
                 if (isNull(lastMove)) {
                     return;
                 }
-                var swipeDirection = lastMove.direction, xSame = swipeDirection.x === direction.x, ySame = swipeDirection.y === direction.y;
+                var swipeDirection = lastMove.direction;
+                var xSame = swipeDirection.x === direction.x;
+                var ySame = swipeDirection.y === direction.y;
                 if (xSame && ySame) {
                     return;
                 }
-                var origin = this.__swipeOrigin, gestures = this._gestures, swipes = [gestures.$swipe, gestures.$swipedown, gestures.$swipeleft, gestures.$swiperight, gestures.$swipeup];
+                var origin = this.__swipeOrigin;
+                var gestures = this._gestures;
+                var swipes = [
+                    gestures.$swipe,
+                    gestures.$swipedown,
+                    gestures.$swipeleft,
+                    gestures.$swiperight,
+                    gestures.$swipeup,
+                ];
                 if (!xSame) {
                     origin.clientX = lastMove.clientX;
                     origin.xTimestamp = lastMove.timeStamp;
                     origin.xTarget = lastMove.target;
                     if (this._android44orBelow) {
-                        this.__haveSwipeSubscribers = this.__findFirstSubscribers(origin.xTarget, swipes).length > 0;
+                        this.__haveSwipeSubscribers =
+                            this.__findFirstSubscribers(origin.xTarget, swipes).length > 0;
                     }
                 }
                 if (!ySame) {
@@ -10129,7 +11691,8 @@ var plat;
                     origin.yTimestamp = lastMove.timeStamp;
                     origin.yTarget = lastMove.target;
                     if (this._android44orBelow) {
-                        this.__haveSwipeSubscribers = this.__findFirstSubscribers(origin.yTarget, swipes).length > 0;
+                        this.__haveSwipeSubscribers =
+                            this.__findFirstSubscribers(origin.yTarget, swipes).length > 0;
                     }
                 }
             };
@@ -10141,7 +11704,14 @@ var plat;
              * @param {number} dy The distance in the y direction.
              */
             DomEvents.prototype.__getRegisteredSwipes = function (direction, velocity, dx, dy) {
-                var swipeTarget, swipeGesture = this._gestures.$swipe, minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity, events = [swipeGesture], origin = (this.__swipeOrigin || {});
+                var swipeGesture = this._gestures.$swipe;
+                var minSwipeVelocity = DomEvents.config.velocities.minSwipeVelocity;
+                var events = [swipeGesture];
+                var swipeTarget;
+                var origin = this.__swipeOrigin;
+                if (!isObject(origin)) {
+                    origin = {};
+                }
                 if (dx > dy) {
                     swipeTarget = origin.xTarget;
                     if (velocity.x >= minSwipeVelocity) {
@@ -10167,25 +11737,33 @@ var plat;
              * Appends CSS to the head for gestures if needed.
              */
             DomEvents.prototype.__appendGestureStyle = function () {
-                var _document = this._document, styleClasses, classLength;
+                var _document = this._document;
+                var styleClasses;
+                var classLength;
                 if (this._compat.platCss) {
                     return;
                 }
-                else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+                else if (!isNull(_document.styleSheets) &&
+                    _document.styleSheets.length > 0) {
                     var styleSheet = _document.styleSheets[0];
                     styleClasses = DomEvents.config.styleConfig;
                     classLength = styleClasses.length;
-                    while (classLength-- > 0) {
+                    while (classLength > 0) {
+                        classLength -= 1;
                         styleSheet.insertRule(this.__createStyle(styleClasses[classLength]), 0);
                     }
                     return;
                 }
-                var head = _document.head, style = _document.createElement('style'), textContent = '';
+                var head = _document.head;
+                var style = _document.createElement('style');
+                var textContent = '';
                 style.type = 'text/css';
                 styleClasses = DomEvents.config.styleConfig;
                 classLength = styleClasses.length;
-                while (classLength-- > 0) {
-                    textContent = this.__createStyle(styleClasses[classLength]) + textContent;
+                while (classLength > 0) {
+                    classLength -= 1;
+                    textContent =
+                        this.__createStyle(styleClasses[classLength]) + textContent;
                 }
                 style.textContent = textContent;
                 head.appendChild(style);
@@ -10196,19 +11774,29 @@ var plat;
              * gestures.
              */
             DomEvents.prototype.__createStyle = function (styleClass) {
-                var styles = styleClass.styles || [], styleLength = styles.length, style = '.' + styleClass.className + ' { ', textContent = '';
-                styleLength = styles.length;
-                for (var j = 0; j < styleLength; ++j) {
-                    textContent += styles[j] + ';';
+                var styles = styleClass.styles;
+                if (!isArray(styles)) {
+                    styles = [];
                 }
-                style += textContent + ' } ';
+                var styleLength = styles.length;
+                var style = "." + styleClass.className + " { ";
+                var textContent = '';
+                styleLength = styles.length;
+                for (var j = 0; j < styleLength; j += 1) {
+                    textContent += styles[j] + ";";
+                }
+                style += textContent + " } ";
                 return style;
             };
             /**
              * Blurs the currently focused element.
              */
             DomEvents.prototype.__blurFocusedElement = function () {
-                var focusedElement = this.__focusedElement || {};
+                var focusedElement = this
+                    .__focusedElement;
+                if (!isObject(focusedElement)) {
+                    focusedElement = {};
+                }
                 if (isFunction(focusedElement.blur)) {
                     focusedElement.blur();
                 }
@@ -10229,11 +11817,12 @@ var plat;
             };
             /**
              * Handles a click target case.
-             * @param {HTMLInputElement} target The target to handle click functionaliy for.
+             * @param {HTMLInputElement} target The target to handle click functionality for.
              */
             DomEvents.prototype.__clickTarget = function (target) {
                 var _this = this;
-                var clicked = false, handler = function () {
+                var clicked = false;
+                var handler = function () {
                     clicked = true;
                     target.removeEventListener('click', handler, false);
                 };
@@ -10243,7 +11832,8 @@ var plat;
                         return;
                     }
                     target.removeEventListener('click', handler, false);
-                    if (_this._document.body.contains(target) && isFunction(target.click)) {
+                    if (_this._document.body.contains(target) &&
+                        isFunction(target.click)) {
                         target.click();
                     }
                 });
@@ -10280,7 +11870,6 @@ var plat;
                             default:
                                 this.__blurFocusedElement();
                                 this.__clickTarget(target);
-                                break;
                         }
                         break;
                     case 'a':
@@ -10299,7 +11888,6 @@ var plat;
                     default:
                         this.__blurFocusedElement();
                         this.__clickTarget(target);
-                        break;
                 }
                 this.__focusedElement = target;
                 return preventDefault;
@@ -10308,7 +11896,10 @@ var plat;
              * Handles the phantom click in WebKit based touch applications.
              */
             DomEvents.prototype.__preventClickFromTouch = function () {
-                var _document = this._document, ignoreEvents = this.__ignoreEvent, boundPreventDefault = this.__boundPreventDefaultClick, interval = DomEvents.config.intervals.delayedClickInterval;
+                var _document = this._document;
+                var ignoreEvents = this.__ignoreEvent;
+                var boundPreventDefault = this.__boundPreventDefaultClick;
+                var interval = DomEvents.config.intervals.delayedClickInterval;
                 if (interval <= 0) {
                     return;
                 }
@@ -10321,7 +11912,7 @@ var plat;
                     }, interval),
                     click: defer(function () {
                         _document.removeEventListener('click', boundPreventDefault, true);
-                    }, interval)
+                    }, interval),
                 };
                 ignoreEvents.mousedown = ignoreEvents.mouseup = true;
                 postpone(function () {
@@ -10387,7 +11978,7 @@ var plat;
             };
             DomEvents._inject = {
                 _document: __Document,
-                _compat: __Compat
+                _compat: __Compat,
             };
             /**
              * A configuration object for all DOM events.
@@ -10410,7 +12001,7 @@ var plat;
                     dblTapZoomDelay: 0,
                     /**
                      */
-                    delayedClickInterval: 400
+                    delayedClickInterval: 400,
                 },
                 /**
                  */
@@ -10420,18 +12011,19 @@ var plat;
                     minScrollDistance: 3,
                     /**
                      */
-                    maxDblTapDistance: 10
+                    maxDblTapDistance: 10,
                 },
                 /**
                  */
                 velocities: {
                     /**
                      */
-                    minSwipeVelocity: 0.645
+                    minSwipeVelocity: 0.645,
                 },
                 /**
                  */
-                styleConfig: [{
+                styleConfig: [
+                    {
                         /**
                          */
                         className: 'plat-gesture',
@@ -10447,19 +12039,18 @@ var plat;
                             '-webkit-overflow-scrolling: touch',
                             '-ms-user-select: none',
                             '-ms-touch-action: manipulation',
-                            'touch-action: manipulation'
-                        ]
-                    }, {
+                            'touch-action: manipulation',
+                        ],
+                    },
+                    {
                         /**
                          */
                         className: 'plat-no-touch-action',
                         /**
                          */
-                        styles: [
-                            '-ms-touch-action: none',
-                            'touch-action: none'
-                        ]
-                    }]
+                        styles: ['-ms-touch-action: none', 'touch-action: none'],
+                    },
+                ],
             };
             /**
              * An object containing the event types for all of the
@@ -10480,7 +12071,7 @@ var plat;
                 $trackright: __trackright,
                 $trackup: __trackup,
                 $trackdown: __trackdown,
-                $trackend: __trackend
+                $trackend: __trackend,
             };
             return DomEvents;
         }());
@@ -10503,6 +12094,13 @@ var plat;
                  */
                 this._document = acquire(__Document);
             }
+            /**
+             * Initializes the element and event of this DomEvent object.
+             * @param {Window} element The window object.
+             * @param {string} event The event associated with this DomEvent object.
+             * @param {string} eventType? The event type associated with this DomEvent object.
+             * If not specified, it will default to 'CustomEvent'.
+             */
             DomEvent.prototype.initialize = function (element, event, eventType) {
                 this.element = element;
                 this.event = event;
@@ -10521,7 +12119,10 @@ var plat;
                     _extend(false, false, customEv, eventExtension);
                 }
                 customEv.initCustomEvent(this.event, true, true, isNull(detailArg) ? 0 : detailArg);
-                return (dispatchElement || this.element).dispatchEvent(customEv);
+                if (!isNode(dispatchElement)) {
+                    dispatchElement = this.element;
+                }
+                return dispatchElement.dispatchEvent(customEv);
             };
             return DomEvent;
         }());
@@ -10532,6 +12133,12 @@ var plat;
          */
         var CustomDomEvent = /** @class */ (function (_super) {
             __extends(CustomDomEvent, _super);
+            /**
+             * The constructor for a CustomDomEvent. Assigns the
+             * associated element and event.
+             * @param {Window} element The window object.
+             * @param {string} event The associated event.
+             */
             function CustomDomEvent(element, event) {
                 var _this = _super.call(this) || this;
                 /**
@@ -10540,7 +12147,7 @@ var plat;
                 _this.count = 0;
                 _this.element = element;
                 _this.event = event;
-                _this.count++;
+                _this.count += 1;
                 return _this;
             }
             /**
@@ -10549,10 +12156,14 @@ var plat;
              * newly created custom event.
              */
             CustomDomEvent.prototype.trigger = function (ev) {
-                var customEv = this._document.createEvent('CustomEvent'), element = this.element, target = ev.target;
+                var customEv = this._document.createEvent('CustomEvent');
+                var element = this.element;
+                var target = ev.target;
                 this.__extendEventObject(customEv, ev);
                 customEv.initCustomEvent(this.event, true, true, 0);
-                var success = isDocument(element) || element.contains(target) ? target.dispatchEvent(customEv) : element.dispatchEvent(customEv);
+                var success = isDocument(element) || element.contains(target)
+                    ? target.dispatchEvent(customEv)
+                    : element.dispatchEvent(customEv);
                 if (!success) {
                     ev.preventDefault();
                 }
@@ -10570,15 +12181,21 @@ var plat;
                 customEv.clientY = ev.clientY;
                 customEv.offsetX = ev.offset.x;
                 customEv.offsetY = ev.offset.y;
-                customEv.direction = ev.direction || {
-                    x: 'none',
-                    y: 'none',
-                    primary: 'none'
-                };
+                customEv.direction = isNull(ev.direction)
+                    ? {
+                        x: 'none',
+                        y: 'none',
+                        primary: 'none',
+                    }
+                    : ev.direction;
                 customEv.touches = ev._touches;
-                customEv.velocity = ev.velocity || { x: 0, y: 0 };
-                customEv.identifier = ev.identifier || 0;
-                customEv.pointerType = isNumber(pointerType) ? this.__convertPointerType(pointerType, ev.type) : pointerType;
+                customEv.velocity = isNull(ev.velocity)
+                    ? { x: 0, y: 0 }
+                    : ev.velocity;
+                customEv.identifier = isNull(ev.identifier) ? 0 : ev.identifier;
+                customEv.pointerType = isNumber(pointerType)
+                    ? this.__convertPointerType(pointerType, ev.type)
+                    : pointerType;
                 customEv.screenX = ev.screenX;
                 customEv.screenY = ev.screenY;
                 customEv.pageX = ev.pageX;
@@ -10598,8 +12215,9 @@ var plat;
                         return 'pen';
                     case MSPointerEvent.MSPOINTER_TYPE_TOUCH:
                         return 'touch';
+                    default:
                 }
-                return (eventType.indexOf('mouse') === -1) ? 'touch' : 'mouse';
+                return eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
             };
             return CustomDomEvent;
         }(DomEvent));
@@ -10618,56 +12236,118 @@ var plat;
                      */
                     this._animatedElements = {};
                 }
+                /**
+                 * Creates the defined animation denoted by the key but does not start the animation.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options? Specified options for the animation.
+                 */
                 Animator.prototype.create = function (elements, key, options) {
                     return this._create(elements, key, options, {
-                        key: null
+                        key: null,
                     });
                 };
+                /**
+                 * Animates the element with the defined animation denoted by the key. Similar to `create` but
+                 * immediately begins the animation.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options? Specified options for the animation.
+                 */
                 Animator.prototype.animate = function (elements, key, options) {
                     return this._animate(elements, key, options, {
-                        key: null
+                        key: null,
                     });
                 };
+                /**
+                 * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {Element} parent The parent element used for adding the elements to the DOM.
+                 * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                 * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                 * is ignored.
+                 * @param {any} options? Specified options for the animation.
+                 */
                 Animator.prototype.enter = function (elements, key, parent, refChild, options) {
                     return this._animate(elements, key, options, {
                         key: 'enter',
                         parent: parent,
-                        refChild: refChild
+                        refChild: refChild,
                     });
                 };
+                /**
+                 * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
+                 * the animation is finished.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options? Specified options for the animation.
+                 */
                 Animator.prototype.leave = function (elements, key, options) {
                     return this._animate(elements, key, options, {
-                        key: 'leave'
+                        key: 'leave',
                     });
                 };
+                /**
+                 * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
+                 * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
+                 * refChild is not specified.
+                 * @param {Node} refChild? An optional reference node used for placing the element into the DOM
+                 * just before itself using the insertBefore function. If this argument is specified, the parent argument
+                 * is ignored during DOM insertion.
+                 * @param {any} options? Specified options for the animation.
+                 */
                 Animator.prototype.move = function (elements, key, parent, refChild, options) {
                     return this._animate(elements, key, options, {
                         key: 'move',
                         parent: parent,
-                        refChild: refChild
-                    });
-                };
-                Animator.prototype.show = function (elements, key, options) {
-                    return this._animate(elements, key, options, {
-                        key: 'show'
-                    });
-                };
-                Animator.prototype.hide = function (elements, key, options) {
-                    return this._animate(elements, key, options, {
-                        key: 'hide'
+                        refChild: refChild,
                     });
                 };
                 /**
-                 * Returns a promise that fulfills when every animation promise in the input array is fulfilled.
+                 * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
+                 * with the defined animation denoted by the key.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options? Specified options for the animation.
                  */
+                Animator.prototype.show = function (elements, key, options) {
+                    return this._animate(elements, key, options, {
+                        key: 'show',
+                    });
+                };
+                /**
+                 * Animates the elements with the defined animation denoted by the key and hides them by adding the
+                 * `plat-hide` attribute after the animation is finished.
+                 * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
+                 * the same parent, otherwise the animation will not function correctly.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options? Specified options for the animation.
+                 */
+                Animator.prototype.hide = function (elements, key, options) {
+                    return this._animate(elements, key, options, {
+                        key: 'hide',
+                    });
+                };
                 Animator.prototype.all = function (promises) {
                     var _this = this;
-                    var length = promises.length, args = [], animationPromise = new AnimationPromise(function (resolve) {
+                    var length = promises.length;
+                    var args = [];
+                    var animationPromise = new AnimationPromise(function (resolve) {
                         _this._Promise.all(promises).then(function () {
                             resolve();
                         });
                     });
-                    for (var i = 0; i < length; ++i) {
+                    for (var i = 0; i < length; i += 1) {
                         args = args.concat(promises[i].getInstances());
                     }
                     animationPromise.initialize(args);
@@ -10677,6 +12357,7 @@ var plat;
                  * Immediately resolves an empty AnimationPromise.
                  */
                 Animator.prototype.resolve = function () {
+                    // tslint:disable-next-line 
                     var animationPromise = new AnimationPromise(function (resolve) {
                         resolve(function () {
                             return animationPromise;
@@ -10694,7 +12375,8 @@ var plat;
                  * special animation functionality.
                  */
                 Animator.prototype._animate = function (elements, key, options, functionality) {
-                    var animation = this._create(elements, key, options, functionality), current = animation.current;
+                    var animation = this._create(elements, key, options, functionality);
+                    var current = animation.current;
                     animation.previous.then(function () {
                         requestAnimationFrameGlobal(function () {
                             current.start();
@@ -10714,8 +12396,12 @@ var plat;
                  */
                 Animator.prototype._create = function (elements, key, options, functionality) {
                     var _this = this;
-                    var animationInjector = animationInjectors[key], animationInstances = [], elementNodes = [], immediateResolve;
-                    if (!this._compat.animationSupported || isUndefined(animationInjector)) {
+                    var animationInjector = animationInjectors[key];
+                    var animationInstances = [];
+                    var elementNodes = [];
+                    var immediateResolve;
+                    if (!this._compat.animationSupported ||
+                        isUndefined(animationInjector)) {
                         animationInjector = jsAnimationInjectors[key];
                         if (isUndefined(animationInjector)) {
                             elements = this.__constructAnimatableElements(elements, { inject: noop }, elementNodes, animationInstances);
@@ -10723,7 +12409,10 @@ var plat;
                             this._handlePostInitFunctionality(elements, elementNodes, functionality);
                             this._handleEndFunctionality(elements, elementNodes, functionality);
                             immediateResolve = this.resolve();
-                            return { previous: immediateResolve, current: immediateResolve };
+                            return {
+                                previous: immediateResolve,
+                                current: immediateResolve,
+                            };
                         }
                     }
                     elements = this.__constructAnimatableElements(elements, animationInjector, elementNodes, animationInstances);
@@ -10733,27 +12422,39 @@ var plat;
                         this._handlePostInitFunctionality(elements, elementNodes, functionality);
                         this._handleEndFunctionality(elements, elementNodes, functionality);
                         immediateResolve = this.resolve();
-                        return { previous: immediateResolve, current: immediateResolve };
+                        return {
+                            previous: immediateResolve,
+                            current: immediateResolve,
+                        };
                     }
                     this._handlePreInitFunctionality(elements, elementNodes, functionality);
-                    var id = uniqueId('animation_'), previousAnimations = this.__setAnimationId(id, elementNodes), previousPromise, animationPromise = new AnimationPromise(function (resolve) {
+                    var id = uniqueId('animation_');
+                    var previousAnimations = this.__setAnimationId(id, elementNodes);
+                    var previousPromise;
+                    var animationPromise = new AnimationPromise(function (resolve) {
                         var _Promise = _this._Promise;
-                        previousPromise = _Promise.all(previousAnimations).then(function () {
+                        previousPromise = _Promise
+                            .all(previousAnimations)
+                            .then(function () {
                             var animationPromises = [];
-                            for (var i = 0; i < length; ++i) {
+                            for (var i = 0; i < length; i += 1) {
                                 animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
                             }
                             _this._handlePostInitFunctionality(elements, elementNodes, functionality);
-                            var animationsFinished = _Promise.all(animationPromises), animatingParentId = _this.__isParentAnimating(elementNodes), animatedElement = _this.__generateAnimatedElement(id, elementNodes, animationPromise);
+                            var animationsFinished = _Promise.all(animationPromises);
+                            var animatingParentId = _this.__isParentAnimating(elementNodes);
+                            var animatedElement = _this.__generateAnimatedElement(id, elementNodes, animationPromise);
                             if (!isNull(animatingParentId)) {
                                 _this._handleEndFunctionality(elements, elementNodes, functionality);
                                 animatedElement.animationEnd(true);
-                                var parent_1 = _this._animatedElements[animatingParentId], resolvedPromise_1 = isPromise(parent_1.promise) ?
-                                    function () {
+                                var parent_1 = _this._animatedElements[animatingParentId];
+                                var resolvedPromise_1 = isPromise(parent_1.promise)
+                                    ? function () {
                                         return parent_1.promise;
-                                    } : function () {
-                                    return animationPromise;
-                                };
+                                    }
+                                    : function () {
+                                        return animationPromise;
+                                    };
                                 animationsFinished.then(function () {
                                     resolve(resolvedPromise_1);
                                 });
@@ -10770,7 +12471,10 @@ var plat;
                         });
                     });
                     animationPromise.initialize(animationInstances);
-                    return { previous: previousPromise, current: animationPromise };
+                    return {
+                        previous: previousPromise,
+                        current: animationPromise,
+                    };
                 };
                 /**
                  * Handles different specialized functionalities immediately before the init portion of the animation cycle.
@@ -10781,12 +12485,11 @@ var plat;
                 Animator.prototype._handlePreInitFunctionality = function (nodes, elementNodes, functionality) {
                     switch (functionality.key) {
                         case 'move':
-                            for (var i = 0; i < length; ++i) {
+                            for (var i = 0; i < length; i += 1) {
                                 removeNode(nodes[i]);
                             }
                             break;
                         default:
-                            break;
                     }
                 };
                 /**
@@ -10796,11 +12499,13 @@ var plat;
                  * @param {plat.ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
                  */
                 Animator.prototype._handlePostInitFunctionality = function (nodes, elementNodes, functionality) {
-                    var length, i;
+                    var length;
+                    var i;
                     switch (functionality.key) {
                         case 'enter':
                         case 'move':
-                            var refChild = functionality.refChild, parent_2;
+                            var refChild = functionality.refChild;
+                            var parent_2;
                             if (isNode(refChild)) {
                                 parent_2 = refChild.parentNode;
                             }
@@ -10812,18 +12517,17 @@ var plat;
                                 break;
                             }
                             length = nodes.length;
-                            for (i = 0; i < length; ++i) {
+                            for (i = 0; i < length; i += 1) {
                                 parent_2.insertBefore(nodes[i], refChild);
                             }
                             break;
                         case 'show':
                             length = elementNodes.length;
-                            for (i = 0; i < length; ++i) {
+                            for (i = 0; i < length; i += 1) {
                                 elementNodes[i].removeAttribute(__Hide);
                             }
                             break;
                         default:
-                            break;
                     }
                 };
                 /**
@@ -10833,22 +12537,22 @@ var plat;
                  * @param {plat.ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
                  */
                 Animator.prototype._handleEndFunctionality = function (nodes, elementNodes, functionality) {
-                    var length, i;
+                    var length;
+                    var i;
                     switch (functionality.key) {
                         case 'leave':
                             length = nodes.length;
-                            for (i = 0; i < length; ++i) {
+                            for (i = 0; i < length; i += 1) {
                                 removeNode(nodes[i]);
                             }
                             break;
                         case 'hide':
                             length = elementNodes.length;
-                            for (i = 0; i < length; ++i) {
+                            for (i = 0; i < length; i += 1) {
                                 elementNodes[i].setAttribute(__Hide, '');
                             }
                             break;
                         default:
-                            break;
                     }
                 };
                 /**
@@ -10857,8 +12561,13 @@ var plat;
                  * @param {Array<Element>} elements The Array of Elements being animated.
                  */
                 Animator.prototype.__setAnimationId = function (id, elements) {
-                    var animatedElements = this._animatedElements, animatedElement, _plat, promises = [], length = elements.length, element;
-                    for (var i = 0; i < length; ++i) {
+                    var animatedElements = this._animatedElements;
+                    var animatedElement;
+                    var _plat;
+                    var promises = [];
+                    var length = elements.length;
+                    var element;
+                    for (var i = 0; i < length; i += 1) {
                         element = elements[i];
                         _plat = element.__plat;
                         if (isUndefined(_plat)) {
@@ -10888,16 +12597,23 @@ var plat;
                  * @param {plat.ui.animations.AnimationPromise} animationPromise The animation's associated promise.
                  */
                 Animator.prototype.__generateAnimatedElement = function (id, elements, animationPromise) {
-                    var animatedElements = this._animatedElements, removeListener = function (cancel) {
-                        var _plat, element, length = elements.length, animationId;
+                    var animatedElements = this._animatedElements;
+                    var removeListener = function (cancel) {
+                        var _plat;
+                        var element;
+                        var length = elements.length;
+                        var animationId;
                         if (cancel === true) {
                             animationPromise.cancel();
                             deleteProperty(animatedElements, id);
                             return;
                         }
-                        for (var i = 0; i < length; ++i) {
+                        for (var i = 0; i < length; i += 1) {
                             element = elements[i];
-                            _plat = element.__plat || {};
+                            _plat = element.__plat;
+                            if (!isObject(_plat)) {
+                                _plat = {};
+                            }
                             animationId = _plat.animation;
                             if (isUndefined(animationId) || animationId !== id) {
                                 continue;
@@ -10910,20 +12626,26 @@ var plat;
                         }
                         deleteProperty(animatedElements, id);
                     };
-                    return animatedElements[id] = {
-                        animationEnd: removeListener
-                    };
+                    return (animatedElements[id] = {
+                        animationEnd: removeListener,
+                    });
                 };
                 /**
                  * Checks whether or not any parent elements are animating.
                  * @param {Array<Element>} elements The Elements whose parents we need to check.
                  */
                 Animator.prototype.__isParentAnimating = function (elements) {
-                    var animationId, element = elements[0];
-                    while (!(isDocument(element = element.parentNode) || isNull(element) || element.nodeType !== Node.ELEMENT_NODE)) {
+                    var animationId;
+                    var element = elements[0];
+                    while (!(isDocument((element = element.parentNode)) ||
+                        isNull(element) ||
+                        element.nodeType !== Node.ELEMENT_NODE)) {
                         if (hasClass(element, __Animating)) {
                             var _plat = element.__plat;
-                            animationId = (_plat || {}).animation;
+                            if (!isObject(_plat)) {
+                                _plat = {};
+                            }
+                            animationId = _plat.animation;
                             if (isString(animationId)) {
                                 if (!isNull(this._animatedElements[animationId])) {
                                     return animationId;
@@ -10942,16 +12664,28 @@ var plat;
                  * @param {Element} element The element being animated.
                  */
                 Animator.prototype.__stopChildAnimations = function (elements) {
-                    var animatingElements = this._animatedElements, slice = Array.prototype.slice, customAnimationElements, animatedElement, _plat, id;
-                    for (var i = 0; i < elements.length; ++i) {
-                        customAnimationElements = slice.call(elements[i].querySelectorAll('.' + __Animating));
+                    var animatingElements = this._animatedElements;
+                    var slice = Array.prototype.slice;
+                    var customAnimationElements;
+                    var animatedElement;
+                    var _plat;
+                    var id;
+                    var length = elements.length;
+                    for (var i = 0; i < length; i += 1) {
+                        customAnimationElements = slice.call(elements[i].querySelectorAll("." + __Animating));
                         while (customAnimationElements.length > 0) {
-                            _plat = customAnimationElements.pop().__plat || {};
+                            _plat = customAnimationElements.pop().__plat;
+                            if (!isObject(_plat)) {
+                                _plat = {};
+                            }
                             id = _plat.animation;
                             if (isNull(id)) {
                                 continue;
                             }
-                            animatedElement = animatingElements[id] || {};
+                            animatedElement = animatingElements[id];
+                            if (!isObject(animatedElement)) {
+                                animatedElement = {};
+                            }
                             if (isFunction(animatedElement.animationEnd)) {
                                 animatedElement.animationEnd(true);
                             }
@@ -10975,15 +12709,17 @@ var plat;
                         else if (isArrayLike(elements)) {
                             elements = Array.prototype.slice.call(elements);
                         }
-                        else if (!(isNode(elements) && elements.nodeType === Node.ELEMENT_NODE)) {
+                        else if (!(isNode(elements) &&
+                            elements.nodeType === Node.ELEMENT_NODE)) {
                             return [];
                         }
                         else {
                             elements = [elements];
                         }
                     }
-                    var length = elements.length, element;
-                    for (var i = 0; i < length; ++i) {
+                    var length = elements.length;
+                    var element;
+                    for (var i = 0; i < length; i += 1) {
                         element = elements[i];
                         if (isNode(element) && element.nodeType === Node.ELEMENT_NODE) {
                             elementNodes.push(element);
@@ -10995,7 +12731,7 @@ var plat;
                 Animator._inject = {
                     _compat: __Compat,
                     _Promise: __Promise,
-                    _document: __Document
+                    _document: __Document,
                 };
                 return Animator;
             }());
@@ -11004,11 +12740,17 @@ var plat;
             /**
              * Describes a type of Promise that can be optionally cancelled.
              * Further, in the case where it may have a parent that is animating (which will cause it to immediately cancel and fulfill
-             * itself, it resolves with a IGetAnimatingThenable for acccessing
+             * itself, it resolves with a IGetAnimatingThenable for accessing
              * the IAnimationThenable of the animating parent element.
              */
             var AnimationPromise = /** @class */ (function (_super) {
                 __extends(AnimationPromise, _super);
+                /**
+                 * The constructor method for the {@link plat.async.AjaxPromise}.
+                 * @param {(resolve: (value?: plat.ui.animations.IParentAnimationFn) => any) => void} resolveFunction A resolve function
+                 * that only allows for a resolve of void and no reject.
+                 * @param {any} promise? The promise object to allow for cancelling the {@link plat.ui.animations.AnimationPromise}.
+                 */
                 function AnimationPromise(resolveFunction, promise) {
                     var _this = _super.call(this, resolveFunction) || this;
                     /**
@@ -11030,13 +12772,20 @@ var plat;
                     }
                     return _this;
                 }
+                /**
+                 * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
+                 * @param {Array<plat.ui.animations.IAnimationEssentials>} instances The animation instances or
+                 * animation promises for this promise.
+                 */
                 AnimationPromise.prototype.initialize = function (instances) {
                     if (isEmpty(this.__animationInstances)) {
                         if (isArray(instances)) {
                             this.__animationInstances = instances;
                         }
                         else if (isObject(instances)) {
-                            this.__animationInstances = [instances];
+                            this.__animationInstances = [
+                                instances,
+                            ];
                         }
                     }
                 };
@@ -11053,8 +12802,10 @@ var plat;
                     if (this.__animationState > 0) {
                         return;
                     }
-                    var animationInstances = this.__animationInstances, animationInstance, length = animationInstances.length;
-                    for (var i = 0; i < length; ++i) {
+                    var animationInstances = this.__animationInstances;
+                    var animationInstance;
+                    var length = animationInstances.length;
+                    for (var i = 0; i < length; i += 1) {
                         animationInstance = animationInstances[i];
                         if (isFunction(animationInstance.start)) {
                             animationInstance.start();
@@ -11069,8 +12820,11 @@ var plat;
                     if (this.__animationState !== 1) {
                         return this._Promise.resolve();
                     }
-                    var animationInstances = this.__animationInstances, pausePromises = [], animationInstance, length = animationInstances.length;
-                    for (var i = 0; i < length; ++i) {
+                    var animationInstances = this.__animationInstances;
+                    var pausePromises = [];
+                    var animationInstance;
+                    var length = animationInstances.length;
+                    for (var i = 0; i < length; i += 1) {
                         animationInstance = animationInstances[i];
                         if (isFunction(animationInstance.pause)) {
                             pausePromises.push(animationInstance.pause());
@@ -11085,8 +12839,11 @@ var plat;
                     if (this.__animationState !== 1) {
                         return this._Promise.resolve();
                     }
-                    var animationInstances = this.__animationInstances, resumePromises = [], animationInstance, length = animationInstances.length;
-                    for (var i = 0; i < length; ++i) {
+                    var animationInstances = this.__animationInstances;
+                    var resumePromises = [];
+                    var animationInstance;
+                    var length = animationInstances.length;
+                    for (var i = 0; i < length; i += 1) {
                         animationInstance = animationInstances[i];
                         if (isFunction(animationInstance.resume)) {
                             resumePromises.push(animationInstance.resume());
@@ -11101,8 +12858,10 @@ var plat;
                     if (this.__animationState === 2) {
                         return this;
                     }
-                    var animationInstances = this.__animationInstances, animationInstance, length = animationInstances.length;
-                    for (var i = 0; i < length; ++i) {
+                    var animationInstances = this.__animationInstances;
+                    var animationInstance;
+                    var length = animationInstances.length;
+                    for (var i = 0; i < length; i += 1) {
                         animationInstance = animationInstances[i];
                         if (isFunction(animationInstance.cancel)) {
                             animationInstance.cancel();
@@ -11120,9 +12879,20 @@ var plat;
                 AnimationPromise.prototype.isCanceled = function () {
                     return this.__animationState === 2;
                 };
-                AnimationPromise.prototype.then = function (onFulfilled) {
+                /**
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.Promise<U>} onFulfilled
+                 * A method called when/if the promise fulfills.
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 */
+                AnimationPromise.prototype.then = function (onFulfilled, onRejected) {
                     return _super.prototype.then.call(this, onFulfilled);
                 };
+                /**
+                 * A wrapper method for Promise.then(undefined, onRejected);
+                 * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+                 * onRejected method in the promise chain will be called.
+                 */
                 AnimationPromise.prototype.catch = function (onRejected) {
                     return _super.prototype.catch.call(this, onRejected);
                 };
@@ -11196,7 +12966,8 @@ var plat;
                     var removeListener = this.dom.addEventListener(this.element, type, function (ev) {
                         ev.stopPropagation();
                         listener(ev);
-                    }, useCapture), eventListeners = this.__eventListeners;
+                    }, useCapture);
+                    var eventListeners = this.__eventListeners;
                     eventListeners.push(removeListener);
                     return function () {
                         removeListener();
@@ -11229,7 +13000,7 @@ var plat;
                     _log: __Log,
                     _Promise: __Promise,
                     dom: __Dom,
-                    utils: __Utils
+                    utils: __Utils,
                 };
                 return BaseAnimation;
             }());
@@ -11244,7 +13015,8 @@ var plat;
                     /**
                      * A set of browser compatible CSS animation events capable of being listened to.
                      */
-                    _this._animationEvents = _this._compat.animationEvents;
+                    _this._animationEvents = _this._compat
+                        .animationEvents;
                     return _this;
                 }
                 /**
@@ -11315,16 +13087,24 @@ var plat;
                 SimpleCssAnimation.prototype.start = function () {
                     var _this = this;
                     this._cancelAnimation = requestAnimationFrameGlobal(function () {
-                        var element = _this.element, className = _this.className;
+                        var element = _this.element;
+                        var className = _this.className;
                         if (element.offsetParent === null) {
                             _this._dispose();
                             _this.end();
                             return;
                         }
                         addClass(element, className);
-                        var animationId = _this._animationEvents.$animation, options = _this.options || {}, computedStyle = _this._window.getComputedStyle(element, options.pseudo), animationName = computedStyle[(animationId + 'Name')];
-                        if (animationName === '' || animationName === 'none' ||
-                            computedStyle[(animationId + 'PlayState')] === 'paused') {
+                        var animationId = _this._animationEvents.$animation;
+                        var options = _this.options;
+                        if (!isObject(options)) {
+                            options = {};
+                        }
+                        var computedStyle = _this._window.getComputedStyle(element, options.pseudo);
+                        var animationName = computedStyle[animationId + "Name"];
+                        if (animationName === '' ||
+                            animationName === 'none' ||
+                            computedStyle[animationId + "PlayState"] === 'paused') {
                             _this._dispose();
                             _this.end();
                             return;
@@ -11352,7 +13132,8 @@ var plat;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
                             if (_this._cancelAnimation !== noop) {
-                                _this.element.style[(animationEvents.$animation + 'PlayState')] = 'paused';
+                                _this.element.style[animationEvents.$animation + "PlayState"] =
+                                    'paused';
                             }
                             resolve();
                         });
@@ -11370,7 +13151,8 @@ var plat;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
                             if (_this._cancelAnimation !== noop) {
-                                _this.element.style[(animationEvents.$animation + 'PlayState')] = 'running';
+                                _this.element.style[animationEvents.$animation + "PlayState"] =
+                                    'running';
                             }
                             resolve();
                         });
@@ -11390,7 +13172,7 @@ var plat;
                  */
                 SimpleCssAnimation.prototype._dispose = function () {
                     var className = this.className;
-                    removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
+                    removeClass(this.element, className + " " + className + __INIT_SUFFIX);
                     this._cancelAnimation = noop;
                 };
                 return SimpleCssAnimation;
@@ -11541,7 +13323,8 @@ var plat;
                 SimpleCssTransition.prototype.start = function () {
                     var _this = this;
                     this._animationCanceled = requestAnimationFrameGlobal(function () {
-                        var element = _this.element, className = _this.className;
+                        var element = _this.element;
+                        var className = _this.className;
                         if (element.offsetParent === null) {
                             _this._animate();
                             _this._dispose();
@@ -11549,8 +13332,21 @@ var plat;
                         }
                         addClass(element, className);
                         _this._started = true;
-                        var utils = _this.utils, transitionId = _this._animationEvents.$transition, options = _this.options || {}, computedStyle = _this._window.getComputedStyle(element, options.pseudo), properties = _this._properties = computedStyle[(transitionId + 'Property')].split(','), durations = computedStyle[(transitionId + 'Duration')].split(','), length = properties.length, propLength = length, noTransition = false, prop;
-                        while (length-- > 0) {
+                        var utils = _this.utils;
+                        var transitionId = _this._animationEvents.$transition;
+                        var options = _this.options;
+                        if (!isObject(options)) {
+                            options = {};
+                        }
+                        var computedStyle = _this._window.getComputedStyle(element, options.pseudo);
+                        var properties = (_this._properties = computedStyle[transitionId + "Property"].split(','));
+                        var durations = computedStyle[transitionId + "Duration"].split(',');
+                        var length = properties.length;
+                        var propLength = length;
+                        var noTransition = false;
+                        var prop;
+                        while (length > 0) {
+                            length -= 1;
                             prop = properties[length];
                             if (prop === '' || prop === 'none') {
                                 properties.splice(length, 1);
@@ -11567,7 +13363,8 @@ var plat;
                         }
                         else {
                             length = durations.length;
-                            while (length-- > 0) {
+                            while (length > 0) {
+                                length -= 1;
                                 prop = durations[length];
                                 if (!(prop === '' || prop === '0s')) {
                                     break;
@@ -11617,7 +13414,7 @@ var plat;
                  */
                 SimpleCssTransition.prototype._dispose = function () {
                     var className = this.className;
-                    removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
+                    removeClass(this.element, className + " " + className + __INIT_SUFFIX);
                     this._animationCanceled = noop;
                 };
                 /**
@@ -11629,10 +13426,14 @@ var plat;
                 SimpleCssTransition.prototype._done = function (ev) {
                     var propertyName = ev.propertyName;
                     if (isString(propertyName)) {
-                        var count = ++this._transitionCount;
-                        propertyName = propertyName.replace(this._normalizeRegex, '').toLowerCase();
-                        if ((count < this._count) ||
-                            (!this._usingCss && this._normalizedKeys[propertyName] === true &&
+                        this._transitionCount += 1;
+                        var count = this._transitionCount;
+                        propertyName = propertyName
+                            .replace(this._normalizeRegex, '')
+                            .toLowerCase();
+                        if (count < this._count ||
+                            (!this._usingCss &&
+                                this._normalizedKeys[propertyName] === true &&
                                 count < this._properties.length)) {
                             return;
                         }
@@ -11644,18 +13445,37 @@ var plat;
                  * Animate the element based on the options passed in.
                  */
                 SimpleCssTransition.prototype._animate = function () {
-                    var style = this.element.style || {}, properties = (this.options || {}).properties || {}, keys = Object.keys(properties), length = keys.length, key, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, currentProperty, newProperty, unchanged = 0;
+                    var normalizedKeys = this._normalizedKeys;
+                    var normalizeRegex = this._normalizeRegex;
+                    var options = this.options;
+                    if (!isObject(options)) {
+                        options = {};
+                    }
+                    var properties = this.options.properties;
+                    if (!isObject(properties)) {
+                        properties = {};
+                    }
+                    var keys = Object.keys(properties);
+                    var length = keys.length;
+                    var key;
+                    var currentProperty;
+                    var newProperty;
+                    var unchanged = 0;
+                    var style = this.element.style;
+                    if (!isObject(style)) {
+                        style = {};
+                    }
                     while (keys.length > 0) {
                         key = keys.shift();
                         currentProperty = style[key];
                         newProperty = properties[key];
                         if (!isString(newProperty)) {
-                            unchanged++;
+                            unchanged += 1;
                             continue;
                         }
                         style[key] = newProperty;
                         if (currentProperty === style[key]) {
-                            unchanged++;
+                            unchanged += 1;
                         }
                         else {
                             normalizedKeys[key.replace(normalizeRegex, '').toLowerCase()] = true;
@@ -11664,48 +13484,14 @@ var plat;
                     return unchanged < length;
                 };
                 /**
-                 * Handles element transitions that are defined with CSS.
-                 * @param {CSSStyleDeclaration} computedStyle The computed style of the
-                 * element.
-                 * @param {Array<string>} durations The array of declared transition duration values.
-                 */
-                SimpleCssTransition.prototype.__cssTransition = function (computedStyle, durations) {
-                    var _this = this;
-                    var transitionId = this._animationEvents.$transition, delays = computedStyle[(transitionId + 'Delay')].split(','), properties = this._properties, property, duration, delay, length = properties.length, computedProperty, normalizedKeys = this._normalizedKeys, normalizeRegex = this._normalizeRegex, i = 0, count = 0, changed = false, defer = this.utils.defer.bind(this, function (prop, computedProp) {
-                        if (_this._animationCanceled === noop) {
-                            // disposal has already occurred 
-                            return;
-                        }
-                        else if (prop === 'all' || computedStyle[prop] !== computedProp) {
-                            // we can't know if the transition started due to 'all' being set and have to rely on this.options.count 
-                            // or 
-                            // we know the transition started due to the properties being different 
-                            changed = true;
-                        }
-                        if (++count < length || changed) {
-                            return;
-                        }
-                        _this._dispose();
-                        _this.end();
-                    });
-                    this._usingCss = true;
-                    this._count = this._count || length;
-                    for (; i < length; ++i) {
-                        property = properties[i] = properties[i].trim();
-                        duration = durations.length > i ? durations[i].trim() : durations[durations.length - 1].trim();
-                        delay = delays.length > i ? delays[i].trim() : delays[delays.length - 1].trim();
-                        normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
-                        computedProperty = computedStyle[property];
-                        defer(this._toMs(duration) + this._toMs(delay), [property, computedProperty]);
-                    }
-                };
-                /**
                  * A function that converts a string value expressed as either seconds or milliseconds
                  * to a numerical millisecond value.
                  * @param {string} duration The transition duration specified by the computed style.
                  */
                 SimpleCssTransition.prototype._toMs = function (duration) {
-                    var regex = this._nonNumRegex, units = duration.match(regex)[0], time = Number(duration.replace(regex, ''));
+                    var regex = this._nonNumRegex;
+                    var units = duration.match(regex)[0];
+                    var time = Number(duration.replace(regex, ''));
                     if (!this.utils.isNumber(time)) {
                         return 0;
                     }
@@ -11716,6 +13502,68 @@ var plat;
                         return time;
                     }
                     return 0;
+                };
+                /**
+                 * Handles element transitions that are defined with CSS.
+                 * @param {CSSStyleDeclaration} computedStyle The computed style of the
+                 * element.
+                 * @param {Array<string>} durations The array of declared transition duration values.
+                 */
+                SimpleCssTransition.prototype.__cssTransition = function (computedStyle, durations) {
+                    var _this = this;
+                    var transitionId = this._animationEvents.$transition;
+                    var delays = computedStyle[transitionId + "Delay"].split(',');
+                    var properties = this._properties;
+                    var length = properties.length;
+                    var normalizedKeys = this._normalizedKeys;
+                    var normalizeRegex = this._normalizeRegex;
+                    var i = 0;
+                    var count = 0;
+                    var changed = false;
+                    var computedProperty;
+                    var property;
+                    var duration;
+                    var delay;
+                    var defer = this.utils.defer.bind(this, function (prop, computedProp) {
+                        if (_this._animationCanceled === noop) {
+                            // disposal has already occurred 
+                            return;
+                        }
+                        else if (prop === 'all' ||
+                            computedStyle[prop] !== computedProp) {
+                            // we can't know if the transition started due to 'all' being set and have to rely on this.options.count 
+                            // or 
+                            // we know the transition started due to the properties being different 
+                            changed = true;
+                        }
+                        count += 1;
+                        if (count < length || changed) {
+                            return;
+                        }
+                        _this._dispose();
+                        _this.end();
+                    });
+                    this._usingCss = true;
+                    if (!isFinite(this._count) || this._count === 0) {
+                        this._count = length;
+                    }
+                    for (; i < length; i += 1) {
+                        property = properties[i] = properties[i].trim();
+                        duration =
+                            durations.length > i
+                                ? durations[i].trim()
+                                : durations[durations.length - 1].trim();
+                        delay =
+                            delays.length > i
+                                ? delays[i].trim()
+                                : delays[delays.length - 1].trim();
+                        normalizedKeys[property.replace(normalizeRegex, '').toLowerCase()] = true;
+                        computedProperty = computedStyle[property];
+                        defer(this._toMs(duration) + this._toMs(delay), [
+                            property,
+                            computedProperty,
+                        ]);
+                    }
                 };
                 return SimpleCssTransition;
             }(CssAnimation));
@@ -11743,7 +13591,9 @@ var plat;
                  * router.
                  */
                 Viewport.prototype.initialize = function () {
-                    var router = this._router = this._Router.currentRouter(), parentViewport = this._getParentViewport(), parentRouter;
+                    var router = (this._router = this._Router.currentRouter());
+                    var parentViewport = this._getParentViewport();
+                    var parentRouter;
                     if (!(isNull(parentViewport) || isNull(parentViewport._router))) {
                         parentRouter = this._parentRouter = parentViewport._router;
                         parentRouter.addChild(router);
@@ -11756,11 +13606,14 @@ var plat;
                  */
                 Viewport.prototype.loaded = function () {
                     var _this = this;
-                    var animate = this._animate = isObject(this.options) && this.options.value.animate === true;
+                    var animate = (this._animate =
+                        isObject(this.options) && this.options.value.animate === true);
                     if (animate) {
-                        this.dom.addClass(this.element, __Viewport + '-animate');
+                        this.dom.addClass(this.element, __Viewport + "-animate");
                     }
-                    this._Promise.resolve(this._router.finishNavigating).then(function () {
+                    this._Promise
+                        .resolve(this._router.finishNavigating)
+                        .then(function () {
                         _this._router.register(_this);
                     });
                 };
@@ -11773,7 +13626,13 @@ var plat;
                  */
                 Viewport.prototype.canNavigateTo = function (routeInfo) {
                     var _this = this;
-                    var getRouter = this._Router.currentRouter, currentRouter = getRouter(), response = true, injector = this._Injector.getDependency(routeInfo.delegate.view), view = injector.inject(), parameters = routeInfo.parameters, nextRouter = getRouter();
+                    var getRouter = this._Router.currentRouter;
+                    var currentRouter = getRouter();
+                    var response = true;
+                    var injector = this._Injector.getDependency(routeInfo.delegate.view);
+                    var view = injector.inject();
+                    var parameters = routeInfo.parameters;
+                    var nextRouter = getRouter();
                     if (!isObject(view)) {
                         return this._Promise.resolve(null);
                     }
@@ -11789,7 +13648,9 @@ var plat;
                     if (isFunction(view.canNavigateTo)) {
                         response = view.canNavigateTo(parameters, routeInfo.query);
                     }
-                    return this._Promise.resolve(response).then(function (canNavigateTo) {
+                    return this._Promise
+                        .resolve(response)
+                        .then(function (canNavigateTo) {
                         _this._nextInjector = injector;
                         _this._nextView = view;
                         return canNavigateTo;
@@ -11801,7 +13662,8 @@ var plat;
                  * ask it if it is safe to navigate from its current state.
                  */
                 Viewport.prototype.canNavigateFrom = function () {
-                    var view = this.controls[0], response = true;
+                    var view = this.controls[0];
+                    var response = true;
                     if (isObject(view) && isFunction(view.canNavigateFrom)) {
                         response = view.canNavigateFrom();
                     }
@@ -11815,10 +13677,20 @@ var plat;
                  * the view and feed it the route parameters/query.
                  */
                 Viewport.prototype.navigateTo = function (routeInfo) {
-                    var injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view), nodeMap = this._createNodeMap(injector), element = this.element, node = nodeMap.element, parameters = routeInfo.parameters, query = routeInfo.query, control = nodeMap.uiControlNode.control;
+                    var injector = this._nextInjector;
+                    if (!isObject(injector)) {
+                        injector = this._Injector.getDependency(routeInfo.delegate.view);
+                    }
+                    var nodeMap = this._createNodeMap(injector);
+                    var element = this.element;
+                    var node = nodeMap.element;
+                    var parameters = routeInfo.parameters;
+                    var query = routeInfo.query;
+                    var control = nodeMap.uiControlNode.control;
                     this._nextInjector = this._nextView = undefined;
                     if (this._animate) {
-                        var animator = this._animator, dom_1 = this.dom;
+                        var animator = this._animator;
+                        var dom_1 = this.dom;
                         if (this._navigator.isBackNavigation()) {
                             dom_1.addClass(node, __NavigatingBack);
                             animator.enter(node, __Enter, element).then(function () {
@@ -11832,7 +13704,8 @@ var plat;
                     else {
                         element.insertBefore(node, null);
                     }
-                    var viewportManager = this._managerCache.read(this.uid), manager = this._ElementManagerFactory.getInstance();
+                    var viewportManager = this._managerCache.read(this.uid);
+                    var manager = this._ElementManagerFactory.getInstance();
                     viewportManager.children = [];
                     manager.initialize(nodeMap, viewportManager);
                     if (isFunction(control.navigatedTo)) {
@@ -11850,24 +13723,28 @@ var plat;
                  */
                 Viewport.prototype.navigateFrom = function () {
                     var _this = this;
-                    var view = this.controls[0], promise, viewExists = isObject(view);
+                    var view = this.controls[0];
+                    var promise;
+                    var viewExists = isObject(view);
                     if (viewExists && isFunction(view.navigatingFrom)) {
                         promise = this._Promise.resolve(view.navigatingFrom());
                     }
                     else {
                         promise = this._Promise.resolve();
                     }
-                    return promise.catch(function (error) {
+                    return promise
+                        .catch(function (error) {
                         if (isObject(error)) {
                             if (isString(error.message)) {
-                                _this._log.debug(_this.type + ' error: ' + error.message);
+                                _this._log.debug(_this.type + " error: " + error.message);
                                 return;
                             }
-                            _this._log.debug(_this.type + ' error: ' + JSON.stringify(error));
+                            _this._log.debug(_this.type + " error: " + JSON.stringify(error));
                             return;
                         }
                         _this._log.debug(error);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         if (!(_this._animate && viewExists)) {
                             Control.dispose(view);
                             return;
@@ -11894,8 +13771,16 @@ var plat;
                  * @param {plat.dependency.Injector<plat.ui.ViewControl>} The injector used to instantiate the ViewControl.
                  */
                 Viewport.prototype._createNodeMap = function (injector) {
-                    var control = this._nextView || injector.inject(), doc = this._document, type = injector.name, replaceWith = control.replaceWith, node = (isEmpty(replaceWith) || replaceWith === 'any') ?
-                        doc.createElement('div') : doc.createElement(replaceWith);
+                    var control = this._nextView;
+                    if (!isObject(control)) {
+                        control = injector.inject();
+                    }
+                    var doc = this._document;
+                    var type = injector.name;
+                    var replaceWith = control.replaceWith;
+                    var node = isEmpty(replaceWith) || replaceWith === 'any'
+                        ? doc.createElement('div')
+                        : doc.createElement(replaceWith);
                     node.setAttribute(__Control, type);
                     node.className = __ViewControl;
                     return {
@@ -11906,8 +13791,8 @@ var plat;
                             control: control,
                             nodeName: type,
                             expressions: [],
-                            injector: injector
-                        }
+                            injector: injector,
+                        },
                     };
                 };
                 /**
@@ -11915,7 +13800,8 @@ var plat;
                  * router as a child of the parent viewport's router.
                  */
                 Viewport.prototype._getParentViewport = function () {
-                    var viewport = this.parent, type = this.type;
+                    var viewport = this.parent;
+                    var type = this.type;
                     while (!isNull(viewport) && viewport.type !== type) {
                         viewport = viewport.parent;
                     }
@@ -11929,7 +13815,7 @@ var plat;
                     _document: __Document,
                     _managerCache: __ManagerCache,
                     _animator: __Animator,
-                    _navigator: __NavigatorInstance
+                    _navigator: __NavigatorInstance,
                 };
                 return Viewport;
             }(TemplateControl));
@@ -11963,9 +13849,17 @@ var plat;
                  * Initializes the creation of the template.
                  */
                 Template.prototype.initialize = function () {
-                    var optionsObj = this.options || {}, options = optionsObj.value || {}, id = this._id = options.id;
+                    var optionsObj = this.options;
+                    if (!isObject(optionsObj)) {
+                        optionsObj = {};
+                    }
+                    var options = optionsObj.value;
+                    if (!isObject(options)) {
+                        options = {};
+                    }
+                    var id = (this._id = options.id);
                     if (isNull(id)) {
-                        this._log.warn(this.type + ' instantiated without an id option');
+                        this._log.warn(this.type + " instantiated without an id option");
                         return;
                     }
                     this._url = options.templateUrl;
@@ -12009,7 +13903,9 @@ var plat;
                     if (isNull(id)) {
                         return;
                     }
-                    var parentNode = this.endNode.parentNode, url = this._url, template;
+                    var parentNode = this.endNode.parentNode;
+                    var url = this._url;
+                    var template;
                     if (!isNull(url)) {
                         template = this._templateCache.read(url);
                         clearNodeBlock(this.elementNodes, parentNode);
@@ -12021,12 +13917,14 @@ var plat;
                     this.elementNodes = [];
                     var controlPromise;
                     if (isPromise(template)) {
-                        controlPromise = template.catch(function (error) {
+                        controlPromise = template
+                            .catch(function (error) {
                             if (isNull(error)) {
                                 return TemplateControl.determineTemplate(_this, url);
                             }
-                        }).then(function (template) {
-                            _this.bindableTemplates.add(id, template.cloneNode(true));
+                        })
+                            .then(function (fragment) {
+                            _this.bindableTemplates.add(id, fragment.cloneNode(true));
                             return _this;
                         });
                     }
@@ -12040,7 +13938,7 @@ var plat;
                  * Waits for the template promise to resolve, then initializes
                  * the binding of the bindable template and places it into the
                  * DOM.
-                 * @param {plat.async.IThenable<plat.ui.controls.Template>} templatePromise The promise
+                 * @param {plat.async.Promise<plat.ui.controls.Template>} templatePromise The promise
                  * associated with the first instance of the control with this ID.
                  */
                 Template.prototype._waitForTemplateControl = function (templatePromise) {
@@ -12048,21 +13946,22 @@ var plat;
                     if (!isPromise(templatePromise)) {
                         return;
                     }
-                    templatePromise.then(function (templateControl) {
-                        if (!(isNull(_this._url) || (_this._url === templateControl._url))) {
-                            _this._log.warn('The specified url: ' + _this._url +
-                                ' does not match the original ' + _this.type + ' with id: ' +
-                                '"' + _this._id + '". The original url will be loaded.');
+                    templatePromise
+                        .then(function (templateControl) {
+                        if (!(isNull(_this._url) ||
+                            _this._url === templateControl._url)) {
+                            _this._log.warn("The specified url: " + _this._url + " should match " + _this.type + " with id: \"" + _this._id + "\". Loading original url.");
                         }
                         _this.__mapBindableTemplates(templateControl);
                         return _this.bindableTemplates.bind(_this._id);
-                    }).then(function (clone) {
+                    })
+                        .then(function (clone) {
                         var endNode = _this.endNode;
                         insertBefore(endNode.parentNode, clone, endNode);
-                    }).catch(function (error) {
+                    })
+                        .catch(function (error) {
                         postpone(function () {
-                            _this._log.warn('Problem resolving ' + _this.type + ' url: ' +
-                                error.response);
+                            _this._log.warn("Problem resolving " + _this.type + " url: " + error.response);
                         });
                     });
                 };
@@ -12080,7 +13979,7 @@ var plat;
                 Template._inject = {
                     _Promise: __Promise,
                     _templateCache: __TemplateCache,
-                    _document: __Document
+                    _document: __Document,
                 };
                 return Template;
             }(TemplateControl));
@@ -12136,7 +14035,7 @@ var plat;
                         even: __forEachAliasOptions.even,
                         odd: __forEachAliasOptions.odd,
                         first: __forEachAliasOptions.first,
-                        last: __forEachAliasOptions.last
+                        last: __forEachAliasOptions.last,
                     };
                     /**
                      * The node length of each item's childNodes (innerHTML).
@@ -12182,16 +14081,21 @@ var plat;
                     else {
                         newValue = [];
                     }
-                    this._executeEvent([{
+                    this._executeEvent([
+                        {
                             object: newValue,
-                            type: 'splice'
-                        }]);
+                            type: 'splice',
+                        },
+                    ]);
                 };
                 /**
                  * Observes the Array context for changes and adds initial items to the DOM.
                  */
                 ForEach.prototype.loaded = function () {
-                    var options = this.options, animating = this._animate = isObject(options) && options.value.animate === true, context = this.context;
+                    var options = this.options;
+                    var animating = (this._animate =
+                        isObject(options) && options.value.animate === true);
+                    var context = this.context;
                     this._container = this.element;
                     if (animating) {
                         this._animationQueue = [];
@@ -12200,7 +14104,8 @@ var plat;
                     if (!isArray(context)) {
                         return;
                     }
-                    var addQueue = this._addQueue, itemCount = context.length;
+                    var addQueue = this._addQueue;
+                    var itemCount = context.length;
                     var addPromise = this._addItems(0, itemCount, 0).then(function () {
                         var index = addQueue.indexOf(addPromise);
                         if (index !== -1) {
@@ -12232,8 +14137,11 @@ var plat;
                     if (!isObject(aliases)) {
                         return;
                     }
-                    var _aliases = this._aliases, keys = Object.keys(_aliases), length = keys.length, value;
-                    for (var i = 0; i < length; ++i) {
+                    var _aliases = this._aliases;
+                    var keys = Object.keys(_aliases);
+                    var length = keys.length;
+                    var value;
+                    for (var i = 0; i < length; i += 1) {
                         value = aliases[keys[i]];
                         if (isString(value)) {
                             _aliases[keys[i]] = value;
@@ -12249,17 +14157,23 @@ var plat;
                  */
                 ForEach.prototype._addItems = function (index, numberOfItems, animateItems) {
                     var _this = this;
-                    var max = +(index + numberOfItems), promises = [], initialIndex = index;
+                    var max = +(index + numberOfItems);
+                    var promises = [];
+                    var initialIndex = index;
                     this._itemLength += numberOfItems;
                     while (index < max) {
-                        promises.push(this._bindItem(index++));
+                        promises.push(this._bindItem(index));
+                        index += 1;
                     }
                     if (promises.length > 0) {
-                        this.itemsLoaded = this._Promise.all(promises).then(function (templates) {
+                        this.itemsLoaded = this._Promise
+                            .all(promises)
+                            .then(function (templates) {
                             _this._setBlockLength(templates);
                             if (animateItems > 0) {
-                                var length_10 = templates.length, container = _this._container;
-                                for (var i = 0; i < length_10; ++i) {
+                                var length_10 = templates.length;
+                                var container = _this._container;
+                                for (var i = 0; i < length_10; i += 1) {
                                     if (i < animateItems) {
                                         _this._appendAnimatedItem(templates[i]);
                                     }
@@ -12276,7 +14190,8 @@ var plat;
                                 _this.__resolveFn();
                                 _this.__resolveFn = _this.__rejectFn = null;
                             }
-                        }).catch(function (error) {
+                        })
+                            .catch(function (error) {
                             postpone(function () {
                                 if (isString(error)) {
                                     error = new Error(error);
@@ -12302,15 +14217,18 @@ var plat;
                     if (!isNode(item)) {
                         return;
                     }
-                    var animationQueue = this._animationQueue, animation = {
-                        animation: this._animator.enter(item, __Enter, this._container).then(function () {
+                    var animationQueue = this._animationQueue;
+                    var animation = {
+                        animation: this._animator
+                            .enter(item, __Enter, this._container)
+                            .then(function () {
                             var index = animationQueue.indexOf(animation);
                             if (index === -1) {
                                 return;
                             }
                             animationQueue.splice(index, 1);
                         }),
-                        op: null
+                        op: null,
                     };
                     animationQueue.push(animation);
                 };
@@ -12320,8 +14238,11 @@ var plat;
                  * @param {number} numberOfItems The number of items to remove.
                  */
                 ForEach.prototype._removeItems = function (index, numberOfItems) {
-                    var dispose = TemplateControl.dispose, controls = this.controls, last = index + numberOfItems;
-                    while (last-- > index) {
+                    var dispose = TemplateControl.dispose;
+                    var controls = this.controls;
+                    var last = index + numberOfItems;
+                    while (last > index) {
+                        last -= 1;
                         dispose(controls[last]);
                     }
                     this._updateResource(controls.length - 1);
@@ -12368,7 +14289,7 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 ForEach.prototype._executeEvent = function (changes) {
-                    var method = '_' + changes[0].type;
+                    var method = "_" + changes[0].type;
                     if (isFunction(this[method])) {
                         this[method](changes);
                     }
@@ -12380,26 +14301,29 @@ var plat;
                  * @param {number} index The index used to create the resource aliases.
                  */
                 ForEach.prototype._getAliases = function (index) {
-                    var isEven = (index & 1) === 0, aliases = {}, _aliases = this._aliases, type = __LITERAL_RESOURCE;
+                    var isEven = index % 2 === 0;
+                    var aliases = {};
+                    var _aliases = this._aliases;
+                    var type = __LITERAL_RESOURCE;
                     aliases[_aliases.index] = {
                         value: index,
-                        type: type
+                        type: type,
                     };
                     aliases[_aliases.even] = {
                         value: isEven,
-                        type: type
+                        type: type,
                     };
                     aliases[_aliases.odd] = {
                         value: !isEven,
-                        type: type
+                        type: type,
                     };
                     aliases[_aliases.first] = {
                         value: index === 0,
-                        type: type
+                        type: type,
                     };
                     aliases[_aliases.last] = {
-                        value: index === (this.context.length - 1),
-                        type: type
+                        value: index === this.context.length - 1,
+                        type: type,
                     };
                     return aliases;
                 };
@@ -12408,7 +14332,9 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 ForEach.prototype._push = function (changes) {
-                    var change = changes[0], addQueue = this._addQueue, itemCount = change.addedCount;
+                    var change = changes[0];
+                    var addQueue = this._addQueue;
+                    var itemCount = change.addedCount;
                     var addPromise = this._addItems(change.index, itemCount, this._animate ? itemCount : 0).then(function () {
                         var index = addQueue.indexOf(addPromise);
                         if (index !== -1) {
@@ -12423,13 +14349,14 @@ var plat;
                  */
                 ForEach.prototype._pop = function (changes) {
                     var _this = this;
-                    var change = changes[0], start = change.object.length;
+                    var change = changes[0];
+                    var start = change.object.length;
                     if (change.removed.length === 0) {
                         return;
                     }
                     var removeIndex = change.object.length;
                     if (this._itemLength > 0) {
-                        this._itemLength--;
+                        this._itemLength -= 1;
                     }
                     this._Promise.all(this._addQueue).then(function () {
                         if (_this._animate) {
@@ -12442,14 +14369,18 @@ var plat;
                     });
                 };
                 /**
-                 * Handles items being unshifted into the array.
+                 * Handles items being un-shifted into the array.
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 ForEach.prototype._unshift = function (changes) {
-                    var change = changes[0], addedCount = change.addedCount, addQueue = this._addQueue;
+                    var change = changes[0];
+                    var addedCount = change.addedCount;
+                    var addQueue = this._addQueue;
                     if (this._animate) {
-                        var animationQueue = this._animationQueue, animationLength = animationQueue.length;
-                        this._animateItems(0, addedCount, __Enter, null, animationLength > 0 && animationQueue[animationLength - 1].op === 'clone');
+                        var animationQueue = this._animationQueue;
+                        var animationLength = animationQueue.length;
+                        this._animateItems(0, addedCount, __Enter, null, animationLength > 0 &&
+                            animationQueue[animationLength - 1].op === 'clone');
                     }
                     var addPromise = this._addItems(change.object.length - addedCount, addedCount, 0).then(function () {
                         var index = addQueue.indexOf(addPromise);
@@ -12465,18 +14396,21 @@ var plat;
                  */
                 ForEach.prototype._shift = function (changes) {
                     var _this = this;
-                    var addQueue = this._addQueue, change = changes[0];
+                    var addQueue = this._addQueue;
+                    var change = changes[0];
                     if (change.removed.length === 0) {
                         return;
                     }
                     else if (this._animate) {
                         if (addQueue.length === 0) {
-                            addQueue = addQueue.concat([this._animateItems(0, 1, __Leave, 'clone', true)]);
+                            addQueue = addQueue.concat([
+                                this._animateItems(0, 1, __Leave, 'clone', true),
+                            ]);
                         }
                     }
                     var removeIndex = change.object.length;
                     if (this._itemLength > 0) {
-                        this._itemLength--;
+                        this._itemLength -= 1;
                     }
                     this._Promise.all(addQueue).then(function () {
                         _this._removeItems(removeIndex, 1);
@@ -12488,12 +14422,18 @@ var plat;
                  */
                 ForEach.prototype._splice = function (changes) {
                     var _this = this;
-                    var change = changes[0], addCount = change.addedCount, addQueue = this._addQueue, currentLength = this._itemLength, addPromise, animating = this._animate;
+                    var change = changes[0];
+                    var addCount = change.addedCount;
+                    var currentLength = this._itemLength;
+                    var animating = this._animate;
+                    var addQueue = this._addQueue;
+                    var addPromise;
                     if (isNull(addCount)) {
                         if (animating) {
                             this._cancelCurrentAnimations();
                         }
-                        var newLength = change.object.length, itemCount_1 = currentLength - newLength;
+                        var newLength = change.object.length;
+                        var itemCount_1 = currentLength - newLength;
                         if (newLength > currentLength) {
                             // itemCount will be negative 
                             addPromise = this._addItems(currentLength, -itemCount_1, 0).then(function () {
@@ -12517,16 +14457,20 @@ var plat;
                         }
                         return;
                     }
-                    var removeCount = change.removed.length, animationQueue = this._animationQueue;
+                    var removeCount = change.removed.length;
+                    var animationQueue = this._animationQueue;
                     if (addCount > removeCount) {
-                        var itemAddCount = addCount - removeCount, animationCount = void 0;
+                        var itemAddCount = addCount - removeCount;
+                        var animationCount = void 0;
                         if (animating) {
                             animationCount = addCount;
-                            var animationLength = animationQueue.length, startIndex = change.index;
+                            var animationLength = animationQueue.length;
+                            var startIndex = change.index;
                             if (currentLength < addCount - startIndex) {
                                 animationCount = currentLength - startIndex;
                             }
-                            this._animateItems(startIndex, animationCount, __Enter, null, animationLength > 0 && animationQueue[animationLength - 1].op === 'clone');
+                            this._animateItems(startIndex, animationCount, __Enter, null, animationLength > 0 &&
+                                animationQueue[animationLength - 1].op === 'clone');
                             animationCount = addCount - animationCount;
                         }
                         else {
@@ -12543,7 +14487,9 @@ var plat;
                     else if (removeCount > addCount) {
                         var adding_1 = addCount > 0;
                         if (animating && !adding_1 && addQueue.length === 0) {
-                            addQueue = addQueue.concat([this._animateItems(change.index, removeCount, __Leave, 'clone', true)]);
+                            addQueue = addQueue.concat([
+                                this._animateItems(change.index, removeCount, __Leave, 'clone', true),
+                            ]);
                         }
                         var deleteCount_1 = removeCount - addCount;
                         if (currentLength >= deleteCount_1) {
@@ -12555,14 +14501,15 @@ var plat;
                         this._Promise.all(addQueue).then(function () {
                             if (animating && adding_1) {
                                 var animLength = animationQueue.length;
-                                _this._animateItems(change.index, addCount, __Enter, null, animLength > 0 && animationQueue[animLength - 1].op === 'clone');
+                                _this._animateItems(change.index, addCount, __Enter, null, animLength > 0 &&
+                                    animationQueue[animLength - 1].op === 'clone');
                             }
                             _this._removeItems(currentLength - deleteCount_1, deleteCount_1);
                         });
                     }
                 };
                 /**
-                 * Grabs the total blocklength of the specified items.
+                 * Grabs the total block length of the specified items.
                  * @param {number} startIndex The starting index of items.
                  * @param {number} numberOfItems The number of consecutive items.
                  */
@@ -12600,17 +14547,21 @@ var plat;
                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                  */
                 ForEach.prototype._handleSimpleAnimation = function (startNode, endNode, key, cancel) {
-                    var container = this._container, nodes = Array.prototype.slice.call(container.childNodes, startNode, endNode);
+                    var container = this._container;
+                    var nodes = Array.prototype.slice.call(container.childNodes, startNode, endNode);
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
-                    var animationQueue = this._animationQueue, animationCreation = this._animator.create(nodes, key), animationPromise = animationCreation.current.then(function () {
+                    var animationQueue = this._animationQueue;
+                    var animationCreation = this._animator.create(nodes, key);
+                    var animationPromise = animationCreation.current.then(function () {
                         var index = animationQueue.indexOf(animation);
                         if (index === -1) {
                             return;
                         }
                         animationQueue.splice(index, 1);
-                    }), callback = function () {
+                    });
+                    var callback = function () {
                         animationCreation.previous.then(function () {
                             animationPromise.start();
                         });
@@ -12618,7 +14569,7 @@ var plat;
                     };
                     var animation = {
                         animation: animationPromise,
-                        op: null
+                        op: null,
                     };
                     if (cancel && animationQueue.length > 0) {
                         var cancelPromise = this._cancelCurrentAnimations().then(callback);
@@ -12635,11 +14586,15 @@ var plat;
                  * @param {string} key The animation key/type.
                  */
                 ForEach.prototype._handleLeave = function (startNode, endNode, key) {
-                    var container = this._container, nodes = Array.prototype.slice.call(container.childNodes, startNode, endNode);
+                    var container = this._container;
+                    var nodes = Array.prototype.slice.call(container.childNodes, startNode, endNode);
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
-                    var animationQueue = this._animationQueue, animationPromise = this._animator.leave(nodes, key).then(function () {
+                    var animationQueue = this._animationQueue;
+                    var animationPromise = this._animator
+                        .leave(nodes, key)
+                        .then(function () {
                         var index = animationQueue.indexOf(animation);
                         if (index === -1) {
                             return;
@@ -12648,7 +14603,7 @@ var plat;
                     });
                     var animation = {
                         animation: animationPromise,
-                        op: 'leave'
+                        op: 'leave',
                     };
                     animationQueue.push(animation);
                     return animationPromise;
@@ -12661,11 +14616,16 @@ var plat;
                  * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
                  */
                 ForEach.prototype._handleClonedContainerAnimation = function (startNode, endNode, key, cancel) {
-                    var container = this._container, clonedContainer = container.cloneNode(true), nodes = Array.prototype.slice.call(clonedContainer.childNodes, startNode, endNode);
+                    var container = this._container;
+                    var clonedContainer = container.cloneNode(true);
+                    var nodes = Array.prototype.slice.call(clonedContainer.childNodes, startNode, endNode);
                     if (nodes.length === 0) {
                         return this._Promise.resolve();
                     }
-                    var parentNode, animationQueue = this._animationQueue, animationCreation = this._animator.create(nodes, key), animationPromise = animationCreation.current.then(function () {
+                    var parentNode;
+                    var animationQueue = this._animationQueue;
+                    var animationCreation = this._animator.create(nodes, key);
+                    var animationPromise = animationCreation.current.then(function () {
                         var index = animationQueue.indexOf(animation);
                         if (index > -1) {
                             animationQueue.splice(index, 1);
@@ -12674,7 +14634,8 @@ var plat;
                             return;
                         }
                         parentNode.replaceChild(container, clonedContainer);
-                    }), callback = function () {
+                    });
+                    var callback = function () {
                         parentNode = container.parentNode;
                         if (isNull(parentNode) || animationPromise.isCanceled()) {
                             return animationPromise;
@@ -12687,7 +14648,7 @@ var plat;
                     };
                     var animation = {
                         animation: animationPromise,
-                        op: 'clone'
+                        op: 'clone',
                     };
                     if (cancel && animationQueue.length > 0) {
                         var cancelPromise = this._cancelCurrentAnimations().then(callback);
@@ -12701,15 +14662,17 @@ var plat;
                  * Cancels all current animations.
                  */
                 ForEach.prototype._cancelCurrentAnimations = function () {
-                    var animationQueue = this._animationQueue, animations = [], length = animationQueue.length;
-                    for (var i = 0; i < length; ++i) {
+                    var animationQueue = this._animationQueue;
+                    var animations = [];
+                    var length = animationQueue.length;
+                    for (var i = 0; i < length; i += 1) {
                         animations.push(animationQueue[i].animation.cancel());
                     }
                     return this._Promise.all(animations);
                 };
                 ForEach._inject = {
                     _animator: __Animator,
-                    _Promise: __Promise
+                    _Promise: __Promise,
                 };
                 return ForEach;
             }(TemplateControl));
@@ -12748,7 +14711,19 @@ var plat;
                  * Makes sure all the elements exist.
                  */
                 Head.prototype.setTemplate = function () {
-                    var meta = __Meta, title = __Title, link = __MetaLink, author = __Author, type = __MetaType, creator = __Creator, image = __MetaImage, video = __MetaVideo, description = __Description, url = __Url, og = __OpenGraph, article = __Article, twitter = __Twitter;
+                    var meta = __Meta;
+                    var title = __Title;
+                    var link = __MetaLink;
+                    var author = __Author;
+                    var type = __MetaType;
+                    var creator = __Creator;
+                    var image = __MetaImage;
+                    var video = __MetaVideo;
+                    var description = __Description;
+                    var url = __Url;
+                    var og = __OpenGraph;
+                    var article = __Article;
+                    var twitter = __Twitter;
                     this.element.setAttribute('prefix', 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#');
                     this._titleElement = this._createElement(title);
                     this._ogTitleElement = this._createElement(meta, og + title);
@@ -12773,10 +14748,7 @@ var plat;
                         return this._getContent(this._titleElement);
                     }
                     this._titleElement.innerText = title;
-                    this._setContent([
-                        this._ogTitleElement,
-                        this._twitterTitleElement
-                    ], title);
+                    this._setContent([this._ogTitleElement, this._twitterTitleElement], title);
                     return title;
                 };
                 /**
@@ -12790,7 +14762,7 @@ var plat;
                     this._setContent([
                         this._descriptionElement,
                         this._ogDescriptionElement,
-                        this._twitterDescriptionElement
+                        this._twitterDescriptionElement,
                     ], description);
                     return description;
                 };
@@ -12802,10 +14774,7 @@ var plat;
                     if (!isString(url)) {
                         return this._getContent(this._ogUrlElement);
                     }
-                    this._setContent([
-                        this._ogUrlElement,
-                        this._twitterUrlElement
-                    ], url);
+                    this._setContent([this._ogUrlElement, this._twitterUrlElement], url);
                     return url;
                 };
                 /**
@@ -12817,9 +14786,7 @@ var plat;
                     if (!isString(author)) {
                         return this._getContent(this._authorElement);
                     }
-                    this._setContent([
-                        this._authorElement,
-                    ], author);
+                    this._setContent([this._authorElement], author);
                     return author;
                 };
                 /**
@@ -12831,9 +14798,7 @@ var plat;
                     if (!isString(author)) {
                         return this._getContent(this._googleAuthorElement);
                     }
-                    this._setContent([
-                        this._googleAuthorElement,
-                    ], author);
+                    this._setContent([this._googleAuthorElement], author);
                     return author;
                 };
                 /**
@@ -12845,9 +14810,7 @@ var plat;
                     if (!isString(author)) {
                         return this._getContent(this._fbAuthorElement);
                     }
-                    this._setContent([
-                        this._fbAuthorElement
-                    ], author);
+                    this._setContent([this._fbAuthorElement], author);
                     return author;
                 };
                 /**
@@ -12859,9 +14822,7 @@ var plat;
                     if (!isString(creator)) {
                         return this._getContent(this._twitterCreatorElement);
                     }
-                    this._setContent([
-                        this._twitterCreatorElement
-                    ], creator);
+                    this._setContent([this._twitterCreatorElement], creator);
                     return creator;
                 };
                 /**
@@ -12872,9 +14833,7 @@ var plat;
                     if (!isString(type)) {
                         return this._getContent(this._ogTypeElement);
                     }
-                    this._setContent([
-                        this._ogTypeElement
-                    ], type);
+                    this._setContent([this._ogTypeElement], type);
                     return type;
                 };
                 /**
@@ -12886,7 +14845,12 @@ var plat;
                     if (!isArray(images)) {
                         return;
                     }
-                    var meta = __Meta, og = __OpenGraph, twitter = __Twitter, ogElement, twitterElement, head = this.element;
+                    var meta = __Meta;
+                    var og = __OpenGraph;
+                    var twitter = __Twitter;
+                    var ogElement;
+                    var twitterElement;
+                    var head = this.element;
                     forEach(function (image) {
                         image = _this._browser.urlUtils(image).href;
                         var elements = head.querySelectorAll(meta + "[content=\"" + image + "\"]");
@@ -12895,10 +14859,7 @@ var plat;
                         }
                         ogElement = _this._createElement(meta, og + __MetaImage, true);
                         twitterElement = _this._createElement(meta, twitter + __MetaImage, true);
-                        _this._setContent([
-                            ogElement,
-                            twitterElement
-                        ], image);
+                        _this._setContent([ogElement, twitterElement], image);
                     }, images);
                 };
                 /**
@@ -12910,7 +14871,12 @@ var plat;
                     if (!isArray(videos)) {
                         return;
                     }
-                    var meta = __Meta, og = __OpenGraph, metaVideo = __MetaVideo, _browser = this._browser, ogElement, head = this.element;
+                    var meta = __Meta;
+                    var og = __OpenGraph;
+                    var metaVideo = __MetaVideo;
+                    var _browser = this._browser;
+                    var ogElement;
+                    var head = this.element;
                     forEach(function (video) {
                         video = _browser.urlUtils(video).href;
                         var elements = head.querySelectorAll(meta + "[content=\"" + video + "\"]");
@@ -12918,9 +14884,7 @@ var plat;
                             return;
                         }
                         ogElement = _this._createElement(meta, og + metaVideo, true);
-                        _this._setContent([
-                            ogElement
-                        ], video);
+                        _this._setContent([ogElement], video);
                     }, videos);
                 };
                 /**
@@ -12931,7 +14895,8 @@ var plat;
                     if (isEmpty(obj)) {
                         return;
                     }
-                    var el = this._document.createElement('script'), sibling = this._titleElement.nextSibling;
+                    var el = this._document.createElement('script');
+                    var sibling = this._titleElement.nextSibling;
                     el.setAttribute('type', 'application/ld+json');
                     el.textContent = JSON.stringify(obj);
                     this._structuredDataElements.push(el);
@@ -12946,7 +14911,8 @@ var plat;
                     for (var _i = 0; _i < arguments.length; _i++) {
                         postings[_i] = arguments[_i];
                     }
-                    for (var i = 0, length_11 = postings.length; i < length_11; ++i) {
+                    var length = postings.length;
+                    for (var i = 0; i < length; i += 1) {
                         this.structuredData(postings[i]);
                     }
                 };
@@ -12984,8 +14950,16 @@ var plat;
                  * @param {Array<HTMLElement>} elements The elements for which to set values.
                  */
                 Head.prototype._setContent = function (elements, value) {
-                    var el = this.element, nodes = Array.prototype.slice.call(el.children), length = elements.length, content = __Content, href = __MetaHref, sibling = this._titleElement.nextSibling, dom = this.dom, nodeName, element;
-                    for (var i = 0; i < length; ++i) {
+                    var el = this.element;
+                    var nodes = Array.prototype.slice.call(el.children);
+                    var length = elements.length;
+                    var content = __Content;
+                    var href = __MetaHref;
+                    var sibling = this._titleElement.nextSibling;
+                    var dom = this.dom;
+                    var nodeName;
+                    var element;
+                    for (var i = 0; i < length; i += 1) {
                         element = elements[i];
                         nodeName = element.nodeName.toLowerCase();
                         if (nodeName === __Meta) {
@@ -13009,12 +14983,19 @@ var plat;
                  * @param {boolean} multiple? Whether or not there can be multiple of this tag/name in the dom
                  */
                 Head.prototype._createElement = function (tag, name, multiple) {
-                    var el, hasName = isString(name), attr = (hasName && (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName, element = this.element;
+                    var hasName = isString(name);
+                    var element = this.element;
+                    var el;
+                    var attr = hasName &&
+                        (name.indexOf(__OpenGraph) === 0 ||
+                            name.indexOf(__Article) === 0)
+                        ? __MetaProperty
+                        : __MetaName;
                     if (tag === __MetaLink) {
                         attr = __Rel;
                     }
                     if (!multiple && hasName) {
-                        el = element.querySelector(tag + '[' + attr + '="' + name + '"]');
+                        el = element.querySelector(tag + "[" + attr + "=\"" + name + "\"]");
                     }
                     else if (!multiple) {
                         el = element.querySelector(tag);
@@ -13032,11 +15013,13 @@ var plat;
                  * incorrect tags on the page.
                  */
                 Head.prototype._removeAllElements = function () {
-                    var slice = Array.prototype.slice, og = this._document.head.querySelectorAll('meta[' + __MetaProperty + '^="' + __OpenGraph + '"]'), twitter = this._document.head.querySelectorAll('meta[' + __MetaName + '^="' + __Twitter + '"]');
+                    var slice = Array.prototype.slice;
+                    var og = this._document.head.querySelectorAll("meta[" + __MetaProperty + "^=\"" + __OpenGraph + "\"]");
+                    var twitter = this._document.head.querySelectorAll("meta[" + __MetaName + "^=\"" + __Twitter + "\"]");
                     this._removeElements.apply(this, [
                         this._descriptionElement,
                         this._authorElement,
-                        this._googleAuthorElement
+                        this._googleAuthorElement,
                     ].concat(slice.call(og), slice.call(twitter), slice.call(this._structuredDataElements)));
                     this._structuredDataElements = [];
                 };
@@ -13048,8 +15031,11 @@ var plat;
                     for (var _i = 0; _i < arguments.length; _i++) {
                         elements[_i] = arguments[_i];
                     }
-                    var el = this.element, nodes = Array.prototype.slice.call(el.children), length = elements.length, element;
-                    for (var i = 0; i < length; ++i) {
+                    var el = this.element;
+                    var nodes = Array.prototype.slice.call(el.children);
+                    var length = elements.length;
+                    var element;
+                    for (var i = 0; i < length; i += 1) {
                         element = elements[i];
                         if (nodes.indexOf(element) !== -1) {
                             el.removeChild(element);
@@ -13058,10 +15044,10 @@ var plat;
                 };
                 Head._inject = {
                     _document: __Document,
-                    _browser: __Browser
+                    _browser: __Browser,
                 };
                 return Head;
-            }(ui.TemplateControl));
+            }(TemplateControl));
             controls_1.Head = Head;
             /**
              * A TemplateControl for adding HTML to the
@@ -13100,7 +15086,7 @@ var plat;
                         return;
                     }
                     else if (!isObject(newValue)) {
-                        this._log.debug('plat-options for ' + this.type + ' must be an object.');
+                        this._log.debug("plat-options for " + this.type + " must be an object.");
                         return;
                     }
                     var html = newValue.html;
@@ -13119,7 +15105,7 @@ var plat;
                         return;
                     }
                     else if (!htmlIsString) {
-                        this._log.debug('Trying to bind a non-string value to ' + this.type + '.');
+                        this._log.debug("Trying to bind a non-string value to " + this.type + ".");
                         return;
                     }
                     else if (newValue.compile === true) {
@@ -13138,7 +15124,7 @@ var plat;
                     setInnerHtml(this.element, html);
                 };
                 InnerHtml._inject = {
-                    _TemplateControlFactory: __TemplateControlFactory
+                    _TemplateControlFactory: __TemplateControlFactory,
                 };
                 return InnerHtml;
             }(TemplateControl));
@@ -13181,15 +15167,30 @@ var plat;
                  */
                 Select.prototype.setTemplate = function () {
                     this.bindableTemplates.add('option', this.element.childNodes);
-                    var options = this.options || {}, platOptions = options.value || {}, defaultOptionValues = platOptions.default;
+                    var options = this.options;
+                    if (!isObject(options)) {
+                        options = {};
+                    }
+                    var platOptions = options.value;
+                    if (!isObject(platOptions)) {
+                        platOptions = {};
+                    }
+                    var defaultOptionValues = platOptions.default;
                     if (isObject(defaultOptionValues)) {
-                        var defaultOption = this._document.createElement('option'), defaultValue = defaultOptionValues.value, defaultTextContent = defaultOptionValues.textContent;
-                        defaultOption.value = isUndefined(defaultValue) ? defaultTextContent : defaultValue;
-                        defaultOption.textContent = isUndefined(defaultTextContent) ? defaultValue : defaultTextContent;
+                        var defaultOption = this._document.createElement('option');
+                        var defaultValue = defaultOptionValues.value;
+                        var defaultTextContent = defaultOptionValues.textContent;
+                        defaultOption.value = isUndefined(defaultValue)
+                            ? defaultTextContent
+                            : defaultValue;
+                        defaultOption.textContent = isUndefined(defaultTextContent)
+                            ? defaultValue
+                            : defaultTextContent;
                         this.element.insertBefore(defaultOption, null);
                     }
                     if (!isNull(platOptions.group)) {
-                        var group = this._group = platOptions.group, optionGroup = this._document.createElement('optgroup');
+                        var group = (this._group = platOptions.group);
+                        var optionGroup = this._document.createElement('optgroup');
                         optionGroup.label = __startSymbol + group + __endSymbol;
                         this.bindableTemplates.add('group', optionGroup);
                         this._isGrouped = true;
@@ -13208,13 +15209,16 @@ var plat;
                     var _this = this;
                     if (isEmpty(newValue) || !isArray(newValue)) {
                         if (!isEmpty(oldValue)) {
-                            this.itemsLoaded.then(function () {
+                            this.itemsLoaded
+                                .then(function () {
                                 _this._removeItems(_this.controls.length);
-                            }).then(this._observeChange.bind(this));
+                            })
+                                .then(this._observeChange.bind(this));
                         }
                         return;
                     }
-                    var newLength = isArray(newValue) ? newValue.length : 0, oldLength = isArray(oldValue) ? oldValue.length : 0;
+                    var newLength = isArray(newValue) ? newValue.length : 0;
+                    var oldLength = isArray(oldValue) ? oldValue.length : 0;
                     this._setListener();
                     if (newLength > oldLength) {
                         this._addItems(newLength - oldLength, oldLength);
@@ -13230,10 +15234,19 @@ var plat;
                  */
                 Select.prototype.loaded = function () {
                     if (isUndefined(this._isGrouped)) {
-                        var options = this.options || {}, platOptions = options.value || {};
-                        this._isGrouped = !isNull((this._group = platOptions.group));
+                        var options = this.options;
+                        if (!isObject(options)) {
+                            options = {};
+                        }
+                        var platOptions = options.value;
+                        if (!isObject(platOptions)) {
+                            platOptions = {};
+                        }
+                        this._group = platOptions.group;
+                        this._isGrouped = !isNull(this._group);
                     }
-                    this._defaultOption = this.element.firstElementChild;
+                    this._defaultOption = this.element
+                        .firstElementChild;
                     var context = this.context;
                     if (!isArray(context)) {
                         return;
@@ -13256,7 +15269,7 @@ var plat;
                  * A function that allows this control to observe both the bound property itself as well as
                  * potential child properties if being bound to an object.
                  * @param {plat.observable.IImplementTwoWayBinding} binder The control that facilitates the
-                 * databinding.
+                 * data-binding.
                  */
                 Select.prototype.observeProperties = function (binder) {
                     var _this = this;
@@ -13287,9 +15300,11 @@ var plat;
                  */
                 Select.prototype._setSelectedIndex = function (newValue, oldValue, identifier, firstTime) {
                     var _this = this;
-                    var element = this.element, value = element.value;
+                    var element = this.element;
+                    var value = element.value;
                     if (isNull(newValue)) {
-                        if (firstTime === true || !this._document.body.contains(element)) {
+                        if (firstTime === true ||
+                            !this._document.body.contains(element)) {
                             this.itemsLoaded.then(function () {
                                 if (isNull(_this._binder.evaluate())) {
                                     var newLast = element.value;
@@ -13318,7 +15333,7 @@ var plat;
                             else {
                                 newValue = Object.prototype.toString.call(newValue);
                             }
-                            this._log.info('Trying to bind the invalid value "' + newValue + '" to a ' + this.type + '.');
+                            this._log.info("Trying to bind the invalid value \"" + newValue + "\" to a " + this.type + ".");
                         }
                     }
                     if (value === newValue) {
@@ -13339,7 +15354,8 @@ var plat;
                         element.value = _this.__lastValue = newValue;
                         // check to make sure the user changed to a valid value 
                         // second boolean argument is an ie fix for inconsistency 
-                        if (element.value !== newValue || element.selectedIndex === -1) {
+                        if (element.value !== newValue ||
+                            element.selectedIndex === -1) {
                             element.selectedIndex = -1;
                         }
                     });
@@ -13354,7 +15370,11 @@ var plat;
                 Select.prototype._setSelectedIndices = function (newValue, oldValue, identifier, firstTime) {
                     var _this = this;
                     this.itemsLoaded.then(function () {
-                        var element = _this.element, options = element.options, length = isNull(options) ? 0 : options.length, option, nullValue = isNull(newValue);
+                        var element = _this.element;
+                        var options = element.options;
+                        var nullValue = isNull(newValue);
+                        var length = isNull(options) ? 0 : options.length;
+                        var option;
                         if (nullValue || !isArray(newValue)) {
                             if (firstTime === true && isNull(_this._binder.evaluate())) {
                                 var newLast = _this._getSelectedValues();
@@ -13362,9 +15382,10 @@ var plat;
                                 _this.__lastValue = newLast;
                             }
                             // unselects the options unless a match is found 
-                            while (length-- > 0) {
+                            while (length > 0) {
+                                length -= 1;
                                 option = options[length];
-                                if (!nullValue && option.value === '' + newValue) {
+                                if (!nullValue && option.value === "" + newValue) {
                                     option.selected = true;
                                     return;
                                 }
@@ -13373,8 +15394,12 @@ var plat;
                             _this.__lastValue = newValue;
                             return;
                         }
-                        var value, numberValue, index, highestIndex = Infinity;
-                        while (length-- > 0) {
+                        var value;
+                        var numberValue;
+                        var index;
+                        var highestIndex = Infinity;
+                        while (length > 0) {
+                            length -= 1;
                             option = options[length];
                             value = option.value;
                             if (newValue.indexOf(value) !== -1) {
@@ -13382,7 +15407,11 @@ var plat;
                                 continue;
                             }
                             numberValue = Number(value);
-                            if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                            var numberValueIndex = newValue.indexOf(numberValue);
+                            var trueIndex = newValue.indexOf(true);
+                            var falseIndex = newValue.indexOf(false);
+                            if (isNumber(numberValue) && numberValueIndex !== -1) {
+                                index = numberValueIndex;
                                 if (index < highestIndex) {
                                     _this._propertyType = 'number';
                                     highestIndex = index;
@@ -13390,8 +15419,9 @@ var plat;
                                 option.selected = true;
                                 continue;
                             }
-                            else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
-                                value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                            else if ((value === 'true' && trueIndex !== -1) ||
+                                (value === 'false' && falseIndex !== -1)) {
+                                index = trueIndex > falseIndex ? trueIndex : falseIndex;
                                 if (index < highestIndex) {
                                     _this._propertyType = 'boolean';
                                     highestIndex = index;
@@ -13408,7 +15438,10 @@ var plat;
                  * Fires the inputChanged event when the select's value changes.
                  */
                 Select.prototype._observeChange = function () {
-                    var element = this.element, newLast = element.multiple ? this._getSelectedValues() : this._castValue(element.value);
+                    var element = this.element;
+                    var newLast = element.multiple
+                        ? this._getSelectedValues()
+                        : this._castValue(element.value);
                     if (newLast === this.__lastValue) {
                         return;
                     }
@@ -13419,8 +15452,11 @@ var plat;
                  * Getter for select-multiple.
                  */
                 Select.prototype._getSelectedValues = function () {
-                    var options = this.element.options, length = options.length, option, selectedValues = [];
-                    for (var i = 0; i < length; ++i) {
+                    var options = this.element.options;
+                    var length = options.length;
+                    var option;
+                    var selectedValues = [];
+                    for (var i = 0; i < length; i += 1) {
                         option = options[i];
                         if (option.selected) {
                             selectedValues.push(this._castValue(option.value));
@@ -13454,12 +15490,10 @@ var plat;
                                     break;
                                 default:
                                     castValue = !!value;
-                                    break;
                             }
                             break;
                         default:
                             castValue = value;
-                            break;
                     }
                     return castValue;
                 };
@@ -13478,7 +15512,7 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 Select.prototype._executeEvent = function (changes) {
-                    var method = '_' + changes[0].type;
+                    var method = "_" + changes[0].type;
                     if (isFunction(this[method])) {
                         this[method](changes);
                     }
@@ -13491,18 +15525,27 @@ var plat;
                  */
                 Select.prototype._addItems = function (numberOfItems, index) {
                     var _this = this;
-                    var bindableTemplates = this.bindableTemplates, promises = [], insertOption = this._insertOption;
-                    while (numberOfItems-- > 0) {
-                        promises.push(bindableTemplates.bind('option', index).then(insertOption.bind(this, index++)));
+                    var bindableTemplates = this.bindableTemplates;
+                    var promises = [];
+                    var insertOption = this._insertOption;
+                    while (numberOfItems > 0) {
+                        numberOfItems -= 1;
+                        promises.push(bindableTemplates
+                            .bind('option', index)
+                            .then(insertOption.bind(this, index)));
+                        index += 1;
                     }
                     if (promises.length > 0) {
-                        this.itemsLoaded = this._Promise.all(promises).then(function () {
+                        this.itemsLoaded = this._Promise
+                            .all(promises)
+                            .then(function () {
                             if (isFunction(_this.__resolveFn)) {
                                 _this.__resolveFn();
                                 _this.__resolveFn = _this.__rejectFn = null;
                             }
                             return;
-                        }).catch(function (error) {
+                        })
+                            .catch(function (error) {
                             postpone(function () {
                                 if (isString(error)) {
                                     error = new Error(error);
@@ -13523,19 +15566,27 @@ var plat;
                 Select.prototype._insertOption = function (index, option) {
                     var element = this.element;
                     if (this._isGrouped) {
-                        var groups_1 = this.groups, newGroup_1 = (this.context[index] || {})[this._group], optgroup_1 = groups_1[newGroup_1];
+                        var groups_1 = this.groups;
+                        var group = this.context[index];
+                        if (!isObject(group)) {
+                            group = {};
+                        }
+                        var newGroup_1 = group[this._group];
+                        var optgroup_1 = groups_1[newGroup_1];
                         if (isNull(optgroup_1)) {
-                            return (groups_1[newGroup_1] = this.bindableTemplates.bind('group', index)
+                            return (groups_1[newGroup_1] = this.bindableTemplates
+                                .bind('group', index)
                                 .then(function (groupFragment) {
-                                optgroup_1 = groups_1[newGroup_1] = groupFragment.childNodes[1];
+                                optgroup_1 = groups_1[newGroup_1] = groupFragment
+                                    .childNodes[1];
                                 optgroup_1.insertBefore(option, null);
                                 element.insertBefore(groupFragment, null);
                                 return optgroup_1;
                             }));
                         }
                         else if (isPromise(optgroup_1)) {
-                            return optgroup_1.then(function (group) {
-                                group.insertBefore(option, null);
+                            return optgroup_1.then(function (el) {
+                                el.insertBefore(option, null);
                             });
                         }
                         optgroup_1.insertBefore(option, null);
@@ -13550,8 +15601,10 @@ var plat;
                  * to remove.
                  */
                 Select.prototype._removeItems = function (numberOfItems) {
-                    var dispose = TemplateControl.dispose, controls = this.controls;
-                    while (numberOfItems-- > 0) {
+                    var dispose = TemplateControl.dispose;
+                    var controls = this.controls;
+                    while (numberOfItems > 0) {
+                        numberOfItems -= 1;
                         dispose(controls.pop());
                     }
                 };
@@ -13602,7 +15655,7 @@ var plat;
                     });
                 };
                 /**
-                 * The function called when an item is unshifted
+                 * The function called when an item is un-shifted
                  * onto the array context.
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
@@ -13611,7 +15664,8 @@ var plat;
                         this._resetSelect();
                         return;
                     }
-                    var change = changes[0], addedCount = change.addedCount;
+                    var change = changes[0];
+                    var addedCount = change.addedCount;
                     this._addItems(addedCount, change.object.length - addedCount - 1);
                 };
                 /**
@@ -13639,7 +15693,9 @@ var plat;
                         this._resetSelect();
                         return;
                     }
-                    var change = changes[0], addCount = change.addedCount, removeCount = change.removed.length;
+                    var change = changes[0];
+                    var addCount = change.addedCount;
+                    var removeCount = change.removed.length;
                     if (addCount > removeCount) {
                         this._addItems(addCount - removeCount, change.object.length - addCount - 1);
                     }
@@ -13671,7 +15727,7 @@ var plat;
                 };
                 Select._inject = {
                     _Promise: __Promise,
-                    _document: __Document
+                    _document: __Document,
                 };
                 return Select;
             }(BindControl));
@@ -13708,7 +15764,7 @@ var plat;
                      */
                     _this.__isBound = false;
                     var _document = _this._document;
-                    _this.commentNode = _document.createComment(__If + __BOUND_PREFIX + 'placeholder');
+                    _this.commentNode = _document.createComment("" + __If + __BOUND_PREFIX + "placeholder");
                     _this.fragmentStore = _document.createDocumentFragment();
                     return _this;
                 }
@@ -13740,12 +15796,12 @@ var plat;
                         this._animate = options.value.animate === true;
                     }
                     else {
-                        this._log.warn('No condition specified in ' + __Options + ' for ' + this.type + '.');
+                        this._log.warn("No condition specified in " + __Options + " for " + this.type + ".");
                         this.options = {
                             value: {
-                                condition: true
+                                condition: true,
                             },
-                            observe: noop
+                            observe: noop,
                         };
                     }
                     var promise = this.contextChanged();
@@ -13774,7 +15830,10 @@ var plat;
                  */
                 If.prototype._setter = function (options) {
                     var _this = this;
-                    var value = !!options.condition, actionPromise, next, promise;
+                    var value = !!options.condition;
+                    var actionPromise;
+                    var next;
+                    var promise;
                     if (value === this.__condition && !this.__firstTime) {
                         return this._Promise.resolve(null);
                     }
@@ -13795,8 +15854,11 @@ var plat;
                     if (isNull(actionPromise)) {
                         promise = next();
                     }
-                    else if (this._animate && isFunction(actionPromise.cancel)) {
-                        promise = actionPromise.cancel().then(next);
+                    else if (this._animate &&
+                        isFunction(actionPromise.cancel)) {
+                        promise = actionPromise
+                            .cancel()
+                            .then(next);
                     }
                     else {
                         promise = actionPromise.then(next);
@@ -13816,10 +15878,13 @@ var plat;
                     }
                     if (!isBound) {
                         this.__isBound = true;
-                        return this.__initialBind = this.bindableTemplates.bind('template').then(function (template) {
+                        return (this.__initialBind = this.bindableTemplates
+                            .bind('template')
+                            .then(function (template) {
                             _this.__initialBind = null;
                             var element = _this.element;
-                            if (element.parentNode === _this.fragmentStore || isNull(element.parentNode)) {
+                            if (element.parentNode === _this.fragmentStore ||
+                                isNull(element.parentNode)) {
                                 element.insertBefore(template, null);
                                 if (_this._animate) {
                                     return _this._animateEntrance();
@@ -13827,23 +15892,26 @@ var plat;
                                 return _this._elementEntrance();
                             }
                             else if (_this._animate) {
-                                _this.__enterPromise = _this._animator.animate(element, __Enter).then(function () {
+                                _this.__enterPromise = _this._animator
+                                    .animate(element, __Enter)
+                                    .then(function () {
                                     _this.__enterPromise = null;
                                 });
                                 element.insertBefore(template, null);
                                 return _this.__enterPromise;
                             }
                             element.insertBefore(template, null);
-                        });
+                        }));
                     }
                     else if (!isNull(this.__initialBind)) {
-                        return this.__initialBind = this.__initialBind.then(function () {
+                        this.__initialBind = this.__initialBind.then(function () {
                             _this.__initialBind = null;
                             if (_this._animate) {
                                 return _this._animateEntrance();
                             }
                             return _this._elementEntrance();
                         });
+                        return this.__initialBind;
                     }
                     else if (this._animate) {
                         return this._animateEntrance();
@@ -13855,7 +15923,8 @@ var plat;
                  */
                 If.prototype._elementEntrance = function () {
                     var _this = this;
-                    var commentNode = this.commentNode, parentNode = commentNode.parentNode;
+                    var commentNode = this.commentNode;
+                    var parentNode = commentNode.parentNode;
                     if (!isNode(parentNode)) {
                         return this._Promise.resolve();
                     }
@@ -13874,11 +15943,14 @@ var plat;
                  */
                 If.prototype._animateEntrance = function () {
                     var _this = this;
-                    var commentNode = this.commentNode, parentNode = commentNode.parentNode;
+                    var commentNode = this.commentNode;
+                    var parentNode = commentNode.parentNode;
                     if (!isNode(parentNode)) {
                         return this._animator.resolve().then(noop);
                     }
-                    this.__enterPromise = this._animator.enter(this.element, __Enter, parentNode, commentNode).then(function () {
+                    this.__enterPromise = this._animator
+                        .enter(this.element, __Enter, parentNode, commentNode)
+                        .then(function () {
                         _this.__enterPromise = null;
                     });
                     return this.__enterPromise;
@@ -13889,13 +15961,14 @@ var plat;
                 If.prototype._removeItem = function () {
                     var _this = this;
                     if (!isNull(this.__initialBind)) {
-                        return this.__initialBind = this.__initialBind.then(function () {
+                        this.__initialBind = this.__initialBind.then(function () {
                             _this.__initialBind = null;
                             if (_this._animate) {
                                 return _this._animateLeave();
                             }
                             return _this._elementLeave();
                         });
+                        return this.__initialBind;
                     }
                     else if (this._animate) {
                         return this._animateLeave();
@@ -13909,7 +15982,9 @@ var plat;
                     var _this = this;
                     this.__leavePromise = new this._Promise(function (resolve) {
                         _this.__cancelFrame = requestAnimationFrameGlobal(function () {
-                            var element = _this.element, parent = element.parentNode, nextSibling = element.nextSibling;
+                            var element = _this.element;
+                            var parent = element.parentNode;
+                            var nextSibling = element.nextSibling;
                             if (!isNode(parent)) {
                                 resolve();
                                 return;
@@ -13931,8 +16006,11 @@ var plat;
                 If.prototype._animateLeave = function () {
                     var _this = this;
                     var element = this.element;
-                    this.__leavePromise = this._animator.leave(element, __Leave).then(function () {
-                        var parent = element.parentNode, nextSibling = element.nextSibling;
+                    this.__leavePromise = this._animator
+                        .leave(element, __Leave)
+                        .then(function () {
+                        var parent = element.parentNode;
+                        var nextSibling = element.nextSibling;
                         _this.__leavePromise = null;
                         if (!isNode(_this.commentNode.parentNode)) {
                             parent.insertBefore(_this.commentNode, nextSibling);
@@ -13944,14 +16022,14 @@ var plat;
                 If._inject = {
                     _animator: __Animator,
                     _Promise: __Promise,
-                    _document: __Document
+                    _document: __Document,
                 };
                 return If;
             }(TemplateControl));
             controls_1.If = If;
             register.control(__If, If);
             /**
-             * A TemplateControl for adding additonal
+             * A TemplateControl for adding additional
              * functionality to a native HTML anchor tag.
              */
             var Link = /** @class */ (function (_super) {
@@ -13982,10 +16060,10 @@ var plat;
                  * Calls to normalize the href for internal links and initializes the tap event.
                  */
                 Link.prototype.loaded = function () {
-                    var options = this.options, setHref = this.setHref.bind(this);
+                    var options = this.options;
+                    var setHref = this.setHref.bind(this);
                     if (!isObject(options)) {
-                        this._log.warn('No options specified for ' + this.type +
-                            '. Please send in options of type plat.ui.controls.ILinkOptions.');
+                        this._log.warn("No options specified for " + this.type + ". Please send in options of type plat.ui.controls.ILinkOptions.");
                         options = this.options = {};
                         options.value = { view: '' };
                         this.setHref();
@@ -14015,15 +16093,23 @@ var plat;
                     if (isNull(this._router)) {
                         return;
                     }
-                    var value = this.options.value, href = value.view;
+                    var value = this.options.value;
+                    var href = value.view;
                     if (value.isUrl !== true) {
-                        var parameters = value.parameters, query = value.query;
+                        var parameters = value.parameters;
+                        var query = value.query;
                         if (isEmpty(href)) {
                             return href;
                         }
                         href = this._router.generate(href, parameters, query);
                     }
                     return this._browser.formatUrl(href);
+                };
+                /**
+                 * Calls to remove the click eater after a delay.
+                 */
+                Link.prototype.dispose = function () {
+                    defer(this._removeClickListener, 3000);
                 };
                 /**
                  * Determines Whether or not the default click behavior should be prevented.
@@ -14062,7 +16148,6 @@ var plat;
                                 break;
                             default:
                                 buttons = 1;
-                                break;
                         }
                     }
                     if (buttons === 1) {
@@ -14093,24 +16178,18 @@ var plat;
                     // force call click to handle delay 
                     this.element.click();
                 };
-                /**
-                 * Calls to remove the click eater after a delay.
-                 */
-                Link.prototype.dispose = function () {
-                    defer(this._removeClickListener, 3000);
-                };
                 Link._inject = {
                     _Router: __RouterStatic,
                     _Injector: __InjectorStatic,
                     _browser: __Browser,
-                    _window: __Window
+                    _window: __Window,
                 };
                 return Link;
             }(TemplateControl));
             controls_1.Link = Link;
             register.control(__Link, Link);
         })(controls = ui.controls || (ui.controls = {}));
-    })(ui = plat_1.ui || (plat_1.ui = {}));
+    })(ui = plat.ui || (plat.ui = {}));
     /**
      * Holds classes and interfaces related to Document processing in platypus.
      */
@@ -14122,8 +16201,23 @@ var plat;
         var Compiler = /** @class */ (function () {
             function Compiler() {
             }
+            /**
+             * Goes through the NodeList, finding elements that contain controls as well as
+             * text that contains markup.
+             * @param {NodeList} nodes The NodeList that is going to be compiled.
+             * @param {plat.ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
+             * TemplateControl interface since only they can contain templates.
+             */
             Compiler.prototype.compile = function (node, control) {
-                var childNodes = node.childNodes, length, newLength, childNode, hasControl = !isNull(control), manager = (hasControl ? this._managerCache.read(control.uid) : null), create = this._ElementManagerFactory.create;
+                var hasControl = !isNull(control);
+                var manager = (hasControl
+                    ? this._managerCache.read(control.uid)
+                    : null);
+                var create = this._ElementManagerFactory.create;
+                var childNodes = node.childNodes;
+                var length;
+                var newLength;
+                var childNode;
                 if (!isUndefined(childNodes)) {
                     childNodes = Array.prototype.slice.call(childNodes);
                 }
@@ -14135,7 +16229,7 @@ var plat;
                 }
                 if (isNull(manager)) {
                     length = childNodes.length;
-                    for (var i = 0; i < length; ++i) {
+                    for (var i = 0; i < length; i += 1) {
                         childNode = childNodes[i];
                         if (childNode.nodeType === Node.ELEMENT_NODE) {
                             if (!isNull(create(childNode))) {
@@ -14159,13 +16253,15 @@ var plat;
              * @param {plat.processing.ElementManager} manager The parent ElementManagers
              * for the given array of nodes.
              */
-            /**
-             * @param nodes The NodeList to be compiled.
-             * @param manager The parent Element Manager for the given array of nodes.
-             */
             Compiler.prototype._compileNodes = function (nodes, manager) {
-                var length = nodes.length, node, newManager, newLength, create = this._ElementManagerFactory.create, commentCreate = this._CommentManagerFactory.create, textCreate = this._TextManagerFactory.create;
-                for (var i = 0; i < length; ++i) {
+                var create = this._ElementManagerFactory.create;
+                var commentCreate = this._CommentManagerFactory.create;
+                var textCreate = this._TextManagerFactory.create;
+                var length = nodes.length;
+                var node;
+                var newManager;
+                var newLength;
+                for (var i = 0; i < length; i += 1) {
                     node = nodes[i];
                     switch (node.nodeType) {
                         case Node.ELEMENT_NODE:
@@ -14180,6 +16276,7 @@ var plat;
                         case Node.COMMENT_NODE:
                             commentCreate(node, manager);
                             break;
+                        default:
                     }
                     newLength = nodes.length;
                     i += newLength - length;
@@ -14190,7 +16287,7 @@ var plat;
                 _ElementManagerFactory: __ElementManagerFactory,
                 _TextManagerFactory: __TextManagerFactory,
                 _CommentManagerFactory: __CommentManagerFactory,
-                _managerCache: __ManagerCache
+                _managerCache: __ManagerCache,
             };
             return Compiler;
         }());
@@ -14219,16 +16316,30 @@ var plat;
              * @param {string} text The text string in which to search for markup.
              */
             NodeManager.findMarkup = function (text) {
-                var start, end, startLength = __startSymbol.length, endLength = __endSymbol.length, endChar = __endSymbol[endLength - 1], parsedExpressions = [], wrapExpression = NodeManager._wrapExpression, substring, expression, _parser = NodeManager._parser;
+                var startLength = __startSymbol.length;
+                var endLength = __endSymbol.length;
+                var endChar = __endSymbol[endLength - 1];
+                var parsedExpressions = [];
+                var wrapExpression = NodeManager._wrapExpression;
+                var _parser = NodeManager._parser;
+                var start;
+                var end;
+                var substring;
+                var expression;
                 text = text.replace(NodeManager._newLineRegex, '');
-                while ((start = text.indexOf(__startSymbol)) !== -1 && (end = text.indexOf(__endSymbol)) !== -1) {
+                start = text.indexOf(__startSymbol);
+                end = text.indexOf(__endSymbol);
+                while (start !== -1 && end !== -1) {
                     if (start !== 0) {
                         parsedExpressions.push(wrapExpression(text.slice(0, start)));
                     }
-                    // incremement with while loop instead of just += 2 for nested object literal case. 
-                    while (text[end++] !== endChar || text[end] === endChar) { }
+                    // increment with while loop instead of just += 2 for nested object literal case. 
+                    while (text[end] !== endChar || text[end + 1] === endChar) {
+                        end += 1;
+                    }
+                    end += 1;
                     substring = text.slice(start + startLength, end - endLength);
-                    // check for one-time databinding 
+                    // check for one-time data-binding 
                     if (substring[0] === '=') {
                         expression = _parser.parse(substring.slice(1).trim());
                         expression.oneTime = true;
@@ -14238,6 +16349,8 @@ var plat;
                         parsedExpressions.push(_parser.parse(substring.trim()));
                     }
                     text = text.slice(end);
+                    start = text.indexOf(__startSymbol);
+                    end = text.indexOf(__endSymbol);
                 }
                 if (start >= 0 && end >= 0) {
                     parsedExpressions.push(wrapExpression(text.slice(end)));
@@ -14255,8 +16368,13 @@ var plat;
              * the expressions.
              */
             NodeManager.build = function (expressions, control) {
-                var text = '', length = expressions.length, resources = {}, expression, value, evaluateExpression = NodeManager._TemplateControlFactory.evaluateExpression;
-                for (var i = 0; i < length; ++i) {
+                var length = expressions.length;
+                var resources = {};
+                var evaluateExpression = NodeManager._TemplateControlFactory.evaluateExpression;
+                var text = '';
+                var expression;
+                var value;
+                for (var i = 0; i < length; i += 1) {
                     expression = expressions[i];
                     value = evaluateExpression(expression, control, resources);
                     if (isObject(value)) {
@@ -14265,9 +16383,9 @@ var plat;
                         }
                         catch (e) {
                             if (!isNull(e.description)) {
-                                e.description = 'Cannot stringify object: ' + e.description;
+                                e.description = "Cannot stringify object: " + e.description;
                             }
-                            e.message = 'Cannot stringify object: ' + e.message;
+                            e.message = "Cannot stringify object: " + e.message;
                             NodeManager._log.warn(e);
                         }
                     }
@@ -14286,10 +16404,17 @@ var plat;
              * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
              */
             NodeManager.observeExpressions = function (expressions, control, listener) {
-                var uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions), identifiers = uniqueIdentifiers.identifiers, oneTimeIdentifiers = uniqueIdentifiers.oneTimeIdentifiers, oneTimeIdentifier, observableCallback = {
+                var uniqueIdentifiers = NodeManager.__findUniqueIdentifiers(expressions);
+                var identifiers = uniqueIdentifiers.identifiers;
+                var oneTimeIdentifiers = uniqueIdentifiers.oneTimeIdentifiers;
+                var observableCallback = {
                     listener: listener,
-                    uid: control.uid
-                }, observationDetails, manager, absoluteIdentifier;
+                    uid: control.uid,
+                };
+                var oneTimeIdentifier;
+                var observationDetails;
+                var manager;
+                var absoluteIdentifier;
                 while (identifiers.length > 0) {
                     observationDetails = NodeManager.__getObservationDetails(identifiers.pop(), control);
                     manager = observationDetails.manager;
@@ -14297,20 +16422,24 @@ var plat;
                         manager.observe(observationDetails.absoluteIdentifier, observableCallback);
                     }
                 }
-                while (oneTimeIdentifiers.length > 0) {
+                var _loop_2 = function () {
                     oneTimeIdentifier = oneTimeIdentifiers.pop();
                     observationDetails = NodeManager.__getObservationDetails(oneTimeIdentifier, control);
                     manager = observationDetails.manager;
                     if (!(isNull(manager) || observationDetails.isDefined)) {
                         absoluteIdentifier = observationDetails.absoluteIdentifier;
-                        var stopObserving = manager.observe(absoluteIdentifier, observableCallback), stopListening = manager.observe(absoluteIdentifier, {
+                        var stopObserving_1 = manager.observe(absoluteIdentifier, observableCallback);
+                        var stopListening_1 = manager.observe(absoluteIdentifier, {
                             uid: control.uid,
                             listener: function () {
-                                stopObserving();
-                                stopListening();
-                            }
+                                stopObserving_1();
+                                stopListening_1();
+                            },
                         });
                     }
+                };
+                while (oneTimeIdentifiers.length > 0) {
+                    _loop_2();
                 }
             };
             /**
@@ -14322,7 +16451,7 @@ var plat;
                     evaluate: function () { return text; },
                     identifiers: [],
                     aliases: [],
-                    expression: text
+                    expression: text,
                 };
             };
             /**
@@ -14331,27 +16460,36 @@ var plat;
              * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
              */
             NodeManager.__findUniqueIdentifiers = function (expressions) {
-                var length = expressions.length, expression;
+                var length = expressions.length;
+                var expression;
                 if (length === 1) {
                     expression = expressions[0];
                     if (expression.oneTime === true) {
                         return {
                             identifiers: [],
-                            oneTimeIdentifiers: expression.identifiers.slice(0)
+                            oneTimeIdentifiers: expression.identifiers.slice(0),
                         };
                     }
                     return {
                         identifiers: expression.identifiers.slice(0),
-                        oneTimeIdentifiers: []
+                        oneTimeIdentifiers: [],
                     };
                 }
-                var uniqueIdentifierObject = {}, oneTimeIdentifierObject = {}, uniqueIdentifiers = [], oneTimeIdentifiers = [], identifiers, identifier, j, jLength, oneTime;
-                for (var i = 0; i < length; ++i) {
+                var uniqueIdentifierObject = {};
+                var oneTimeIdentifierObject = {};
+                var uniqueIdentifiers = [];
+                var oneTimeIdentifiers = [];
+                var identifiers;
+                var identifier;
+                var j;
+                var jLength;
+                var oneTime;
+                for (var i = 0; i < length; i += 1) {
                     expression = expressions[i];
                     oneTime = expression.oneTime;
                     identifiers = expression.identifiers;
                     jLength = identifiers.length;
-                    for (j = 0; j < jLength; ++j) {
+                    for (j = 0; j < jLength; j += 1) {
                         identifier = identifiers[j];
                         if (oneTime) {
                             if (uniqueIdentifierObject[identifier] === true) {
@@ -14376,7 +16514,7 @@ var plat;
                 }
                 return {
                     identifiers: uniqueIdentifiers,
-                    oneTimeIdentifiers: oneTimeIdentifiers
+                    oneTimeIdentifiers: oneTimeIdentifiers,
                 };
             };
             /**
@@ -14387,12 +16525,19 @@ var plat;
              * to the identifiers.
              */
             NodeManager.__getObservationDetails = function (identifier, control) {
-                var _ContextManager = NodeManager._ContextManager, manager, split = identifier.split('.'), absoluteIdentifier = '', isDefined = false;
+                var _ContextManager = NodeManager._ContextManager;
+                var split = identifier.split('.');
+                var manager;
+                var absoluteIdentifier = '';
+                var isDefined = false;
                 if (identifier[0] === '@') {
                     // we found an alias 
-                    var resourceObj = void 0, resources = {}, topIdentifier = split.shift(), alias = topIdentifier.slice(1);
+                    var resources = {};
+                    var topIdentifier = split.shift();
+                    var alias = topIdentifier.slice(1);
+                    var resourceObj = void 0;
                     if (split.length > 0) {
-                        absoluteIdentifier = '.' + split.join('.');
+                        absoluteIdentifier = "." + split.join('.');
                     }
                     resourceObj = resources[alias];
                     if (isNull(resourceObj)) {
@@ -14402,24 +16547,27 @@ var plat;
                         var type = resourceObj.resource.type;
                         if (alias === __CONTEXT_RESOURCE) {
                             manager = _ContextManager.getManager(Control.getRootControl(control));
-                            absoluteIdentifier = control.absoluteContextPath + absoluteIdentifier;
+                            absoluteIdentifier =
+                                control.absoluteContextPath + absoluteIdentifier;
                         }
                         else if (alias === __ROOT_CONTEXT_RESOURCE) {
                             manager = _ContextManager.getManager(resources[alias].control);
-                            absoluteIdentifier = 'context' + absoluteIdentifier;
+                            absoluteIdentifier = "context" + absoluteIdentifier;
                         }
-                        else if (type === __OBSERVABLE_RESOURCE || type === __LITERAL_RESOURCE) {
+                        else if (type === __OBSERVABLE_RESOURCE ||
+                            type === __LITERAL_RESOURCE) {
                             manager = _ContextManager.getManager(resources[alias].control);
-                            absoluteIdentifier = 'resources.' + alias + '.value' + absoluteIdentifier;
+                            absoluteIdentifier = "resources." + alias + ".value" + absoluteIdentifier;
                         }
                     }
                 }
                 else {
                     // look on the control.context 
                     isDefined = !isUndefined(_ContextManager.getContext(control.context, split));
-                    if (isDefined || isUndefined(_ContextManager.getContext(control, split))) {
+                    if (isDefined ||
+                        isUndefined(_ContextManager.getContext(control, split))) {
                         manager = _ContextManager.getManager(Control.getRootControl(control));
-                        absoluteIdentifier = control.absoluteContextPath + '.' + identifier;
+                        absoluteIdentifier = control.absoluteContextPath + "." + identifier;
                     }
                     else {
                         manager = null;
@@ -14428,7 +16576,7 @@ var plat;
                 return {
                     absoluteIdentifier: absoluteIdentifier,
                     manager: manager,
-                    isDefined: isDefined
+                    isDefined: isDefined,
                 };
             };
             /**
@@ -14449,7 +16597,8 @@ var plat;
              * Retrieves the parent control associated with the parent manager.
              */
             NodeManager.prototype.getParentControl = function () {
-                var parent = this.parent, control;
+                var parent = this.parent;
+                var control;
                 while (isNull(control)) {
                     if (isNull(parent)) {
                         break;
@@ -14493,7 +16642,7 @@ var plat;
             __ContextManagerStatic,
             __Parser,
             __TemplateControlFactory,
-            __Log
+            __Log,
         ], __STATIC);
         /**
          * A class used to manage element nodes. Provides a way for compiling and binding the
@@ -14536,34 +16685,53 @@ var plat;
              * used for context inheritance.
              */
             ElementManager.create = function (element, parent) {
-                var name = element.nodeName.toLowerCase(), nodeName = name, injector = controlInjectors[name] || viewControlInjectors[name], noControlAttribute = true, hasUiControl = false, uiControlNode;
+                var name = element.nodeName.toLowerCase();
+                var nodeName = name;
+                var injector = controlInjectors[name];
+                if (!isObject(injector)) {
+                    injector = viewControlInjectors[name];
+                }
+                var noControlAttribute = true;
+                var hasUiControl = false;
+                var uiControlNode;
                 if (isNull(injector)) {
                     if (element.hasAttribute(__Control)) {
                         name = element.getAttribute(__Control).toLowerCase();
-                        injector = controlInjectors[name] || viewControlInjectors[name];
+                        injector = controlInjectors[name];
+                        if (!isObject(injector)) {
+                            injector = viewControlInjectors[name];
+                        }
                         noControlAttribute = false;
                     }
                     else if (element.hasAttribute(__AttributePrefix + __Control)) {
-                        name = element.getAttribute(__AttributePrefix + __Control).toLowerCase();
-                        injector = controlInjectors[name] || viewControlInjectors[name];
+                        name = element
+                            .getAttribute(__AttributePrefix + __Control)
+                            .toLowerCase();
+                        injector = controlInjectors[name];
+                        if (!isObject(injector)) {
+                            injector = viewControlInjectors[name];
+                        }
                         noControlAttribute = false;
                     }
                 }
                 if (!isNull(injector)) {
-                    var uiControl = injector.inject(), resourceElement = ElementManager.locateResources(element);
+                    var uiControl = injector.inject();
+                    var resourceElement = ElementManager.locateResources(element);
                     uiControlNode = {
                         control: uiControl,
                         resourceElement: resourceElement,
                         nodeName: name,
                         expressions: [],
-                        injector: injector
+                        injector: injector,
                     };
                     hasUiControl = true;
                     if (noControlAttribute) {
                         element.setAttribute(__Control, name);
                     }
-                    var replacementType = uiControl.replaceWith, replaceWithDiv = replacementType === 'any' && noControlAttribute;
-                    if (!isEmpty(replacementType) && (replacementType !== 'any' || replaceWithDiv) &&
+                    var replacementType = uiControl.replaceWith;
+                    var replaceWithDiv = replacementType === 'any' && noControlAttribute;
+                    if (!isEmpty(replacementType) &&
+                        (replacementType !== 'any' || replaceWithDiv) &&
                         replacementType.toLowerCase() !== nodeName) {
                         if (replaceWithDiv) {
                             replacementType = 'div';
@@ -14574,7 +16742,8 @@ var plat;
                         }
                     }
                 }
-                var elementMap = ElementManager._collectAttributes(element.attributes), manager = ElementManager.getInstance();
+                var elementMap = ElementManager._collectAttributes(element.attributes);
+                var manager = ElementManager.getInstance();
                 elementMap.element = element;
                 if (!hasUiControl && isString(elementMap.childContext)) {
                     injector = injectableInjectors[__TemplateControlInstance];
@@ -14584,7 +16753,7 @@ var plat;
                         resourceElement: null,
                         nodeName: __TemplateContext,
                         expressions: [],
-                        injector: injector
+                        injector: injector,
                     };
                 }
                 else {
@@ -14592,7 +16761,9 @@ var plat;
                 }
                 manager.initialize(elementMap, parent);
                 if (!(elementMap.hasControl || hasUiControl)) {
-                    manager.bind = function () { return []; };
+                    manager.bind = function () {
+                        return [];
+                    };
                 }
                 else {
                     manager.setUiControlTemplate();
@@ -14606,11 +16777,14 @@ var plat;
              * @param {Node} node The node whose child nodes may contain Resources.
              */
             ElementManager.locateResources = function (node) {
-                var childNodes = Array.prototype.slice.call(node.childNodes), childNode, nodeName;
+                var childNodes = Array.prototype.slice.call(node.childNodes);
+                var childNode;
+                var nodeName;
                 while (childNodes.length > 0) {
                     childNode = childNodes.shift();
                     nodeName = childNode.nodeName.toLowerCase();
-                    if (nodeName === __Resources || nodeName === 'x-' + __Resources) {
+                    if (nodeName === __Resources ||
+                        nodeName === "x-" + __Resources) {
                         return node.removeChild(childNode);
                     }
                 }
@@ -14628,10 +16802,14 @@ var plat;
              */
             ElementManager.clone = function (sourceManager, parent, element, newControl, nodeMap) {
                 if (isNull(nodeMap)) {
-                    nodeMap = ElementManager._cloneNodeMap(sourceManager.nodeMap, element, parent.getUiControl() ||
-                        parent.getParentControl(), newControl);
+                    var parentControl = parent.getUiControl();
+                    if (!isObject(parentControl)) {
+                        parentControl = parent.getParentControl();
+                    }
+                    nodeMap = ElementManager._cloneNodeMap(sourceManager.nodeMap, element, parentControl, newControl);
                 }
-                var manager = ElementManager.getInstance(), hasNewControl = !isNull(newControl);
+                var manager = ElementManager.getInstance();
+                var hasNewControl = !isNull(newControl);
                 manager.nodeMap = nodeMap;
                 manager.parent = parent;
                 if (!isNull(parent)) {
@@ -14642,7 +16820,9 @@ var plat;
                 manager.hasOwnContext = sourceManager.hasOwnContext;
                 manager.isClone = true;
                 if (!(nodeMap.hasControl || hasNewControl)) {
-                    manager.bind = function () { return []; };
+                    manager.bind = function () {
+                        return [];
+                    };
                 }
                 if (hasNewControl) {
                     ElementManager._managerCache.put(newControl.uid, manager);
@@ -14660,7 +16840,10 @@ var plat;
                 if (isNull(uiControlNode) || isNull(uiControlNode.injector)) {
                     return;
                 }
-                var uiControl = uiControlNode.control, newUiControl = uiControlNode.injector.inject(), resources = ElementManager._ResourcesFactory.getInstance(), attributes = ElementManager._AttributesFactory.getInstance();
+                var uiControl = uiControlNode.control;
+                var newUiControl = uiControlNode.injector.inject();
+                var resources = ElementManager._ResourcesFactory.getInstance();
+                var attributes = ElementManager._AttributesFactory.getInstance();
                 newUiControl.parent = parent;
                 parent.controls.push(newUiControl);
                 newUiControl.controls = [];
@@ -14690,15 +16873,27 @@ var plat;
              * @param {boolean} isClone? Whether or not these controls are clones.
              */
             ElementManager.createAttributeControls = function (nodeMap, parent, templateControl, newElement, isClone) {
-                var nodes = nodeMap.nodes, element = isClone === true ? newElement : nodeMap.element, attributes;
+                var nodes = nodeMap.nodes;
+                var element = isClone === true ? newElement : nodeMap.element;
+                var attributes;
                 if (isNode(element)) {
                     if (element.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-                        return isClone === true ? ElementManager._copyAttributeNodes(nodes) : [];
+                        return isClone === true
+                            ? ElementManager._copyAttributeNodes(nodes)
+                            : [];
                     }
                     attributes = element.attributes;
                 }
-                var attrs = nodeMap.attributes, newAttributes, node, injector, control, newNodes = [], length = nodes.length, nodeName, i;
-                for (i = 0; i < length; ++i) {
+                var attrs = nodeMap.attributes;
+                var newNodes = [];
+                var length = nodes.length;
+                var newAttributes;
+                var node;
+                var injector;
+                var control;
+                var nodeName;
+                var i;
+                for (i = 0; i < length; i += 1) {
                     node = nodes[i];
                     nodeName = node.nodeName;
                     injector = node.injector;
@@ -14718,13 +16913,20 @@ var plat;
                         control.templateControl = templateControl;
                     }
                     if (isClone === true) {
+                        var haveAttributes = isObject(attributes);
+                        var namedItem = null;
+                        if (haveAttributes) {
+                            namedItem = attributes.getNamedItem(nodeName);
+                            if (!isObject(namedItem)) {
+                                namedItem = attributes.getNamedItem(__AttributePrefix + nodeName);
+                            }
+                        }
                         newNodes.push({
                             control: control,
                             expressions: node.expressions,
-                            node: !attributes ? null : (attributes.getNamedItem(nodeName) ||
-                                attributes.getNamedItem(__AttributePrefix + nodeName)),
+                            node: namedItem,
                             nodeName: nodeName,
-                            injector: injector
+                            injector: injector,
                         });
                         if (!isNull(control)) {
                             if (!isNull(parent)) {
@@ -14738,17 +16940,23 @@ var plat;
                 }
                 if (!isClone) {
                     nodes.sort(function (a, b) {
-                        var aControl = a.control, bControl = b.control;
+                        var aControl = a.control;
+                        var bControl = b.control;
                         if (isNull(aControl)) {
                             return 1;
                         }
                         else if (isNull(bControl)) {
                             return -1;
                         }
-                        var aPriority = isNumber(aControl.priority) ? aControl.priority : 0, bPriority = isNumber(bControl.priority) ? bControl.priority : 0;
+                        var aPriority = isNumber(aControl.priority)
+                            ? aControl.priority
+                            : 0;
+                        var bPriority = isNumber(bControl.priority)
+                            ? bControl.priority
+                            : 0;
                         return bPriority - aPriority;
                     });
-                    for (i = 0; i < length; ++i) {
+                    for (i = 0; i < length; i += 1) {
                         node = nodes[i];
                         control = node.control;
                         if (!isNull(control)) {
@@ -14773,8 +16981,10 @@ var plat;
                 manager._compiler = acquire(__Compiler);
                 manager._CommentManagerFactory = acquire(__CommentManagerFactory);
                 manager._ControlFactory = acquire(__ControlFactory);
-                manager._TemplateControlFactory = NodeManager._TemplateControlFactory;
-                manager._BindableTemplatesFactory = ElementManager._BindableTemplatesFactory;
+                manager._TemplateControlFactory =
+                    NodeManager._TemplateControlFactory;
+                manager._BindableTemplatesFactory =
+                    ElementManager._BindableTemplatesFactory;
                 manager._log = ElementManager._log;
                 return manager;
             };
@@ -14785,18 +16995,34 @@ var plat;
              * @param {NamedNodeMap} attributes The attributes used to create the INodeMap.
              */
             ElementManager._collectAttributes = function (attributes) {
-                var nodes = [], attribute, name, value, childContext, childIdentifier, hasMarkup, hasMarkupFn = NodeManager.hasMarkup, findMarkup = NodeManager.findMarkup, _parser = NodeManager._parser, expressions, hasControl = false, injector, length = attributes.length, controlAttributes = {};
-                for (var i = 0; i < length; ++i) {
+                var nodes = [];
+                var hasMarkupFn = NodeManager.hasMarkup;
+                var findMarkup = NodeManager.findMarkup;
+                var _parser = NodeManager._parser;
+                var length = attributes.length;
+                var controlAttributes = {};
+                var attribute;
+                var name;
+                var value;
+                var childContext;
+                var childIdentifier;
+                var hasMarkup;
+                var expressions;
+                var hasControl = false;
+                var injector;
+                for (var i = 0; i < length; i += 1) {
                     attribute = attributes[i];
                     value = attribute.value;
                     name = attribute.name.replace(/^data-/i, '').toLowerCase();
-                    injector = controlInjectors[name] || viewControlInjectors[name];
+                    injector = controlInjectors[name];
+                    if (!isObject(injector)) {
+                        injector = viewControlInjectors[name];
+                    }
                     if (name === __Context) {
                         if (value !== '') {
                             childContext = _parser.parse(value);
                             if (childContext.identifiers.length !== 1) {
-                                ElementManager._log.warn('Incorrect ' + __Context + ': ' +
-                                    value + ', must contain a single identifier.');
+                                ElementManager._log.warn("Incorrect " + __Context + ": " + value + ", must contain a single identifier.");
                             }
                             childIdentifier = childContext.identifiers[0];
                         }
@@ -14812,7 +17038,7 @@ var plat;
                             node: attribute,
                             nodeName: name,
                             expressions: expressions,
-                            injector: injector
+                            injector: injector,
                         });
                     }
                     controlAttributes[camelCase(name)] = value;
@@ -14822,7 +17048,7 @@ var plat;
                     attributes: controlAttributes,
                     nodes: nodes,
                     childContext: childIdentifier,
-                    hasControl: hasControl
+                    hasControl: hasControl,
                 };
             };
             /**
@@ -14831,12 +17057,14 @@ var plat;
              * to be cloned.
              */
             ElementManager._copyAttributeNodes = function (nodes) {
-                var newNodes = [], length = nodes.length, node;
-                for (var i = 0; i < length; ++i) {
+                var newNodes = [];
+                var length = nodes.length;
+                var node;
+                for (var i = 0; i < length; i += 1) {
                     node = nodes[i];
                     newNodes.push({
                         expressions: node.expressions,
-                        nodeName: node.nodeName
+                        nodeName: node.nodeName,
                     });
                 }
                 return newNodes;
@@ -14853,7 +17081,7 @@ var plat;
                     injector: sourceNode.injector,
                     expressions: sourceNode.expressions,
                     node: node,
-                    nodeName: sourceNode.nodeName
+                    nodeName: sourceNode.nodeName,
                 };
             };
             /**
@@ -14866,14 +17094,16 @@ var plat;
              * to associate with the element.
              */
             ElementManager._cloneNodeMap = function (sourceMap, element, parent, newControl) {
-                var hasControl = sourceMap.hasControl, nodeMap = {
+                var hasControl = sourceMap.hasControl;
+                var nodeMap = {
                     attributes: sourceMap.attributes,
                     childContext: sourceMap.childContext,
                     nodes: [],
                     element: element,
-                    uiControlNode: !isNull(sourceMap.uiControlNode) ?
-                        ElementManager._cloneNode(sourceMap.uiControlNode, element, newControl) : null,
-                    hasControl: hasControl
+                    uiControlNode: !isNull(sourceMap.uiControlNode)
+                        ? ElementManager._cloneNode(sourceMap.uiControlNode, element, newControl)
+                        : null,
+                    hasControl: hasControl,
                 };
                 if (hasControl) {
                     nodeMap.nodes = ElementManager.createAttributeControls(sourceMap, parent, newControl, element, true);
@@ -14887,15 +17117,30 @@ var plat;
              * @param {plat.processing.INodeMap} nodeMap? An optional INodeMap to clone a ui control if needed.
              */
             ElementManager.prototype.clone = function (newNode, parentManager, nodeMap) {
-                var childNodes, clonedManager, replace = this.replace, children = this.children, newControl = !isNull(nodeMap) ? nodeMap.uiControlNode.control : null, newControlExists = !isNull(newControl), startNodeManager, endNodeManager;
+                var replace = this.replace;
+                var children = this.children;
+                var newControl = !isNull(nodeMap)
+                    ? nodeMap.uiControlNode.control
+                    : null;
+                var newControlExists = !isNull(newControl);
+                var childNodes;
+                var clonedManager;
+                var startNodeManager;
+                var endNodeManager;
                 if (!newControlExists) {
                     // create new control 
-                    newControl = ElementManager.cloneUiControl(this.nodeMap, (parentManager.getUiControl() || parentManager.getParentControl()));
+                    var toClone = parentManager.getUiControl();
+                    if (!isObject(toClone)) {
+                        toClone = parentManager.getParentControl();
+                    }
+                    newControl = ElementManager.cloneUiControl(this.nodeMap, toClone);
                     newControlExists = !isNull(newControl);
                 }
                 if (replace) {
                     // definitely have newControl 
-                    var nodes = newNode.parentNode.childNodes, arrayProto = Array.prototype, startIndex = arrayProto.indexOf.call(nodes, newNode);
+                    var nodes = newNode.parentNode.childNodes;
+                    var arrayProto = Array.prototype;
+                    var startIndex = arrayProto.indexOf.call(nodes, newNode);
                     childNodes = arrayProto.slice.call(nodes, startIndex + 1, startIndex + this.replaceNodeLength);
                     clonedManager = ElementManager.clone(this, parentManager, null, newControl, nodeMap);
                     newControl.elementNodes = childNodes;
@@ -14920,8 +17165,9 @@ var plat;
                         }
                     }
                 }
-                var length = children.length, childNodeOffset = 0;
-                for (var i = 0; i < length; ++i) {
+                var length = children.length;
+                var childNodeOffset = 0;
+                for (var i = 0; i < length; i += 1) {
                     // clone children 
                     childNodeOffset += children[i].clone(childNodes[childNodeOffset], clonedManager);
                 }
@@ -14945,7 +17191,9 @@ var plat;
              */
             ElementManager.prototype.initialize = function (nodeMap, parent, dontInitialize) {
                 _super.prototype.initialize.call(this, nodeMap, parent);
-                var controlNode = nodeMap.uiControlNode, hasUiControl = !isNull(controlNode), control;
+                var controlNode = nodeMap.uiControlNode;
+                var hasUiControl = !isNull(controlNode);
+                var control;
                 if (hasUiControl) {
                     this._populateUiControl();
                     control = controlNode.control;
@@ -14954,7 +17202,9 @@ var plat;
                 if (nodeMap.hasControl) {
                     ElementManager.createAttributeControls(nodeMap, this.getParentControl(), control);
                 }
-                if (!dontInitialize && hasUiControl && isFunction(control.initialize)) {
+                if (!dontInitialize &&
+                    hasUiControl &&
+                    isFunction(control.initialize)) {
                     control.initialize();
                 }
             };
@@ -14963,24 +17213,40 @@ var plat;
              */
             ElementManager.prototype.bind = function () {
                 var _this = this;
-                var nodeMap = this.nodeMap, parent = this.getParentControl(), controlNode = nodeMap.uiControlNode, controls = [];
+                var nodeMap = this.nodeMap;
+                var parent = this.getParentControl();
+                var controlNode = nodeMap.uiControlNode;
+                var controls = [];
                 if (!isNull(controlNode)) {
-                    var uiControl_1 = controlNode.control, childContext = nodeMap.childContext, getManager = this._ContextManager.getManager, contextManager_1, absoluteContextPath_1 = isNull(parent) ? __CONTEXT : parent.absoluteContextPath, _TemplateControlFactory = this._TemplateControlFactory, inheritsContext = !uiControl_1.hasOwnContext;
+                    var uiControl_1 = controlNode.control;
+                    var _TemplateControlFactory = this._TemplateControlFactory;
+                    var inheritsContext = !uiControl_1.hasOwnContext;
+                    var getManager = this._ContextManager.getManager;
+                    var childContext = nodeMap.childContext;
+                    var contextManager_1;
+                    var absoluteContextPath_1 = isNull(parent)
+                        ? __CONTEXT
+                        : parent.absoluteContextPath;
                     controls.push(uiControl_1);
                     if (inheritsContext && !isNull(childContext)) {
                         if (childContext[0] === '@') {
-                            var split = childContext.split('.'), topIdentifier = split.shift(), alias = topIdentifier.slice(1), resourceObj = _TemplateControlFactory.findResource(uiControl_1, alias);
+                            var split = childContext.split('.');
+                            var topIdentifier = split.shift();
+                            var alias = topIdentifier.slice(1);
+                            var resourceObj = _TemplateControlFactory.findResource(uiControl_1, alias);
                             if (isObject(resourceObj)) {
                                 var resource = resourceObj.resource;
-                                childContext = (split.length > 0 ? ('.' + split.join('.')) : '');
+                                childContext =
+                                    split.length > 0 ? "." + split.join('.') : '';
                                 if (alias === __CONTEXT_RESOURCE) {
                                     absoluteContextPath_1 += childContext;
                                 }
                                 else if (alias === __ROOT_CONTEXT_RESOURCE) {
                                     absoluteContextPath_1 = __CONTEXT + childContext;
                                 }
-                                else if (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE) {
-                                    absoluteContextPath_1 = 'resources.' + alias + '.value' + childContext;
+                                else if (resource.type === __OBSERVABLE_RESOURCE ||
+                                    resource.type === __LITERAL_RESOURCE) {
+                                    absoluteContextPath_1 = "resources." + alias + ".value" + childContext;
                                     uiControl_1.root = resourceObj.control;
                                 }
                                 else {
@@ -14988,22 +17254,26 @@ var plat;
                                 }
                             }
                             else {
-                                this._log.warn('Could not set the context of ' + uiControl_1.type +
-                                    ' with the resource specified as "' + childContext + '".');
+                                this._log.warn("Could not set the context of " + uiControl_1.type + " with the resource specified as \"" + childContext + "\".");
                             }
                         }
                         else {
-                            absoluteContextPath_1 += '.' + childContext;
+                            absoluteContextPath_1 += "." + childContext;
                         }
                     }
                     if (!isObject(uiControl_1.root)) {
-                        uiControl_1.root = this._ControlFactory.getRootControl(uiControl_1) || uiControl_1;
+                        uiControl_1.root = this._ControlFactory.getRootControl(uiControl_1);
+                        if (!isObject(uiControl_1.root)) {
+                            uiControl_1.root = uiControl_1;
+                        }
                     }
                     contextManager_1 = getManager(uiControl_1.root);
                     var awaitContext = false;
                     if (inheritsContext) {
                         uiControl_1.context = contextManager_1.getContext(absoluteContextPath_1.split('.'), false);
-                        awaitContext = isUndefined(uiControl_1.context) && !this._BindableTemplatesFactory.isBoundControl(uiControl_1);
+                        awaitContext =
+                            isUndefined(uiControl_1.context) &&
+                                !this._BindableTemplatesFactory.isBoundControl(uiControl_1);
                     }
                     else {
                         absoluteContextPath_1 = __CONTEXT;
@@ -15020,7 +17290,7 @@ var plat;
                                     uiControl_1.context = newValue;
                                     _this._beforeLoad(uiControl_1, absoluteContextPath_1);
                                     resolve();
-                                }
+                                },
                             });
                         });
                     }
@@ -15043,7 +17313,9 @@ var plat;
                 var controlNode = this.nodeMap.uiControlNode;
                 if (!isNull(controlNode)) {
                     var control_1 = controlNode.control;
-                    this.templatePromise = this._TemplateControlFactory.determineTemplate(control_1, templateUrl).then(function (template) {
+                    this.templatePromise = this._TemplateControlFactory
+                        .determineTemplate(control_1, templateUrl)
+                        .then(function (template) {
                         _this.templatePromise = null;
                         _this._initializeControl(control_1, template.cloneNode(true));
                     }, function (error) {
@@ -15083,7 +17355,7 @@ var plat;
                 return uiControlNode.control;
             };
             /**
-             * Fullfills any template promises and finishes the compile phase for the HTML template associated
+             * Fulfills any template promises and finishes the compile phase for the HTML template associated
              * with this ElementManager.
              */
             ElementManager.prototype.fulfillTemplate = function () {
@@ -15100,9 +17372,11 @@ var plat;
              */
             ElementManager.prototype.fulfillAndLoad = function () {
                 var _this = this;
-                return this.fulfillTemplate().then(function () {
+                return this.fulfillTemplate()
+                    .then(function () {
                     return _this.bindAndLoad();
-                }).catch(function (error) {
+                })
+                    .catch(function (error) {
                     postpone(function () {
                         if (isString(error)) {
                             error = new Error(error);
@@ -15116,7 +17390,8 @@ var plat;
              */
             ElementManager.prototype.bindAndLoad = function () {
                 var _this = this;
-                var controls = this.bind(), promise;
+                var controls = this.bind();
+                var promise;
                 if (isPromise(this.contextPromise)) {
                     promise = this.contextPromise.then(function () {
                         return _this._bindChildren();
@@ -15125,9 +17400,11 @@ var plat;
                 else {
                     promise = this._bindChildren();
                 }
-                return promise.then(function () {
+                return promise
+                    .then(function () {
                     return _this._loadControls(controls, _this.getUiControl());
-                }).catch(function (error) {
+                })
+                    .catch(function (error) {
                     postpone(function () {
                         if (isString(error)) {
                             error = new Error(error);
@@ -15140,7 +17417,7 @@ var plat;
              * Observes the root context for controls that specify their own context, and initiates
              * a load upon a successful set of the context.
              * @param {plat.ui.TemplateControl} root The TemplateControl specifying its own context.
-             * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its
+             * @param {() => async.Promise<void>} loadMethod The function to initiate the loading of the root control and its
              * children.
              */
             ElementManager.prototype.observeRootContext = function (root, loadMethod) {
@@ -15150,12 +17427,14 @@ var plat;
                     return loadMethod();
                 }
                 return new this._Promise(function (resolve) {
-                    var removeListener = _this._ContextManager.getManager(root).observe(__CONTEXT, {
+                    var removeListener = _this._ContextManager
+                        .getManager(root)
+                        .observe(__CONTEXT, {
                         listener: function () {
                             removeListener();
                             loadMethod().then(resolve);
                         },
-                        uid: root.uid
+                        uid: root.uid,
                     });
                 }).catch(function (error) {
                     postpone(function () {
@@ -15173,13 +17452,14 @@ var plat;
              * @param {string} absoluteContextPath The absoluteContextPath of the uiControl.
              */
             ElementManager.prototype._beforeLoad = function (uiControl, absoluteContextPath) {
-                var contextManager = this._ContextManager.getManager(uiControl.root), _TemplateControlFactory = this._TemplateControlFactory;
+                var contextManager = this._ContextManager.getManager(uiControl.root);
+                var _TemplateControlFactory = this._TemplateControlFactory;
                 uiControl.zCC__plat = contextManager.observe(absoluteContextPath, {
                     uid: uiControl.uid,
                     priority: __CONTEXT_CHANGED_PRIORITY,
                     listener: function (newValue, oldValue) {
                         uiControl.context = newValue;
-                    }
+                    },
                 });
                 _TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
                 _TemplateControlFactory.setContextResources(uiControl);
@@ -15189,8 +17469,11 @@ var plat;
              * Binds context to the DOM and calls bindAndLoad on all children.
              */
             ElementManager.prototype._bindChildren = function () {
-                var children = this.children, length = children.length, child, promises = [];
-                for (var i = 0; i < length; ++i) {
+                var children = this.children;
+                var length = children.length;
+                var promises = [];
+                var child;
+                for (var i = 0; i < length; i += 1) {
                     child = children[i];
                     if (child.hasOwnContext) {
                         if (this.isClone) {
@@ -15218,7 +17501,13 @@ var plat;
              * associated with this manager.
              */
             ElementManager.prototype._loadControls = function (controls, templateControl) {
-                var length = controls.length, control, load = this._ControlFactory.load, templateControlLoaded = isNull(templateControl), promise, templateControlPriority, i;
+                var length = controls.length;
+                var load = this._ControlFactory.load;
+                var control;
+                var templateControlLoaded = isNull(templateControl);
+                var promise;
+                var templateControlPriority;
+                var i;
                 if (templateControlLoaded) {
                     // don't need to set templateControlPriority because it will never be checked. 
                     i = 0;
@@ -15228,10 +17517,11 @@ var plat;
                     templateControlPriority = isNumber(priority) ? priority : 100;
                     i = 1;
                 }
-                for (; i < length; ++i) {
+                for (; i < length; i += 1) {
                     control = controls[i];
                     control.templateControl = templateControl;
-                    if (!templateControlLoaded && templateControlPriority > control.priority) {
+                    if (!templateControlLoaded &&
+                        templateControlPriority > control.priority) {
                         templateControlLoaded = true;
                         promise = load(templateControl);
                     }
@@ -15247,7 +17537,17 @@ var plat;
              * if one exists.
              */
             ElementManager.prototype._populateUiControl = function () {
-                var nodeMap = this.nodeMap, parent = this.getParentControl(), controlNode = nodeMap.uiControlNode, uiControl = controlNode.control, uid = uiControl.uid, resources = uiControl.resources, element = nodeMap.element, childNodes = Array.prototype.slice.call(element.childNodes), newAttributes = ElementManager._AttributesFactory.getInstance(), replace = this.replace = (uiControl.replaceWith === null || uiControl.replaceWith === '');
+                var nodeMap = this.nodeMap;
+                var parent = this.getParentControl();
+                var controlNode = nodeMap.uiControlNode;
+                var uiControl = controlNode.control;
+                var element = nodeMap.element;
+                var childNodes = Array.prototype.slice.call(element.childNodes);
+                var newAttributes = ElementManager._AttributesFactory.getInstance();
+                var replace = (this.replace =
+                    uiControl.replaceWith === null || uiControl.replaceWith === '');
+                var uid = uiControl.uid;
+                var resources = uiControl.resources;
                 if (!isString(uid)) {
                     uid = uiControl.uid = uniqueId(__Plat);
                 }
@@ -15273,8 +17573,12 @@ var plat;
                 }
                 ElementManager._ResourcesFactory.addControlResources(uiControl);
                 uiControl.type = controlNode.nodeName;
-                uiControl.bindableTemplates = uiControl.bindableTemplates || this._BindableTemplatesFactory.create(uiControl);
-                if (childNodes.length > 0 && (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
+                if (!isObject(uiControl.bindableTemplates)) {
+                    uiControl.bindableTemplates = this._BindableTemplatesFactory.create(uiControl);
+                }
+                if (childNodes.length > 0 &&
+                    (!isEmpty(uiControl.templateString) ||
+                        !isEmpty(uiControl.templateUrl))) {
                     uiControl.innerTemplate = appendChildren(childNodes);
                 }
                 if (replace) {
@@ -15289,7 +17593,14 @@ var plat;
              * @param {plat.processing.INodeMap} nodeMap The INodeMap associated with this manager.
              */
             ElementManager.prototype._replaceElement = function (control, nodeMap) {
-                var element = nodeMap.element, parentNode = element.parentNode, _document = ElementManager._document, controlType = control.type, controlUid = control.uid, startNode = control.startNode = _document.createComment(controlType + ' ' + controlUid + __START_NODE), endNode = control.endNode = _document.createComment(controlType + ' ' + controlUid + __END_NODE), create = this._CommentManagerFactory.create;
+                var element = nodeMap.element;
+                var parentNode = element.parentNode;
+                var _document = ElementManager._document;
+                var controlType = control.type;
+                var controlUid = control.uid;
+                var startNode = (control.startNode = _document.createComment(controlType + " " + controlUid + __START_NODE));
+                var endNode = (control.endNode = _document.createComment(controlType + " " + controlUid + __END_NODE));
+                var create = this._CommentManagerFactory.create;
                 create(startNode, this);
                 create(endNode, this);
                 parentNode.insertBefore(startNode, element);
@@ -15305,9 +17616,10 @@ var plat;
              * template.
              */
             ElementManager.prototype._initializeControl = function (uiControl, template) {
-                var element = this.nodeMap.element, 
+                var element = this.nodeMap.element;
                 // have to check if null since isNull checks for undefined case 
-                replaceElement = this.replace, endNode;
+                var replaceElement = this.replace;
+                var endNode;
                 if (!isNull(template)) {
                     var resourceElement = ElementManager.locateResources(template);
                     if (!isNull(resourceElement)) {
@@ -15327,7 +17639,9 @@ var plat;
                 }
                 if (replaceElement) {
                     this._compiler.compile(uiControl.elementNodes, uiControl);
-                    var startNode = uiControl.startNode, parentNode = startNode.parentNode, childNodes = Array.prototype.slice.call(parentNode.childNodes);
+                    var startNode = uiControl.startNode;
+                    var parentNode = startNode.parentNode;
+                    var childNodes = Array.prototype.slice.call(parentNode.childNodes);
                     endNode = uiControl.endNode;
                     uiControl.elementNodes = childNodes.slice(childNodes.indexOf(startNode) + 1, childNodes.indexOf(endNode));
                     this.replaceNodeLength = uiControl.elementNodes.length + 2;
@@ -15347,8 +17661,15 @@ var plat;
              * upon the context changing.
              */
             ElementManager.prototype._observeControlIdentifiers = function (nodes, parent, controls, element) {
-                var length = nodes.length, hasParent = !isNull(parent), node, control, i = 0, replace = this.replace, managers = [], manager;
-                for (; i < length; ++i) {
+                var hasParent = !isNull(parent);
+                var replace = this.replace;
+                var managers = [];
+                var length = nodes.length;
+                var node;
+                var control;
+                var i = 0;
+                var manager;
+                for (; i < length; i += 1) {
                     node = nodes[i];
                     control = node.control;
                     if (hasParent && node.expressions.length > 0) {
@@ -15362,7 +17683,7 @@ var plat;
                     }
                 }
                 length = managers.length;
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     managers[i].attributeChanged();
                 }
             };
@@ -15371,8 +17692,11 @@ var plat;
              */
             ElementManager.prototype._fulfillChildTemplates = function () {
                 var _this = this;
-                var children = this.children, child, length = children.length, promises = [];
-                for (var i = 0; i < length; ++i) {
+                var children = this.children;
+                var length = children.length;
+                var promises = [];
+                var child;
+                for (var i = 0; i < length; i += 1) {
                     child = children[i];
                     if (!isUndefined(child.children)) {
                         promises.push(child.fulfillTemplate());
@@ -15395,7 +17719,7 @@ var plat;
                 _ControlFactory: __ControlFactory,
                 _TemplateControlFactory: __TemplateControlFactory,
                 _BindableTemplatesFactory: __BindableTemplatesFactory,
-                _log: __Log
+                _log: __Log,
             };
             return ElementManager;
         }(NodeManager));
@@ -15418,7 +17742,7 @@ var plat;
             __ResourcesFactory,
             __AttributesFactory,
             __BindableTemplatesFactory,
-            __Log
+            __Log,
         ], __FACTORY);
         register.injectable(__ElementManagerInstance, ElementManager, null, __INSTANCE);
         /**
@@ -15444,13 +17768,17 @@ var plat;
              * for the node.
              */
             TextManager.create = function (node, parent) {
-                var value = node.nodeValue, manager = new TextManager();
+                var value = node.nodeValue;
+                var manager = new TextManager();
                 if (NodeManager.hasMarkup(value)) {
-                    var expressions_1 = NodeManager.findMarkup(value), map_1 = {
-                        nodes: [{
+                    var expressions_1 = NodeManager.findMarkup(value);
+                    var map_1 = {
+                        nodes: [
+                            {
                                 node: node,
-                                expressions: expressions_1
-                            }]
+                                expressions: expressions_1,
+                            },
+                        ],
                     };
                     manager.initialize(map_1, parent);
                     return manager;
@@ -15465,14 +17793,16 @@ var plat;
              * @param {Node} newNode The new text node used for cloning.
              */
             TextManager._cloneNodeMap = function (sourceMap, newNode) {
-                var node = sourceMap.nodes[0], nodeMap = {
-                    nodes: [{
+                var node = sourceMap.nodes[0];
+                return {
+                    nodes: [
+                        {
                             expressions: node.expressions,
                             nodeName: node.nodeName,
-                            node: newNode
-                        }]
+                            node: newNode,
+                        },
+                    ],
                 };
-                return nodeMap;
             };
             /**
              * Clones a TextManager with a new text node.
@@ -15482,7 +17812,8 @@ var plat;
              * for the new clone.
              */
             TextManager._clone = function (sourceManager, node, parent) {
-                var map = sourceManager.nodeMap, manager = new TextManager();
+                var map = sourceManager.nodeMap;
+                var manager = new TextManager();
                 if (!isNull(map)) {
                     manager.initialize(TextManager._cloneNodeMap(map, node), parent);
                 }
@@ -15506,7 +17837,10 @@ var plat;
              * The function used for data-binding a data context to the DOM.
              */
             TextManager.prototype.bind = function () {
-                var parent = this.getParentControl(), node = this.nodeMap.nodes[0], textNode = node.node, expressions = node.expressions;
+                var parent = this.getParentControl();
+                var node = this.nodeMap.nodes[0];
+                var textNode = node.node;
+                var expressions = node.expressions;
                 NodeManager.observeExpressions(node.expressions, parent, this._setText.bind(this, textNode, parent, expressions));
                 this._setText(textNode, parent, expressions);
             };
@@ -15519,7 +17853,10 @@ var plat;
              * the node value.
              */
             TextManager.prototype._setText = function (node, control, expressions) {
-                node.nodeValue = NodeManager.build(expressions, (control || {}));
+                if (!isObject(control)) {
+                    control = {};
+                }
+                node.nodeValue = NodeManager.build(expressions, control);
             };
             return TextManager;
         }(NodeManager));
@@ -15556,9 +17893,11 @@ var plat;
             CommentManager.create = function (node, parent) {
                 var manager = new CommentManager();
                 manager.initialize({
-                    nodes: [{
-                            node: node
-                        }]
+                    nodes: [
+                        {
+                            node: node,
+                        },
+                    ],
                 }, parent);
                 return manager;
             };
@@ -15630,22 +17969,45 @@ var plat;
              * we need to only mutate the piece of the attribute corresponding to expressions with markup.
              */
             AttributeManager.prototype._dynamicAttributeChanged = function () {
-                var node = this.node, attr = node.node, nodeManager = this._NodeManager, nodeValue = attr.value, classes = nodeManager.build(node.expressions, this.parent).trim().split(/\s+/), last = this._lastValues, element = this.element, c, length = classes.length, i;
+                var node = this.node;
+                var attr = node.node;
+                var nodeManager = this._NodeManager;
+                var last = this._lastValues;
+                var element = this.element;
+                var nodeValue = attr.value;
+                var classes = nodeManager
+                    .build(node.expressions, this.parent)
+                    .trim()
+                    .split(/\s+/);
+                var c;
+                var length = classes.length;
+                var i;
                 if (nodeManager.hasMarkup(nodeValue)) {
-                    var start = void 0, end = void 0, startLength = __startSymbol.length, endLength = __endSymbol.length, endChar = __endSymbol[endLength - 1];
-                    while ((start = nodeValue.indexOf(__startSymbol)) !== -1 && (end = nodeValue.indexOf(__endSymbol)) !== -1) {
-                        // incremement with while loop instead of just += 2 for nested object literal case. 
-                        while (nodeValue[end++] !== endChar || nodeValue[end] === endChar) { }
-                        nodeValue = nodeValue.slice(0, start).trim() + ' ' + nodeValue.slice(end).trim();
+                    var startLength = __startSymbol.length;
+                    var endLength = __endSymbol.length;
+                    var endChar = __endSymbol[endLength - 1];
+                    var start = nodeValue.indexOf(__startSymbol);
+                    var end = nodeValue.indexOf(__endSymbol);
+                    while (start !== -1 && end !== -1) {
+                        // increment with while loop instead of just += 2 for nested object literal case. 
+                        while (nodeValue[end] !== endChar ||
+                            nodeValue[end + 1] === endChar) {
+                            end += 1;
+                        }
+                        nodeValue = nodeValue
+                            .slice(0, start)
+                            .trim() + " " + nodeValue.slice(end).trim();
+                        start = nodeValue.indexOf(__startSymbol);
+                        end = nodeValue.indexOf(__endSymbol);
                     }
                     attr.value = nodeValue.trim();
                 }
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     last[classes[i]] = true;
                 }
                 classes = Object.keys(last);
                 length = classes.length;
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     c = classes[i];
                     if (last[c]) {
                         addClass(element, c);
@@ -15663,7 +18025,10 @@ var plat;
              * and notifies the associated Attributes.
              */
             AttributeManager.prototype._staticAttributeChanged = function () {
-                var controls = this._controls, node = this.node, key = camelCase(node.nodeName), value = this._NodeManager.build(node.expressions, this.parent);
+                var controls = this._controls;
+                var node = this.node;
+                var key = camelCase(node.nodeName);
+                var value = this._NodeManager.build(node.expressions, this.parent);
                 this._notifyAttributes(key, value);
                 if (!this.replace) {
                     node.node.value = value;
@@ -15673,8 +18038,11 @@ var plat;
              * Notifies the necessary Attributes of changes to an attribute.
              */
             AttributeManager.prototype._notifyAttributes = function (key, value) {
-                var controls = this._controls, length = controls.length, attributes, oldValue;
-                for (var i = 0; i < length; ++i) {
+                var controls = this._controls;
+                var length = controls.length;
+                var attributes;
+                var oldValue;
+                for (var i = 0; i < length; i += 1) {
                     attributes = controls[i].attributes;
                     oldValue = attributes[key];
                     attributes[key] = value;
@@ -15684,7 +18052,7 @@ var plat;
             return AttributeManager;
         }());
         processing.AttributeManager = AttributeManager;
-    })(processing = plat_1.processing || (plat_1.processing = {}));
+    })(processing = plat.processing || (plat.processing = {}));
     /**
      * Holds all classes and interfaces related to routing components in platypus.
      */
@@ -15724,7 +18092,9 @@ var plat;
              */
             Navigator.prototype.initialize = function (router) {
                 this._router = router;
-                if (isObject(router) && router.isRoot && !isObject(Navigator._root)) {
+                if (isObject(router) &&
+                    router.isRoot &&
+                    !isObject(Navigator._root)) {
                     this.isRoot = true;
                     Navigator._root = this;
                     this._observeUrl();
@@ -15808,7 +18178,8 @@ var plat;
                 return new this._Promise(function (resolve, reject) {
                     _this._resolveNavigate = resolve;
                     _this._rejectNavigate = reject;
-                    var current = _this._browser.url(), next = _this._browser.url(url, replace);
+                    var current = _this._browser.url();
+                    var next = _this._browser.url(url, replace);
                     if (current === next) {
                         _this._resolveNavigate();
                     }
@@ -15834,11 +18205,17 @@ var plat;
                 if (!isObject(this._router)) {
                     return;
                 }
-                var EventManager = this._EventManager, previousUrl, headControl = acquire(__Head), headExists = isObject(headControl) && isFunction(headControl.navigated), onFailedNavigaton = function (e) {
+                var EventManager = this._EventManager;
+                var previousUrl;
+                var headControl = acquire(__Head);
+                var headExists = isObject(headControl) && isFunction(headControl.navigated);
+                var onFailedNavigation = function (e) {
                     _this._previousUrl = previousUrl;
-                    var _history = _this._history, state = _history.state;
+                    var _history = _this._history;
+                    var state = _history.state;
                     _this._ignoreOnce = true;
-                    if (isNull(state.previousLocation) || state.previousLocation === previousUrl) {
+                    if (isNull(state.previousLocation) ||
+                        state.previousLocation === previousUrl) {
                         _history.go(-1);
                     }
                     else {
@@ -15874,14 +18251,15 @@ var plat;
                     previousUrl = _this._previousUrl;
                     ev = EventManager.dispatch(__beforeNavigate, _this, EventManager.DIRECT, [utils]);
                     if (ev.defaultPrevented) {
-                        onFailedNavigaton(new Error('Navigation prevented during ' + __beforeNavigate + ' event'));
+                        onFailedNavigation(new Error("Navigation prevented during " + __beforeNavigate + " event"));
                         return;
                     }
                     _this.finishNavigating()
                         .then(function () {
                         EventManager.dispatch(__navigating, _this, EventManager.DIRECT, [utils]);
                         return _this._router.navigate(utils.pathname, utils.query);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         _this._previousUrl = utils.pathname;
                         if (isFunction(_this._resolveNavigate)) {
                             _this._backNavigate = false;
@@ -15891,7 +18269,7 @@ var plat;
                             headControl.navigated(utils.href);
                         }
                         EventManager.dispatch(__navigated, _this, EventManager.DIRECT, [utils]);
-                    }, onFailedNavigaton);
+                    }, onFailedNavigation);
                 });
             };
             /**
@@ -15914,7 +18292,7 @@ var plat;
                 _EventManager: __EventManagerStatic,
                 _window: __Window,
                 _log: __Log,
-                _history: __History
+                _history: __History,
             };
             return Navigator;
         }());
@@ -15928,10 +18306,25 @@ var plat;
         routing.History = History;
         register.injectable(__History, History, [__Window]);
         var specialCharacters = [
-            '/', '.', '*', '+', '?', '|',
-            '(', ')', '[', ']', '{', '}', '\\'
-        ], escapeRegex = new RegExp('(\\' + specialCharacters.join('|\\') + ')', 'g');
-        var baseSegment, dynamicSegments = {}, splatSegments = {}, staticSegments = {};
+            '/',
+            '.',
+            '*',
+            '+',
+            '?',
+            '|',
+            '(',
+            ')',
+            '[',
+            ']',
+            '{',
+            '}',
+            '\\',
+        ];
+        var escapeRegex = new RegExp("(\\" + specialCharacters.join('|\\') + ")", 'g');
+        var baseSegment;
+        var dynamicSegments = {};
+        var splatSegments = {};
+        var staticSegments = {};
         /**
          * Stores information about a segment, publishes a regex for matching the segment as well as
          * methods for generating the segment and iterating over the characters in the segment.
@@ -15965,31 +18358,41 @@ var plat;
                 else if (route[0] === '/') {
                     route = route.slice(1);
                 }
-                var segments = route.split('/'), length = segments.length, findSegment = BaseSegment.__findSegment, results = [], segment, name, match, _regex = BaseSegment._regex;
-                for (var i = 0; i < length; ++i) {
+                var segments = route.split('/');
+                var length = segments.length;
+                var findSegment = BaseSegment.__findSegment;
+                var results = [];
+                var segment;
+                var name;
+                var match;
+                var _regex = BaseSegment._regex;
+                for (var i = 0; i < length; i += 1) {
                     segment = segments[i];
                     if (segment === '') {
                         if (!isObject(baseSegment)) {
                             baseSegment = acquire(__BaseSegmentInstance);
                         }
                         results.push(baseSegment);
+                        continue;
                     }
-                    else if (match = segment.match(_regex.dynamicSegmentsRegex)) {
+                    match = segment.match(_regex.dynamicSegmentsRegex);
+                    if (isObject(match)) {
                         name = match[1];
                         results.push(findSegment(name, __DynamicSegmentInstance, dynamicSegments));
                         names.push(name);
-                        types.dynamics++;
+                        types.dynamics += 1;
+                        continue;
                     }
-                    else if (match = segment.match(_regex.splatSegmentRegex)) {
+                    match = segment.match(_regex.splatSegmentRegex);
+                    if (isObject(match)) {
                         name = match[1];
                         results.push(findSegment(name, __SplatSegmentInstance, splatSegments));
                         names.push(name);
-                        types.splats++;
+                        types.splats += 1;
+                        continue;
                     }
-                    else {
-                        results.push(findSegment(segment, __StaticSegmentInstance, staticSegments));
-                        types.statics++;
-                    }
+                    results.push(findSegment(segment, __StaticSegmentInstance, staticSegments));
+                    types.statics += 1;
                 }
                 return results;
             };
@@ -16075,8 +18478,10 @@ var plat;
              * @param {T} initialValue? An optional initial value with which to start the accumulation.
              */
             StaticSegment.prototype.reduceCharacters = function (iterator, initialValue) {
-                var name = this.name, length = name.length, value = initialValue;
-                for (var i = 0; i < length; ++i) {
+                var name = this.name;
+                var length = name.length;
+                var value = initialValue;
+                for (var i = 0; i < length; i += 1) {
                     value = iterator(value, { validCharacters: name[i] });
                 }
                 return value;
@@ -16133,7 +18538,7 @@ var plat;
                  */
                 _this._specification = {
                     invalidCharacters: '',
-                    repeat: true
+                    repeat: true,
                 };
                 return _this;
             }
@@ -16162,7 +18567,7 @@ var plat;
                  */
                 _this._specification = {
                     invalidCharacters: '/',
-                    repeat: true
+                    repeat: true,
                 };
                 return _this;
             }
@@ -16200,18 +18605,30 @@ var plat;
              * @param {string} path The path to link to the given state.
              */
             State.link = function (state, path) {
-                var delegates = state.delegates, regex = state.regex, length = delegates.length, matches = path.match(regex), matchIndex = 1, result = [], names, parameters, j, jLength, delegate;
-                for (var i = 0; i < length; ++i) {
+                var delegates = state.delegates;
+                var regex = state.regex;
+                var length = delegates.length;
+                var matches = path.match(regex);
+                var result = [];
+                var matchIndex = 1;
+                var names;
+                var parameters;
+                var j;
+                var jLength;
+                var delegate;
+                for (var i = 0; i < length; i += 1) {
                     delegate = delegates[i];
                     names = delegate.names;
                     parameters = {};
-                    for (j = 0, jLength = names.length; j < jLength; ++j) {
-                        parameters[names[j]] = matches[matchIndex++];
+                    jLength = names.length;
+                    for (j = 0; j < jLength; j += 1) {
+                        parameters[names[j]] = matches[matchIndex];
+                        matchIndex += 1;
                     }
                     result.push({
                         delegate: delegate.delegate,
                         parameters: parameters,
-                        isDynamic: jLength > 0
+                        isDynamic: jLength > 0,
                     });
                 }
                 return result;
@@ -16222,8 +18639,10 @@ var plat;
              * @param {Array<plat.routing.State>} states The states with which to match the character.
              */
             State.recognize = function (char, states) {
-                var nextStates = [], length = states.length, state;
-                for (var i = 0; i < length; ++i) {
+                var nextStates = [];
+                var length = states.length;
+                var state;
+                for (var i = 0; i < length; i += 1) {
                     state = states[i];
                     nextStates = nextStates.concat(state.match(char));
                 }
@@ -16237,7 +18656,14 @@ var plat;
                 if (!isArray(states)) {
                     return states;
                 }
-                var aTypes, aSplats, aStatics, aDynamics, bTypes, bSplats, bStatics, bDynamics;
+                var aTypes;
+                var aSplats;
+                var aStatics;
+                var aDynamics;
+                var bTypes;
+                var bSplats;
+                var bStatics;
+                var bDynamics;
                 return states.sort(function (a, b) {
                     aTypes = a.types;
                     bTypes = b.types;
@@ -16262,7 +18688,7 @@ var plat;
                         return aDynamics - bDynamics;
                     }
                     if (aStatics !== bStatics) {
-                        return bStatics = aStatics;
+                        return (bStatics = aStatics);
                     }
                     return 0;
                 });
@@ -16302,7 +18728,9 @@ var plat;
              * @param {string} char The character with which to match next states.
              */
             State.prototype.match = function (char) {
-                var matches = [], spec, chars;
+                var matches = [];
+                var spec;
+                var chars;
                 this._someChildren(function (child) {
                     spec = child.specification;
                     // Check for valid characters first 
@@ -16326,7 +18754,10 @@ var plat;
              * the next state.
              */
             State.prototype._find = function (spec) {
-                var validChars = spec.validCharacters, invalidChars = spec.invalidCharacters, s, found;
+                var validChars = spec.validCharacters;
+                var invalidChars = spec.invalidCharacters;
+                var s;
+                var found;
                 this._someChildren(function (child) {
                     s = child.specification;
                     if (s.validCharacters === validChars &&
@@ -16337,9 +18768,15 @@ var plat;
                 });
                 return found;
             };
+            /**
+             * Iterates through the next states and calls the input callback with each state.
+             * @param {(child: plat.routing.State) => void} iterator The function with which to call for each
+             * State.
+             */
             State.prototype._someChildren = function (iterator) {
-                var nextStates = this.nextStates, length = nextStates.length;
-                for (var i = 0; i < length; ++i) {
+                var nextStates = this.nextStates;
+                var length = nextStates.length;
+                for (var i = 0; i < length; i += 1) {
                     if (iterator(nextStates[i]) === true) {
                         return true;
                     }
@@ -16381,24 +18818,30 @@ var plat;
                 if (!isArray(routes)) {
                     return;
                 }
-                var finalState = this._rootState, length = routes.length, regex = ['^'], types = {
+                var finalState = this._rootState;
+                var length = routes.length;
+                var regex = ['^'];
+                var types = {
                     statics: 0,
                     dynamics: 0,
-                    splats: 0
-                }, delegates = [], allSegments = [], segments;
-                for (var i = 0; i < length; ++i) {
+                    splats: 0,
+                };
+                var delegates = [];
+                var allSegments = [];
+                var segments;
+                for (var i = 0; i < length; i += 1) {
                     segments = this._parse(routes[i], delegates, types);
                     allSegments = allSegments.concat(segments);
                     finalState = this._compile(segments, finalState, regex);
                 }
                 finalState = this._finalize(finalState, regex);
                 finalState.delegates = delegates;
-                finalState.regex = new RegExp(regex.join('') + '$');
+                finalState.regex = new RegExp(regex.join('') + "$");
                 finalState.types = types;
                 if (isObject(options) && isString(options.name)) {
                     this._namedRoutes[this._toLowerCase(options.name)] = {
                         segments: allSegments,
-                        delegates: delegates
+                        delegates: delegates,
                     };
                 }
             };
@@ -16408,7 +18851,8 @@ var plat;
              * @param {string} path The path to recognize.
              */
             RouteRecognizer.prototype.recognize = function (path) {
-                var isTrailingSlashDropped = false, solutions = [];
+                var isTrailingSlashDropped = false;
+                var solutions = [];
                 path = this._addLeadingSlash(path);
                 isTrailingSlashDropped = this._hasTrailingSlash(path);
                 if (isTrailingSlashDropped) {
@@ -16426,13 +18870,16 @@ var plat;
              */
             RouteRecognizer.prototype.generate = function (name, parameters) {
                 name = this._toLowerCase(name);
-                var route = this._namedRoutes[name], output = '', segments, length;
+                var route = this._namedRoutes[name];
+                var output = '';
+                var segments;
+                var length;
                 if (!isObject(route)) {
                     return;
                 }
                 segments = route.segments;
                 length = segments.length;
-                for (var i = 0; i < length; i++) {
+                for (var i = 0; i < length; i += 1) {
                     var segment = segments[i];
                     if (segment.type === __BASE_SEGMENT_TYPE) {
                         continue;
@@ -16449,7 +18896,8 @@ var plat;
              */
             RouteRecognizer.prototype.delegatesFor = function (name) {
                 name = this._toLowerCase(name);
-                var namedRoute = this._namedRoutes[name], delegates;
+                var namedRoute = this._namedRoutes[name];
+                var delegates;
                 if (!isObject(namedRoute)) {
                     return [];
                 }
@@ -16487,7 +18935,7 @@ var plat;
             RouteRecognizer.prototype._finalize = function (state, regex) {
                 if (state === this._rootState) {
                     state = state.add({
-                        validCharacters: '/'
+                        validCharacters: '/',
                     });
                     regex.push('/');
                 }
@@ -16503,7 +18951,7 @@ var plat;
                 var names = [];
                 delegates.push({
                     delegate: route.delegate,
-                    names: names
+                    names: names,
                 });
                 return this._BaseSegmentFactory.parse(route.pattern, names, types);
             };
@@ -16514,15 +18962,17 @@ var plat;
              * @param {Array<string>} regex A regular expression string to build in order to match the segments.
              */
             RouteRecognizer.prototype._compile = function (segments, state, regex) {
-                var length = segments.length, compile = this._State.compile, segment;
-                for (var i = 0; i < length; ++i) {
+                var length = segments.length;
+                var compile = this._State.compile;
+                var segment;
+                for (var i = 0; i < length; i += 1) {
                     segment = segments[i];
                     if (segment.type === __BASE_SEGMENT_TYPE) {
                         continue;
                     }
                     state = state.add({ validCharacters: '/' });
                     state = compile(segment, state);
-                    regex.push('/' + segment.regex);
+                    regex.push("/" + segment.regex);
                 }
                 return state;
             };
@@ -16533,7 +18983,7 @@ var plat;
             RouteRecognizer.prototype._addLeadingSlash = function (path) {
                 path = decodeURI(path);
                 if (path[0] !== '/') {
-                    path = '/' + path;
+                    path = "/" + path;
                 }
                 return path;
             };
@@ -16550,10 +19000,10 @@ var plat;
              * @param {string} path The path with which to look for compiled states.
              */
             RouteRecognizer.prototype._findStates = function (path) {
-                var states = [
-                    this._rootState
-                ], recognize = this._State.recognize, length = path.length;
-                for (var i = 0; i < length; ++i) {
+                var states = [this._rootState];
+                var recognize = this._State.recognize;
+                var length = path.length;
+                for (var i = 0; i < length; i += 1) {
                     states = recognize(path[i], states);
                     if (states.length === 0) {
                         break;
@@ -16566,8 +19016,10 @@ var plat;
              * @param {Array<plat.routing.State>} states The states to filter.
              */
             RouteRecognizer.prototype._filter = function (states) {
-                var length = states.length, solutions = [], state;
-                for (var i = 0; i < length; ++i) {
+                var length = states.length;
+                var solutions = [];
+                var state;
+                for (var i = 0; i < length; i += 1) {
                     state = states[i];
                     if (isArray(state.delegates)) {
                         solutions.push(state);
@@ -16584,7 +19036,7 @@ var plat;
             RouteRecognizer.prototype._link = function (state, path, isTrailingSlashDropped) {
                 if (isObject(state) && isArray(state.delegates)) {
                     if (isTrailingSlashDropped && this._isDynamic(state)) {
-                        path = path + '/';
+                        path = path + "/";
                     }
                     return this._State.link(state, path);
                 }
@@ -16599,21 +19051,21 @@ var plat;
             RouteRecognizer._inject = {
                 _BaseSegmentFactory: __BaseSegmentFactory,
                 _State: __StateStatic,
-                _rootState: __StateInstance
+                _rootState: __StateInstance,
             };
             return RouteRecognizer;
         }());
         routing.RouteRecognizer = RouteRecognizer;
         register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
-        ;
-        var __CHILD_ROUTE = '/*childRoute', __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
+        var __CHILD_ROUTE = '/*childRoute';
+        var __CHILD_ROUTE_LENGTH = __CHILD_ROUTE.length;
         /**
          * Matches URLs to registered views. Allows for rejecting navigation, as well as
          * processing route and query parameters. When a route is matches, the current view
          * has the opportunity to reject/delay navigation. The next view can also reject navigation,
          * or redirect.
          * This is done asynchronously, giving the application the ability to make web service calls
-         * to determing
+         * to determining
          */
         var Router = /** @class */ (function () {
             /**
@@ -16696,7 +19148,8 @@ var plat;
              * @param {plat.routing.Router} child The child router to remove.
              */
             Router.prototype.removeChild = function (child) {
-                var children = this.children, index = children.indexOf(child);
+                var children = this.children;
+                var index = children.indexOf(child);
                 if (index < 0) {
                     return;
                 }
@@ -16726,28 +19179,30 @@ var plat;
                     .catch(noop)
                     .then(function () {
                     var routeInfo = _clone(_this.currentRouteInfo, true);
-                    return _this.finishNavigating = _this._canNavigateTo(routeInfo)
+                    return (_this.finishNavigating = _this._canNavigateTo(routeInfo)
                         .then(function (canNavigateTo) {
                         if (!canNavigateTo) {
                             return;
                         }
                         _this.currentRouteInfo = undefined;
                         return _this._performNavigation(routeInfo);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         _this.navigating = false;
                         _this.currentRouteInfo = routeInfo;
                     }, function () {
                         _this.navigating = false;
-                    });
+                    }));
                 });
             };
             /**
-             * Unregisters a Viewport (or similar object) with the
+             * Un-registers a Viewport (or similar object) with the
              * router in order to stop receiving navigation events.
              * @param {plat.routing.ISupportRouteNavigation} port An object that supports all the navigation events.
              */
             Router.prototype.unregister = function (port) {
-                var ports = this._ports, index = ports.indexOf(port);
+                var ports = this._ports;
+                var index = ports.indexOf(port);
                 if (index < 0) {
                     return;
                 }
@@ -16756,6 +19211,12 @@ var plat;
                     this.parent.removeChild(this);
                 }
             };
+            /**
+             * Configures routes for the router to match. Routes contain the information necessary to map a
+             * route to a particular ViewControl. Also forces a navigation.
+             * @param {Array<plat.routing.IRouteMapping>} routes Route mappings to register.
+             * @param {boolean} force whether or not we should force navigate.
+             */
             Router.prototype.configure = function (routes, force) {
                 var _this = this;
                 if (isArray(routes)) {
@@ -16780,12 +19241,39 @@ var plat;
                 this._unknownHandler = handler;
                 return this;
             };
+            /**
+             * Registers a handler for a route parameter. When a route is a variable route (e.g. /posts/:id), all the param handlers
+             * registered for the particular view and parameter "id" will be called. The call to the handler is blocking, so the handler
+             * can return a promise while it processes the parameter. All the handlers for a parameter will be called in the order in which
+             * they were registered, with the catch-all (i.e. '*') handlers being called first. Param handlers will be called after all the
+             * query param handlers have been processed. Param handlers are called prior to calling the "canNavigateTo" pipeline.
+             * @param {(value: any, parameters: any, query: any) => any} handler A method that will manipulate the registered parameter.
+             * @param {string} parameter The parameter that the registered handler will modify.
+             * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
+             */
             Router.prototype.param = function (handler, parameter, view) {
                 return this._addHandler(handler, parameter, view, this._paramTransforms);
             };
+            /**
+             * Registers a handler for a query parameter. When a route contains a query string (e.g. '?start=0'), it will be serialized into an object.
+             * Then, all the queryParam handlers registered for the particular view and query parameter "start" will be called. The call to the handler
+             * is blocking, so the handler can return a promise while it processes the parameter. All the handlers for a parameter will be called in the
+             * order in which they were registered, with the catch-all (i.e. '*') handlers being called first. Query param handlers are called prior to
+             * calling the "canNavigateTo" pipeline.
+             * @param {(value: any, query: any) => any} handler A method that will manipulate the registered parameter.
+             * @param {string} parameter The parameter that the registered handler will modify.
+             * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
+             */
             Router.prototype.queryParam = function (handler, parameter, view) {
                 return this._addHandler(handler, parameter, view, this._queryTransforms);
             };
+            /**
+             * Registers a handler for a particular route, or all routes. When the route changes, the interceptors registered for the route will be
+             * called in-order (starting with the catch-all interceptors), and they have the opportunity to modify the route information, as well as
+             * prevent navigation from occurring. Interceptors are called prior to calling the "canNavigateTo" pipeline.
+             * @param {(routeInfo: plat.routing.IRouteInfo) => any} interceptor A method that will process the current route.
+             * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
+             */
             Router.prototype.intercept = function (interceptor, view) {
                 if (isUndefined(view)) {
                     view = '*';
@@ -16819,12 +19307,17 @@ var plat;
                 if (!isObject(query)) {
                     query = {};
                 }
-                var resolve = this._resolve, queryString = serializeQuery(query);
+                var resolve = this._resolve;
+                var queryString = serializeQuery(query);
                 if (url === '/') {
                     url = '';
                 }
                 force = force === true;
-                if (!isString(url) || this.navigating || (!force && url === this._previousUrl && queryString === this._previousQuery)) {
+                if (!isString(url) ||
+                    this.navigating ||
+                    (!force &&
+                        url === this._previousUrl &&
+                        queryString === this._previousQuery)) {
                     if (this.navigating) {
                         return this.finishNavigating.then(function () {
                             return _this.navigate(url, query, force);
@@ -16832,7 +19325,12 @@ var plat;
                     }
                     return resolve();
                 }
-                var recognizer = this._recognizer, result = recognizer.recognize(url), routeInfo, emptyResult = isEmpty(result), pattern, segment;
+                var recognizer = this._recognizer;
+                var result = recognizer.recognize(url);
+                var routeInfo;
+                var emptyResult = isEmpty(result);
+                var pattern;
+                var segment;
                 if (!emptyResult) {
                     routeInfo = result[0];
                     routeInfo.query = query;
@@ -16841,7 +19339,11 @@ var plat;
                 if (emptyResult || sameRoute) {
                     var childUrl_1 = url;
                     if (sameRoute) {
-                        segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
+                        var name_1 = routeInfo.delegate.alias;
+                        if (isEmpty(name_1)) {
+                            name_1 = routeInfo.delegate.view;
+                        }
+                        segment = recognizer.generate(name_1, routeInfo.parameters);
                         childUrl_1 = childUrl_1.replace(segment, '');
                     }
                     if (childUrl_1 === '/' || childUrl_1 === '') {
@@ -16869,7 +19371,7 @@ var plat;
                             if (isFunction(this._unknownHandler)) {
                                 var unknownRouteConfig_1 = {
                                     segment: url,
-                                    view: undefined
+                                    view: undefined,
                                 };
                                 return resolve(this._unknownHandler(unknownRouteConfig_1)).then(function () {
                                     var view = unknownRouteConfig_1.view;
@@ -16878,7 +19380,7 @@ var plat;
                                     }
                                     return _this.configure({
                                         pattern: url,
-                                        view: view
+                                        view: view,
                                     });
                                 });
                             }
@@ -16894,27 +19396,30 @@ var plat;
                             // the pattern for this router is the same as the last pattern so 
                             // only navigate child routers. 
                             this.navigating = true;
-                            return this.finishNavigating = this._navigateChildren(routeInfo)
-                                .then(function () {
+                            return (this.finishNavigating = this._navigateChildren(routeInfo).then(function () {
                                 _this._previousUrl = url;
                                 _this._previousQuery = queryString;
                                 _this.navigating = false;
                             }, function (e) {
                                 _this.navigating = false;
                                 throw e;
-                            });
+                            }));
                         }
                     }
                 }
                 else {
                     pattern = routeInfo.delegate.pattern;
                 }
-                segment = recognizer.generate(routeInfo.delegate.alias || routeInfo.delegate.view, routeInfo.parameters);
+                var delegateName = routeInfo.delegate.alias;
+                if (isEmpty(delegateName)) {
+                    delegateName = routeInfo.delegate.view;
+                }
+                segment = recognizer.generate(delegateName, routeInfo.parameters);
                 var previousSegment = this._previousSegment;
                 this._previousSegment = segment;
                 this.navigating = true;
-                var routeInfoCopy = this._nextRouteInfo = _clone(routeInfo, true);
-                return this.finishNavigating = this._canNavigate(routeInfo, poll)
+                var routeInfoCopy = (this._nextRouteInfo = _clone(routeInfo, true));
+                return (this.finishNavigating = this._canNavigate(routeInfo, poll)
                     .then(function (canNavigate) {
                     if (!canNavigate) {
                         _this.navigating = false;
@@ -16923,7 +19428,8 @@ var plat;
                     _this._previousUrl = url;
                     _this._previousQuery = queryString;
                     return _this._performNavigation(routeInfo);
-                }).then(function () {
+                })
+                    .then(function () {
                     _this._previousPattern = pattern;
                     _this._previousSegment = segment;
                     _this.currentRouteInfo = routeInfoCopy;
@@ -16932,25 +19438,36 @@ var plat;
                     _this._previousSegment = previousSegment;
                     _this.navigating = false;
                     throw e;
-                });
+                }));
             };
+            /**
+             * Attempts to generate a route with the specified route name. Will generate the full-path from the root
+             * router.
+             * @param {string} name The name of the route to generate.
+             * @param {plat.IObject<string>} parameters? Any parameters used to generate the route.
+             * @param {plat.IObject<string>} query? Any query parameters to append to the generated route.
+             */
             Router.prototype.generate = function (name, parameters, query) {
                 var alias = name;
                 name = this._Injector.convertDependency(name);
                 if (name === __NOOP_INJECTOR) {
                     name = alias;
                 }
-                var router = this, prefix = '';
+                // tslint:disable-next-line 
+                var router = this;
+                var prefix = '';
                 while (!(isNull(router) || router._recognizer.exists(name))) {
                     router = router.parent;
                 }
                 if (isNull(router)) {
-                    throw new Error('Route for ' + name + ' does not exist.');
+                    throw new Error("Route for " + name + " does not exist.");
                 }
-                var path = router._recognizer.generate(name, parameters), previous;
-                while (!isNull(router = router.parent)) {
+                var path = router._recognizer.generate(name, parameters);
+                var previous;
+                while (!isNull((router = router.parent))) {
                     previous = router._previousSegment;
-                    previous = (!isNull(previous) && previous !== '/') ? previous : '';
+                    previous =
+                        !isNull(previous) && previous !== '/' ? previous : '';
                     prefix = previous + prefix;
                 }
                 return prefix + path + serializeQuery(query);
@@ -16961,22 +19478,31 @@ var plat;
              * @param {plat.routing.IRouteMapping} route The mapping used to configure the route.
              */
             Router.prototype._configureRoute = function (route) {
-                var view = this._Injector.convertDependency(route.view), alias = route.alias || view;
+                var view = this._Injector.convertDependency(route.view);
+                var alias = route.alias;
+                if (isEmpty(alias)) {
+                    alias = view;
+                }
                 if (view === __NOOP_INJECTOR) {
                     return;
                 }
                 route.view = view;
-                route.alias = alias || view;
+                route.alias = alias;
+                if (isEmpty(alias)) {
+                    route.alias = view;
+                }
                 var routeDelegate = {
                     pattern: route.pattern,
-                    delegate: route
-                }, childPattern = route.pattern + __CHILD_ROUTE, childDelegate = {
+                    delegate: route,
+                };
+                var childPattern = route.pattern + __CHILD_ROUTE;
+                var childDelegate = {
                     pattern: childPattern,
                     delegate: {
                         pattern: childPattern,
                         view: view,
-                        alias: alias
-                    }
+                        alias: alias,
+                    },
                 };
                 this._recognizer.register([routeDelegate], { name: alias });
                 this._childRecognizer.register([childDelegate]);
@@ -17018,7 +19544,8 @@ var plat;
              */
             Router.prototype._forceNavigate = function () {
                 var _this = this;
-                var resolve = this._resolve, query;
+                var resolve = this._resolve;
+                var query;
                 if (this.navigating) {
                     return this.finishNavigating.then(function () {
                         return _this._forceNavigate();
@@ -17060,7 +19587,7 @@ var plat;
                 if (!isString(childRoute)) {
                     childRoute = '';
                 }
-                return '/' + childRoute;
+                return "/" + childRoute;
             };
             /**
              * It is safe to navigate, so perform the navigation.
@@ -17069,14 +19596,16 @@ var plat;
             Router.prototype._performNavigation = function (info) {
                 var _this = this;
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
-                return this._performNavigateFrom(sameRoute).then(function () {
+                return this._performNavigateFrom(sameRoute)
+                    .then(function () {
                     if (sameRoute) {
                         return;
                     }
                     return mapAsync(function (port) {
                         return port.navigateTo(info);
                     }, _this._ports);
-                }).then(function () {
+                })
+                    .then(function () {
                     return _this._navigateChildren(info, false);
                 });
             };
@@ -17096,7 +19625,8 @@ var plat;
                     return mapAsync(function (port) {
                         return port.navigateFrom();
                     }, _this._ports);
-                }).then(noop);
+                })
+                    .then(noop);
             };
             /**
              * Determines if we can navigate from the current state and navigate to the next state.
@@ -17107,17 +19637,21 @@ var plat;
                 if (poll === void 0) { poll = true; }
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
                 if (!poll) {
-                    return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then(function () {
+                    return this._callAllHandlers(info.delegate.alias, info.parameters, info.query)
+                        .then(function () {
                         return _this._callInterceptors(info);
-                    }).then(function () {
+                    })
+                        .then(function () {
                         return true;
                     }, function () {
                         return true;
                     });
                 }
-                return this._canNavigateFrom(sameRoute)
-                    .then(function (canNavigateFrom) {
-                    return canNavigateFrom && _this._canNavigateTo(info, sameRoute);
+                return this._canNavigateFrom(sameRoute).then(function (canNavigateFrom) {
+                    if (!canNavigateFrom) {
+                        return canNavigateFrom;
+                    }
+                    return _this._canNavigateTo(info, sameRoute);
                 });
             };
             /**
@@ -17126,7 +19660,8 @@ var plat;
              */
             Router.prototype._canNavigateFrom = function (ignorePorts) {
                 var _this = this;
-                return this._Promise.all(this.children.reduce(function (promises, child) {
+                return this._Promise
+                    .all(this.children.reduce(function (promises, child) {
                     return promises.concat(child._canNavigateFrom());
                 }, []))
                     .then(booleanReduce)
@@ -17137,7 +19672,8 @@ var plat;
                     return mapAsync(function (port) {
                         return port.canNavigateFrom();
                     }, _this._ports);
-                }).then(booleanReduce);
+                })
+                    .then(booleanReduce);
             };
             /**
              * Determines if we can navigate to the next state.
@@ -17149,16 +19685,19 @@ var plat;
                 if (isEmpty(this._ports)) {
                     return this._resolve(true);
                 }
-                return this._callAllHandlers(info.delegate.alias, info.parameters, info.query).then(function () {
+                return this._callAllHandlers(info.delegate.alias, info.parameters, info.query)
+                    .then(function () {
                     return _this._callInterceptors(info);
-                }).then(function (canNavigateTo) {
+                })
+                    .then(function (canNavigateTo) {
                     if (canNavigateTo === false || ignorePorts) {
                         return [canNavigateTo];
                     }
                     return mapAsync(function (port) {
                         return port.canNavigateTo(info);
                     }, _this._ports);
-                }).then(booleanReduce);
+                })
+                    .then(booleanReduce);
             };
             /**
              * Calls all the registered query and param transforms for a route.
@@ -17169,9 +19708,15 @@ var plat;
             Router.prototype._callAllHandlers = function (view, parameters, query) {
                 var _this = this;
                 return this._callHandlers(this._queryTransforms['*'], query, undefined, true)
-                    .then(function () { return _this._callHandlers(_this._queryTransforms[view], query, undefined, true); })
-                    .then(function () { return _this._callHandlers(_this._paramTransforms['*'], parameters, query); })
-                    .then(function () { return _this._callHandlers(_this._paramTransforms[view], parameters, query); })
+                    .then(function () {
+                    return _this._callHandlers(_this._queryTransforms[view], query, undefined, true);
+                })
+                    .then(function () {
+                    return _this._callHandlers(_this._paramTransforms['*'], parameters, query);
+                })
+                    .then(function () {
+                    return _this._callHandlers(_this._paramTransforms[view], parameters, query);
+                })
                     .then(noop);
             };
             /**
@@ -17193,8 +19738,7 @@ var plat;
                         }
                         return resolve(handler(obj[key], obj, query));
                     }, handlers);
-                }, allHandlers)
-                    .then(noop);
+                }, allHandlers).then(noop);
             };
             /**
              * Calls the interceptors for a particular route.
@@ -17229,12 +19773,17 @@ var plat;
                 if (!(isObject(currentRouteInfo) && isObject(info))) {
                     return false;
                 }
-                var currentDelegate = currentRouteInfo.delegate, delegate = info.delegate, currentParameters = serializeQuery(currentRouteInfo.parameters), parameters = serializeQuery(info.parameters), currentQuery = serializeQuery(currentRouteInfo.query), query = serializeQuery(info.query);
-                return currentDelegate.view === delegate.view &&
+                var currentDelegate = currentRouteInfo.delegate;
+                var delegate = info.delegate;
+                var currentParameters = serializeQuery(currentRouteInfo.parameters);
+                var parameters = serializeQuery(info.parameters);
+                var currentQuery = serializeQuery(currentRouteInfo.query);
+                var query = serializeQuery(info.query);
+                return (currentDelegate.view === delegate.view &&
                     currentDelegate.alias === delegate.alias &&
                     currentDelegate.pattern === delegate.pattern &&
                     currentParameters === parameters &&
-                    (currentQuery === query || this.children.length > 0);
+                    (currentQuery === query || this.children.length > 0));
             };
             /**
              * Removes childRoute from routeInfo
@@ -17243,7 +19792,8 @@ var plat;
             Router.prototype._sanitizeRouteInfo = function (info) {
                 if (isObject(info)) {
                     if (info.parameters.hasOwnProperty('childRoute')) {
-                        var delegate = info.delegate, pattern = delegate.pattern;
+                        var delegate = info.delegate;
+                        var pattern = delegate.pattern;
                         delegate.pattern = pattern.slice(0, pattern.length - __CHILD_ROUTE_LENGTH);
                         deleteProperty(info.parameters, 'childRoute');
                     }
@@ -17270,7 +19820,7 @@ var plat;
                 _browser: __Browser,
                 _browserConfig: __BrowserConfig,
                 _recognizer: __RouteRecognizerInstance,
-                _childRecognizer: __RouteRecognizerInstance
+                _childRecognizer: __RouteRecognizerInstance,
             };
             return Router;
         }());
@@ -17283,7 +19833,7 @@ var plat;
         }
         routing.IRouterStatic = IRouterStatic;
         register.injectable(__RouterStatic, IRouterStatic);
-    })(routing = plat_1.routing || (plat_1.routing = {}));
+    })(routing = plat.routing || (plat.routing = {}));
     /**
      * Holds all classes and interfaces related to attribute control components in platypus.
      */
@@ -17303,7 +19853,8 @@ var plat;
              * on all the ancestor controls, ignoring those that already have the property defined.
              */
             Name.prototype.initialize = function () {
-                var attr = camelCase(this.type), name = this.attributes[attr];
+                var attr = camelCase(this.type);
+                var name = this.attributes[attr];
                 if (isEmpty(name) || this._isPrecompiled()) {
                     return;
                 }
@@ -17314,7 +19865,8 @@ var plat;
              * Removes the INamedElement from the ancestor controls.
              */
             Name.prototype.dispose = function () {
-                var name = this._label, control = this.parent;
+                var name = this._label;
+                var control = this.parent;
                 while (!isUndefined(name) && isObject(control)) {
                     if (isObject(control[name]) &&
                         isNode(control[name].element) &&
@@ -17334,10 +19886,11 @@ var plat;
                 if (!isNull(templateControl)) {
                     templateControl.name = name;
                 }
-                var control = this.parent, namedElement = {
+                var namedElement = {
                     element: this.element,
-                    control: templateControl
+                    control: templateControl,
                 };
+                var control = this.parent;
                 while (isObject(control)) {
                     var obj = control[name];
                     if (!isObject(obj)) {
@@ -17410,7 +19963,13 @@ var plat;
              * into account.
              */
             SimpleEventControl.prototype._buildExpression = function () {
-                var parent = this.parent, templateControl = this.templateControl, listenerStr = this._listener, context, fn = noop, aliases, argContext;
+                var parent = this.parent;
+                var templateControl = this.templateControl;
+                var listenerStr = this._listener;
+                var context;
+                var fn = noop;
+                var aliases;
+                var argContext;
                 if (!isNull(templateControl)) {
                     aliases = templateControl.getResources(this._aliases);
                     if (!isNull(parent)) {
@@ -17423,7 +19982,8 @@ var plat;
                 }
                 if (listenerStr[0] === '@') {
                     if (!isNull(aliases)) {
-                        var functionSplit = listenerStr.split('.'), fnObj = aliases[functionSplit[0].slice(1)];
+                        var functionSplit = listenerStr.split('.');
+                        var fnObj = aliases[functionSplit[0].slice(1)];
                         if (isObject(fnObj)) {
                             // shift off alias 
                             functionSplit.shift();
@@ -17445,7 +20005,7 @@ var plat;
                                 }
                             }
                             else {
-                                this._log.warn('Invalid path for function "' + listenerStr + '"');
+                                this._log.warn("Invalid path for function \"" + listenerStr + "\"");
                             }
                         }
                         else if (isFunction(fnObj)) {
@@ -17456,24 +20016,26 @@ var plat;
                 else {
                     var listener = this.findProperty(listenerStr, this.templateControl);
                     if (isNull(listener)) {
-                        this._log.warn('Could not find property ' + listenerStr + ' on any associated control.');
+                        this._log.warn("Could not find property " + listenerStr + " on any associated control.");
                         return {
                             fn: noop,
                             context: {},
-                            args: []
+                            args: [],
                         };
                     }
-                    var parsedExpression = listener.expresssion, identifiers = parsedExpression.identifiers;
+                    var parsedExpression = listener.expression;
+                    var identifiers = parsedExpression.identifiers;
                     if (identifiers.length > 1) {
-                        this._log.warn('Cannot have more than one identifier in a ' + this.type +
-                            '\'s expression.');
+                        this._log.warn("Cannot have more than one identifier in a " + this.type + "'s expression.");
                         return {
                             fn: noop,
                             context: {},
-                            args: []
+                            args: [],
                         };
                     }
-                    var identifier = identifiers[0], split = identifier.split('.'), control = listener.control;
+                    var identifier = identifiers[0];
+                    var split = identifier.split('.');
+                    var control = listener.control;
                     // pop key 
                     split.pop();
                     if (split.length > 0) {
@@ -17494,7 +20056,9 @@ var plat;
                 return {
                     fn: fn,
                     context: context,
-                    args: isNull(this._args) ? [] : this._args.evaluate(argContext, aliases)
+                    args: isNull(this._args)
+                        ? []
+                        : this._args.evaluate(argContext, aliases),
                 };
             };
             /**
@@ -17502,10 +20066,10 @@ var plat;
              * @param {Event} ev The event object.
              */
             SimpleEventControl.prototype._onEvent = function (ev) {
-                var expression = this._buildExpression(), fn = expression.fn;
+                var expression = this._buildExpression();
+                var fn = expression.fn;
                 if (!isFunction(fn)) {
-                    this._log.warn('Cannot find registered event method ' +
-                        this._listener + ' for control: ' + this.type);
+                    this._log.warn("Cannot find registered event method " + this._listener + " for control: " + this.type);
                     return;
                 }
                 fn.apply(expression.context, expression.args.concat(ev));
@@ -17519,7 +20083,9 @@ var plat;
                 if (isEmpty(expression)) {
                     return;
                 }
-                var exec = this._regex.argumentRegex.exec(expression), listenerStr, aliases = [];
+                var exec = this._regex.argumentRegex.exec(expression);
+                var listenerStr;
+                var aliases = [];
                 if (isNull(exec)) {
                     listenerStr = expression;
                 }
@@ -17527,7 +20093,7 @@ var plat;
                     listenerStr = expression.slice(0, exec.index);
                     if (exec[1] !== '') {
                         // parse args as an array 
-                        var argExp = this._parser.parse('[' + exec[1] + ']');
+                        var argExp = this._parser.parse("[" + exec[1] + "]");
                         aliases = argExp.aliases;
                         this._args = argExp;
                     }
@@ -17543,7 +20109,7 @@ var plat;
             };
             SimpleEventControl._inject = {
                 _parser: __Parser,
-                _regex: __Regex
+                _regex: __Regex,
             };
             return SimpleEventControl;
         }(AttributeControl));
@@ -17995,12 +20561,19 @@ var plat;
              */
             React.prototype._addEventListeners = function () {
                 var _this = this;
-                var element = this.element, _compat = this._compat, composing = false, inputFired = false, input = 'input', timeout, eventListener = function (ev) {
+                var element = this.element;
+                var _compat = this._compat;
+                var input = 'input';
+                var composing = false;
+                var inputFired = false;
+                var timeout;
+                var eventListener = function (ev) {
                     if (composing) {
                         return;
                     }
                     _this._onEvent(ev);
-                }, postponedEventListener = function (ev) {
+                };
+                var postponedEventListener = function (ev) {
                     if (isFunction(timeout)) {
                         return;
                     }
@@ -18010,7 +20583,9 @@ var plat;
                     });
                 };
                 if (isUndefined(_compat.ANDROID)) {
-                    this.addEventListener(element, 'compositionstart', function () { composing = true; }, false);
+                    this.addEventListener(element, 'compositionstart', function () {
+                        composing = true;
+                    }, false);
                     this.addEventListener(element, 'compositionend', function (ev) {
                         composing = false;
                         eventListener(ev);
@@ -18031,7 +20606,8 @@ var plat;
                     return;
                 }
                 this.addEventListener(element, 'keydown', function (ev) {
-                    var key = ev.keyCode, codes = controls.KeyCodes;
+                    var key = ev.keyCode;
+                    var codes = controls.KeyCodes;
                     if (key === codes.lwk ||
                         key === codes.rwk ||
                         (key >= codes.shift && key <= codes.escape) ||
@@ -18044,7 +20620,7 @@ var plat;
                 this.addEventListener(element, 'paste', postponedEventListener, false);
             };
             React._inject = {
-                _compat: __Compat
+                _compat: __Compat,
             };
             return React;
         }(SimpleEventControl));
@@ -18080,56 +20656,108 @@ var plat;
          * A mapping of all keys to their equivalent keyCode.
          */
         controls.KeyCodes = {
-            'backspace': 8,
-            'tab': 9,
-            'enter': 13,
-            'shift': 16,
-            'ctrl': 17,
-            'alt': 18,
-            'pause': 19, 'break': 19,
+            backspace: 8,
+            tab: 9,
+            enter: 13,
+            shift: 16,
+            ctrl: 17,
+            alt: 18,
+            pause: 19,
+            break: 19,
             'caps lock': 20,
-            'escape': 27,
-            'space': 32,
+            escape: 27,
+            space: 32,
             'page up': 33,
             'page down': 34,
-            'end': 35,
-            'home': 36,
-            'left': 37, 'left arrow': 37,
-            'up': 38, 'up arrow': 38,
-            'right': 39, 'right arrow': 39,
-            'down': 40, 'down arrow': 40,
-            'insert': 45,
-            'delete': 46,
-            '0': 48, 'zero': 48,
-            ')': 48, 'right parenthesis': 48,
-            '1': 49, 'one': 49,
-            '!': 49, 'exclamation': 49, 'exclamation point': 49,
-            '2': 50, 'two': 50,
-            '@': 50, 'at': 50,
-            '3': 51, 'three': 51,
-            '#': 51, 'number sign': 51,
-            'hash': 51, 'pound': 51,
-            '4': 52, 'four': 52,
-            '$': 52, 'dollar': 52, 'dollar sign': 52,
-            '5': 53, 'five': 53,
-            '%': 53, 'percent': 53, 'percent sign': 53,
-            '6': 54, 'six': 54,
-            '^': 54, 'caret': 54,
-            '7': 55, 'seven': 55,
-            '&': 55, 'ampersand': 55,
-            '8': 56, 'eight': 56,
-            '*': 56, 'asterisk': 56,
-            '9': 57, 'nine': 57,
-            '(': 57, 'left parenthesis': 57,
-            'a': 65, 'b': 66, 'c': 67, 'd': 68, 'e': 69,
-            'f': 70, 'g': 71, 'h': 72, 'i': 73, 'j': 74,
-            'k': 75, 'l': 76, 'm': 77, 'n': 78, 'o': 79,
-            'p': 80, 'q': 81, 'r': 82, 's': 83, 't': 84,
-            'u': 85, 'v': 86, 'w': 87, 'x': 88, 'y': 89,
-            'z': 90,
-            'lwk': 91, 'left window key': 91,
-            'rwk': 92, 'right window key': 92,
-            'select': 93, 'select key': 93,
+            end: 35,
+            home: 36,
+            left: 37,
+            'left arrow': 37,
+            up: 38,
+            'up arrow': 38,
+            right: 39,
+            'right arrow': 39,
+            down: 40,
+            'down arrow': 40,
+            insert: 45,
+            delete: 46,
+            0: 48,
+            zero: 48,
+            ')': 48,
+            'right parenthesis': 48,
+            1: 49,
+            one: 49,
+            '!': 49,
+            exclamation: 49,
+            'exclamation point': 49,
+            2: 50,
+            two: 50,
+            '@': 50,
+            at: 50,
+            3: 51,
+            three: 51,
+            '#': 51,
+            'number sign': 51,
+            hash: 51,
+            pound: 51,
+            4: 52,
+            four: 52,
+            $: 52,
+            dollar: 52,
+            'dollar sign': 52,
+            5: 53,
+            five: 53,
+            '%': 53,
+            percent: 53,
+            'percent sign': 53,
+            6: 54,
+            six: 54,
+            '^': 54,
+            caret: 54,
+            7: 55,
+            seven: 55,
+            '&': 55,
+            ampersand: 55,
+            8: 56,
+            eight: 56,
+            '*': 56,
+            asterisk: 56,
+            9: 57,
+            nine: 57,
+            '(': 57,
+            'left parenthesis': 57,
+            a: 65,
+            b: 66,
+            c: 67,
+            d: 68,
+            e: 69,
+            f: 70,
+            g: 71,
+            h: 72,
+            i: 73,
+            j: 74,
+            k: 75,
+            l: 76,
+            m: 77,
+            n: 78,
+            o: 79,
+            p: 80,
+            q: 81,
+            r: 82,
+            s: 83,
+            t: 84,
+            u: 85,
+            v: 86,
+            w: 87,
+            x: 88,
+            y: 89,
+            z: 90,
+            lwk: 91,
+            'left window key': 91,
+            rwk: 92,
+            'right window key': 92,
+            select: 93,
+            'select key': 93,
             'numpad 0': 96,
             'numpad 1': 97,
             'numpad 2': 98,
@@ -18140,40 +20768,75 @@ var plat;
             'numpad 7': 103,
             'numpad 8': 104,
             'numpad 9': 105,
-            'multiply': 106,
-            'add': 107,
-            'subtract': 109,
+            multiply: 106,
+            add: 107,
+            subtract: 109,
             'decimal point': 110,
-            'divide': 111,
-            'f1': 112, 'f2': 113, 'f3': 114, 'f4': 115,
-            'f5': 116, 'f6': 117, 'f7': 118, 'f8': 119,
-            'f9': 120, 'f10': 121, 'f11': 122, 'f12': 123,
+            divide: 111,
+            f1: 112,
+            f2: 113,
+            f3: 114,
+            f4: 115,
+            f5: 116,
+            f6: 117,
+            f7: 118,
+            f8: 119,
+            f9: 120,
+            f10: 121,
+            f11: 122,
+            f12: 123,
             'num lock': 144,
             'scroll lock': 145,
-            ';': 186, 'semi-colon': 186,
-            ':': 186, 'colon': 186,
-            '=': 187, 'equal': 187, 'equal sign': 187,
-            '+': 187, 'plus': 187,
-            ',': 188, 'comma': 188,
-            '<': 188, 'lt': 188, 'less than': 188,
+            ';': 186,
+            'semi-colon': 186,
+            ':': 186,
+            colon: 186,
+            '=': 187,
+            equal: 187,
+            'equal sign': 187,
+            '+': 187,
+            plus: 187,
+            ',': 188,
+            comma: 188,
+            '<': 188,
+            lt: 188,
+            'less than': 188,
             'left angle bracket': 188,
-            '-': 189, 'dash': 189,
-            '_': 189, 'underscore': 189,
-            '.': 190, 'period': 190,
-            '>': 190, 'gt': 190, 'greater than': 190,
+            '-': 189,
+            dash: 189,
+            _: 189,
+            underscore: 189,
+            '.': 190,
+            period: 190,
+            '>': 190,
+            gt: 190,
+            'greater than': 190,
             'right angle bracket': 190,
-            '/': 191, 'forward slash': 191,
-            '?': 191, 'question mark': 191,
-            '`': 192, 'grave accent': 192,
-            '~': 192, 'tilde': 192,
-            '[': 219, 'open bracket': 219,
-            '{': 219, 'open brace': 219,
-            '\\': 220, 'back slash': 220,
-            '|': 220, 'pipe': 220,
-            ']': 221, 'close bracket': 221,
-            '}': 221, 'close brace': 221,
-            '\'': 222, 'single quote': 222,
-            '"': 222, 'double quote': 222
+            '/': 191,
+            'forward slash': 191,
+            '?': 191,
+            'question mark': 191,
+            '`': 192,
+            'grave accent': 192,
+            '~': 192,
+            tilde: 192,
+            '[': 219,
+            'open bracket': 219,
+            '{': 219,
+            'open brace': 219,
+            '\\': 220,
+            'back slash': 220,
+            '|': 220,
+            pipe: 220,
+            ']': 221,
+            'close bracket': 221,
+            '}': 221,
+            'close brace': 221,
+            // tslint:disable-next-line 
+            "'": 222,
+            'single quote': 222,
+            '"': 222,
+            'double quote': 222,
         };
         /**
          * Base class used for filtering keys on KeyboardEvents.
@@ -18199,7 +20862,11 @@ var plat;
                 }
                 var expression = this.attributes[attr].trim();
                 if (expression[0] === '{') {
-                    var eventObject = this.evaluateExpression(expression) || { method: '' }, keys = this._filterArgs(eventObject);
+                    var eventObject = this.evaluateExpression(expression);
+                    if (!isObject(eventObject)) {
+                        eventObject = { method: '' };
+                    }
+                    var keys = this._filterArgs(eventObject);
                     this._setKeyCodes(keys);
                     this.addEventListener(this.element, this.event, this._onEvent, false);
                     return;
@@ -18210,7 +20877,8 @@ var plat;
              * Parses the proper method args and finds any key code filters.
              */
             KeyCodeEventControl.prototype._filterArgs = function (input) {
-                var key = input.key, keys = input.keys;
+                var key = input.key;
+                var keys = input.keys;
                 this._parseArgs(input.method);
                 if (isArray(keys)) {
                     return keys;
@@ -18226,8 +20894,7 @@ var plat;
                 }
                 else {
                     if (!(isNull(input.char) && isNull(input.chars))) {
-                        this._log.warn(this.type +
-                            ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
+                        this._log.warn(this.type + " should be using the property key or keys to denote key codes or keys and not char codes or characters.");
                     }
                 }
             };
@@ -18246,7 +20913,11 @@ var plat;
              * @param {KeyboardEvent} ev The keyboard event object.
              */
             KeyCodeEventControl.prototype._compareKeys = function (ev) {
-                var keyCodes = this.keyCodes, keyCode = ev.keyCode || ev.which;
+                var keyCodes = this.keyCodes;
+                var keyCode = ev.keyCode;
+                if (isNull(keyCode) || keyCode === 0) {
+                    keyCode = ev.which;
+                }
                 return isEmpty(keyCodes) || keyCodes[keyCode] === true;
             };
             /**
@@ -18259,10 +20930,15 @@ var plat;
                 if (!isArray(keys)) {
                     keys = [];
                 }
-                var length = keys.length, key, keyCodes = this.keyCodes, index;
-                for (var i = 0; i < length; ++i) {
+                var length = keys.length;
+                var keyCodes = this.keyCodes;
+                var key;
+                var index;
+                for (var i = 0; i < length; i += 1) {
                     key = keys[i];
-                    index = isNumber(key) ? key : controls.KeyCodes[key.toLowerCase()];
+                    index = isNumber(key)
+                        ? key
+                        : controls.KeyCodes[key.toLowerCase()];
                     keyCodes[index] = true;
                 }
             };
@@ -18305,9 +20981,14 @@ var plat;
              */
             KeyPress.prototype._onEvent = function (ev) {
                 var _this = this;
-                var keyCode = ev.keyCode || ev.which;
-                if (_super.prototype._compareKeys.call(this, ev) && ((keyCode >= 48 && keyCode <= 90) ||
-                    (keyCode >= 186) || (keyCode >= 96 && keyCode <= 111))) {
+                var keyCode = ev.keyCode;
+                if (isNull(keyCode) || keyCode === 0) {
+                    keyCode = ev.which;
+                }
+                if (_super.prototype._compareKeys.call(this, ev) &&
+                    ((keyCode >= 48 && keyCode <= 90) ||
+                        keyCode >= 186 ||
+                        (keyCode >= 96 && keyCode <= 111))) {
                     var remove_1 = this.addEventListener(this.element, 'keypress', function (e) {
                         remove_1();
                         _super.prototype._onEvent.call(_this, e);
@@ -18357,7 +21038,8 @@ var plat;
              * Parses the proper method args and finds any char code filters.
              */
             CharPress.prototype._filterArgs = function (input) {
-                var char = input.char, chars = input.chars;
+                var char = input.char;
+                var chars = input.chars;
                 this._parseArgs(input.method);
                 if (isArray(chars)) {
                     return chars;
@@ -18373,8 +21055,7 @@ var plat;
                 }
                 else {
                     if (!(isNull(input.key) && isNull(input.keys))) {
-                        this._log.warn(this.type +
-                            ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
+                        this._log.warn(this.type + " should be using the property key or keys to denote key codes or keys and not char codes or characters.");
                     }
                 }
             };
@@ -18384,10 +21065,15 @@ var plat;
              * @param {KeyboardEvent} ev The keyboard event object.
              */
             CharPress.prototype._onEvent = function (ev) {
-                var keyCodes = this.keyCodes, keyCode = ev.charCode || ev.which, key;
-                if (!keyCode) {
+                var keyCodes = this.keyCodes;
+                var keyCode = ev.charCode;
+                if (isNull(keyCode) || keyCode === 0) {
+                    keyCode = ev.which;
+                }
+                var key;
+                if (isNull(keyCode) || keyCode === 0) {
                     key = ev.key;
-                    if (!key) {
+                    if (!isString(key)) {
                         return;
                     }
                 }
@@ -18415,8 +21101,11 @@ var plat;
                 if (!isArray(keys)) {
                     keys = [];
                 }
-                var length = keys.length, key, keyCodes = this.keyCodes, index;
-                for (var i = 0; i < length; ++i) {
+                var length = keys.length;
+                var keyCodes = this.keyCodes;
+                var key;
+                var index;
+                for (var i = 0; i < length; i += 1) {
                     key = keys[i];
                     index = isNumber(key) ? String.fromCharCode(key) : key;
                     keyCodes[index] = true;
@@ -18486,7 +21175,8 @@ var plat;
                 var _this = this;
                 this._stopSetter();
                 this._stopSetter = requestAnimationFrameGlobal(function () {
-                    var element = _this.element, property = _this.property;
+                    var element = _this.element;
+                    var property = _this.property;
                     if (!isNode(element)) {
                         return;
                     }
@@ -18502,7 +21192,6 @@ var plat;
                         default:
                             element.setAttribute(property, property);
                             element[property] = true;
-                            break;
                     }
                 });
             };
@@ -18602,7 +21291,11 @@ var plat;
              * Hides the element.
              */
             Visible.prototype.initialize = function () {
-                var style = this.element.style || { getPropertyValue: noop }, initialValue = style.getPropertyValue(this.property);
+                var style = this.element.style;
+                if (!isObject(style)) {
+                    style = { getPropertyValue: noop };
+                }
+                var initialValue = style.getPropertyValue(this.property);
                 this._setValue(this.value, this.importance);
                 if (isEmpty(initialValue) || initialValue === 'none') {
                     return;
@@ -18628,7 +21321,6 @@ var plat;
                             break;
                         default:
                             _this._setValue(_this._initialValue);
-                            break;
                     }
                 });
             };
@@ -18639,12 +21331,18 @@ var plat;
              * @param {string} importance? The priority or importance level to set.
              */
             Visible.prototype._setValue = function (value, importance) {
-                var property = this.property, style = this.element.style || {
-                    setProperty: noop,
-                    removeProperty: noop,
-                    getPropertyValue: noop,
-                    getPropertyPriority: noop
-                }, currentVal = style.getPropertyValue(property), currentPriority = style.getPropertyPriority(property);
+                var property = this.property;
+                var style = this.element.style;
+                if (!isObject(style)) {
+                    style = {
+                        setProperty: noop,
+                        removeProperty: noop,
+                        getPropertyValue: noop,
+                        getPropertyPriority: noop,
+                    };
+                }
+                var currentVal = style.getPropertyValue(property);
+                var currentPriority = style.getPropertyPriority(property);
                 if (value === currentVal && importance === currentPriority) {
                     return;
                 }
@@ -18697,18 +21395,31 @@ var plat;
             Style.prototype.setter = function () {
                 var _this = this;
                 this._stopSetter();
-                var element = this.element, expression = this.attributes[this.attribute];
+                var element = this.element;
+                var expression = this.attributes[this.attribute];
                 if (isEmpty(expression) || isNull(element)) {
                     return;
                 }
                 this._stopSetter = requestAnimationFrameGlobal(function () {
-                    var urls = [], urlReplace = _this._urlReplace;
+                    var urls = [];
+                    var urlReplace = _this._urlReplace;
                     expression = expression.replace(_this._urlRegex, function (match) {
                         urls.push(match);
                         return urlReplace;
                     });
-                    var style = element.style, addedStyles = _this.__addedStyles, oldStyles = _this.__oldStyles, newStyles = [], props = expression.split(';'), length = props.length, prop, val, styleRegex = _this._styleRegex, exec, styleChanges = {}, i;
-                    for (i = 0; i < length; ++i) {
+                    var style = element.style;
+                    var addedStyles = _this.__addedStyles;
+                    var oldStyles = _this.__oldStyles;
+                    var newStyles = [];
+                    var props = expression.split(';');
+                    var styleChanges = {};
+                    var styleRegex = _this._styleRegex;
+                    var length = props.length;
+                    var prop;
+                    var val;
+                    var exec;
+                    var i;
+                    for (i = 0; i < length; i += 1) {
                         exec = styleRegex.exec(props[i]);
                         if (isNull(exec) || exec.length < 3) {
                             continue;
@@ -18728,7 +21439,8 @@ var plat;
                         styleChanges[prop] = val;
                     }
                     length = addedStyles.length;
-                    while (length-- > 0) {
+                    while (length > 0) {
+                        length -= 1;
                         prop = addedStyles[length];
                         if (newStyles.indexOf(prop) === -1) {
                             styleChanges[prop] = oldStyles[prop];
@@ -18737,7 +21449,8 @@ var plat;
                     }
                     var keys = Object.keys(styleChanges);
                     length = keys.length;
-                    while (length-- > 0) {
+                    while (length > 0) {
+                        length -= 1;
                         prop = keys[length];
                         style[prop] = styleChanges[prop];
                     }
@@ -18766,7 +21479,9 @@ var plat;
              * attribute property value to the evaluated expression.
              */
             ElementPropertyControl.prototype.setter = function () {
-                var element = this.element, elementProperty = this.property, expression = this.attributes[this.attribute];
+                var element = this.element;
+                var elementProperty = this.property;
+                var expression = this.attributes[this.attribute];
                 if (isEmpty(expression) || isNull(element)) {
                     return;
                 }
@@ -18811,7 +21526,9 @@ var plat;
              * attribute property value to the evaluated expression.
              */
             Src.prototype.setter = function () {
-                var element = this.element, elementProperty = this.property, expression = this.attributes[this.attribute];
+                var element = this.element;
+                var elementProperty = this.property;
+                var expression = this.attributes[this.attribute];
                 if (isEmpty(expression) || isNull(element)) {
                     return;
                 }
@@ -18820,7 +21537,7 @@ var plat;
                 }
             };
             Src._inject = {
-                _browser: __Browser
+                _browser: __Browser,
             };
             return Src;
         }(ElementPropertyControl));
@@ -18828,7 +21545,7 @@ var plat;
         register.control(__Href, Href);
         register.control(__Src, Src);
         /**
-         * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
+         * Facilitates two-way data-binding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
          */
         var Bind = /** @class */ (function (_super) {
             __extends(Bind, _super);
@@ -18853,15 +21570,18 @@ var plat;
                 /**
                  * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
                  */
+                // tslint:disable-next-line 
                 _this._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[1-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
                 /**
                  * Whether or not the File API is supported.
                  */
-                _this.__fileSupported = acquire(__Compat).fileSupported;
+                _this.__fileSupported = acquire(__Compat)
+                    .fileSupported;
                 /**
                  * Used to grab a filename from input[type="file"].
                  */
-                _this.__fileNameRegex = acquire(__Regex).fileNameRegex;
+                _this.__fileNameRegex = acquire(__Regex)
+                    .fileNameRegex;
                 /**
                  * Used to denote that a property change happened from within this control.
                  */
@@ -18883,27 +21603,33 @@ var plat;
                 if (isNull(parent) || isNull(this.element)) {
                     return;
                 }
-                var attr = camelCase(this.type), _parser = this._parser, expression = this._expression = _parser.parse(this.attributes[attr]);
+                var attr = camelCase(this.type);
+                var _parser = this._parser;
+                var expression = (this._expression = _parser.parse(this.attributes[attr]));
                 var identifiers = expression.identifiers;
                 if (identifiers.length !== 1) {
-                    this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression.');
+                    this._log.warn("Only 1 identifier allowed in a " + this.type + " expression.");
                     this._contextExpression = null;
                     return;
                 }
                 var split = identifiers[0].split('.');
                 this._property = split.pop();
                 if (expression.aliases.length > 0) {
-                    var alias = expression.aliases[0], resourceObj_1 = parent.findResource(alias), type = void 0;
+                    var alias = expression.aliases[0];
+                    var resourceObj_1 = parent.findResource(alias);
+                    var type = void 0;
                     if (isObject(resourceObj_1)) {
                         type = resourceObj_1.resource.type;
-                        if (type !== __OBSERVABLE_RESOURCE && type !== __LITERAL_RESOURCE) {
+                        if (type !== __OBSERVABLE_RESOURCE &&
+                            type !== __LITERAL_RESOURCE) {
                             return;
                         }
                     }
                     else {
                         resourceObj_1 = { resource: {} };
                     }
-                    if (alias === __CONTEXT_RESOURCE || alias === __ROOT_CONTEXT_RESOURCE) {
+                    if (alias === __CONTEXT_RESOURCE ||
+                        alias === __ROOT_CONTEXT_RESOURCE) {
                         this._contextExpression = _parser.parse(split.join('.'));
                     }
                     else {
@@ -18914,7 +21640,7 @@ var plat;
                             },
                             aliases: [],
                             identifiers: [],
-                            expression: ''
+                            expression: '',
                         };
                     }
                 }
@@ -18928,7 +21654,7 @@ var plat;
                         },
                         aliases: [],
                         identifiers: [],
-                        expression: ''
+                        expression: '',
                     };
                 }
                 if (this._supportsTwoWayBinding) {
@@ -18962,6 +21688,14 @@ var plat;
                 }
                 return this.evaluateExpression(expression);
             };
+            /**
+             * The function that allows a control implementing ISupportTwoWayBinding to observe
+             * changes to the bound property and/or its child properties.
+             * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
+             * specified child changes.
+             * @param {number | string} identifier? The path of the child property of the bound item if the bound item is an Array.
+             * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
+             */
             Bind.prototype.observeProperty = function (listener, identifier, autocast) {
                 return this._observeProperty(listener, identifier, autocast);
             };
@@ -18974,12 +21708,18 @@ var plat;
              */
             Bind.prototype._addTextEventListener = function () {
                 var _this = this;
-                var element = this.element, _compat = this._compat, composing = false, input = 'input', timeout, eventListener = function () {
+                var element = this.element;
+                var _compat = this._compat;
+                var input = 'input';
+                var composing = false;
+                var timeout;
+                var eventListener = function () {
                     if (composing) {
                         return;
                     }
                     _this._propertyChanged();
-                }, postponedEventListener = function () {
+                };
+                var postponedEventListener = function () {
                     if (isFunction(timeout)) {
                         return;
                     }
@@ -18989,7 +21729,9 @@ var plat;
                     });
                 };
                 if (isUndefined(_compat.ANDROID)) {
-                    this.addEventListener(element, 'compositionstart', function () { composing = true; }, false);
+                    this.addEventListener(element, 'compositionstart', function () {
+                        composing = true;
+                    }, false);
                     this.addEventListener(element, 'compositionend', function () {
                         composing = false;
                         eventListener();
@@ -19000,7 +21742,11 @@ var plat;
                 }
                 else {
                     this.addEventListener(element, 'keydown', function (ev) {
-                        var key = ev.keyCode || ev.which, codes = controls.KeyCodes;
+                        var codes = controls.KeyCodes;
+                        var key = ev.keyCode;
+                        if (isNull(key) || key === 0) {
+                            key = ev.which;
+                        }
                         if (key === codes.lwk ||
                             key === codes.rwk ||
                             (key >= codes.shift && key <= codes.escape) ||
@@ -19033,7 +21779,8 @@ var plat;
              * Used for select, input[type="radio"], and input[type="range"].
              */
             Bind.prototype._addRangeEventListener = function () {
-                var element = this.element, input = 'input';
+                var element = this.element;
+                var input = 'input';
                 if (this._compat.hasEvent(input)) {
                     this.addEventListener(element, input, this._propertyChanged, false);
                 }
@@ -19062,7 +21809,8 @@ var plat;
              * Getter for input[type="date"].
              */
             Bind.prototype._getDate = function () {
-                var value = this.element.value, regex = this._dateRegex;
+                var value = this.element.value;
+                var regex = this._dateRegex;
                 if (this._propertyType !== 'string' && regex.test(value)) {
                     var exec = regex.exec(value);
                     if (exec.length === 4) {
@@ -19075,7 +21823,8 @@ var plat;
              * Getter for input[type="datetime-local"].
              */
             Bind.prototype._getDateTimeLocal = function () {
-                var value = this.element.value, regex = this._dateTimeLocalRegex;
+                var value = this.element.value;
+                var regex = this._dateTimeLocalRegex;
                 if (this._propertyType !== 'string' && regex.test(value)) {
                     var exec = regex.exec(value);
                     if (exec.length === 8) {
@@ -19095,7 +21844,8 @@ var plat;
              * element if file is not supported.
              */
             Bind.prototype._getFile = function () {
-                var element = this.element, value = element.value;
+                var element = this.element;
+                var value = element.value;
                 if (this.__fileSupported) {
                     if (element.files.length > 0) {
                         return element.files[0];
@@ -19110,7 +21860,7 @@ var plat;
                     size: undefined,
                     msDetachStream: noop,
                     msClose: noop,
-                    slice: function () { return ({}); }
+                    slice: function () { return ({}); },
                 };
             };
             /**
@@ -19123,9 +21873,13 @@ var plat;
                 }
                 // this case should never be hit since ie9 does not support multi-file uploads, 
                 // but kept in here for now for consistency's sake 
-                var filelist = element.value.split(/,|;/g), length = filelist.length, files = [], fileValue, blobSlice = function () { return ({}); };
-                for (var i = 0; i < length; ++i) {
-                    fileValue = filelist[i];
+                var fileList = element.value.split(/,|;/g);
+                var length = fileList.length;
+                var files = [];
+                var fileValue;
+                var blobSlice = function () { return ({}); };
+                for (var i = 0; i < length; i += 1) {
+                    fileValue = fileList[i];
                     files.push({
                         name: fileValue.replace(this.__fileNameRegex, ''),
                         path: fileValue,
@@ -19134,7 +21888,7 @@ var plat;
                         size: undefined,
                         msDetachStream: noop,
                         msClose: noop,
-                        slice: blobSlice
+                        slice: blobSlice,
                     });
                 }
                 return files;
@@ -19143,8 +21897,11 @@ var plat;
              * Getter for select-multiple.
              */
             Bind.prototype._getSelectedValues = function () {
-                var options = this.element.options, length = options.length, option, selectedValues = [];
-                for (var i = 0; i < length; ++i) {
+                var options = this.element.options;
+                var length = options.length;
+                var selectedValues = [];
+                var option;
+                for (var i = 0; i < length; i += 1) {
                     option = options[i];
                     if (option.selected) {
                         selectedValues.push(option.value);
@@ -19289,7 +22046,7 @@ var plat;
                         newValue = newValue.toString();
                     }
                 }
-                element.checked = (element.value === newValue);
+                element.checked = element.value === newValue;
             };
             /**
              * Setter for input[type="date"]
@@ -19314,7 +22071,8 @@ var plat;
                     }
                     return;
                 }
-                var day = ("0" + newValue.getDate()).slice(-2), month = ("0" + (newValue.getMonth() + 1)).slice(-2);
+                var day = ("0" + newValue.getDate()).slice(-2);
+                var month = ("0" + (newValue.getMonth() + 1)).slice(-2);
                 this._setValue(newValue.getFullYear() + "-" + month + "-" + day);
             };
             /**
@@ -19340,7 +22098,12 @@ var plat;
                     }
                     return;
                 }
-                var day = ("0" + newValue.getDate()).slice(-2), month = ("0" + (newValue.getMonth() + 1)).slice(-2), hour = ("0" + newValue.getHours()).slice(-2), minutes = ("0" + newValue.getMinutes()).slice(-2), seconds = ("0" + newValue.getSeconds()).slice(-2), ms = newValue.getMilliseconds();
+                var day = ("0" + newValue.getDate()).slice(-2);
+                var month = ("0" + (newValue.getMonth() + 1)).slice(-2);
+                var hour = ("0" + newValue.getHours()).slice(-2);
+                var minutes = ("0" + newValue.getMinutes()).slice(-2);
+                var seconds = ("0" + newValue.getSeconds()).slice(-2);
+                var ms = newValue.getMilliseconds();
                 this._setValue(newValue.getFullYear() + "-" + month + "-" + day + "T" + hour + ":" + minutes + ":" + seconds + "." + ms);
             };
             /**
@@ -19354,9 +22117,11 @@ var plat;
                 if (this.__isSelf) {
                     return;
                 }
-                var element = this.element, value = element.value;
+                var element = this.element;
+                var value = element.value;
                 if (isNull(newValue)) {
-                    if (firstTime === true || !this._document.body.contains(element)) {
+                    if (firstTime === true ||
+                        !this._document.body.contains(element)) {
                         this._propertyChanged();
                         return;
                     }
@@ -19373,7 +22138,7 @@ var plat;
                         newValue = newValue.toString();
                     }
                     else {
-                        this._log.info('Trying to bind an invalid value to a <select> element using a ' + this.type + '.');
+                        this._log.info("Trying to bind an invalid value to a <select> element using a " + this.type + ".");
                     }
                 }
                 if (value === newValue) {
@@ -19405,15 +22170,19 @@ var plat;
                 if (this.__isSelf) {
                     return;
                 }
-                var options = this.element.options, length = isNull(options) ? 0 : options.length, option, nullValue = isNull(newValue);
+                var nullValue = isNull(newValue);
+                var options = this.element.options;
+                var length = isNull(options) ? 0 : options.length;
+                var option;
                 if (nullValue || !isArray(newValue)) {
                     if (firstTime === true) {
                         this._propertyChanged();
                     }
                     // unselects the options unless a match is found 
-                    while (length-- > 0) {
+                    while (length > 0) {
+                        length -= 1;
                         option = options[length];
-                        if (!nullValue && option.value === '' + newValue) {
+                        if (!nullValue && option.value === "" + newValue) {
                             option.selected = true;
                             return;
                         }
@@ -19421,8 +22190,12 @@ var plat;
                     }
                     return;
                 }
-                var value, numberValue, index, highestIndex = Infinity;
-                while (length-- > 0) {
+                var value;
+                var numberValue;
+                var index;
+                var highestIndex = Infinity;
+                while (length > 0) {
+                    length -= 1;
                     option = options[length];
                     value = option.value;
                     if (newValue.indexOf(value) !== -1) {
@@ -19430,7 +22203,10 @@ var plat;
                         continue;
                     }
                     numberValue = Number(value);
-                    if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                    index = newValue.indexOf(numberValue);
+                    var trueIndex = newValue.indexOf(true);
+                    var falseIndex = newValue.indexOf(false);
+                    if (isNumber(numberValue) && index !== -1) {
                         if (index < highestIndex) {
                             this._propertyType = 'number';
                             highestIndex = index;
@@ -19438,8 +22214,14 @@ var plat;
                         option.selected = true;
                         continue;
                     }
-                    else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
-                        value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                    else if ((value === 'true' && trueIndex !== -1) ||
+                        (value === 'false' && falseIndex !== -1)) {
+                        if (trueIndex !== -1) {
+                            index = trueIndex;
+                        }
+                        else {
+                            index = falseIndex;
+                        }
                         if (index < highestIndex) {
                             this._propertyType = 'boolean';
                             highestIndex = index;
@@ -19501,7 +22283,9 @@ var plat;
                                 this._propertyType = 'nullable';
                                 var multi = element.multiple;
                                 this._addEventType = this._addChangeEventListener;
-                                this._getter = multi ? this._getFiles : this._getFile;
+                                this._getter = multi
+                                    ? this._getFiles
+                                    : this._getFile;
                                 break;
                             case 'hidden':
                                 this._getter = this._getValue;
@@ -19513,7 +22297,6 @@ var plat;
                                 this._addEventType = this._addTextEventListener;
                                 this._getter = this._getValue;
                                 this._setter = this._setText;
-                                break;
                         }
                         break;
                     case 'textarea':
@@ -19528,6 +22311,7 @@ var plat;
                         this._addEventType = this._addButtonEventListener;
                         this._getter = this._getTextContent;
                         break;
+                    default:
                 }
             };
             /**
@@ -19535,16 +22319,15 @@ var plat;
              */
             Bind.prototype._watchExpression = function () {
                 var _this = this;
-                var contextExpression = this._contextExpression, context = this.evaluateExpression(contextExpression);
+                var contextExpression = this._contextExpression;
+                var context = this.evaluateExpression(contextExpression);
                 if (!isObject(context)) {
-                    if (isNull(context) && contextExpression.identifiers.length > 0) {
+                    if (isNull(context) &&
+                        contextExpression.identifiers.length > 0) {
                         context = this._createContext(contextExpression.identifiers[0]);
                     }
                     else {
-                        this._log.warn(this.type + ' is trying to index into a primitive type. ' +
-                            this._contextExpression.expression + ' is already defined and not ' +
-                            'an object when trying to evaluate ' + this.type + '="' +
-                            this._expression.expression + '"');
+                        this._log.warn("Cannot index into a non-object type: " + this.type + "=\"" + this._expression.expression + "\"");
                         return;
                     }
                 }
@@ -19559,7 +22342,7 @@ var plat;
                     }
                     this.observeArray(function (arrayInfo) {
                         _this._setter(arrayInfo[0].object, null, true);
-                    }, contextExpression + '.' + property);
+                    }, contextExpression + "." + property);
                 }
                 var expression = this._expression;
                 this.observeExpression(function (newValue, oldValue) {
@@ -19572,7 +22355,9 @@ var plat;
              * @param {string} identifier The identifier to base the created context off of.
              */
             Bind.prototype._createContext = function (identifier) {
-                var split = identifier.split('.'), start = split.shift().slice(1), parent = this.parent;
+                var split = identifier.split('.');
+                var start = split.shift().slice(1);
+                var parent = this.parent;
                 if (start === __ROOT_CONTEXT_RESOURCE) {
                     identifier = split.join('.');
                     parent = this.parent.root;
@@ -19589,23 +22374,30 @@ var plat;
              */
             Bind.prototype._castProperty = function (value, type) {
                 var castValue;
-                type = type || this._propertyType;
+                if (isNull(type)) {
+                    type = this._propertyType;
+                }
                 if (isNull(type)) {
                     return value;
                 }
                 else if (isObject(value)) {
                     if (isArray(value)) {
-                        var length_12 = value.length;
+                        var length_11 = value.length;
                         castValue = [];
-                        for (var i = 0; i < length_12; ++i) {
+                        for (var i = 0; i < length_11; i += 1) {
                             castValue.push(this._castProperty(value[i], type));
                         }
                     }
-                    else if (isDate(value) || isFile(value) || isPromise(value) || isWindow(value) || isNode(value)) {
+                    else if (isDate(value) ||
+                        isFile(value) ||
+                        isPromise(value) ||
+                        isWindow(value) ||
+                        isNode(value)) {
                         castValue = value;
                     }
                     else {
-                        var keys = Object.keys(value), key = void 0;
+                        var keys = Object.keys(value);
+                        var key = void 0;
                         castValue = {};
                         while (keys.length > 0) {
                             key = keys.pop();
@@ -19642,7 +22434,6 @@ var plat;
                                     break;
                                 default:
                                     castValue = !!value;
-                                    break;
                             }
                             break;
                         case 'nullable':
@@ -19652,7 +22443,6 @@ var plat;
                             break;
                         default:
                             castValue = value;
-                            break;
                     }
                 }
                 return castValue;
@@ -19669,7 +22459,8 @@ var plat;
                 if (!isObject(context)) {
                     return;
                 }
-                var property = this._property, newValue = this._castProperty(this._getter());
+                var property = this._property;
+                var newValue = this._castProperty(this._getter());
                 if (context[property] === newValue) {
                     return;
                 }
@@ -19687,7 +22478,8 @@ var plat;
                 this._getter = this._getValue;
                 this._setter = this._setRadio;
                 if (!element.hasAttribute('name')) {
-                    var attr = camelCase(this.type), expression = this.attributes[attr];
+                    var attr = camelCase(this.type);
+                    var expression = this.attributes[attr];
                     element.setAttribute('name', expression);
                 }
                 if (element.hasAttribute('value')) {
@@ -19699,7 +22491,11 @@ var plat;
              * Normalizes HTMLSelectElements for cross-browser compatibility.
              */
             Bind.prototype._initializeSelect = function () {
-                var element = this.element, multiple = element.multiple, options = element.options, length = options.length, option;
+                var element = this.element;
+                var multiple = element.multiple;
+                var options = element.options;
+                var length = options.length;
+                var option;
                 this._addEventType = this._addChangeEventListener;
                 if (multiple) {
                     this._getter = this._getSelectedValues;
@@ -19709,7 +22505,7 @@ var plat;
                     this._getter = this._getValue;
                     this._setter = this._setSelectedIndex;
                 }
-                for (var i = 0; i < length; ++i) {
+                for (var i = 0; i < length; i += 1) {
                     option = options[i];
                     if (!option.hasAttribute('value')) {
                         option.setAttribute('value', option.textContent);
@@ -19723,7 +22519,9 @@ var plat;
             Bind.prototype._observingBindableProperty = function () {
                 var _this = this;
                 var templateControl = this.templateControl;
-                if (isObject(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
+                if (isObject(templateControl) &&
+                    isFunction(templateControl.onInput) &&
+                    isFunction(templateControl.observeProperties)) {
                     templateControl.onInput(function (newValue) {
                         _this._getter = function () { return newValue; };
                         _this._propertyChanged();
@@ -19749,27 +22547,28 @@ var plat;
                     parsedIdentifier = this._expression.expression;
                 }
                 else if (isNumber(identifier)) {
-                    parsedIdentifier = this._expression.expression + '.' + identifier;
+                    parsedIdentifier = this._expression.expression + "." + identifier;
                 }
                 else {
-                    var _parser = this._parser, identifierExpression = _parser.parse(identifier), identifiers = identifierExpression.identifiers;
+                    var _parser = this._parser;
+                    var identifierExpression = _parser.parse(identifier);
+                    var identifiers = identifierExpression.identifiers;
                     if (identifiers.length !== 1) {
-                        this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
-                            'implementing observable.ISupportTwoWayBinding and working with ' + this.type);
+                        this._log.warn("Only 1 identifier path allowed with " + this.type);
                         return;
                     }
-                    var expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
+                    var expression = _parser.parse(this._expression.expression + "." + identifiers[0]);
                     parsedIdentifier = expression.identifiers[0];
                     var split = parsedIdentifier.split('.');
                     split.pop();
-                    var contextExpression = split.join('.'), context = this.evaluateExpression(contextExpression);
+                    var contextExpression = split.join('.');
+                    var context = this.evaluateExpression(contextExpression);
                     if (!isObject(context)) {
                         if (isNull(context)) {
                             context = this._ContextManager.createContext(this.parent, contextExpression);
                         }
                         else {
-                            this._log.warn('A control implementing observable.ISupportTwoWayBinding is trying to index into a primitive type ' +
-                                'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
+                            this._log.warn("Cannot index a primitive type: " + this.type + "=\"" + this._expression.expression + "\"");
                             return;
                         }
                     }
@@ -19822,7 +22621,7 @@ var plat;
                 _parser: __Parser,
                 _ContextManager: __ContextManagerStatic,
                 _compat: __Compat,
-                _document: __Document
+                _document: __Document,
             };
             return Bind;
         }(AttributeControl));
@@ -19892,7 +22691,7 @@ var plat;
                 }
                 this._ContextManager.defineGetter(templateControl, this.property, {
                     value: value,
-                    observe: this._boundAddListener
+                    observe: this._boundAddListener,
                 }, true, true);
                 this._callListeners(value, oldValue);
             };
@@ -19902,8 +22701,9 @@ var plat;
              * @param {any} oldValue The old value of the evaluated expression.
              */
             ObservableAttributeControl.prototype._callListeners = function (newValue, oldValue) {
-                var listeners = this._listeners, length = listeners.length;
-                for (var i = 0; i < length; ++i) {
+                var listeners = this._listeners;
+                var length = listeners.length;
+                for (var i = 0; i < length; i += 1) {
                     listeners[i](newValue, oldValue);
                 }
             };
@@ -19942,7 +22742,7 @@ var plat;
                 this._removeListener = this.observeExpression(this._setProperty, this.attributes[this.attribute]);
             };
             ObservableAttributeControl._inject = {
-                _ContextManager: __ContextManagerStatic
+                _ContextManager: __ContextManagerStatic,
             };
             return ObservableAttributeControl;
         }(AttributeControl));
@@ -19965,7 +22765,7 @@ var plat;
         }(ObservableAttributeControl));
         controls.Options = Options;
         register.control(__Options, Options);
-    })(controls = plat_1.controls || (plat_1.controls = {}));
+    })(controls = plat.controls || (plat.controls = {}));
     /**
      * Class for every app. This class contains hooks for Application Lifecycle Events
      * as well as error handling.
@@ -19984,7 +22784,7 @@ var plat;
              * Reference to the Log injectable.
              */
             this._log = App._log;
-            var navigator = this.navigator = acquire(__NavigatorInstance);
+            var navigator = (this.navigator = acquire(__NavigatorInstance));
             navigator.initialize(acquire(__RouterStatic).currentRouter());
         }
         /**
@@ -19992,8 +22792,9 @@ var plat;
          */
         App.start = function () {
             if (!App._compat.isCompatible) {
-                return App._log.error(new Error('PlatypusTS only supports modern browsers where ' +
+                App._log.error(new Error('PlatypusTS only supports modern browsers where ' +
                     'Object.defineProperty is defined'));
+                return;
             }
             App.__addPlatCss();
             var _EventManager = App._EventManager;
@@ -20020,7 +22821,10 @@ var plat;
          * @param {Node} node The node at which DOM compilation begins.
          */
         App.load = function (node) {
-            var _LifecycleEvent = App._LifecycleEvent, _compiler = App._compiler, body = App._document.body, head = App._document.head;
+            var _LifecycleEvent = App._LifecycleEvent;
+            var _compiler = App._compiler;
+            var body = App._document.body;
+            var head = App._document.head;
             _LifecycleEvent.dispatch(__beforeLoad, App);
             if (isNull(node)) {
                 body.setAttribute(__Hide, '');
@@ -20061,7 +22865,9 @@ var plat;
          * A static method called when the application wants to programmatically shutdown.
          */
         App.__shutdown = function () {
-            var app = navigator.app, _LifecycleEvent = App._LifecycleEvent, ev;
+            var app = navigator.app;
+            var _LifecycleEvent = App._LifecycleEvent;
+            var ev;
             if (!isNull(app) && isFunction(app.exitApp)) {
                 ev = _LifecycleEvent.dispatch(__exiting, App);
                 if (ev.defaultPrevented) {
@@ -20078,7 +22884,7 @@ var plat;
             if (isNull(appInjector) || !isFunction(appInjector.inject)) {
                 return;
             }
-            var app = App.app = appInjector.inject();
+            var app = (App.app = appInjector.inject());
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
             app.on(__online, app.online);
@@ -20098,7 +22904,8 @@ var plat;
             if (App._compat.platCss) {
                 return;
             }
-            else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
+            else if (!isNull(_document.styleSheets) &&
+                _document.styleSheets.length > 0) {
                 _document.styleSheets[0].insertRule('[plat-hide] { display: none !important; }', 0);
                 return;
             }
@@ -20117,7 +22924,7 @@ var plat;
          */
         App.prototype.resume = function (ev) { };
         /**
-         * Event fired when an internal error occures.
+         * Event fired when an internal error occurs.
          * @param {plat.events.ErrorEvent<Error>} ev The ErrorEvent object.
          */
         App.prototype.error = function (ev) { };
@@ -20127,7 +22934,7 @@ var plat;
          */
         App.prototype.ready = function (ev) { };
         /**
-         * Event fired when the app has been programatically shutdown. This event is cancelable.
+         * Event fired when the app has been programmatically shutdown. This event is cancelable.
          * @param {plat.events.LifecycleEvent} ev The LifecycleEvent object.
          */
         App.prototype.exiting = function (ev) { };
@@ -20145,7 +22952,7 @@ var plat;
          * Creates a new DispatchEvent and propagates it to all
          * listeners based on the DIRECT method. Propagation
          * will always start with the sender, so the sender can both produce and consume the same event.
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * app.on() method.
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
          */
@@ -20154,18 +22961,24 @@ var plat;
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
-            var _EventManager = App._EventManager || acquire(__EventManagerStatic);
+            var _EventManager = App._EventManager;
+            if (!isObject(_EventManager)) {
+                _EventManager = acquire(__EventManagerStatic);
+            }
             _EventManager.dispatch(name, this, _EventManager.DIRECT, args);
         };
         /**
          * Registers a listener for a DispatchEvent. The listener will be called when
          * a DispatchEvent is propagating over the app. Any number of listeners can exist for a single event name.
-         * @param {string} name The name of the event, cooinciding with the DispatchEvent name.
+         * @param {string} name The name of the event, coinciding with the DispatchEvent name.
          * @param {(ev: plat.events.DispatchEvent, ...args: Array<any>) => void} listener The method called when
          * the DispatchEvent is fired.
          */
         App.prototype.on = function (name, listener) {
-            var _EventManager = App._EventManager || acquire(__EventManagerStatic);
+            var _EventManager = App._EventManager;
+            if (!isObject(_EventManager)) {
+                _EventManager = acquire(__EventManagerStatic);
+            }
             return _EventManager.on(this.uid, name, listener, this);
         };
         /**
@@ -20190,7 +23003,7 @@ var plat;
         App.app = null;
         return App;
     }());
-    plat_1.App = App;
+    plat.App = App;
     /**
      */
     function IAppStatic(_compat, _EventManager, _document, _compiler, _LifecycleEvent, _log) {
@@ -20202,21 +23015,21 @@ var plat;
         App._log = _log;
         return App;
     }
-    plat_1.IAppStatic = IAppStatic;
+    plat.IAppStatic = IAppStatic;
     register.injectable(__AppStatic, IAppStatic, [
         __Compat,
         __EventManagerStatic,
         __Document,
         __Compiler,
         __LifecycleEventStatic,
-        __Log
+        __Log,
     ], __STATIC);
     /**
      */
     function IApp(_AppStatic) {
         return _AppStatic.app;
     }
-    plat_1.IApp = IApp;
+    plat.IApp = IApp;
     register.injectable(__App, IApp, [__AppStatic], __INSTANCE);
 })(plat || (plat = {}));
 module.exports = plat;

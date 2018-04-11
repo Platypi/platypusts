@@ -1,4 +1,4 @@
-module plat.storage {
+namespace plat.storage {
     'use strict';
 
     /**

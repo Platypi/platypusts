@@ -1,4 +1,4 @@
-module plat.processing {
+namespace plat.processing {
     'use strict';
 
     /**
@@ -22,7 +22,7 @@ module plat.processing {
             _ControlFactory: __ControlFactory,
             _TemplateControlFactory: __TemplateControlFactory,
             _BindableTemplatesFactory: __BindableTemplatesFactory,
-            _log: __Log
+            _log: __Log,
         };
 
         /**
@@ -218,7 +218,7 @@ module plat.processing {
          * @description
          * The child managers for this manager.
          */
-        children: Array<NodeManager> = [];
+        public children: NodeManager[] = [];
 
         /**
          * @name type
@@ -232,7 +232,7 @@ module plat.processing {
          * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}.
          * It's value is "element".
          */
-        type: string = 'element';
+        public type: string = 'element';
 
         /**
          * @name replace
@@ -246,7 +246,7 @@ module plat.processing {
          * Specifies whether or not this manager has a {@link plat.ui.TemplateControl|TemplateControl} which has a
          * replaceWith property set to null or empty string.
          */
-        replace: boolean = false;
+        public replace: boolean = false;
 
         /**
          * @name hasOwnContext
@@ -260,7 +260,7 @@ module plat.processing {
          * Indicates whether the {@link plat.ui.TemplateControl|TemplateControl} for this manager has its own context
          * or inherits it from a parent.
          */
-        hasOwnContext: boolean = false;
+        public hasOwnContext: boolean = false;
 
         /**
          * @name replaceNodeLength
@@ -274,7 +274,7 @@ module plat.processing {
          * The length of a replaced control, indicates the number of nodes to slice
          * out of the parent's childNodes.
          */
-        replaceNodeLength: number;
+        public replaceNodeLength: number;
 
         /**
          * @name contextPromise
@@ -282,13 +282,13 @@ module plat.processing {
          * @kind property
          * @access public
          *
-         * @type {plat.async.IThenable<void>}
+         * @type {plat.async.Promise<void>}
          *
          * @description
-         * In the event that a control does not have its own context, we need a promise to fullfill
+         * In the event that a control does not have its own context, we need a promise to fulfill
          * when the control's context has been set.
          */
-        contextPromise: async.IThenable<void>;
+        public contextPromise: async.Promise<void>;
 
         /**
          * @name templatePromise
@@ -296,13 +296,13 @@ module plat.processing {
          * @kind property
          * @access public
          *
-         * @type {plat.async.IThenable<void>}
+         * @type {plat.async.Promise<void>}
          *
          * @description
          * A promise that is set when an {@link plat.ui.TemplateControl|TemplateControl} specifies a templateUrl
          * and its HTML needs to be asynchronously obtained.
          */
-        templatePromise: async.IThenable<void>;
+        public templatePromise: async.Promise<void>;
 
         /**
          * @name create
@@ -324,36 +324,58 @@ module plat.processing {
          *
          * @returns {plat.processing.ElementManager}
          */
-        static create(element: Element, parent?: ElementManager): ElementManager {
-            let name = element.nodeName.toLowerCase(),
-                nodeName = name,
-                injector = controlInjectors[name] || viewControlInjectors[name],
-                noControlAttribute = true,
-                hasUiControl = false,
-                uiControlNode: IUiControlNode;
+        public static create(
+            element: Element,
+            parent?: ElementManager
+        ): ElementManager {
+            let name = element.nodeName.toLowerCase();
+            const nodeName = name;
+            let injector = controlInjectors[name];
+
+            if (!isObject(injector)) {
+                injector = viewControlInjectors[name];
+            }
+
+            let noControlAttribute = true;
+            let hasUiControl = false;
+            let uiControlNode: IUiControlNode;
 
             if (isNull(injector)) {
                 if (element.hasAttribute(__Control)) {
                     name = element.getAttribute(__Control).toLowerCase();
-                    injector = controlInjectors[name] || viewControlInjectors[name];
+                    injector = controlInjectors[name];
+
+                    if (!isObject(injector)) {
+                        injector = viewControlInjectors[name];
+                    }
+
                     noControlAttribute = false;
-                } else if (element.hasAttribute(__AttributePrefix + __Control)) {
-                    name = element.getAttribute(__AttributePrefix + __Control).toLowerCase();
-                    injector = controlInjectors[name] || viewControlInjectors[name];
+                } else if (
+                    element.hasAttribute(__AttributePrefix + __Control)
+                ) {
+                    name = element
+                        .getAttribute(__AttributePrefix + __Control)
+                        .toLowerCase();
+                    injector = controlInjectors[name];
+
+                    if (!isObject(injector)) {
+                        injector = viewControlInjectors[name];
+                    }
+
                     noControlAttribute = false;
                 }
             }
 
             if (!isNull(injector)) {
-                let uiControl = <ui.TemplateControl>injector.inject(),
-                    resourceElement = ElementManager.locateResources(element);
+                const uiControl = <ui.TemplateControl>injector.inject();
+                const resourceElement = ElementManager.locateResources(element);
 
                 uiControlNode = {
                     control: uiControl,
                     resourceElement: resourceElement,
                     nodeName: name,
                     expressions: [],
-                    injector: injector
+                    injector: injector,
                 };
 
                 hasUiControl = true;
@@ -362,23 +384,31 @@ module plat.processing {
                     element.setAttribute(__Control, name);
                 }
 
-                let replacementType = uiControl.replaceWith,
-                    replaceWithDiv = replacementType === 'any' && noControlAttribute;
-                if (!isEmpty(replacementType) && (replacementType !== 'any' || replaceWithDiv) &&
-                    replacementType.toLowerCase() !== nodeName) {
+                let replacementType = uiControl.replaceWith;
+                const replaceWithDiv =
+                    replacementType === 'any' && noControlAttribute;
+                if (
+                    !isEmpty(replacementType) &&
+                    (replacementType !== 'any' || replaceWithDiv) &&
+                    replacementType.toLowerCase() !== nodeName
+                ) {
                     if (replaceWithDiv) {
                         replacementType = 'div';
                     }
 
-                    let replacement = ElementManager._document.createElement(replacementType);
+                    const replacement = ElementManager._document.createElement(
+                        replacementType
+                    );
                     if (replacement.nodeType === Node.ELEMENT_NODE) {
-                        element = replaceWith(element, <HTMLElement>replacement);
+                        element = replaceWith(element, replacement);
                     }
                 }
             }
 
-            let elementMap = ElementManager._collectAttributes(element.attributes),
-                manager: ElementManager = ElementManager.getInstance();
+            const elementMap = ElementManager._collectAttributes(
+                element.attributes
+            );
+            const manager: ElementManager = ElementManager.getInstance();
 
             elementMap.element = <HTMLElement>element;
 
@@ -390,7 +420,7 @@ module plat.processing {
                     resourceElement: null,
                     nodeName: __TemplateContext,
                     expressions: [],
-                    injector: injector
+                    injector: injector,
                 };
             } else {
                 elementMap.uiControlNode = uiControlNode;
@@ -399,9 +429,12 @@ module plat.processing {
             manager.initialize(elementMap, parent);
 
             if (!(elementMap.hasControl || hasUiControl)) {
-                manager.bind = (): Array<Control> => { return []; };
+                manager.bind = (): Control[] => {
+                    return [];
+                };
             } else {
                 manager.setUiControlTemplate();
+
                 return hasUiControl ? null : manager;
             }
 
@@ -423,16 +456,21 @@ module plat.processing {
          *
          * @returns {HTMLElement} The HTML element that represents the defined {@link plat.ui.Resources|Resources}.
          */
-        static locateResources(node: Node): HTMLElement {
-            let childNodes: Array<Node> = Array.prototype.slice.call(node.childNodes),
-                childNode: Node,
-                nodeName: string;
+        public static locateResources(node: Node): HTMLElement {
+            const childNodes: Node[] = Array.prototype.slice.call(
+                node.childNodes
+            );
+            let childNode: Node;
+            let nodeName: string;
 
             while (childNodes.length > 0) {
                 childNode = childNodes.shift();
                 nodeName = childNode.nodeName.toLowerCase();
 
-                if (nodeName === __Resources || nodeName === 'x-' + __Resources) {
+                if (
+                    nodeName === __Resources ||
+                    nodeName === `x-${__Resources}`
+                ) {
                     return <HTMLElement>node.removeChild(childNode);
                 }
             }
@@ -460,16 +498,30 @@ module plat.processing {
          *
          * @returns {plat.processing.ElementManager} The cloned {@link plat.processing.ElementManager|ElementManager}.
          */
-        static clone(sourceManager: ElementManager, parent: ElementManager,
-            element: Element, newControl?: ui.TemplateControl, nodeMap?: INodeMap): ElementManager {
-
+        public static clone(
+            sourceManager: ElementManager,
+            parent: ElementManager,
+            element: Element,
+            newControl?: ui.TemplateControl,
+            nodeMap?: INodeMap
+        ): ElementManager {
             if (isNull(nodeMap)) {
-                nodeMap = ElementManager._cloneNodeMap(sourceManager.nodeMap, element, parent.getUiControl() ||
-                    parent.getParentControl(), newControl);
+                let parentControl = parent.getUiControl();
+
+                if (!isObject(parentControl)) {
+                    parentControl = parent.getParentControl();
+                }
+
+                nodeMap = ElementManager._cloneNodeMap(
+                    sourceManager.nodeMap,
+                    element,
+                    parentControl,
+                    newControl
+                );
             }
 
-            let manager: ElementManager = ElementManager.getInstance(),
-                hasNewControl = !isNull(newControl);
+            const manager: ElementManager = ElementManager.getInstance();
+            const hasNewControl = !isNull(newControl);
 
             manager.nodeMap = nodeMap;
             manager.parent = parent;
@@ -484,7 +536,9 @@ module plat.processing {
             manager.isClone = true;
 
             if (!(nodeMap.hasControl || hasNewControl)) {
-                manager.bind = (): Array<Control> => { return []; };
+                manager.bind = (): Control[] => {
+                    return [];
+                };
             }
 
             if (hasNewControl) {
@@ -510,17 +564,20 @@ module plat.processing {
          *
          * @returns {plat.ui.TemplateControl} The cloned {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        static cloneUiControl(sourceMap: INodeMap, parent: ui.TemplateControl): ui.TemplateControl {
-            let uiControlNode = sourceMap.uiControlNode;
+        public static cloneUiControl(
+            sourceMap: INodeMap,
+            parent: ui.TemplateControl
+        ): ui.TemplateControl {
+            const uiControlNode = sourceMap.uiControlNode;
 
             if (isNull(uiControlNode) || isNull(uiControlNode.injector)) {
                 return;
             }
 
-            let uiControl = uiControlNode.control,
-                newUiControl = <ui.TemplateControl>uiControlNode.injector.inject(),
-                resources = ElementManager._ResourcesFactory.getInstance(),
-                attributes: ui.Attributes = ElementManager._AttributesFactory.getInstance();
+            const uiControl = uiControlNode.control;
+            const newUiControl = <ui.TemplateControl>uiControlNode.injector.inject();
+            const resources = ElementManager._ResourcesFactory.getInstance();
+            const attributes: ui.Attributes = ElementManager._AttributesFactory.getInstance();
 
             newUiControl.parent = parent;
             parent.controls.push(newUiControl);
@@ -535,11 +592,16 @@ module plat.processing {
             ElementManager._ResourcesFactory.addControlResources(newUiControl);
 
             if (!isNull(uiControl.innerTemplate)) {
-                newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(true);
+                newUiControl.innerTemplate = <DocumentFragment>uiControl.innerTemplate.cloneNode(
+                    true
+                );
             }
 
             newUiControl.type = uiControl.type;
-            newUiControl.bindableTemplates = ElementManager._BindableTemplatesFactory.create(newUiControl, uiControl.bindableTemplates);
+            newUiControl.bindableTemplates = ElementManager._BindableTemplatesFactory.create(
+                newUiControl,
+                uiControl.bindableTemplates
+            );
             newUiControl.replaceWith = uiControl.replaceWith;
 
             return newUiControl;
@@ -567,31 +629,38 @@ module plat.processing {
          *
          * @returns {Array<plat.processing.INode>} An array of the newly created {@link plat.processing.INode|INodes}.
          */
-        static createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl,
-            templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode> {
-            let nodes = nodeMap.nodes,
-                element = isClone === true ? newElement : nodeMap.element,
-                attributes: NamedNodeMap;
+        public static createAttributeControls(
+            nodeMap: INodeMap,
+            parent: ui.TemplateControl,
+            templateControl?: ui.TemplateControl,
+            newElement?: Element,
+            isClone?: boolean
+        ): INode[] {
+            const nodes = nodeMap.nodes;
+            const element = isClone === true ? newElement : nodeMap.element;
+            let attributes: NamedNodeMap;
 
             if (isNode(element)) {
                 if (element.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-                    return isClone === true ? ElementManager._copyAttributeNodes(nodes) : [];
+                    return isClone === true
+                        ? ElementManager._copyAttributeNodes(nodes)
+                        : [];
                 }
 
                 attributes = element.attributes;
             }
 
-            let attrs = nodeMap.attributes,
-                newAttributes: ui.Attributes,
-                node: INode,
-                injector: dependency.Injector<Control>,
-                control: AttributeControl,
-                newNodes: Array<INode> = [],
-                length = nodes.length,
-                nodeName: string,
-                i: number;
+            const attrs = nodeMap.attributes;
+            const newNodes: INode[] = [];
+            const length = nodes.length;
+            let newAttributes: ui.Attributes;
+            let node: INode;
+            let injector: dependency.Injector<Control>;
+            let control: AttributeControl;
+            let nodeName: string;
+            let i: number;
 
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 node = nodes[i];
                 nodeName = node.nodeName;
                 injector = node.injector;
@@ -617,13 +686,25 @@ module plat.processing {
                 }
 
                 if (isClone === true) {
+                    const haveAttributes = isObject(attributes);
+                    let namedItem = null;
+
+                    if (haveAttributes) {
+                        namedItem = attributes.getNamedItem(nodeName);
+
+                        if (!isObject(namedItem)) {
+                            namedItem = attributes.getNamedItem(
+                                __AttributePrefix + nodeName
+                            );
+                        }
+                    }
+
                     newNodes.push({
                         control: control,
                         expressions: node.expressions,
-                        node: !attributes ? null : (attributes.getNamedItem(nodeName) ||
-                        attributes.getNamedItem(__AttributePrefix + nodeName)),
+                        node: namedItem,
                         nodeName: nodeName,
-                        injector: injector
+                        injector: injector,
                     });
 
                     if (!isNull(control)) {
@@ -640,8 +721,8 @@ module plat.processing {
 
             if (!isClone) {
                 nodes.sort((a, b): number => {
-                    let aControl = <AttributeControl>a.control,
-                        bControl = <AttributeControl>b.control;
+                    const aControl = <AttributeControl>a.control;
+                    const bControl = <AttributeControl>b.control;
 
                     if (isNull(aControl)) {
                         return 1;
@@ -649,13 +730,17 @@ module plat.processing {
                         return -1;
                     }
 
-                    let aPriority = isNumber(aControl.priority) ? aControl.priority : 0,
-                        bPriority = isNumber(bControl.priority) ? bControl.priority : 0;
+                    const aPriority = isNumber(aControl.priority)
+                        ? aControl.priority
+                        : 0;
+                    const bPriority = isNumber(bControl.priority)
+                        ? bControl.priority
+                        : 0;
 
                     return bPriority - aPriority;
                 });
 
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     node = nodes[i];
                     control = <AttributeControl>node.control;
 
@@ -686,17 +771,20 @@ module plat.processing {
          *
          * @returns {plat.processing.ElementManager}
          */
-        static getInstance(): ElementManager {
-            let manager = new ElementManager();
+        public static getInstance(): ElementManager {
+            const manager = new ElementManager();
 
             manager._Promise = acquire(__Promise);
             manager._ContextManager = NodeManager._ContextManager;
             manager._compiler = acquire(__Compiler);
             manager._CommentManagerFactory = acquire(__CommentManagerFactory);
             manager._ControlFactory = acquire(__ControlFactory);
-            manager._TemplateControlFactory = NodeManager._TemplateControlFactory;
-            manager._BindableTemplatesFactory = ElementManager._BindableTemplatesFactory;
+            manager._TemplateControlFactory =
+                NodeManager._TemplateControlFactory;
+            manager._BindableTemplatesFactory =
+                ElementManager._BindableTemplatesFactory;
             manager._log = ElementManager._log;
+
             return manager;
         }
 
@@ -716,35 +804,42 @@ module plat.processing {
          *
          * @returns {plat.processing.INodeMap} The compiled {@link plat.processing.INodeMap|INodeMap}.
          */
-        protected static _collectAttributes(attributes: NamedNodeMap): INodeMap {
-            let nodes: Array<INode> = [],
-                attribute: Attr,
-                name: string,
-                value: string,
-                childContext: expressions.IParsedExpression,
-                childIdentifier: string,
-                hasMarkup: boolean,
-                hasMarkupFn = NodeManager.hasMarkup,
-                findMarkup = NodeManager.findMarkup,
-                _parser = NodeManager._parser,
-                expressions: Array<expressions.IParsedExpression>,
-                hasControl = false,
-                injector: dependency.Injector<Control>,
-                length = attributes.length,
-                controlAttributes: IObject<string> = {};
+        protected static _collectAttributes(
+            attributes: NamedNodeMap
+        ): INodeMap {
+            const nodes: INode[] = [];
+            const hasMarkupFn = NodeManager.hasMarkup;
+            const findMarkup = NodeManager.findMarkup;
+            const _parser = NodeManager._parser;
+            const length = attributes.length;
+            const controlAttributes: IObject<string> = {};
+            let attribute: Attr;
+            let name: string;
+            let value: string;
+            let childContext: expressions.IParsedExpression;
+            let childIdentifier: string;
+            let hasMarkup: boolean;
+            let expressions: expressions.IParsedExpression[];
+            let hasControl = false;
+            let injector: dependency.Injector<Control>;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 attribute = attributes[i];
                 value = attribute.value;
                 name = attribute.name.replace(/^data-/i, '').toLowerCase();
-                injector = controlInjectors[name] || viewControlInjectors[name];
+                injector = controlInjectors[name];
+
+                if (!isObject(injector)) {
+                    injector = viewControlInjectors[name];
+                }
 
                 if (name === __Context) {
                     if (value !== '') {
                         childContext = _parser.parse(value);
                         if (childContext.identifiers.length !== 1) {
-                            ElementManager._log.warn('Incorrect ' + __Context + ': ' +
-                                value + ', must contain a single identifier.');
+                            ElementManager._log.warn(
+                                `Incorrect ${__Context}: ${value}, must contain a single identifier.`
+                            );
                         }
                         childIdentifier = childContext.identifiers[0];
                     }
@@ -761,7 +856,7 @@ module plat.processing {
                         node: attribute,
                         nodeName: name,
                         expressions: expressions,
-                        injector: injector
+                        injector: injector,
                     });
                 }
 
@@ -773,7 +868,7 @@ module plat.processing {
                 attributes: controlAttributes,
                 nodes: nodes,
                 childContext: childIdentifier,
-                hasControl: hasControl
+                hasControl: hasControl,
             };
         }
 
@@ -792,16 +887,16 @@ module plat.processing {
          *
          * @returns {Array<plat.processing.INode>} The cloned array of {@link plat.processing.INode|INodes}.
          */
-        protected static _copyAttributeNodes(nodes: Array<INode>): Array<INode> {
-            let newNodes: Array<INode> = [],
-                length = nodes.length,
-                node: INode;
+        protected static _copyAttributeNodes(nodes: INode[]): INode[] {
+            const newNodes: INode[] = [];
+            const length = nodes.length;
+            let node: INode;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 node = nodes[i];
                 newNodes.push({
                     expressions: node.expressions,
-                    nodeName: node.nodeName
+                    nodeName: node.nodeName,
                 });
             }
 
@@ -824,13 +919,17 @@ module plat.processing {
          *
          * @returns {plat.processing.INode} The cloned {@link plat.processing.INode|INode}.
          */
-        protected static _cloneNode(sourceNode: INode, node: Node, newControl?: ui.TemplateControl): INode {
+        protected static _cloneNode(
+            sourceNode: INode,
+            node: Node,
+            newControl?: ui.TemplateControl
+        ): INode {
             return {
                 control: newControl,
                 injector: sourceNode.injector,
                 expressions: sourceNode.expressions,
                 node: node,
-                nodeName: sourceNode.nodeName
+                nodeName: sourceNode.nodeName,
             };
         }
 
@@ -853,21 +952,36 @@ module plat.processing {
          *
          * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
          */
-        protected static _cloneNodeMap(sourceMap: INodeMap, element: Element,
-            parent: ui.TemplateControl, newControl?: ui.TemplateControl): INodeMap {
-            let hasControl = sourceMap.hasControl,
-                nodeMap: INodeMap = {
-                    attributes: sourceMap.attributes,
-                    childContext: sourceMap.childContext,
-                    nodes: [],
-                    element: <HTMLElement>element,
-                    uiControlNode: !isNull(sourceMap.uiControlNode) ?
-                    <IUiControlNode>ElementManager._cloneNode(sourceMap.uiControlNode, element, newControl) : null,
-                    hasControl: hasControl
-                };
+        protected static _cloneNodeMap(
+            sourceMap: INodeMap,
+            element: Element,
+            parent: ui.TemplateControl,
+            newControl?: ui.TemplateControl
+        ): INodeMap {
+            const hasControl = sourceMap.hasControl;
+            const nodeMap: INodeMap = {
+                attributes: sourceMap.attributes,
+                childContext: sourceMap.childContext,
+                nodes: [],
+                element: <HTMLElement>element,
+                uiControlNode: !isNull(sourceMap.uiControlNode)
+                    ? <IUiControlNode>ElementManager._cloneNode(
+                          sourceMap.uiControlNode,
+                          element,
+                          newControl
+                      )
+                    : null,
+                hasControl: hasControl,
+            };
 
             if (hasControl) {
-                nodeMap.nodes = ElementManager.createAttributeControls(sourceMap, parent, newControl, element, true);
+                nodeMap.nodes = ElementManager.createAttributeControls(
+                    sourceMap,
+                    parent,
+                    newControl,
+                    element,
+                    true
+                );
             }
 
             return nodeMap;
@@ -888,32 +1002,59 @@ module plat.processing {
          *
          * @returns {number} The number of nodes to advance while node traversal is in progress.
          */
-        clone(newNode: Node, parentManager: ElementManager, nodeMap?: INodeMap): number {
-            let childNodes: Array<Node>,
-                clonedManager: ElementManager,
-                replace = this.replace,
-                children = this.children,
-                newControl = !isNull(nodeMap) ? nodeMap.uiControlNode.control : null,
-                newControlExists = !isNull(newControl),
-                startNodeManager: NodeManager,
-                endNodeManager: NodeManager;
+        public clone(
+            newNode: Node,
+            parentManager: ElementManager,
+            nodeMap?: INodeMap
+        ): number {
+            const replace = this.replace;
+            const children = this.children;
+            let newControl = !isNull(nodeMap)
+                ? nodeMap.uiControlNode.control
+                : null;
+            let newControlExists = !isNull(newControl);
+            let childNodes: Node[];
+            let clonedManager: ElementManager;
+            let startNodeManager: NodeManager;
+            let endNodeManager: NodeManager;
 
             if (!newControlExists) {
                 // create new control
-                newControl = ElementManager.cloneUiControl(this.nodeMap,
-                    (parentManager.getUiControl() || parentManager.getParentControl()));
+                let toClone = parentManager.getUiControl();
+
+                if (!isObject(toClone)) {
+                    toClone = parentManager.getParentControl();
+                }
+
+                newControl = ElementManager.cloneUiControl(
+                    this.nodeMap,
+                    toClone
+                );
 
                 newControlExists = !isNull(newControl);
             }
 
             if (replace) {
                 // definitely have newControl
-                let nodes = newNode.parentNode.childNodes,
-                    arrayProto = Array.prototype,
-                    startIndex = arrayProto.indexOf.call(nodes, newNode);
+                const nodes = newNode.parentNode.childNodes;
+                const arrayProto = Array.prototype;
+                const startIndex: number = arrayProto.indexOf.call(
+                    nodes,
+                    newNode
+                );
 
-                childNodes = arrayProto.slice.call(nodes, startIndex + 1, startIndex + this.replaceNodeLength);
-                clonedManager = ElementManager.clone(this, parentManager, null, newControl, nodeMap);
+                childNodes = arrayProto.slice.call(
+                    nodes,
+                    startIndex + 1,
+                    startIndex + this.replaceNodeLength
+                );
+                clonedManager = ElementManager.clone(
+                    this,
+                    parentManager,
+                    null,
+                    newControl,
+                    nodeMap
+                );
                 newControl.elementNodes = childNodes;
                 newControl.startNode = <Comment>newNode;
                 newControl.endNode = <Comment>childNodes.pop();
@@ -929,7 +1070,13 @@ module plat.processing {
                 }
             } else {
                 childNodes = Array.prototype.slice.call(newNode.childNodes);
-                clonedManager = ElementManager.clone(this, parentManager, <Element>newNode, newControl, nodeMap);
+                clonedManager = ElementManager.clone(
+                    this,
+                    parentManager,
+                    <Element>newNode,
+                    newControl,
+                    nodeMap
+                );
                 nodeMap = clonedManager.nodeMap;
 
                 if (newControlExists) {
@@ -940,12 +1087,15 @@ module plat.processing {
                 }
             }
 
-            let length = children.length,
-                childNodeOffset = 0;
+            const length = children.length;
+            let childNodeOffset = 0;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 // clone children
-                childNodeOffset += children[i].clone(childNodes[childNodeOffset], clonedManager);
+                childNodeOffset += children[i].clone(
+                    childNodes[childNodeOffset],
+                    clonedManager
+                );
             }
 
             if (replace) {
@@ -978,12 +1128,16 @@ module plat.processing {
          *
          * @returns {void}
          */
-        initialize(nodeMap: INodeMap, parent: ElementManager, dontInitialize?: boolean): void {
+        public initialize(
+            nodeMap: INodeMap,
+            parent: ElementManager,
+            dontInitialize?: boolean
+        ): void {
             super.initialize(nodeMap, parent);
 
-            let controlNode = nodeMap.uiControlNode,
-                hasUiControl = !isNull(controlNode),
-                control: ui.TemplateControl;
+            const controlNode = nodeMap.uiControlNode;
+            const hasUiControl = !isNull(controlNode);
+            let control: ui.TemplateControl;
 
             if (hasUiControl) {
                 this._populateUiControl();
@@ -992,10 +1146,18 @@ module plat.processing {
             }
 
             if (nodeMap.hasControl) {
-                ElementManager.createAttributeControls(nodeMap, this.getParentControl(), control);
+                ElementManager.createAttributeControls(
+                    nodeMap,
+                    this.getParentControl(),
+                    control
+                );
             }
 
-            if (!dontInitialize && hasUiControl && isFunction(control.initialize)) {
+            if (
+                !dontInitialize &&
+                hasUiControl &&
+                isFunction(control.initialize)
+            ) {
                 control.initialize();
             }
         }
@@ -1013,55 +1175,75 @@ module plat.processing {
          * {@link plat.processing.ElementManager|ElementManager's} associated
          * {@link plat.processing.INodeMap|INodeMap}.
          */
-        bind(): Array<Control> {
-            let nodeMap = this.nodeMap,
-                parent = this.getParentControl(),
-                controlNode = nodeMap.uiControlNode,
-                controls: Array<Control> = [];
+        public bind(): Control[] {
+            const nodeMap = this.nodeMap;
+            const parent = this.getParentControl();
+            const controlNode = nodeMap.uiControlNode;
+            const controls: Control[] = [];
 
             if (!isNull(controlNode)) {
-                let uiControl = controlNode.control,
-                    childContext = nodeMap.childContext,
-                    getManager = this._ContextManager.getManager,
-                    contextManager: observable.ContextManager,
-                    absoluteContextPath = isNull(parent) ? __CONTEXT : parent.absoluteContextPath,
-                    _TemplateControlFactory = this._TemplateControlFactory,
-                    inheritsContext = !uiControl.hasOwnContext;
+                const uiControl = controlNode.control;
+                const _TemplateControlFactory = this._TemplateControlFactory;
+                const inheritsContext = !uiControl.hasOwnContext;
+                const getManager = this._ContextManager.getManager;
+                let childContext = <string>nodeMap.childContext;
+                let contextManager: observable.ContextManager;
+                let absoluteContextPath = isNull(parent)
+                    ? __CONTEXT
+                    : parent.absoluteContextPath;
 
                 controls.push(uiControl);
 
                 if (inheritsContext && !isNull(childContext)) {
                     if (childContext[0] === '@') {
-                        let split = childContext.split('.'),
-                            topIdentifier = split.shift(),
-                            alias = topIdentifier.slice(1),
-                            resourceObj = _TemplateControlFactory.findResource(uiControl, alias);
+                        const split = childContext.split('.');
+                        const topIdentifier = split.shift();
+                        const alias = topIdentifier.slice(1);
+                        const resourceObj = _TemplateControlFactory.findResource(
+                            uiControl,
+                            alias
+                        );
 
                         if (isObject(resourceObj)) {
-                            let resource = resourceObj.resource;
-                            childContext = (split.length > 0 ? ('.' + split.join('.')) : '');
+                            const resource = resourceObj.resource;
+                            childContext =
+                                split.length > 0 ? `.${split.join('.')}` : '';
 
                             if (alias === __CONTEXT_RESOURCE) {
                                 absoluteContextPath += childContext;
                             } else if (alias === __ROOT_CONTEXT_RESOURCE) {
                                 absoluteContextPath = __CONTEXT + childContext;
-                            } else if (resource.type === __OBSERVABLE_RESOURCE || resource.type === __LITERAL_RESOURCE) {
-                                absoluteContextPath = 'resources.' + alias + '.value' + childContext;
+                            } else if (
+                                resource.type === __OBSERVABLE_RESOURCE ||
+                                resource.type === __LITERAL_RESOURCE
+                            ) {
+                                absoluteContextPath = `resources.${alias}.value${childContext}`;
                                 uiControl.root = resourceObj.control;
                             } else {
-                                this._log.warn('Only resources of type "observable" can be set as context.');
+                                this._log.warn(
+                                    'Only resources of type "observable" can be set as context.'
+                                );
                             }
                         } else {
-                            this._log.warn('Could not set the context of ' + uiControl.type +
-                                ' with the resource specified as "' + childContext + '".');
+                            this._log.warn(
+                                `Could not set the context of ${
+                                    uiControl.type
+                                } with the resource specified as "${childContext}".`
+                            );
                         }
                     } else {
-                        absoluteContextPath += '.' + childContext;
+                        absoluteContextPath += `.${childContext}`;
                     }
                 }
 
                 if (!isObject(uiControl.root)) {
-                    uiControl.root = this._ControlFactory.getRootControl(uiControl) || uiControl;
+                    uiControl.root = this._ControlFactory.getRootControl(
+                        uiControl
+                    );
+
+                    if (!isObject(uiControl.root)) {
+                        uiControl.root = uiControl;
+                    }
                 }
 
                 contextManager = getManager(uiControl.root);
@@ -1069,33 +1251,53 @@ module plat.processing {
                 let awaitContext = false;
 
                 if (inheritsContext) {
-                    uiControl.context = contextManager.getContext(absoluteContextPath.split('.'), false);
-                    awaitContext = isUndefined(uiControl.context) && !this._BindableTemplatesFactory.isBoundControl(uiControl);
+                    uiControl.context = contextManager.getContext(
+                        absoluteContextPath.split('.'),
+                        false
+                    );
+                    awaitContext =
+                        isUndefined(uiControl.context) &&
+                        !this._BindableTemplatesFactory.isBoundControl(
+                            uiControl
+                        );
                 } else {
                     absoluteContextPath = __CONTEXT;
                 }
 
                 if (awaitContext) {
-                    this.contextPromise = new this._Promise<void>((resolve, reject): void => {
-                        let removeListener = contextManager.observe(absoluteContextPath, {
-                            uid: uiControl.uid,
-                            listener: (newValue, oldValue): void => {
-                                if (isUndefined(newValue)) {
-                                    return;
+                    this.contextPromise = new this._Promise<void>(
+                        (resolve, reject): void => {
+                            const removeListener = contextManager.observe(
+                                absoluteContextPath,
+                                {
+                                    uid: uiControl.uid,
+                                    listener: (newValue, oldValue): void => {
+                                        if (isUndefined(newValue)) {
+                                            return;
+                                        }
+                                        removeListener();
+                                        uiControl.context = newValue;
+                                        this._beforeLoad(
+                                            uiControl,
+                                            absoluteContextPath
+                                        );
+                                        resolve();
+                                    },
                                 }
-                                removeListener();
-                                uiControl.context = newValue;
-                                this._beforeLoad(uiControl, absoluteContextPath);
-                                resolve();
-                            }
-                        });
-                    });
+                            );
+                        }
+                    );
                 } else {
                     this._beforeLoad(uiControl, absoluteContextPath);
                 }
             }
 
-            this._observeControlIdentifiers(nodeMap.nodes, parent, controls, nodeMap.element);
+            this._observeControlIdentifiers(
+                nodeMap.nodes,
+                parent,
+                controls,
+                nodeMap.element
+            );
 
             return controls;
         }
@@ -1116,35 +1318,49 @@ module plat.processing {
          *
          * @returns {void}
          */
-        setUiControlTemplate(templateUrl?: string): void {
-            let controlNode = this.nodeMap.uiControlNode;
+        public setUiControlTemplate(templateUrl?: string): void {
+            const controlNode = this.nodeMap.uiControlNode;
 
             if (!isNull(controlNode)) {
-                let control = controlNode.control;
+                const control = controlNode.control;
 
-                this.templatePromise = this._TemplateControlFactory.determineTemplate(control, templateUrl).then((template): void => {
-                    this.templatePromise = null;
-                    this._initializeControl(control, <DocumentFragment>template.cloneNode(true));
-                }, (error: any): void => {
-                        this.templatePromise = null;
-                        if (isNull(error)) {
-                            let template: DocumentFragment = error;
+                this.templatePromise = this._TemplateControlFactory
+                    .determineTemplate(control, templateUrl)
+                    .then(
+                        (template): void => {
+                            this.templatePromise = null;
+                            this._initializeControl(
+                                control,
+                                <DocumentFragment>template.cloneNode(true)
+                            );
+                        },
+                        (error: any): void => {
+                            this.templatePromise = null;
+                            if (isNull(error)) {
+                                let template: DocumentFragment = error;
 
-                            if (this._BindableTemplatesFactory.isBoundControl(control)) {
-                                template = <DocumentFragment>appendChildren(control.element.childNodes);
-                            }
-
-                            this._initializeControl(control, template);
-                        } else {
-                            postpone((): void => {
-                                if(isString(error)) {
-                                    error = new Error(error);
+                                if (
+                                    this._BindableTemplatesFactory.isBoundControl(
+                                        control
+                                    )
+                                ) {
+                                    template = <DocumentFragment>appendChildren(
+                                        control.element.childNodes
+                                    );
                                 }
 
-                                this._log.error(error);
-                            });
+                                this._initializeControl(control, template);
+                            } else {
+                                postpone((): void => {
+                                    if (isString(error)) {
+                                        error = new Error(error);
+                                    }
+
+                                    this._log.error(error);
+                                });
+                            }
                         }
-                    });
+                    );
 
                 return;
             }
@@ -1169,8 +1385,8 @@ module plat.processing {
          * @returns {plat.ui.TemplateControl} The {@link plat.ui.TemplateControl|TemplateControl} instance
          * associated with this {@link plat.processing.ElementManager|ElementManager}.
          */
-        getUiControl(): ui.TemplateControl {
-            let uiControlNode = this.nodeMap.uiControlNode;
+        public getUiControl(): ui.TemplateControl {
+            const uiControlNode = this.nodeMap.uiControlNode;
             if (isNull(uiControlNode)) {
                 return;
             }
@@ -1185,15 +1401,15 @@ module plat.processing {
          * @access public
          *
          * @description
-         * Fullfills any template promises and finishes the compile phase for the HTML template associated
+         * Fulfills any template promises and finishes the compile phase for the HTML template associated
          * with this {@link plat.processing.ElementManager|ElementManager}.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when this manager's template and all
+         * @returns {plat.async.Promise<void>} A promise that resolves when this manager's template and all
          * child manager's templates have been fulfilled.
          */
-        fulfillTemplate(): async.IThenable<void> {
+        public fulfillTemplate(): async.Promise<void> {
             if (!isNull(this.templatePromise)) {
-                return this.templatePromise.then((): async.IThenable<void> => {
+                return this.templatePromise.then((): async.Promise<void> => {
                     return this._fulfillChildTemplates();
                 });
             }
@@ -1210,21 +1426,23 @@ module plat.processing {
          * @description
          * Fulfills the template promise prior to binding and loading the control.
          *
-         * @returns {plat.async.IThenable<void>} A promise that fulfills when this manager and
+         * @returns {plat.async.Promise<void>} A promise that fulfills when this manager and
          * its associated controls are bound and loaded.
          */
-        fulfillAndLoad(): async.IThenable<void> {
-            return this.fulfillTemplate().then((): async.IThenable<void> => {
-                return this.bindAndLoad();
-            }).catch((error: any): void => {
-                postpone((): void => {
-                    if(isString(error)) {
-                        error = new Error(error);
-                    }
+        public fulfillAndLoad(): async.Promise<void> {
+            return this.fulfillTemplate()
+                .then((): async.Promise<void> => {
+                    return this.bindAndLoad();
+                })
+                .catch((error: any): void => {
+                    postpone((): void => {
+                        if (isString(error)) {
+                            error = new Error(error);
+                        }
 
-                    this._log.error(error);
+                        this._log.error(error);
+                    });
                 });
-            });
         }
 
         /**
@@ -1236,26 +1454,33 @@ module plat.processing {
          * @description
          * Binds context to the DOM and loads controls.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when this manager's controls and all
+         * @returns {plat.async.Promise<void>} A promise that resolves when this manager's controls and all
          * child manager's controls have been bound and loaded.
          */
-        bindAndLoad(): async.IThenable<void> {
-            let controls = this.bind(),
-                promise: async.IThenable<Array<void>>;
+        public bindAndLoad(): async.Promise<void> {
+            const controls = this.bind();
+            let promise: async.Promise<void[]>;
 
             if (isPromise(this.contextPromise)) {
-                promise = this.contextPromise.then((): async.IThenable<Array<void>> => {
+                promise = this.contextPromise.then((): async.Promise<
+                    void[]
+                > => {
                     return this._bindChildren();
                 });
             } else {
                 promise = this._bindChildren();
             }
 
-            return promise.then((): async.IThenable<void> => {
-                return this._loadControls(<Array<AttributeControl>>controls, this.getUiControl());
-            }).catch((error: any): void => {
+            return promise
+                .then((): async.Promise<void> => {
+                    return this._loadControls(
+                        <AttributeControl[]>controls,
+                        this.getUiControl()
+                    );
+                })
+                .catch((error: any): void => {
                     postpone((): void => {
-                        if(isString(error)) {
+                        if (isString(error)) {
                             error = new Error(error);
                         }
 
@@ -1275,34 +1500,39 @@ module plat.processing {
          * a load upon a successful set of the context.
          *
          * @param {plat.ui.TemplateControl} root The {@link plat.ui.TemplateControl|TemplateControl} specifying its own context.
-         * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its
+         * @param {() => async.Promise<void>} loadMethod The function to initiate the loading of the root control and its
          * children.
          *
-         * @returns {plat.async.IThenable<void>} A promise that fulfills when the context has been set on the control.
+         * @returns {plat.async.Promise<void>} A promise that fulfills when the context has been set on the control.
          */
-        observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): async.IThenable<void> {
+        public observeRootContext(
+            root: ui.TemplateControl,
+            loadMethod: () => async.Promise<void>
+        ): async.Promise<void> {
             loadMethod = loadMethod.bind(this);
             if (!isNull(root.context)) {
                 return loadMethod();
             }
 
             return new this._Promise<void>((resolve): void => {
-                let removeListener = this._ContextManager.getManager(root).observe(__CONTEXT, {
-                    listener: (): void => {
-                        removeListener();
-                        loadMethod().then(resolve);
-                    },
-                    uid: root.uid
-                });
-            }).catch((error): void => {
-                    postpone((): void => {
-                        if(isString(error)) {
-                            error = new Error(error);
-                        }
-
-                        this._log.error(error);
+                const removeListener = this._ContextManager
+                    .getManager(root)
+                    .observe(__CONTEXT, {
+                        listener: (): void => {
+                            removeListener();
+                            loadMethod().then(resolve);
+                        },
+                        uid: root.uid,
                     });
+            }).catch((error): void => {
+                postpone((): void => {
+                    if (isString(error)) {
+                        error = new Error(error);
+                    }
+
+                    this._log.error(error);
                 });
+            });
         }
 
         /**
@@ -1320,19 +1550,30 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _beforeLoad(uiControl: ui.TemplateControl, absoluteContextPath: string): void {
-            let contextManager = this._ContextManager.getManager(uiControl.root),
-                _TemplateControlFactory = this._TemplateControlFactory;
+        protected _beforeLoad(
+            uiControl: ui.TemplateControl,
+            absoluteContextPath: string
+        ): void {
+            const contextManager = this._ContextManager.getManager(
+                uiControl.root
+            );
+            const _TemplateControlFactory = this._TemplateControlFactory;
 
-            (<any>uiControl).zCC__plat = contextManager.observe(absoluteContextPath, {
-                uid: uiControl.uid,
-                priority: __CONTEXT_CHANGED_PRIORITY,
-                listener: (newValue, oldValue): void => {
-                    uiControl.context = newValue;
+            (<any>uiControl).zCC__plat = contextManager.observe(
+                absoluteContextPath,
+                {
+                    uid: uiControl.uid,
+                    priority: __CONTEXT_CHANGED_PRIORITY,
+                    listener: (newValue, oldValue): void => {
+                        uiControl.context = newValue;
+                    },
                 }
-            });
+            );
 
-            _TemplateControlFactory.setAbsoluteContextPath(uiControl, absoluteContextPath);
+            _TemplateControlFactory.setAbsoluteContextPath(
+                uiControl,
+                absoluteContextPath
+            );
             _TemplateControlFactory.setContextResources(uiControl);
             ElementManager._ResourcesFactory.bindResources(uiControl.resources);
         }
@@ -1346,23 +1587,33 @@ module plat.processing {
          * @description
          * Binds context to the DOM and calls bindAndLoad on all children.
          *
-         * @returns {plat.async.IThenable<void[]>} A promise that resolves when this manager's controls and all
+         * @returns {plat.async.Promise<void[]>} A promise that resolves when this manager's controls and all
          * child manager's controls have been bound and loaded.
          */
-        protected _bindChildren(): async.IThenable<void[]> {
-            let children = this.children,
-                length = children.length,
-                child: ElementManager,
-                promises: Array<async.IThenable<void>> = [];
+        protected _bindChildren(): async.Promise<void[]> {
+            const children = this.children;
+            const length = children.length;
+            const promises: async.Promise<void>[] = [];
+            let child: ElementManager;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 child = <ElementManager>children[i];
 
                 if (child.hasOwnContext) {
                     if (this.isClone) {
-                        promises.push(child.observeRootContext(child.getUiControl(), child.bindAndLoad));
+                        promises.push(
+                            child.observeRootContext(
+                                child.getUiControl(),
+                                child.bindAndLoad
+                            )
+                        );
                     } else {
-                        promises.push(child.observeRootContext(child.getUiControl(), child.fulfillAndLoad));
+                        promises.push(
+                            child.observeRootContext(
+                                child.getUiControl(),
+                                child.fulfillAndLoad
+                            )
+                        );
                     }
                 } else if (!isUndefined(child.children)) {
                     promises.push(child.bindAndLoad());
@@ -1391,29 +1642,35 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _loadControls(controls: Array<AttributeControl>, templateControl: ui.TemplateControl): async.IThenable<void> {
-            let length = controls.length,
-                control: AttributeControl,
-                load = this._ControlFactory.load,
-                templateControlLoaded = isNull(templateControl),
-                promise: async.IThenable<void>,
-                templateControlPriority: number,
-                i: number;
+        protected _loadControls(
+            controls: AttributeControl[],
+            templateControl: ui.TemplateControl
+        ): async.Promise<void> {
+            const length = controls.length;
+            const load = this._ControlFactory.load;
+            let control: AttributeControl;
+            let templateControlLoaded = isNull(templateControl);
+            let promise: async.Promise<void>;
+            let templateControlPriority: number;
+            let i: number;
 
             if (templateControlLoaded) {
                 // don't need to set templateControlPriority because it will never be checked.
                 i = 0;
             } else {
-                let priority = templateControl.priority;
+                const priority = templateControl.priority;
                 templateControlPriority = isNumber(priority) ? priority : 100;
                 i = 1;
             }
 
-            for (; i < length; ++i) {
+            for (; i < length; i += 1) {
                 control = controls[i];
                 control.templateControl = templateControl;
 
-                if (!templateControlLoaded && templateControlPriority > control.priority) {
+                if (
+                    !templateControlLoaded &&
+                    templateControlPriority > control.priority
+                ) {
                     templateControlLoaded = true;
                     promise = load(templateControl);
                 }
@@ -1441,16 +1698,17 @@ module plat.processing {
          * @returns {void}
          */
         protected _populateUiControl(): void {
-            let nodeMap = this.nodeMap,
-                parent = this.getParentControl(),
-                controlNode = nodeMap.uiControlNode,
-                uiControl = controlNode.control,
-                uid = uiControl.uid,
-                resources = uiControl.resources,
-                element = nodeMap.element,
-                childNodes = Array.prototype.slice.call(element.childNodes),
-                newAttributes: ui.Attributes = ElementManager._AttributesFactory.getInstance(),
-                replace = this.replace = (uiControl.replaceWith === null || uiControl.replaceWith === '');
+            const nodeMap = this.nodeMap;
+            const parent = this.getParentControl();
+            const controlNode = nodeMap.uiControlNode;
+            const uiControl = controlNode.control;
+            const element = nodeMap.element;
+            const childNodes = Array.prototype.slice.call(element.childNodes);
+            const newAttributes: ui.Attributes = ElementManager._AttributesFactory.getInstance();
+            const replace = (this.replace =
+                uiControl.replaceWith === null || uiControl.replaceWith === '');
+            let uid = uiControl.uid;
+            let resources = uiControl.resources;
 
             if (!isString(uid)) {
                 uid = uiControl.uid = uniqueId(__Plat);
@@ -1484,10 +1742,20 @@ module plat.processing {
             ElementManager._ResourcesFactory.addControlResources(uiControl);
             uiControl.type = controlNode.nodeName;
 
-            uiControl.bindableTemplates = uiControl.bindableTemplates || this._BindableTemplatesFactory.create(uiControl);
+            if (!isObject(uiControl.bindableTemplates)) {
+                uiControl.bindableTemplates = this._BindableTemplatesFactory.create(
+                    uiControl
+                );
+            }
 
-            if (childNodes.length > 0 && (!isEmpty(uiControl.templateString) || !isEmpty(uiControl.templateUrl))) {
-                uiControl.innerTemplate = <DocumentFragment>appendChildren(childNodes);
+            if (
+                childNodes.length > 0 &&
+                (!isEmpty(uiControl.templateString) ||
+                    !isEmpty(uiControl.templateUrl))
+            ) {
+                uiControl.innerTemplate = <DocumentFragment>appendChildren(
+                    childNodes
+                );
             }
 
             if (replace) {
@@ -1511,15 +1779,22 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _replaceElement(control: ui.TemplateControl, nodeMap: INodeMap): void {
-            let element = nodeMap.element,
-                parentNode = element.parentNode,
-                _document = ElementManager._document,
-                controlType = control.type,
-                controlUid = control.uid,
-                startNode = control.startNode = _document.createComment(controlType + ' ' + controlUid + __START_NODE),
-                endNode = control.endNode = _document.createComment(controlType + ' ' + controlUid + __END_NODE),
-                create = this._CommentManagerFactory.create;
+        protected _replaceElement(
+            control: ui.TemplateControl,
+            nodeMap: INodeMap
+        ): void {
+            const element = nodeMap.element;
+            const parentNode = element.parentNode;
+            const _document = ElementManager._document;
+            const controlType = control.type;
+            const controlUid = control.uid;
+            const startNode = (control.startNode = _document.createComment(
+                `${controlType} ${controlUid}${__START_NODE}`
+            ));
+            const endNode = (control.endNode = _document.createComment(
+                `${controlType} ${controlUid}${__END_NODE}`
+            ));
+            const create = this._CommentManagerFactory.create;
 
             create(startNode, this);
             create(endNode, this);
@@ -1547,22 +1822,33 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _initializeControl(uiControl: ui.TemplateControl, template: DocumentFragment): void {
-            let element = this.nodeMap.element,
-                // have to check if null since isNull checks for undefined case
-                replaceElement = this.replace,
-                endNode: Node;
+        protected _initializeControl(
+            uiControl: ui.TemplateControl,
+            template: DocumentFragment
+        ): void {
+            const element = this.nodeMap.element;
+            // have to check if null since isNull checks for undefined case
+            const replaceElement = this.replace;
+            let endNode: Node;
 
             if (!isNull(template)) {
-                let resourceElement = ElementManager.locateResources(template);
+                const resourceElement = ElementManager.locateResources(
+                    template
+                );
 
                 if (!isNull(resourceElement)) {
-                    uiControl.resources.add(ElementManager._ResourcesFactory.parseElement(resourceElement));
+                    uiControl.resources.add(
+                        ElementManager._ResourcesFactory.parseElement(
+                            resourceElement
+                        )
+                    );
                 }
 
                 if (replaceElement) {
                     endNode = uiControl.endNode;
-                    uiControl.elementNodes = Array.prototype.slice.call(template.childNodes);
+                    uiControl.elementNodes = Array.prototype.slice.call(
+                        template.childNodes
+                    );
                     insertBefore(endNode.parentNode, template, endNode);
                 } else {
                     insertBefore(element, template, element.lastChild);
@@ -1575,13 +1861,18 @@ module plat.processing {
 
             if (replaceElement) {
                 this._compiler.compile(uiControl.elementNodes, uiControl);
-                let startNode = uiControl.startNode,
-                    parentNode = startNode.parentNode,
-                    childNodes: Array<Node> = Array.prototype.slice.call(parentNode.childNodes);
+                const startNode = uiControl.startNode;
+                const parentNode = startNode.parentNode;
+                const childNodes: Node[] = Array.prototype.slice.call(
+                    parentNode.childNodes
+                );
 
                 endNode = uiControl.endNode;
 
-                uiControl.elementNodes = childNodes.slice(childNodes.indexOf(startNode) + 1, childNodes.indexOf(endNode));
+                uiControl.elementNodes = childNodes.slice(
+                    childNodes.indexOf(startNode) + 1,
+                    childNodes.indexOf(endNode)
+                );
                 this.replaceNodeLength = uiControl.elementNodes.length + 2;
             } else {
                 this._compiler.compile(element, uiControl);
@@ -1608,25 +1899,40 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>, element: Element): void {
-            let length = nodes.length,
-                hasParent = !isNull(parent),
-                node: INode,
-                control: Control,
-                i = 0,
-                replace = this.replace,
-                managers: Array<AttributeManager> = [],
-                manager: AttributeManager;
+        protected _observeControlIdentifiers(
+            nodes: INode[],
+            parent: ui.TemplateControl,
+            controls: Control[],
+            element: Element
+        ): void {
+            const hasParent = !isNull(parent);
+            const replace = this.replace;
+            const managers: AttributeManager[] = [];
+            let length = nodes.length;
+            let node: INode;
+            let control: Control;
+            let i = 0;
+            let manager: AttributeManager;
 
-            for (; i < length; ++i) {
+            for (; i < length; i += 1) {
                 node = nodes[i];
                 control = node.control;
 
                 if (hasParent && node.expressions.length > 0) {
                     manager = AttributeManager.getInstance();
                     managers.push(manager);
-                    manager.initialize(element, node, parent, controls, replace);
-                    NodeManager.observeExpressions(node.expressions, parent, manager.attributeChanged.bind(manager));
+                    manager.initialize(
+                        element,
+                        node,
+                        parent,
+                        controls,
+                        replace
+                    );
+                    NodeManager.observeExpressions(
+                        node.expressions,
+                        parent,
+                        manager.attributeChanged.bind(manager)
+                    );
                 }
 
                 if (!isNull(control)) {
@@ -1635,7 +1941,7 @@ module plat.processing {
             }
 
             length = managers.length;
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 managers[i].attributeChanged();
             }
         }
@@ -1649,16 +1955,16 @@ module plat.processing {
          * @description
          * Runs through all the children of this manager and calls fulfillTemplate.
          *
-         * @returns {plat.async.IThenable<void>} A promise that fullfills when all
-         * child managers have fullfilled their templates.
+         * @returns {plat.async.Promise<void>} A promise that fulfills when all
+         * child managers have fulfilled their templates.
          */
-        protected _fulfillChildTemplates(): async.IThenable<void> {
-            let children = this.children,
-                child: ElementManager,
-                length = children.length,
-                promises: Array<async.IThenable<void>> = [];
+        protected _fulfillChildTemplates(): async.Promise<void> {
+            const children = this.children;
+            const length = children.length;
+            const promises: async.Promise<void>[] = [];
+            let child: ElementManager;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 child = <ElementManager>children[i];
                 if (!isUndefined(child.children)) {
                     promises.push(child.fulfillTemplate());
@@ -1667,7 +1973,7 @@ module plat.processing {
 
             return this._Promise.all(promises).catch((error: any): void => {
                 postpone((): void => {
-                    if(isString(error)) {
+                    if (isString(error)) {
                         error = new Error(error);
                     }
 
@@ -1686,26 +1992,38 @@ module plat.processing {
         _ResourcesFactory?: ui.IResourcesFactory,
         _AttributesFactory?: typeof ui.Attributes,
         _BindableTemplatesFactory?: ui.IBindableTemplatesFactory,
-        _log?: debug.Log): IElementManagerFactory {
+        _log?: debug.Log
+    ): IElementManagerFactory {
         (<any>ElementManager)._document = _document;
         (<any>ElementManager)._managerCache = _managerCache;
         (<any>ElementManager)._ResourcesFactory = _ResourcesFactory;
         (<any>ElementManager)._AttributesFactory = _AttributesFactory;
         (<any>ElementManager)._BindableTemplatesFactory = _BindableTemplatesFactory;
         (<any>ElementManager)._log = _log;
+
         return ElementManager;
     }
 
-    register.injectable(__ElementManagerFactory, IElementManagerFactory, [
-        __Document,
-        __ManagerCache,
-        __ResourcesFactory,
-        __AttributesFactory,
-        __BindableTemplatesFactory,
-        __Log
-    ], __FACTORY);
+    register.injectable(
+        __ElementManagerFactory,
+        IElementManagerFactory,
+        [
+            __Document,
+            __ManagerCache,
+            __ResourcesFactory,
+            __AttributesFactory,
+            __BindableTemplatesFactory,
+            __Log,
+        ],
+        __FACTORY
+    );
 
-    register.injectable(__ElementManagerInstance, ElementManager, null, __INSTANCE);
+    register.injectable(
+        __ElementManagerInstance,
+        ElementManager,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name IElementManagerFactory
@@ -1760,8 +2078,13 @@ module plat.processing {
          *
          * @returns {Array<plat.processing.INode>} An array of the newly created {@link plat.processing.INode|INodes}.
          */
-        createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl,
-            templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode>;
+        createAttributeControls(
+            nodeMap: INodeMap,
+            parent: ui.TemplateControl,
+            templateControl?: ui.TemplateControl,
+            newElement?: Element,
+            isClone?: boolean
+        ): INode[];
 
         /**
          * @name cloneUiControl
@@ -1779,7 +2102,10 @@ module plat.processing {
          *
          * @returns {plat.ui.TemplateControl} The cloned {@link plat.ui.TemplateControl|TemplateControl}.
          */
-        cloneUiControl(sourceMap: INodeMap, parent: ui.TemplateControl): ui.TemplateControl;
+        cloneUiControl(
+            sourceMap: INodeMap,
+            parent: ui.TemplateControl
+        ): ui.TemplateControl;
 
         /**
          * @name clone
@@ -1801,8 +2127,13 @@ module plat.processing {
          *
          * @returns {plat.processing.ElementManager} The cloned {@link plat.processing.ElementManager|ElementManager}.
          */
-        clone(sourceManager: ElementManager, parent: ElementManager,
-            element: Element, newControl?: ui.TemplateControl, nodeMap?: INodeMap): ElementManager;
+        clone(
+            sourceManager: ElementManager,
+            parent: ElementManager,
+            element: Element,
+            newControl?: ui.TemplateControl,
+            nodeMap?: INodeMap
+        ): ElementManager;
 
         /**
          * @name locateResources

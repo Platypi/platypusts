@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "declaration": true,
+        "sourceMap": false
+    },
+    "include": [
+        "dist/platypus-local.ts"
+    ]
+}

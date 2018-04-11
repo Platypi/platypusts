@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -16,7 +16,7 @@ module plat.ui.controls {
         protected static _inject: any = {
             _animator: __Animator,
             _Promise: __Promise,
-            _document: __Document
+            _document: __Document,
         };
 
         /**
@@ -70,7 +70,7 @@ module plat.ui.controls {
          * @description
          * The evaluated {@link plat.controls.Options|plat-options} object.
          */
-        options: observable.IObservableProperty<IIfOptions>;
+        public options: observable.IObservableProperty<IIfOptions>;
 
         /**
          * @name commentNode
@@ -83,7 +83,7 @@ module plat.ui.controls {
          * @description
          * The Comment used to hold the place of the plat-if element.
          */
-        commentNode: Comment;
+        public commentNode: Comment;
 
         /**
          * @name fragmentStore
@@ -96,7 +96,7 @@ module plat.ui.controls {
          * @description
          * The DocumentFragment that stores the plat-if element when hidden.
          */
-        fragmentStore: DocumentFragment;
+        public fragmentStore: DocumentFragment;
 
         /**
          * @name _animate
@@ -184,12 +184,14 @@ module plat.ui.controls {
          * @kind property
          * @access private
          *
-         * @type {plat.ui.animations.IAnimationThenable<any>|plat.async.IThenable<any>}
+         * @type {plat.ui.animations.IAnimationThenable<any>|plat.async.Promise<any>}
          *
          * @description
          * A promise that resolves when the leave is finished.
          */
-        private __leavePromise: animations.IAnimationThenable<any>|plat.async.IThenable<any>;
+        private __leavePromise:
+            | animations.IAnimationThenable<any>
+            | async.Promise<any>;
 
         /**
          * @name __enterPromise
@@ -197,12 +199,14 @@ module plat.ui.controls {
          * @kind property
          * @access private
          *
-         * @type {plat.ui.animations.IAnimationThenable<any>|plat.async.IThenable<any>}
+         * @type {plat.ui.animations.IAnimationThenable<any>|plat.async.Promise<any>}
          *
          * @description
          * A promise that resolves when the entrance is finished.
          */
-        private __enterPromise: animations.IAnimationThenable<any>|plat.async.IThenable<any>;
+        private __enterPromise:
+            | animations.IAnimationThenable<any>
+            | async.Promise<any>;
 
         /**
          * @name __initialBind
@@ -210,12 +214,12 @@ module plat.ui.controls {
          * @kind property
          * @access private
          *
-         * @type {plat.async.IThenable<void>}
+         * @type {plat.async.Promise<void>}
          *
          * @description
          * A promise that resolves when the template has been bound.
          */
-        private __initialBind: async.IThenable<void>;
+        private __initialBind: async.Promise<void>;
 
         /**
          * @name constructor
@@ -232,8 +236,10 @@ module plat.ui.controls {
         constructor() {
             super();
 
-            let _document = this._document;
-            this.commentNode = _document.createComment(__If + __BOUND_PREFIX + 'placeholder');
+            const _document = this._document;
+            this.commentNode = _document.createComment(
+                `${__If}${__BOUND_PREFIX}placeholder`
+            );
             this.fragmentStore = _document.createDocumentFragment();
         }
 
@@ -247,10 +253,10 @@ module plat.ui.controls {
          * Checks the options and initializes the
          * evaluation.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the template has been added/removed.
+         * @returns {plat.async.Promise<void>} A promise that resolves when the template has been added/removed.
          */
-        contextChanged(): async.IThenable<void> {
-            let options = this.options.value;
+        public contextChanged(): async.Promise<void> {
+            const options = this.options.value;
 
             if (isEmpty(options)) {
                 return;
@@ -270,8 +276,11 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        setTemplate(): void {
-            this.bindableTemplates.add('template', Array.prototype.slice.call(this.element.childNodes));
+        public setTemplate(): void {
+            this.bindableTemplates.add(
+                'template',
+                Array.prototype.slice.call(this.element.childNodes)
+            );
         }
 
         /**
@@ -285,24 +294,27 @@ module plat.ui.controls {
          * defined, kicks off the evaluation, and observes
          * the options for changes.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the proper action is complete
+         * @returns {plat.async.Promise<void>} A promise that resolves when the proper action is complete
          */
-        loaded(): async.IThenable<void> {
-            let options = this.options;
+        public loaded(): async.Promise<void> {
+            const options = this.options;
+
             if (isObject(options)) {
                 this._animate = options.value.animate === true;
             } else {
-                this._log.warn('No condition specified in ' + __Options + ' for ' + this.type + '.');
+                this._log.warn(
+                    `No condition specified in ${__Options} for ${this.type}.`
+                );
 
                 this.options = {
                     value: {
-                        condition: true
+                        condition: true,
                     },
-                    observe: <any>noop
+                    observe: <any>noop,
                 };
             }
 
-            let promise = this.contextChanged();
+            const promise = this.contextChanged();
 
             this.__removeListener = this.options.observe(this._setter);
 
@@ -320,7 +332,7 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
                 this.__removeListener = null;
@@ -346,36 +358,49 @@ module plat.ui.controls {
          * whether or not to add or remove
          * the node from the DOM.
          *
-         * @returns {plat.async.IThenable<void>} A Promise that resolves when the boolean based action is complete
+         * @returns {plat.async.Promise<void>} A Promise that resolves when the boolean based action is complete
          */
-        protected _setter(options: IIfOptions): async.IThenable<void> {
-            let value = !!options.condition,
-                actionPromise: animations.IAnimationThenable<any>|async.IThenable<any>,
-                next: () => async.IThenable<any>,
-                promise: animations.IAnimationThenable<any>|async.IThenable<any>;
+        protected _setter(options: IIfOptions): async.Promise<void> {
+            const value = !!options.condition;
+            let actionPromise:
+                | animations.IAnimationThenable<any>
+                | async.Promise<any>;
+            let next: () => async.Promise<any>;
+            let promise:
+                | animations.IAnimationThenable<any>
+                | async.Promise<any>;
 
             if (value === this.__condition && !this.__firstTime) {
                 return this._Promise.resolve(null);
             } else if (value) {
                 actionPromise = this.__leavePromise;
-                next = (): async.IThenable<void> => {
+                next = (): async.Promise<void> => {
                     this.__leavePromise = null;
+
                     return this._addItem();
                 };
             } else {
                 actionPromise = this.__enterPromise;
-                next = (): async.IThenable<void> => {
+                next = (): async.Promise<void> => {
                     this.__enterPromise = null;
+
                     return this._removeItem();
                 };
             }
 
             if (isNull(actionPromise)) {
                 promise = next();
-            } else if (this._animate && isFunction((<animations.IAnimationThenable<any>>actionPromise).cancel)) {
-                promise = (<animations.IAnimationThenable<any>>actionPromise).cancel().then(next);
+            } else if (
+                this._animate &&
+                isFunction(
+                    (<animations.IAnimationThenable<any>>actionPromise).cancel
+                )
+            ) {
+                promise = (<animations.IAnimationThenable<any>>actionPromise)
+                    .cancel()
+                    .then(next);
             } else {
-                promise = (<async.IThenable<any>>actionPromise).then(next);
+                promise = (<async.Promise<any>>actionPromise).then(next);
             }
 
             this.__firstTime = false;
@@ -395,8 +420,8 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        protected _addItem(): async.IThenable<void> {
-            let isBound = this.__isBound;
+        protected _addItem(): async.Promise<void> {
+            const isBound = this.__isBound;
             if (isBound && !isNode(this.commentNode.parentNode)) {
                 return this._Promise.resolve(null);
             }
@@ -404,30 +429,40 @@ module plat.ui.controls {
             if (!isBound) {
                 this.__isBound = true;
 
-                return this.__initialBind = this.bindableTemplates.bind('template').then((template): async.IThenable<void> => {
-                    this.__initialBind = null;
+                return (this.__initialBind = this.bindableTemplates
+                    .bind('template')
+                    .then((template): async.Promise<void> => {
+                        this.__initialBind = null;
 
-                    let element = this.element;
-                    if (element.parentNode === this.fragmentStore || isNull(element.parentNode)) {
-                        element.insertBefore(template, null);
-                        if (this._animate) {
-                            return this._animateEntrance();
+                        const element = this.element;
+                        if (
+                            element.parentNode === this.fragmentStore ||
+                            isNull(element.parentNode)
+                        ) {
+                            element.insertBefore(template, null);
+                            if (this._animate) {
+                                return this._animateEntrance();
+                            }
+
+                            return this._elementEntrance();
+                        } else if (this._animate) {
+                            this.__enterPromise = this._animator
+                                .animate(element, __Enter)
+                                .then((): void => {
+                                    this.__enterPromise = null;
+                                });
+
+                            element.insertBefore(template, null);
+
+                            return this.__enterPromise;
                         }
 
-                        return this._elementEntrance();
-                    } else if (this._animate) {
-                        this.__enterPromise = this._animator.animate(element, __Enter).then((): void => {
-                            this.__enterPromise = null;
-                        });
-
                         element.insertBefore(template, null);
-                        return this.__enterPromise;
-                    }
-
-                    element.insertBefore(template, null);
-                });
+                    }));
             } else if (!isNull(this.__initialBind)) {
-                return this.__initialBind = this.__initialBind.then((): async.IThenable<void> => {
+                this.__initialBind = this.__initialBind.then((): async.Promise<
+                    void
+                > => {
                     this.__initialBind = null;
                     if (this._animate) {
                         return this._animateEntrance();
@@ -435,6 +470,8 @@ module plat.ui.controls {
 
                     return this._elementEntrance();
                 });
+
+                return this.__initialBind;
             } else if (this._animate) {
                 return this._animateEntrance();
             }
@@ -451,11 +488,11 @@ module plat.ui.controls {
          * @description
          * Adds the template to the DOM.
          *
-         * @returns {plat.async.IThenable<void>} A promise that resolves when the template is done animating
+         * @returns {plat.async.Promise<void>} A promise that resolves when the template is done animating
          */
-        protected _elementEntrance(): async.IThenable<void> {
-            let commentNode = this.commentNode,
-                parentNode = commentNode.parentNode;
+        protected _elementEntrance(): async.Promise<void> {
+            const commentNode = this.commentNode;
+            const parentNode = commentNode.parentNode;
 
             if (!isNode(parentNode)) {
                 return this._Promise.resolve();
@@ -485,16 +522,18 @@ module plat.ui.controls {
          * @returns {plat.animations.IAnimationThenable<void>} A promise that resolves when the template is done animating
          */
         protected _animateEntrance(): animations.IAnimationThenable<void> {
-            let commentNode = this.commentNode,
-                parentNode = commentNode.parentNode;
+            const commentNode = this.commentNode;
+            const parentNode = commentNode.parentNode;
 
             if (!isNode(parentNode)) {
                 return this._animator.resolve().then(noop);
             }
 
-            this.__enterPromise = this._animator.enter(this.element, __Enter, <Element>parentNode, commentNode).then((): void => {
-                this.__enterPromise = null;
-            });
+            this.__enterPromise = this._animator
+                .enter(this.element, __Enter, <Element>parentNode, commentNode)
+                .then((): void => {
+                    this.__enterPromise = null;
+                });
 
             return <animations.IAnimationThenable<void>>this.__enterPromise;
         }
@@ -508,11 +547,13 @@ module plat.ui.controls {
          * @description
          * Removes the conditional nodes from the DOM.
          *
-         * @returns {async.IThenable<void>} A Promise that resolves when the item has been removed
+         * @returns {async.Promise<void>} A Promise that resolves when the item has been removed
          */
-        protected _removeItem(): async.IThenable<void> {
+        protected _removeItem(): async.Promise<void> {
             if (!isNull(this.__initialBind)) {
-                return this.__initialBind = this.__initialBind.then((): async.IThenable<void> => {
+                this.__initialBind = this.__initialBind.then((): async.Promise<
+                    void
+                > => {
                     this.__initialBind = null;
                     if (this._animate) {
                         return this._animateLeave();
@@ -520,6 +561,8 @@ module plat.ui.controls {
 
                     return this._elementLeave();
                 });
+
+                return this.__initialBind;
             } else if (this._animate) {
                 return this._animateLeave();
             }
@@ -536,17 +579,18 @@ module plat.ui.controls {
          * @description
          * Removes the template from the DOM.
          *
-         * @returns {async.IThenable<void>} A Promise that resolves when the element has been removed from the DOM
+         * @returns {async.Promise<void>} A Promise that resolves when the element has been removed from the DOM
          */
-        protected _elementLeave(): async.IThenable<void> {
+        protected _elementLeave(): async.Promise<void> {
             this.__leavePromise = new this._Promise((resolve) => {
                 this.__cancelFrame = requestAnimationFrameGlobal(() => {
-                    let element = this.element,
-                        parent = element.parentNode,
-                        nextSibling = element.nextSibling;
+                    const element = this.element;
+                    const parent = element.parentNode;
+                    const nextSibling = element.nextSibling;
 
                     if (!isNode(parent)) {
                         resolve();
+
                         return;
                     } else if (!isNode(this.commentNode.parentNode)) {
                         parent.insertBefore(this.commentNode, nextSibling);
@@ -574,20 +618,22 @@ module plat.ui.controls {
          * @returns {plat.animations.IAnimationThenable<void>} A promise that resolves when the template is done animating
          */
         protected _animateLeave(): animations.IAnimationThenable<void> {
-            let element = this.element;
+            const element = this.element;
 
-            this.__leavePromise = this._animator.leave(element, __Leave).then((): void => {
-                let parent = element.parentNode,
-                    nextSibling = element.nextSibling;
+            this.__leavePromise = this._animator
+                .leave(element, __Leave)
+                .then((): void => {
+                    const parent = element.parentNode;
+                    const nextSibling = element.nextSibling;
 
-                this.__leavePromise = null;
+                    this.__leavePromise = null;
 
-                if (!isNode(this.commentNode.parentNode)) {
-                    parent.insertBefore(this.commentNode, nextSibling);
-                }
+                    if (!isNode(this.commentNode.parentNode)) {
+                        parent.insertBefore(this.commentNode, nextSibling);
+                    }
 
-                this.fragmentStore.insertBefore(element, null);
-            });
+                    this.fragmentStore.insertBefore(element, null);
+                });
 
             return <animations.IAnimationThenable<void>>this.__leavePromise;
         }

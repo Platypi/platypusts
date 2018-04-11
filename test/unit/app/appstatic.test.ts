@@ -1,10 +1,10 @@
-﻿/// <reference path="../../references.d.ts" />
+/// <reference path="../../references.d.ts" />
 
 module tests.appStatic {
-    var _AppStatic = plat.acquire(plat.IAppStatic),
-        app: plat.App;
+    const _AppStatic = plat.acquire(plat.IAppStatic);
+    let app: plat.App;
 
-    class App extends plat.App { }
+    class App extends plat.App {}
 
     describe('AppStatic Tests', () => {
         beforeEach(() => {
@@ -13,13 +13,13 @@ module tests.appStatic {
         });
 
         it('should test App start and fail', () => {
-            var compat: plat.Compat = plat.acquire(plat.Compat),
-                error = false;
+            const compat: plat.Compat = plat.acquire(plat.Compat);
+            let error = false;
 
             Object.defineProperty(compat, 'isCompatible', {
                 value: false,
                 configurable: true,
-                enumerable: true
+                enumerable: true,
             });
 
             try {
@@ -33,15 +33,17 @@ module tests.appStatic {
             Object.defineProperty(compat, 'isCompatible', {
                 value: true,
                 configurable: true,
-                enumerable: true
+                enumerable: true,
             });
         });
 
         it('should test App start and succeed', () => {
-            var compat: plat.Compat = plat.acquire(plat.Compat),
-                error = false,
-                _EventManager: plat.events.IEventManagerStatic = plat.acquire(plat.events.IEventManagerStatic),
-                spy = spyOn(_EventManager, 'initialize');
+            const compat: plat.Compat = plat.acquire(plat.Compat);
+            let error = false;
+            const _EventManager: plat.events.IEventManagerStatic = plat.acquire(
+                plat.events.IEventManagerStatic
+            );
+            const spy = spyOn(_EventManager, 'initialize');
 
             try {
                 _AppStatic.start();
@@ -55,10 +57,13 @@ module tests.appStatic {
 
         document.addEventListener('load', () => {
             it('should test load', () => {
-                var div = document.createElement('div'),
-                    spy = spyOn(plat.acquire(plat.processing.Compiler), 'compile');
+                const div = document.createElement('div');
+                const spy = spyOn(
+                    plat.acquire(plat.processing.Compiler),
+                    'compile'
+                );
 
-                var el = document.createElement('div');
+                const el = document.createElement('div');
 
                 _AppStatic.load();
                 expect(spy).toHaveBeenCalledWith(document.body);

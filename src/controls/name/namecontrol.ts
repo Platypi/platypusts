@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -43,9 +43,9 @@ module plat.controls {
          *
          * @returns {void}
          */
-        initialize(): void {
-            let attr = camelCase(this.type),
-                name = this.attributes[attr];
+        public initialize(): void {
+            const attr = camelCase(this.type);
+            const name = this.attributes[attr];
 
             if (isEmpty(name) || this._isPrecompiled()) {
                 return;
@@ -66,14 +66,16 @@ module plat.controls {
          *
          * @returns {void}
          */
-        dispose(): void {
-            let name = this._label,
-                control: any = this.parent;
+        public dispose(): void {
+            const name = this._label;
+            let control: any = this.parent;
 
             while (!isUndefined(name) && isObject(control)) {
-                if (isObject(control[name]) &&
+                if (
+                    isObject(control[name]) &&
                     isNode(control[name].element) &&
-                    control[name].element === this.element) {
+                    control[name].element === this.element
+                ) {
                     deleteProperty(control, name);
                 }
 
@@ -96,20 +98,20 @@ module plat.controls {
          * @returns {void}
          */
         protected _define(name: string): void {
-            let templateControl = this.templateControl;
+            const templateControl = this.templateControl;
 
             if (!isNull(templateControl)) {
                 templateControl.name = name;
             }
 
-            let control: any = this.parent,
-                namedElement = {
-                    element: this.element,
-                    control: templateControl
-                };
+            const namedElement = {
+                element: this.element,
+                control: templateControl,
+            };
+            let control: any = this.parent;
 
             while (isObject(control)) {
-                let obj = control[name];
+                const obj = control[name];
 
                 if (!isObject(obj)) {
                     control[name] = namedElement;
@@ -142,6 +144,7 @@ module plat.controls {
                 }
                 control = control.parent;
             }
+
             return false;
         }
     }

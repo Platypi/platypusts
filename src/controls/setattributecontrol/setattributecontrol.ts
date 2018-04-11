@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -12,7 +12,8 @@ module plat.controls {
      * @description
      * An {@link plat.AttributeControl|AttributeControl} that deals with binding to a specified property on its element.
      */
-    export class SetAttributeControl extends AttributeControl implements ISetAttributeControl {
+    export class SetAttributeControl extends AttributeControl
+        implements ISetAttributeControl {
         /**
          * @name property
          * @memberof plat.controls.SetAttributeControl
@@ -24,7 +25,7 @@ module plat.controls {
          * @description
          * The property to set on the associated element.
          */
-        property: string = '';
+        public property: string = '';
 
         /**
          * @name attribute
@@ -37,7 +38,7 @@ module plat.controls {
          * @description
          * The camel-cased name of the control as it appears as an attribute.
          */
-        attribute: string;
+        public attribute: string;
 
         /**
          * @name _stopSetter
@@ -77,14 +78,17 @@ module plat.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
+        public loaded(): void {
             if (isNull(this.element)) {
                 return;
             }
 
             this.attribute = camelCase(this.type);
             this.setter();
-            this.__removeListener = this.attributes.observe(this.setter, this.attribute);
+            this.__removeListener = this.attributes.observe(
+                this.setter,
+                this.attribute
+            );
         }
 
         /**
@@ -99,7 +103,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        contextChanged(): void {
+        public contextChanged(): void {
             if (isNull(this.element)) {
                 return;
             }
@@ -118,7 +122,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this._stopSetter();
             if (isFunction(this.__removeListener)) {
                 this.__removeListener();
@@ -139,11 +143,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        setter(): void {
+        public setter(): void {
             this._stopSetter();
             this._stopSetter = requestAnimationFrameGlobal((): void => {
-                let element = this.element,
-                    property = this.property;
+                const element = this.element;
+                const property = this.property;
 
                 if (!isNode(element)) {
                     return;
@@ -161,7 +165,6 @@ module plat.controls {
                     default:
                         element.setAttribute(property, property);
                         (<any>element)[property] = true;
-                        break;
                 }
             });
         }
@@ -239,7 +242,7 @@ module plat.controls {
          * @description
          * The property to set on the associated template control.
          */
-        property: string = 'checked';
+        public property: string = 'checked';
     }
 
     /**
@@ -264,7 +267,7 @@ module plat.controls {
          * @description
          * The property to set on the associated template control.
          */
-        property: string = 'disabled';
+        public property: string = 'disabled';
     }
 
     /**
@@ -289,7 +292,7 @@ module plat.controls {
          * @description
          * The property to set on the associated template control.
          */
-        property: string = 'selected';
+        public property: string = 'selected';
     }
 
     /**
@@ -314,7 +317,7 @@ module plat.controls {
          * @description
          * The property to set on the associated template control.
          */
-        property: string = 'readonly';
+        public property: string = 'readonly';
     }
 
     /**
@@ -339,7 +342,7 @@ module plat.controls {
          * @description
          * The property to set on the associated element.
          */
-        property: string = 'display';
+        public property: string = 'display';
 
         /**
          * @name value
@@ -352,7 +355,7 @@ module plat.controls {
          * @description
          * The value to associate with the property.
          */
-        value: string = 'none';
+        public value: string = 'none';
 
         /**
          * @name importance
@@ -365,7 +368,7 @@ module plat.controls {
          * @description
          * The importance to set on the property.
          */
-        importance: string = 'important';
+        public importance: string = 'important';
 
         /**
          * @name _initialValue
@@ -391,9 +394,14 @@ module plat.controls {
          *
          * @returns {void}
          */
-        initialize(): void {
-            let style: CSSStyleDeclaration = this.element.style || <any>{ getPropertyValue: noop },
-                initialValue = style.getPropertyValue(this.property);
+        public initialize(): void {
+            let style: CSSStyleDeclaration = this.element.style;
+
+            if (!isObject(style)) {
+                style = <any>{ getPropertyValue: noop };
+            }
+
+            const initialValue = style.getPropertyValue(this.property);
 
             this._setValue(this.value, this.importance);
 
@@ -415,7 +423,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        setter(): void {
+        public setter(): void {
             this._stopSetter();
             this._stopSetter = requestAnimationFrameGlobal((): void => {
                 if (!isNode(this.element)) {
@@ -431,7 +439,6 @@ module plat.controls {
                         break;
                     default:
                         this._setValue(this._initialValue);
-                        break;
                 }
             });
         }
@@ -452,20 +459,26 @@ module plat.controls {
          * @returns {void}
          */
         protected _setValue(value: string, importance?: string): void {
-            let property = this.property,
-                style: CSSStyleDeclaration = this.element.style || <any>{
+            const property = this.property;
+            let style: CSSStyleDeclaration = this.element.style;
+
+            if (!isObject(style)) {
+                style = <any>{
                     setProperty: noop,
                     removeProperty: noop,
                     getPropertyValue: noop,
-                    getPropertyPriority: noop
-                },
-                currentVal = style.getPropertyValue(property),
-                currentPriority = style.getPropertyPriority(property);
+                    getPropertyPriority: noop,
+                };
+            }
+
+            const currentVal = style.getPropertyValue(property);
+            const currentPriority = style.getPropertyPriority(property);
 
             if (value === currentVal && importance === currentPriority) {
                 return;
             } else if (isEmpty(value)) {
                 style.removeProperty(property);
+
                 return;
             }
 
@@ -495,7 +508,7 @@ module plat.controls {
          * @description
          * The property to set on the associated template control.
          */
-        property: string = 'style';
+        public property: string = 'style';
 
         /**
          * @name _styleRegex
@@ -548,7 +561,7 @@ module plat.controls {
          * @description
          * An object storing all the added styles.
          */
-        private __addedStyles: Array<string> = [];
+        private __addedStyles: string[] = [];
 
         /**
          * @name __oldStyles
@@ -574,39 +587,43 @@ module plat.controls {
          *
          * @returns {void}
          */
-        setter(): void {
+        public setter(): void {
             this._stopSetter();
 
-            let element = this.element,
-                expression: string = this.attributes[this.attribute];
+            const element = this.element;
+            let expression: string = this.attributes[this.attribute];
 
             if (isEmpty(expression) || isNull(element)) {
                 return;
             }
 
             this._stopSetter = requestAnimationFrameGlobal((): void => {
-                let urls: Array<string> = [],
-                    urlReplace = this._urlReplace;
+                const urls: string[] = [];
+                const urlReplace = this._urlReplace;
 
-                expression = expression.replace(this._urlRegex, (match: string): string => {
-                    urls.push(match);
-                    return urlReplace;
-                });
+                expression = expression.replace(
+                    this._urlRegex,
+                    (match: string): string => {
+                        urls.push(match);
 
-                let style = element.style,
-                    addedStyles = this.__addedStyles,
-                    oldStyles = this.__oldStyles,
-                    newStyles = <Array<string>>[],
-                    props = expression.split(';'),
-                    length = props.length,
-                    prop: string,
-                    val: string,
-                    styleRegex = this._styleRegex,
-                    exec: Array<string>,
-                    styleChanges: IObject<string> = {},
-                    i: number;
+                        return urlReplace;
+                    }
+                );
 
-                for (i = 0; i < length; ++i) {
+                const style = element.style;
+                const addedStyles = this.__addedStyles;
+                const oldStyles = this.__oldStyles;
+                const newStyles = <string[]>[];
+                const props = expression.split(';');
+                const styleChanges: IObject<string> = {};
+                const styleRegex = this._styleRegex;
+                let length = props.length;
+                let prop: string;
+                let val: string;
+                let exec: string[];
+                let i: number;
+
+                for (i = 0; i < length; i += 1) {
                     exec = styleRegex.exec(props[i]);
 
                     if (isNull(exec) || exec.length < 3) {
@@ -632,7 +649,8 @@ module plat.controls {
                 }
 
                 length = addedStyles.length;
-                while (length-- > 0) {
+                while (length > 0) {
+                    length -= 1;
                     prop = addedStyles[length];
                     if (newStyles.indexOf(prop) === -1) {
                         styleChanges[prop] = oldStyles[prop];
@@ -640,9 +658,10 @@ module plat.controls {
                     }
                 }
 
-                let keys = Object.keys(styleChanges);
+                const keys = Object.keys(styleChanges);
                 length = keys.length;
-                while (length-- > 0) {
+                while (length > 0) {
+                    length -= 1;
                     prop = keys[length];
                     style[<any>prop] = styleChanges[prop];
                 }

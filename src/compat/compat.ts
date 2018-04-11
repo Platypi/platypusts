@@ -1,4 +1,4 @@
-﻿module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -14,7 +14,7 @@
         protected static _inject: any = {
             _window: __Window,
             _history: __History,
-            _document: __Document
+            _document: __Document,
         };
 
         /**
@@ -68,7 +68,7 @@
          * Determines if the browser is modern enough to correctly
          * run PlatypusTS.
          */
-        isCompatible: boolean;
+        public isCompatible: boolean;
 
         /**
          * @name cordova
@@ -82,7 +82,7 @@
          * Signifies whether or not Cordova is defined. If it is,
          * we hook up ALM events to Cordova's functions.
          */
-        cordova: boolean;
+        public cordova: boolean;
 
         /**
          * @name pushState
@@ -95,7 +95,7 @@
          * @description
          * Signifies whether window.history.pushState is defined.
          */
-        pushState: boolean;
+        public pushState: boolean;
 
         /**
          * @name fileSupported
@@ -108,7 +108,7 @@
          * @description
          * Signifies whether the File API is supported.
          */
-        fileSupported: boolean;
+        public fileSupported: boolean;
 
         /**
          * @name amd
@@ -123,7 +123,7 @@
          * it is going to be used and leave the loading of the app up
          * to the developer.
          */
-        amd: boolean;
+        public amd: boolean;
 
         /**
          * @name msApp
@@ -136,7 +136,7 @@
          * @description
          * Signifies whether we are in the context of a Windows 8 app.
          */
-        msApp: boolean;
+        public msApp: boolean;
 
         /**
          * @name winJs
@@ -149,7 +149,7 @@
          * @description
          * Signifies whether we are in the context of a WinJS app.
          */
-        winJs: boolean;
+        public winJs: boolean;
 
         /**
          * @name indexedDb
@@ -162,7 +162,7 @@
          * @description
          * Signifies whether indexedDB exists on the window.
          */
-        indexedDb: boolean;
+        public indexedDb: boolean;
 
         /**
          * @name proto
@@ -175,7 +175,7 @@
          * @description
          * Signifies whether Object.prototype.__proto__ exists.
          */
-        proto: boolean;
+        public proto: boolean;
 
         /**
          * @name getProto
@@ -188,7 +188,7 @@
          * @description
          * Signifies whether Object.prototype.getPrototypeOf exists.
          */
-        getProto: boolean;
+        public getProto: boolean;
 
         /**
          * @name setProto
@@ -201,7 +201,7 @@
          * @description
          * Signifies whether Object.prototype.setPrototypeOf exists.
          */
-        setProto: boolean;
+        public setProto: boolean;
 
         /**
          * @name hasTouchEvents
@@ -215,7 +215,7 @@
          * Whether or not the current browser has touch events
          * like touchstart, touchmove, touchend, etc.
          */
-        hasTouchEvents: boolean;
+        public hasTouchEvents: boolean;
 
         /**
          * @name hasPointerEvents
@@ -229,7 +229,7 @@
          * Whether or not the current browser has pointer events
          * like pointerdown, MSPointerMove, pointerup, etc.
          */
-        hasPointerEvents: boolean;
+        public hasPointerEvents: boolean;
 
         /**
          * @name hasMsPointerEvents
@@ -243,7 +243,7 @@
          * Whether or not the current browser has touch events
          * like MSPointerDown, touchmove, MSPointerUp, etc.
          */
-        hasMsPointerEvents: boolean;
+        public hasMsPointerEvents: boolean;
 
         /**
          * @name animationSupported
@@ -256,7 +256,7 @@
          * @description
          * Whether or not the browser supports animations.
          */
-        animationSupported: boolean;
+        public animationSupported: boolean;
 
         /**
          * @name platCss
@@ -269,7 +269,7 @@
          * @description
          * Whether the platypus.css file was included or not.
          */
-        platCss: boolean;
+        public platCss: boolean;
 
         /**
          * @name mappedEvents
@@ -282,7 +282,7 @@
          * @description
          * An object containing the correctly mapped touch events for the browser.
          */
-        mappedEvents: IMappedTouchEvents;
+        public mappedEvents: IMappedTouchEvents;
 
         /**
          * @name animationEvents
@@ -296,7 +296,7 @@
          * An object containing the properly prefixed animation events.
          * Undefined if animation isn't supported.
          */
-        animationEvents: IAnimationEvents;
+        public animationEvents: IAnimationEvents;
 
         /**
          * @name vendorPrefix
@@ -309,7 +309,7 @@
          * @description
          * An object containing information regarding any potential vendor prefix.
          */
-        vendorPrefix: IVendorPrefix;
+        public vendorPrefix: IVendorPrefix;
 
         /**
          * @name requestAnimationFrame
@@ -322,7 +322,9 @@
          * @description
          * The browser's requestAnimationFrame function if one exists. Otherwise undefined.
          */
-        requestAnimationFrame: (callback: FrameRequestCallback) => number;
+        public requestAnimationFrame: (
+            callback: FrameRequestCallback
+        ) => number;
 
         /**
          * @name cancelAnimationFrame
@@ -335,7 +337,7 @@
          * @description
          * The browser's cancelAnimationFrame function if one exists. Otherwise undefined.
          */
-        cancelAnimationFrame: (handle: number) => void;
+        public cancelAnimationFrame: (handle: number) => void;
 
         /**
          * @name IE
@@ -348,7 +350,7 @@
          * @description
          * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
          */
-        IE: number;
+        public IE: number;
 
         /**
          * @name ANDROID
@@ -361,7 +363,7 @@
          * @description
          * The version of Android being used. If not Android, the value is undefined.
          */
-        ANDROID: number;
+        public ANDROID: number;
 
         /**
          * @name __events
@@ -407,16 +409,18 @@
          *
          * @returns {boolean} Whether or not the event exists.
          */
-        hasEvent(event: string): boolean {
-            let events = this.__events,
-                eventExists = events[event];
+        public hasEvent(event: string): boolean {
+            const events = this.__events;
+            let eventExists = events[event];
 
             if (isUndefined(eventExists)) {
-                let element = this._document.createElement('div');
+                const element = this._document.createElement('div');
                 if (event === 'input' && this.IE === 9) {
                     eventExists = events[event] = false;
                 } else {
-                    eventExists = events[event] = !isUndefined((<any>element)[('on' + event)]);
+                    eventExists = events[event] = !isUndefined(
+                        (<any>element)[`on${event}`]
+                    );
                 }
             }
 
@@ -435,25 +439,50 @@
          * @returns {void}
          */
         private __defineBooleans(): void {
-            let _window = this._window,
-                navigator = _window.navigator || <Navigator>{},
-                userAgent = (navigator.userAgent || '').toLowerCase(),
-                history = this._history,
-                def = (<any>_window).define,
-                msA = (<any>_window).MSApp,
-                winJs = (<any>_window).WinJS,
-                android = (<any>/android ((?:\d|\.)+)/.exec(userAgent) || [])[1];
+            const _window = this._window;
+            const history = this._history;
+            const def = (<any>_window).define;
+            const msA = (<any>_window).MSApp;
+            const winJs = (<any>_window).WinJS;
+
+            let navigator = _window.navigator;
+
+            if (!isObject(navigator)) {
+                navigator = <any>{};
+            }
+
+            let userAgent = navigator.userAgent;
+
+            if (!isString(userAgent)) {
+                userAgent = '';
+            }
+
+            userAgent = userAgent.toLowerCase();
+
+            let androidExec = <any>/android ((?:\d|\.)+)/.exec(userAgent);
+
+            if (!isArrayLike(androidExec)) {
+                androidExec = [];
+            }
+
+            let android = androidExec[1];
 
             if (isString(android) && !/iemobile/i.test(userAgent)) {
                 android = parseInt(android.replace(/\./g, ''), 10);
             }
 
-            this.isCompatible = isFunction(Object.defineProperty) && isFunction(this._document.querySelector);
+            this.isCompatible =
+                isFunction(Object.defineProperty) &&
+                isFunction(this._document.querySelector);
             this.cordova = !isNull((<any>_window).cordova);
             this.pushState = !(isNull(history) || isNull(history.pushState));
-            this.fileSupported = !(isUndefined((<any>_window).File) || isUndefined((<any>_window).FormData));
+            this.fileSupported = !(
+                isUndefined((<any>_window).File) ||
+                isUndefined((<any>_window).FormData)
+            );
             this.amd = isFunction(def) && !isNull(def.amd);
-            this.msApp = isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
+            this.msApp =
+                isObject(msA) && isFunction(msA.execUnsafeLocalFunction);
             this.winJs = isObject(winJs) && isObject(winJs.Application);
             this.indexedDb = !isNull(_window.indexedDB);
             this.proto = isObject((<any>{}).__proto__);
@@ -465,11 +494,27 @@
 
             if (isNumber(android)) {
                 this.ANDROID = android;
+
                 return;
             }
 
-            let ie = parseInt((<any>/msie (\d+)/.exec(userAgent) || [])[1], 10) ||
-                parseInt((<any>(/trident\/.*; rv:(\d+)/.exec(userAgent) || []))[1], 10);
+            let msieExec = <any>/msie (\d+)/.exec(userAgent);
+            let tridentExec = <any>/trident\/.*; rv:(\d+)/.exec(userAgent);
+
+            if (!isArrayLike(msieExec)) {
+                msieExec = [];
+            }
+
+            if (!isArrayLike(tridentExec)) {
+                tridentExec = [];
+            }
+
+            let ie = parseInt(msieExec[1], 10);
+
+            if (!isNumber(ie)) {
+                ie = parseInt(tridentExec[1], 10);
+            }
+
             if (isNumber(ie)) {
                 this.IE = ie;
             }
@@ -492,28 +537,28 @@
                     $touchstart: 'pointerdown',
                     $touchend: 'pointerup',
                     $touchmove: 'pointermove',
-                    $touchcancel: 'pointercancel'
+                    $touchcancel: 'pointercancel',
                 };
             } else if (this.hasMsPointerEvents) {
                 this.mappedEvents = {
                     $touchstart: 'MSPointerDown',
                     $touchend: 'MSPointerUp',
                     $touchmove: 'MSPointerMove',
-                    $touchcancel: 'MSPointerCancel'
+                    $touchcancel: 'MSPointerCancel',
                 };
             } else if (this.hasTouchEvents) {
                 this.mappedEvents = {
                     $touchstart: 'touchstart',
                     $touchend: 'touchend',
                     $touchmove: 'touchmove',
-                    $touchcancel: 'touchcancel'
+                    $touchcancel: 'touchcancel',
                 };
             } else {
                 this.mappedEvents = {
                     $touchstart: 'mousedown',
                     $touchend: 'mouseup',
                     $touchmove: 'mousemove',
-                    $touchcancel: null
+                    $touchcancel: null,
                 };
             }
         }
@@ -531,20 +576,24 @@
          * @returns {void}
          */
         private __defineVendorDependencies(): void {
-            let _window = this._window,
-                documentElement = this._document.documentElement,
-                styles = _window.getComputedStyle(documentElement, ''),
-                matches = Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/),
-                prefix: string,
-                dom: string,
-                css: string,
-                jsSyntax: string;
+            const _window = this._window;
+            const documentElement = this._document.documentElement;
+            const styles = _window.getComputedStyle(documentElement, '');
+            const matches = Array.prototype.slice
+                .call(styles)
+                .join('')
+                .match(/-(moz|webkit|ms)-/);
+            let prefix: string;
+            let dom: string;
+            let css: string;
+            let jsSyntax: string;
 
-            if ((isArray(matches) && matches.length > 1)) {
-                prefix = (isArray(matches) && matches.length > 1) ? matches[1] : '';
+            if (isArray(matches) && matches.length > 1) {
+                prefix =
+                    isArray(matches) && matches.length > 1 ? matches[1] : '';
                 jsSyntax = prefix[0].toUpperCase() + prefix.slice(1);
-                dom = ('WebKit|Moz|MS').match(new RegExp('(' + prefix + ')', 'i'))[1];
-                css = '-' + prefix + '-';
+                dom = 'WebKit|Moz|MS'.match(new RegExp(`(${prefix})`, 'i'))[1];
+                css = `-${prefix}-`;
             } else if (!isUndefined((<any>styles).OLink)) {
                 prefix = 'o';
                 jsSyntax = dom = 'O';
@@ -557,19 +606,39 @@
                 dom: dom,
                 lowerCase: prefix,
                 css: css,
-                upperCase: jsSyntax
+                upperCase: jsSyntax,
             };
 
-            this.requestAnimationFrame = _window.requestAnimationFrame || (<any>_window)[prefix + 'RequestAnimationFrame'];
-            this.cancelAnimationFrame = _window.cancelAnimationFrame ||
-            (<any>_window)[prefix + 'CancelRequestAnimationFrame'] ||
-            (<any>_window)[prefix + 'CancelAnimationFrame'];
+            this.requestAnimationFrame = _window.requestAnimationFrame;
 
-            let style = documentElement.style;
+            if (!isFunction(this.requestAnimationFrame)) {
+                this.requestAnimationFrame = (<any>_window)[
+                    `${prefix}RequestAnimationFrame`
+                ];
+            }
+
+            this.cancelAnimationFrame = _window.cancelAnimationFrame;
+
+            if (!isFunction(this.cancelAnimationFrame)) {
+                this.cancelAnimationFrame = (<any>_window)[
+                    `${prefix}CancelRequestAnimationFrame`
+                ];
+            }
+
+            if (!isFunction(this.cancelAnimationFrame)) {
+                this.cancelAnimationFrame = (<any>_window)[
+                    `${prefix}CancelAnimationFrame`
+                ];
+            }
+
+            const style = documentElement.style;
             // handle Android issue where style.transition exists but transition events still need vendor prefix
             // should only affect version 4.1 but we will handle for < 4.4.
-            if ((isUndefined(this.ANDROID) || Math.floor(this.ANDROID / 10) >= 44) &&
-                !(isUndefined(style.animation) || isUndefined(style.transition))) {
+            if (
+                (isUndefined(this.ANDROID) ||
+                    Math.floor(this.ANDROID / 10) >= 44) &&
+                !(isUndefined(style.animation) || isUndefined(style.transition))
+            ) {
                 this.animationSupported = true;
                 this.animationEvents = {
                     $animation: 'animation',
@@ -578,20 +647,31 @@
                     $animationIteration: 'animationiteration',
                     $transition: 'transition',
                     $transitionStart: 'transitionstart',
-                    $transitionEnd: 'transitionend'
+                    $transitionEnd: 'transitionend',
                 };
-            } else if (!(isUndefined((<any>style)[jsSyntax + 'Animation']) || isUndefined((<any>style)[jsSyntax + 'Transition'])) ||
-                !(isUndefined((<any>style)[prefix + 'Animation']) || isUndefined((<any>style)[prefix + 'Transition'])) ||
-                !(isUndefined((<any>style)[dom + 'Animation']) || isUndefined((<any>style)[dom + 'Transition']))) {
+            } else if (
+                !(
+                    isUndefined((<any>style)[`${jsSyntax}Animation`]) ||
+                    isUndefined((<any>style)[`${jsSyntax}Transition`])
+                ) ||
+                !(
+                    isUndefined((<any>style)[`${prefix}Animation`]) ||
+                    isUndefined((<any>style)[`${prefix}Transition`])
+                ) ||
+                !(
+                    isUndefined((<any>style)[`${dom}Animation`]) ||
+                    isUndefined((<any>style)[`${dom}Transition`])
+                )
+            ) {
                 this.animationSupported = true;
                 this.animationEvents = {
-                    $animation: prefix + 'Animation',
-                    $animationStart: prefix + 'AnimationStart',
-                    $animationEnd: prefix + 'AnimationEnd',
-                    $animationIteration: prefix + 'AnimationIteration',
-                    $transition: prefix + 'Transition',
-                    $transitionStart: prefix + 'TransitionStart',
-                    $transitionEnd: prefix + 'TransitionEnd'
+                    $animation: `${prefix}Animation`,
+                    $animationStart: `${prefix}AnimationStart`,
+                    $animationEnd: `${prefix}AnimationEnd`,
+                    $animationIteration: `${prefix}AnimationIteration`,
+                    $transition: `${prefix}Transition`,
+                    $transitionStart: `${prefix}TransitionStart`,
+                    $transitionEnd: `${prefix}TransitionEnd`,
                 };
             }
         }
@@ -608,16 +688,16 @@
          * @returns {void}
          */
         private __determineCss(): void {
-            let _document = this._document,
-                head = _document.head,
-                element = _document.createElement('div');
+            const _document = this._document;
+            const head = _document.head;
+            const element = _document.createElement('div');
 
             element.setAttribute(__Hide, '');
             head.insertBefore(element, null);
 
-            let computedStyle = this._window.getComputedStyle(element),
-                display = computedStyle.display,
-                visibility = computedStyle.visibility;
+            const computedStyle = this._window.getComputedStyle(element);
+            const display = computedStyle.display;
+            const visibility = computedStyle.visibility;
 
             this.platCss = display === 'none' || visibility === 'hidden';
 

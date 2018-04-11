@@ -1,15 +1,27 @@
-﻿module plat.routing {
+namespace plat.routing {
     'use strict';
 
     const specialCharacters = [
-        '/', '.', '*', '+', '?', '|',
-        '(', ')', '[', ']', '{', '}', '\\'
-    ], escapeRegex = new RegExp('(\\' + specialCharacters.join('|\\') + ')', 'g');
+        '/',
+        '.',
+        '*',
+        '+',
+        '?',
+        '|',
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
+        '\\',
+    ];
+    const escapeRegex = new RegExp(`(\\${specialCharacters.join('|\\')})`, 'g');
 
-    let baseSegment: BaseSegment,
-        dynamicSegments: IObject<DynamicSegment> = {},
-        splatSegments: IObject<SplatSegment> = {},
-        staticSegments: IObject<StaticSegment> = {};
+    let baseSegment: BaseSegment;
+    const dynamicSegments: IObject<DynamicSegment> = {};
+    const splatSegments: IObject<SplatSegment> = {};
+    const staticSegments: IObject<StaticSegment> = {};
 
     /**
      * @name BaseSegment
@@ -47,7 +59,7 @@
          * @description
          * Denotes the type of segment for this instance.
          */
-        type: string = __BASE_SEGMENT_TYPE;
+        public type: string = __BASE_SEGMENT_TYPE;
 
         /**
          * @name name
@@ -60,7 +72,7 @@
          * @description
          * The name of the segment.
          */
-        name: string = '';
+        public name: string = '';
 
         /**
          * @name regex
@@ -73,7 +85,7 @@
          * @description
          * A regular expression string which can be used to match the segment.
          */
-        regex: string = '';
+        public regex: string = '';
 
         /**
          * @name regex
@@ -105,23 +117,27 @@
          *
          * @returns {Array<plat.routing.BaseSegment>} The parsed segments.
          */
-        static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment> {
+        public static parse(
+            route: string,
+            names: string[],
+            types: ISegmentTypeCount
+        ): BaseSegment[] {
             if (!isString(route) || !isArray(names) || !isObject(types)) {
                 return [];
             } else if (route[0] === '/') {
                 route = route.slice(1);
             }
 
-            let segments: Array<string> = route.split('/'),
-                length = segments.length,
-                findSegment = BaseSegment.__findSegment,
-                results: Array<BaseSegment> = [],
-                segment: string,
-                name: string,
-                match: RegExpMatchArray,
-                _regex = BaseSegment._regex;
+            const segments: string[] = route.split('/');
+            const length = segments.length;
+            const findSegment = BaseSegment.__findSegment;
+            const results: BaseSegment[] = [];
+            let segment: string;
+            let name: string;
+            let match: RegExpMatchArray;
+            const _regex = BaseSegment._regex;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 segment = segments[i];
 
                 if (segment === '') {
@@ -130,22 +146,48 @@
                     }
 
                     results.push(baseSegment);
-                } else if (match = segment.match(_regex.dynamicSegmentsRegex)) {
-                    name = match[1];
 
-                    results.push(findSegment(name, __DynamicSegmentInstance, dynamicSegments));
-                    names.push(name);
-                    types.dynamics++;
-                } else if (match = segment.match(_regex.splatSegmentRegex)) {
-                    name = match[1];
-
-                    results.push(findSegment(name, __SplatSegmentInstance, splatSegments));
-                    names.push(name);
-                    types.splats++;
-                } else {
-                    results.push(findSegment(segment, __StaticSegmentInstance, staticSegments));
-                    types.statics++;
+                    continue;
                 }
+
+                match = segment.match(_regex.dynamicSegmentsRegex);
+                if (isObject(match)) {
+                    name = match[1];
+
+                    results.push(
+                        findSegment(
+                            name,
+                            __DynamicSegmentInstance,
+                            dynamicSegments
+                        )
+                    );
+                    names.push(name);
+                    types.dynamics += 1;
+
+                    continue;
+                }
+
+                match = segment.match(_regex.splatSegmentRegex);
+                if (isObject(match)) {
+                    name = match[1];
+
+                    results.push(
+                        findSegment(name, __SplatSegmentInstance, splatSegments)
+                    );
+                    names.push(name);
+                    types.splats += 1;
+
+                    continue;
+                }
+
+                results.push(
+                    findSegment(
+                        segment,
+                        __StaticSegmentInstance,
+                        staticSegments
+                    )
+                );
+                types.statics += 1;
             }
 
             return results;
@@ -168,7 +210,11 @@
          *
          * @returns {plat.routing.BaseSegment} The located segment.
          */
-        private static __findSegment(name: string, token: string, cache: IObject<BaseSegment>): BaseSegment {
+        private static __findSegment(
+            name: string,
+            token: string,
+            cache: IObject<BaseSegment>
+        ): BaseSegment {
             let segment = cache[name];
 
             if (!isObject(segment)) {
@@ -192,7 +238,7 @@
          *
          * @returns {void}
          */
-        initialize(name?: string): void {
+        public initialize(name?: string): void {
             this.name = name;
         }
 
@@ -213,7 +259,10 @@
          *
          * @returns {T} The accumulated object.
          */
-        reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
+        public reduceCharacters<T>(
+            iterator: (previousValue: T, spec: ICharacterSpecification) => T,
+            initialValue?: T
+        ): T {
             if (isObject(this._specification)) {
                 initialValue = iterator(initialValue, this._specification);
             }
@@ -234,7 +283,7 @@
          *
          * @returns {string} The generated segment.
          */
-        generate(parameters?: IObject<string>): string {
+        public generate(parameters?: IObject<string>): string {
             return this.name;
         }
     }
@@ -242,12 +291,20 @@
     /**
      * The Type for referencing the '_BaseSegmentFactory' injectable as a dependency.
      */
-    export function IBaseSegmentFactory(_regex: expressions.Regex): typeof BaseSegment {
+    export function IBaseSegmentFactory(
+        _regex: expressions.Regex
+    ): typeof BaseSegment {
         (<any>BaseSegment)._regex = _regex;
+
         return BaseSegment;
     }
 
-    register.injectable(__BaseSegmentFactory, IBaseSegmentFactory, [__Regex], __FACTORY);
+    register.injectable(
+        __BaseSegmentFactory,
+        IBaseSegmentFactory,
+        [__Regex],
+        __FACTORY
+    );
 
     register.injectable(__BaseSegmentInstance, BaseSegment, null, __INSTANCE);
 
@@ -272,7 +329,7 @@
          * @description
          * Denotes that this is a static segment.
          */
-        type: string = __STATIC_SEGMENT_TYPE;
+        public type: string = __STATIC_SEGMENT_TYPE;
 
         /**
          * @name initialize
@@ -287,7 +344,7 @@
          *
          * @returns {void}
          */
-        initialize(name?: string): void {
+        public initialize(name?: string): void {
             super.initialize(name);
 
             this.regex = this.name.replace(escapeRegex, '\\$1');
@@ -310,12 +367,15 @@
          *
          * @returns {T} The accumulated object.
          */
-        reduceCharacters<T>(iterator: (previousValue: T, spec: ICharacterSpecification) => T, initialValue?: T): T {
-            let name: string = this.name,
-                length = name.length,
-                value = initialValue;
+        public reduceCharacters<T>(
+            iterator: (previousValue: T, spec: ICharacterSpecification) => T,
+            initialValue?: T
+        ): T {
+            const name: string = this.name;
+            const length = name.length;
+            let value = initialValue;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 value = iterator(value, { validCharacters: name[i] });
             }
 
@@ -323,7 +383,12 @@
         }
     }
 
-    register.injectable(__StaticSegmentInstance, StaticSegment, null, __INSTANCE);
+    register.injectable(
+        __StaticSegmentInstance,
+        StaticSegment,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name VariableSegment
@@ -346,7 +411,7 @@
          * @description
          * Denotes that this is a variable segment.
          */
-        type: string = __VARIABLE_SEGMENT_TYPE;
+        public type: string = __VARIABLE_SEGMENT_TYPE;
 
         /**
          * @name generate
@@ -361,14 +426,19 @@
          *
          * @returns {string} The generated segment.
          */
-        generate(parameters?: IObject<string>): string {
+        public generate(parameters?: IObject<string>): string {
             if (isObject(parameters)) {
                 return parameters[this.name];
             }
         }
     }
 
-    register.injectable(__VariableSegmentInstance, VariableSegment, null, __INSTANCE);
+    register.injectable(
+        __VariableSegmentInstance,
+        VariableSegment,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name SplatSegment
@@ -391,7 +461,7 @@
          * @description
          * Denotes that this is a splat segment.
          */
-        type: string = __SPLAT_SEGMENT_TYPE;
+        public type: string = __SPLAT_SEGMENT_TYPE;
 
         /**
          * @name regex
@@ -404,7 +474,7 @@
          * @description
          * A regular expression string which can be used to match the segment.
          */
-        regex: string = '(.+)';
+        public regex: string = '(.+)';
 
         /**
          * @name regex
@@ -419,7 +489,7 @@
          */
         protected _specification: ICharacterSpecification = {
             invalidCharacters: '',
-            repeat: true
+            repeat: true,
         };
     }
 
@@ -446,7 +516,7 @@
          * @description
          * Denotes that this is a dynamic segment.
          */
-        type: string = __DYNAMIC_SEGMENT_TYPE;
+        public type: string = __DYNAMIC_SEGMENT_TYPE;
 
         /**
          * @name regex
@@ -459,7 +529,7 @@
          * @description
          * A regular expression string which can be used to match the segment.
          */
-        regex: string = '([^/]+)';
+        public regex: string = '([^/]+)';
 
         /**
          * @name regex
@@ -474,11 +544,16 @@
          */
         protected _specification: ICharacterSpecification = {
             invalidCharacters: '/',
-            repeat: true
+            repeat: true,
         };
     }
 
-    register.injectable(__DynamicSegmentInstance, DynamicSegment, null, __INSTANCE);
+    register.injectable(
+        __DynamicSegmentInstance,
+        DynamicSegment,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name ICharacterSpecification

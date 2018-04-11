@@ -1,4 +1,4 @@
-﻿module plat.web {
+namespace plat.web {
     'use strict';
 
     /**
@@ -17,7 +17,7 @@
             _window: __Window,
             _compat: __Compat,
             _regex: __Regex,
-            _browserConfig: __BrowserConfig
+            _browserConfig: __BrowserConfig,
         };
 
         /**
@@ -109,7 +109,7 @@
          * @description
          * The whole associated URL.
          */
-        href: string;
+        public href: string;
 
         /**
          * @name protocol
@@ -122,7 +122,7 @@
          * @description
          * The protocol scheme of the URL, including the final ':' of the associated URL.
          */
-        protocol: string;
+        public protocol: string;
 
         /**
          * @name host
@@ -135,7 +135,7 @@
          * @description
          * The hostname and port of the associated URL.
          */
-        host: string;
+        public host: string;
 
         /**
          * @name hostname
@@ -148,7 +148,7 @@
          * @description
          * The domain of the associated URL.
          */
-        hostname: string;
+        public hostname: string;
 
         /**
          * @name port
@@ -161,7 +161,7 @@
          * @description
          * The port number of the associated URL.
          */
-        port: string;
+        public port: string;
 
         /**
          * @name pathname
@@ -175,7 +175,7 @@
          * The additional path value in the associated URL preceded by a '/'.
          * Removes the query string.
          */
-        pathname: string;
+        public pathname: string;
 
         /**
          * @name search
@@ -188,7 +188,7 @@
          * @description
          * A '?' followed by the included parameters in the associated URL.
          */
-        search: string;
+        public search: string;
 
         /**
          * @name hash
@@ -201,7 +201,7 @@
          * @description
          * A '#' followed by the included hash fragments in the associated URL.
          */
-        hash: string;
+        public hash: string;
 
         /**
          * @name username
@@ -214,7 +214,7 @@
          * @description
          * The username specified before the domain name in the associated URL.
          */
-        username: string;
+        public username: string;
 
         /**
          * @name password
@@ -227,7 +227,7 @@
          * @description
          * The password specified before the domain name in the associated URL.
          */
-        password: string;
+        public password: string;
 
         /**
          * @name origin
@@ -240,7 +240,7 @@
          * @description
          * The origin of the associated URL (its protocol, domain, and port).
          */
-        origin: string;
+        public origin: string;
 
         /**
          * @name query
@@ -253,7 +253,7 @@
          * @description
          * An object containing keyed query arguments from the associated URL.
          */
-        query: any;
+        public query: any;
 
         /**
          * @name __getQuery
@@ -289,21 +289,25 @@
          * @returns {string} The base URL.
          */
         private static __getBaseUrl(url: string): string {
-            let _regex: expressions.Regex = acquire(__Regex),
-                _location: Location = acquire(__Location),
-                origin = (<any>_location).origin,
-                protocol = _location.protocol,
-                host = _location.host;
+            const _regex: expressions.Regex = acquire(__Regex);
+            const _location: Location = acquire(__Location);
+            const protocol = _location.protocol;
+            const host = _location.host;
+            let origin = (<any>_location).origin;
 
-            if (protocol === 'file:' || protocol.indexOf('wmapp') > -1 || protocol.indexOf('ms-appx') > -1) {
+            if (
+                protocol === 'file:' ||
+                protocol.indexOf('wmapp') > -1 ||
+                protocol.indexOf('ms-appx') > -1
+            ) {
                 origin = _location.href;
-            } else if(isUndefined(origin)) {
-                origin = _location.protocol + '//' + _location.host;
+            } else if (isUndefined(origin)) {
+                origin = `${_location.protocol}//${_location.host}`;
             }
 
             origin = origin.replace(_regex.initialUrlRegex, '');
 
-            return origin.split('?')[0].split('#')[0] + '/';
+            return `${origin.split('?')[0].split('#')[0]}/`;
         }
 
         /**
@@ -319,12 +323,15 @@
          * @returns {plat.web.UrlUtils}
          */
         constructor() {
-            let config = this._browserConfig,
-                baseUrl = config.baseUrl;
+            const config = this._browserConfig;
+            let baseUrl = config.baseUrl;
 
             if (isEmpty(baseUrl) || !this._regex.fullUrlRegex.test(baseUrl)) {
-                let url = this._window.location.href,
-                    trimmedUrl = url.replace(this._regex.initialUrlRegex, '/');
+                const url = this._window.location.href;
+                const trimmedUrl = url.replace(
+                    this._regex.initialUrlRegex,
+                    '/'
+                );
 
                 if (isString(baseUrl)) {
                     if (baseUrl.indexOf('/') === 0) {
@@ -340,7 +347,7 @@
                     baseUrl = baseUrl.slice(0, -1);
                 }
 
-                config.baseUrl = baseUrl + '/';
+                config.baseUrl = `${baseUrl}/`;
             }
         }
 
@@ -358,12 +365,17 @@
          *
          * @returns {void}
          */
-        initialize(url: string): void {
-            url = url || '';
+        public initialize(url: string): void {
+            if (!isString(url)) {
+                url = '';
+            }
 
-            let element = UrlUtils.__urlUtilsElement ||
-                (UrlUtils.__urlUtilsElement = this._document.createElement('a')),
-                _browserConfig = this._browserConfig;
+            if (!isNode(UrlUtils.__urlUtilsElement)) {
+                UrlUtils.__urlUtilsElement = this._document.createElement('a');
+            }
+
+            const element = UrlUtils.__urlUtilsElement;
+            const _browserConfig = this._browserConfig;
 
             // always make local urls relative to start page.
             if (url[0] === '/' && url.indexOf('//') !== 0) {
@@ -378,15 +390,21 @@
             element.setAttribute('href', url);
             url = element.href;
 
-            // we need to do this twice for cerain browsers (e.g. win8)
+            // we need to do this twice for certain browsers (e.g. win8)
             element.setAttribute('href', url);
             url = element.href;
 
             this.href = url;
-            this.protocol = element.protocol ? element.protocol.replace(/:$/, '') : '';
+            this.protocol = isString(element.protocol)
+                ? element.protocol.replace(/:$/, '')
+                : '';
             this.host = element.host;
-            this.search = element.search ? element.search.replace(/^\?/, '') : '';
-            this.hash = element.hash ? element.hash.replace(/^#/, '') : '';
+            this.search = isString(element.search)
+                ? element.search.replace(/^\?/, '')
+                : '';
+            this.hash = isString(element.hash)
+                ? element.hash.replace(/^#/, '')
+                : '';
             this.hostname = element.hostname;
             this.port = element.port;
 
@@ -395,9 +413,10 @@
             if (!isEmpty(_browserConfig.baseUrl)) {
                 path = url.replace(_browserConfig.baseUrl, '/');
             } else {
-                path = (element.pathname.charAt(0) === '/')
-                ? element.pathname
-                : '/' + element.pathname;
+                path =
+                    element.pathname.charAt(0) === '/'
+                        ? element.pathname
+                        : `/${element.pathname}`;
             }
 
             path = path.replace(this._regex.initialUrlRegex, '/');
@@ -417,7 +436,7 @@
          *
          * @returns {string} The href associated with this {@link plat.web.UrlUtils|UrlUtils} instance.
          */
-        toString(): string {
+        public toString(): string {
             return this.href;
         }
     }

@@ -1,4 +1,4 @@
-module plat.storage {
+namespace plat.storage {
     'use strict';
 
     /**
@@ -13,10 +13,10 @@ module plat.storage {
      * clone a template when you put it in the cache. It will
      * also clone the template when you retrieve it.
      */
-    export class TemplateCache extends Cache<async.IThenable<DocumentFragment>> {
+    export class TemplateCache extends Cache<async.Promise<DocumentFragment>> {
         protected static _inject: any = {
             _Promise: __Promise,
-            _log: __Log
+            _log: __Log,
         };
 
         /**
@@ -65,68 +65,35 @@ module plat.storage {
          * @memberof plat.storage.TemplateCache
          * @kind function
          * @access public
-         * @variation 0
-         *
-         * @description
-         * Serializes a string into a DocumentFragment and stores it in the cache.
-         *
-         * @param {string} key The key to use for storage/retrieval of the object.
-         * @param {string} value The string html.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a
-         * DocumentFragment containing the input Node.
-         */
-        put(key: string, value?: string): async.IThenable<DocumentFragment>;
-        /**
-         * @name put
-         * @memberof plat.storage.TemplateCache
-         * @kind function
-         * @access public
-         * @variation 0
-         *
-         * @description
-         * Stores a Node in the cache as a DocumentFragment.
-         *
-         * @param {string} key The key to use for storage/retrieval of the object.
-         * @param {Node} value The Node.
-         *
-         * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a
-         * DocumentFragment containing the input Node.
-         */
-        put(key: string, value?: Node): async.IThenable<DocumentFragment>;
-        /**
-         * @name put
-         * @memberof plat.storage.TemplateCache
-         * @kind function
-         * @access public
-         * @variation 1
          *
          * @description
          * Stores a {@link plat.async.IPromise|IPromise} in the cache.
          *
          * @param {string} key The key to use for storage/retrieval of the object.
-         * @param {plat.async.IThenable<Node>} value {@link plat.async.Promise|Promise} that
+         * @param {plat.async.Promise<Node>} value {@link plat.async.Promise|Promise} that
          * should resolve with a Node.
          *
-         * @returns {plat.async.IThenable<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when
+         * @returns {plat.async.Promise<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when
          * the input {@link plat.async.Promise|Promise} resolves.
          */
-        put(key: string, value?: async.IThenable<Node>): async.IThenable<DocumentFragment>;
-        put(key: string, value?: any): async.IThenable<DocumentFragment> {
-            let Promise = this._Promise;
-            super.put(key, Promise.resolve<DocumentFragment>(value));
+        public put(
+            key: string,
+            value?: string | DocumentFragment | Node | async.Promise<Node>
+        ): async.Promise<DocumentFragment> {
+            const Promise = this._Promise;
+            super.put(key, Promise.resolve<DocumentFragment>(<any>value));
 
             if (isDocumentFragment(value)) {
-                value = value.cloneNode(true);
+                value = (<DocumentFragment>value).cloneNode(true);
             } else if (isNode(value)) {
-                let fragment = document.createDocumentFragment();
-                fragment.appendChild(value.cloneNode(true));
+                const fragment = document.createDocumentFragment();
+                fragment.appendChild((<Node>value).cloneNode(true));
                 value = fragment;
             } else if (isString(value) || isNull(value)) {
-                value = serializeHtml(value);
+                value = serializeHtml(<string>value);
             }
 
-            return Promise.resolve<DocumentFragment>(value);
+            return Promise.resolve<DocumentFragment>(<DocumentFragment>value);
         }
 
         /**
@@ -141,22 +108,28 @@ module plat.storage {
          *
          * @param {string} key The key to search for in this cache.
          *
-         * @returns {plat.async.IThenable<DocumentFragment>} The {@link plat.async.Promise|Promise} found at the associated key.
+         * @returns {plat.async.Promise<DocumentFragment>} The {@link plat.async.Promise|Promise} found at the associated key.
          * Returns undefined for a cache miss.
          */
-        read(key: string): async.IThenable<DocumentFragment> {
-            let promise: async.IThenable<DocumentFragment> = super.read(key);
+        public read(key: string): async.Promise<DocumentFragment> {
+            const promise: async.Promise<DocumentFragment> = super.read(key);
 
             if (isNull(promise)) {
                 return <any>this._Promise.reject(null);
             }
 
-            return promise.then((node): async.IThenable<DocumentFragment> => {
-                return this.put(key, node);
-            },(error: Error): DocumentFragment => {
-                this._log.warn('Error retrieving template, ' + key + ', from promise.');
-                return <DocumentFragment>null;
-            });
+            return promise.then(
+                (node): async.Promise<DocumentFragment> => {
+                    return this.put(key, node);
+                },
+                (error: Error): DocumentFragment => {
+                    this._log.warn(
+                        `Error retrieving template, ${key}, from promise.`
+                    );
+
+                    return <DocumentFragment>null;
+                }
+            );
         }
     }
 

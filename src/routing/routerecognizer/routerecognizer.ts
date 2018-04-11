@@ -1,4 +1,4 @@
-﻿module plat.routing {
+namespace plat.routing {
     'use strict';
 
     /**
@@ -15,7 +15,7 @@
         protected static _inject: any = {
             _BaseSegmentFactory: __BaseSegmentFactory,
             _State: __StateStatic,
-            _rootState: __StateInstance
+            _rootState: __StateInstance,
         };
 
         /**
@@ -87,24 +87,27 @@
          *
          * @returns {void}
          */
-        register(routes: Array<IRouteDelegate>, options?: IRegisterOptions): void {
+        public register(
+            routes: IRouteDelegate[],
+            options?: IRegisterOptions
+        ): void {
             if (!isArray(routes)) {
                 return;
             }
 
-            let finalState = this._rootState,
-                length = routes.length,
-                regex: Array<string> = ['^'],
-                types: ISegmentTypeCount = {
-                    statics: 0,
-                    dynamics: 0,
-                    splats: 0
-                },
-                delegates: Array<IDelegateParameterNames> = [],
-                allSegments: Array<BaseSegment> = [],
-                segments: Array<BaseSegment>;
+            let finalState = this._rootState;
+            const length = routes.length;
+            const regex: string[] = ['^'];
+            const types: ISegmentTypeCount = {
+                statics: 0,
+                dynamics: 0,
+                splats: 0,
+            };
+            const delegates: IDelegateParameterNames[] = [];
+            let allSegments: BaseSegment[] = [];
+            let segments: BaseSegment[];
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 segments = this._parse(routes[i], delegates, types);
                 allSegments = allSegments.concat(segments);
                 finalState = this._compile(segments, finalState, regex);
@@ -112,13 +115,13 @@
 
             finalState = this._finalize(finalState, regex);
             finalState.delegates = delegates;
-            finalState.regex = new RegExp(regex.join('') + '$');
+            finalState.regex = new RegExp(`${regex.join('')}$`);
             finalState.types = types;
 
             if (isObject(options) && isString(options.name)) {
                 this._namedRoutes[this._toLowerCase(options.name)] = {
                     segments: allSegments,
-                    delegates: delegates
+                    delegates: delegates,
                 };
             }
         }
@@ -138,9 +141,9 @@
          * @returns {plat.routing.IRecognizeResult} If the path is recognized, the linked delegates will be
          * returned.
          */
-        recognize(path: string): IRecognizeResult {
-            let isTrailingSlashDropped: boolean = false,
-                solutions: Array<State> = [];
+        public recognize(path: string): IRecognizeResult {
+            let isTrailingSlashDropped: boolean = false;
+            let solutions: State[] = [];
 
             path = this._addLeadingSlash(path);
             isTrailingSlashDropped = this._hasTrailingSlash(path);
@@ -150,6 +153,7 @@
             }
 
             solutions = this._filter(this._findStates(path));
+
             return this._link(solutions[0], path, isTrailingSlashDropped);
         }
 
@@ -169,12 +173,12 @@
          *
          * @returns {string} The generated route.
          */
-        generate(name: string, parameters?: IObject<string>): string {
+        public generate(name: string, parameters?: IObject<string>): string {
             name = this._toLowerCase(name);
-            let route = this._namedRoutes[name],
-                output = '',
-                segments: Array<BaseSegment>,
-                length: number;
+            const route = this._namedRoutes[name];
+            let output = '';
+            let segments: BaseSegment[];
+            let length: number;
 
             if (!isObject(route)) {
                 return;
@@ -183,8 +187,8 @@
             segments = route.segments;
             length = segments.length;
 
-            for (let i = 0; i < length; i++) {
-                let segment = segments[i];
+            for (let i = 0; i < length; i += 1) {
+                const segment = segments[i];
 
                 if (segment.type === __BASE_SEGMENT_TYPE) {
                     continue;
@@ -212,10 +216,10 @@
          *
          * @returns {Array<IDelegateParameterNames>} The delegates for the named route.
          */
-        delegatesFor(name: string): Array<IDelegateParameterNames> {
+        public delegatesFor(name: string): IDelegateParameterNames[] {
             name = this._toLowerCase(name);
-            let namedRoute = this._namedRoutes[name],
-                delegates: Array<IDelegateParameterNames>;
+            const namedRoute = this._namedRoutes[name];
+            let delegates: IDelegateParameterNames[];
 
             if (!isObject(namedRoute)) {
                 return [];
@@ -243,7 +247,7 @@
          *
          * @returns {boolean} Whether or not the named route exists.
          */
-        exists(name: string): boolean {
+        public exists(name: string): boolean {
             return isObject(this._namedRoutes[this._toLowerCase(name)]);
         }
 
@@ -285,10 +289,10 @@
          *
          * @returns {plat.routing.State} The final state.
          */
-        protected _finalize(state: State, regex: Array<string>): State {
+        protected _finalize(state: State, regex: string[]): State {
             if (state === this._rootState) {
                 state = state.add({
-                    validCharacters: '/'
+                    validCharacters: '/',
                 });
                 regex.push('/');
             }
@@ -311,12 +315,16 @@
          *
          * @returns {Array<plat.routing.BaseSegment>} The segments created for the route.
          */
-        protected _parse(route: IRouteDelegate, delegates: Array<IDelegateParameterNames>, types: ISegmentTypeCount): Array<BaseSegment> {
-            let names: Array<string> = [];
+        protected _parse(
+            route: IRouteDelegate,
+            delegates: IDelegateParameterNames[],
+            types: ISegmentTypeCount
+        ): BaseSegment[] {
+            const names: string[] = [];
 
             delegates.push({
                 delegate: route.delegate,
-                names: names
+                names: names,
             });
 
             return this._BaseSegmentFactory.parse(route.pattern, names, types);
@@ -337,12 +345,16 @@
          *
          * @returns {plat.routing.State} The final state obtained from compilation.
          */
-        protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>): State {
-            let length = segments.length,
-                compile = this._State.compile,
-                segment: BaseSegment;
+        protected _compile(
+            segments: BaseSegment[],
+            state: State,
+            regex: string[]
+        ): State {
+            const length = segments.length;
+            const compile = this._State.compile;
+            let segment: BaseSegment;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 segment = segments[i];
 
                 if (segment.type === __BASE_SEGMENT_TYPE) {
@@ -351,7 +363,7 @@
 
                 state = state.add({ validCharacters: '/' });
                 state = compile(segment, state);
-                regex.push('/' + segment.regex);
+                regex.push(`/${segment.regex}`);
             }
 
             return state;
@@ -374,7 +386,7 @@
             path = decodeURI(path);
 
             if (path[0] !== '/') {
-                path = '/' + path;
+                path = `/${path}`;
             }
 
             return path;
@@ -394,7 +406,7 @@
          * @returns {boolean} Whether or not the path has a trailing slash
          */
         protected _hasTrailingSlash(path: string): boolean {
-            let length = path.length;
+            const length = path.length;
 
             return length > 1 && path[length - 1] === '/';
         }
@@ -412,14 +424,12 @@
          *
          * @returns {Array<plat.routing.State>} The states associated with the given path.
          */
-        protected _findStates(path: string): Array<State> {
-            let states: Array<State> = [
-                this._rootState
-            ],
-                recognize = this._State.recognize,
-                length = path.length;
+        protected _findStates(path: string): State[] {
+            let states: State[] = [this._rootState];
+            const recognize = this._State.recognize;
+            const length = path.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 states = recognize(path[i], states);
 
                 if (states.length === 0) {
@@ -443,12 +453,12 @@
          *
          * @returns {Array<plat.routing.State>} The filtered and sorted states
          */
-        protected _filter(states: Array<State>): Array<State> {
-            let length = states.length,
-                solutions: Array<State> = [],
-                state: State;
+        protected _filter(states: State[]): State[] {
+            const length = states.length;
+            const solutions: State[] = [];
+            let state: State;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 state = states[i];
                 if (isArray(state.delegates)) {
                     solutions.push(state);
@@ -473,10 +483,14 @@
          *
          * @returns {plat.routing.IRecognizeResult} The linked result.
          */
-        protected _link(state: State, path: string, isTrailingSlashDropped: boolean): IRecognizeResult {
+        protected _link(
+            state: State,
+            path: string,
+            isTrailingSlashDropped: boolean
+        ): IRecognizeResult {
             if (isObject(state) && isArray(state.delegates)) {
                 if (isTrailingSlashDropped && this._isDynamic(state)) {
-                    path = path + '/';
+                    path = `${path}/`;
                 }
 
                 return this._State.link(state, path);
@@ -501,7 +515,12 @@
         }
     }
 
-    register.injectable(__RouteRecognizerInstance, RouteRecognizer, null, __INSTANCE);
+    register.injectable(
+        __RouteRecognizerInstance,
+        RouteRecognizer,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name IRecognizeResult
@@ -513,7 +532,7 @@
      * @description
      * An Array of delegate information for a recognized route.
      */
-    export interface IRecognizeResult extends Array<IDelegateInfo> { };
+    export interface IRecognizeResult extends Array<IDelegateInfo> {}
 
     /**
      * @name IDelegateInfo
@@ -588,7 +607,7 @@
          * @description
          * All the segments for the named route.
          */
-        segments: Array<BaseSegment>;
+        segments: BaseSegment[];
 
         /**
          * @name delegates
@@ -600,7 +619,7 @@
          * @description
          * All the delegates for the named route.
          */
-        delegates: Array<IDelegateParameterNames>;
+        delegates: IDelegateParameterNames[];
     }
 
     /**
@@ -609,7 +628,7 @@
      * @kind interface
      *
      * @description
-     * Used during route registeration to specify a delegate object to associate
+     * Used during route registration to specify a delegate object to associate
      * with a route.
      */
     export interface IRouteDelegate {

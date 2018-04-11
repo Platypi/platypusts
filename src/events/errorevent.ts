@@ -1,4 +1,4 @@
-﻿module plat.events {
+namespace plat.events {
     'use strict';
 
     /**
@@ -41,7 +41,7 @@
          * @description
          * The error being dispatched.
          */
-        error: E;
+        public error: E;
 
         /**
          * @name logLevel
@@ -54,7 +54,7 @@
          * @description
          * The severity level of the error.
          */
-        logLevel: number;
+        public logLevel: number;
 
         /**
          * @name dispatch
@@ -75,8 +75,13 @@
          *
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        static dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E> {
-            let event: ErrorEvent<E> = acquire<ErrorEvent<E>>(ErrorEvent);
+        public static dispatch<E extends Error>(
+            name: string,
+            sender: any,
+            error: E,
+            logLevel: number
+        ): ErrorEvent<E> {
+            const event = <ErrorEvent<E>>acquire(ErrorEvent);
 
             event.initialize(name, sender, null, error);
             event.logLevel = logLevel;
@@ -97,30 +102,17 @@
          *
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
-         * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
-         * @param {E} error The error that occurred, resulting in the event.
-         *
-         * @returns {void}
-         */
-        initialize(name: string, sender: any, direction?: 'direct', error?: E): void;
-        /**
-         * @name initialize
-         * @memberof plat.events.ErrorEvent
-         * @kind function
-         * @access public
-         *
-         * @description
-         * Initializes the event, populating its public properties.
-         *
-         * @param {string} name The name of the event.
-         * @param {any} sender The sender of the event.
          * @param {string} direction This is always a direct event.
          * @param {E} error The error that occurred, resulting in the event.
          *
          * @returns {void}
          */
-        initialize(name: string, sender: any, direction?: string, error?: E): void;
-        initialize(name: string, sender: any, direction?: string, error?: E): void {
+        public initialize(
+            name: string,
+            sender: any,
+            direction?: string | 'direct',
+            error?: E
+        ): void {
             super.initialize(name, sender, this._EventManager.DIRECT);
 
             this.error = error;
@@ -130,12 +122,20 @@
     /**
      * The Type for referencing the '$ErrorEventStatic' injectable as a dependency.
      */
-    export function IErrorEventStatic(_EventManager?: IEventManagerStatic): IErrorEventStatic {
+    export function IErrorEventStatic(
+        _EventManager?: IEventManagerStatic
+    ): IErrorEventStatic {
         (<any>ErrorEvent)._EventManager = _EventManager;
+
         return ErrorEvent;
     }
 
-    register.injectable(__ErrorEventStatic, IErrorEventStatic, [__EventManagerStatic], __STATIC);
+    register.injectable(
+        __ErrorEventStatic,
+        IErrorEventStatic,
+        [__EventManagerStatic],
+        __STATIC
+    );
 
     /**
      * @name IErrorEventStatic
@@ -165,6 +165,11 @@
          *
          * @returns {plat.events.ErrorEvent<E>} The event instance.
          */
-        dispatch<E extends Error>(name: string, sender: any, error: E, logLevel: number): ErrorEvent<E>;
+        dispatch<E extends Error>(
+            name: string,
+            sender: any,
+            error: E,
+            logLevel: number
+        ): ErrorEvent<E>;
     }
 }

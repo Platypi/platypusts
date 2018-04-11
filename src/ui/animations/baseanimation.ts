@@ -1,4 +1,4 @@
-﻿module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -18,7 +18,7 @@
             _log: __Log,
             _Promise: __Promise,
             dom: __Dom,
-            utils: __Utils
+            utils: __Utils,
         };
 
         /**
@@ -32,7 +32,7 @@
          * @description
          * The node having the animation performed on it.
          */
-        element: HTMLElement;
+        public element: HTMLElement;
 
         /**
          * @name dom
@@ -45,7 +45,7 @@
          * @description
          * Contains DOM helper methods for manipulating this control's element.
          */
-        dom: Dom;
+        public dom: Dom;
 
         /**
          * @name utils
@@ -58,7 +58,7 @@
          * @description
          * Contains helper methods for data manipulation.
          */
-        utils: Utils;
+        public utils: Utils;
 
         /**
          * @name options
@@ -71,7 +71,7 @@
          * @description
          * Specified options for the animation.
          */
-        options: any;
+        public options: any;
 
         /**
          * @name _log
@@ -148,7 +148,7 @@
          * @description
          * An Array of remove functions to dispose of event listeners.
          */
-        private __eventListeners: Array<IRemoveListener> = [];
+        private __eventListeners: IRemoveListener[] = [];
 
         /**
          * @name initialize
@@ -162,7 +162,7 @@
          *
          * @returns {void}
          */
-        initialize(): void { }
+        public initialize(): void {}
 
         /**
          * @name start
@@ -176,7 +176,7 @@
          *
          * @returns {void}
          */
-        start(): void { }
+        public start(): void {}
 
         /**
          * @name end
@@ -189,8 +189,8 @@
          *
          * @returns {void}
          */
-        end(): void {
-            let eventListeners = this.__eventListeners;
+        public end(): void {
+            const eventListeners = this.__eventListeners;
             while (eventListeners.length > 0) {
                 eventListeners.pop()();
             }
@@ -211,9 +211,9 @@
          * @description
          * A function to be called to pause the animation.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation has been paused.
          */
-        pause(): async.IThenable<void> {
+        public pause(): async.Promise<void> {
             return this._Promise.resolve();
         }
 
@@ -227,9 +227,9 @@
          * @description
          * A function to be called to resume a paused animation.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation has resumed.
          */
-        resume(): async.IThenable<void> {
+        public resume(): async.Promise<void> {
             return this._Promise.resolve();
         }
 
@@ -246,7 +246,7 @@
          *
          * @returns {void}
          */
-        cancel(): void {
+        public cancel(): void {
             this.end();
         }
 
@@ -267,23 +267,37 @@
          *
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
-        addEventListener(type: string, listener: EventListener, useCapture?: boolean): IRemoveListener {
+        public addEventListener(
+            type: string,
+            listener: EventListener,
+            useCapture?: boolean
+        ): IRemoveListener {
             if (!isFunction(listener)) {
-                this._log.warn('An animation\'s "addEventListener" must take a function as the second argument.');
+                this._log.warn(
+                    'An animation\'s "addEventListener" must take a function as the second argument.'
+                );
+
                 return noop;
             }
 
             listener = listener.bind(this);
-            let removeListener = this.dom.addEventListener(this.element, type, (ev: Event) => {
-                ev.stopPropagation();
-                listener(ev);
-            }, useCapture),
-                eventListeners = this.__eventListeners;
+
+            const removeListener = this.dom.addEventListener(
+                this.element,
+                type,
+                (ev: Event) => {
+                    ev.stopPropagation();
+                    listener(ev);
+                },
+                useCapture
+            );
+            const eventListeners = this.__eventListeners;
 
             eventListeners.push(removeListener);
+
             return (): void => {
                 removeListener();
-                let index = eventListeners.indexOf(removeListener);
+                const index = eventListeners.indexOf(removeListener);
                 if (index !== -1) {
                     eventListeners.splice(index, 1);
                 }
@@ -306,11 +320,14 @@
          * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the
          * animation is complete and end() is called.
          */
-        instantiate(element: Element, options?: any): IAnimatingThenable {
+        public instantiate(
+            element: Element,
+            options?: any
+        ): IAnimatingThenable {
             this.element = <HTMLElement>element;
             this.options = options;
 
-            let promise = new AnimationPromise((resolve): void => {
+            const promise = new AnimationPromise((resolve): void => {
                 this._resolve = resolve;
                 this.initialize();
             });

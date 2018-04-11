@@ -1,12 +1,59 @@
-function stripDocs(data) {
-    var linkRegex = /\{@link (.*?)[|](.*?)\}/g,
-        out = [],
-        onDescription = false,
-        onParam = false,
-        first = false;
+const util = require('util');
+const fs = require('fs-extra');
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
-    data.forEach(function (line) {
-        line = line.replace(linkRegex, function (value, qualifiedPath, linkValue, index, content) {
+const platRegex = /(?:module|namespace)\splat\s/;
+
+async function strip() {
+    const data = await readFile('dist/platypus.ts', 'utf8');
+
+    return stripDocs(useStrict(data.split(/\r\n|\n/)))
+        .concat(['export = plat;', ''])
+        .join('\r\n');
+}
+
+async function main() {
+    let data = await strip();
+
+    await writeFile('dist/platypus.ts', data);
+
+    data = localize(data.split(/\r\n|\n/))
+        .join('\r\n');
+
+    return writeFile('dist/platypus-local.ts', data);
+}
+
+function normalize(data) {
+    return normalizeBlockComments(data.split(/\r\n|\n/));
+}
+
+async function typings() {
+    let data = await readFile('dist/platypus.d.ts', 'utf8');
+
+    data = normalize(data);
+    data = addNodeTypeDefinition(data.split(/\r\n|\n/))
+        .join('\r\n');
+
+    return writeFile('dist/platypus.d.ts', data);
+}
+
+async function typingsLocal() {
+    let data = await readFile('dist/platypus-local.d.ts', 'utf8');
+
+    data = normalize(data);
+    return writeFile('dist/platypus-local.d.ts', data);
+}
+
+function stripDocs(data) {
+    const linkRegex = /\{@link (.*?)[|](.*?)\}/g;
+    let onDescription = false;
+    let onParam = false;
+    let first = false;
+    const out = [];
+
+    data.forEach((line) => {
+        line = line.replace(linkRegex, (value, qualifiedPath, linkValue, index, content) => {
             return linkValue;
         });
 
@@ -51,27 +98,27 @@ function stripDocs(data) {
 }
 
 function useStrict(data) {
-    var plat;
+    let plat;
 
     data = data
-        .map(function (line, index, lines) {
-            var trim = line.trim();
+        .map((line, index, lines) => {
+            let trim = line.trim();
             if (trim === '\'use strict\';') {
                 return '';
-            } else if (trim.indexOf('module plat ') > -1) {
+            } else if (platRegex.test(trim)) {
                 plat = index + 1;
             }
 
             return line;
         });
 
-    data.splice(plat, 0, '    \'use strict;\'');
+    data.splice(plat, 0, '    \'use strict\';');
     return data;
 }
 
 function normalizeBlockComments(data) {
     return data
-        .map(function (line, index, lines) {
+        .map((line, index, lines) => {
             if (line.trim()[0] === '*') {
                 return ' ' + line;
             }
@@ -95,19 +142,20 @@ function addNodeTypeDefinition(data) {
 }
 
 function localize(data) {
-    var plat, trim;
+    let plat;
+    let trim;
 
-    data.some(function (line, index) {
+    data.some((line, index) => {
         trim = line.trim();
 
-        if (trim.indexOf('module plat ') > -1) {
+        if (platRegex.test(trim)) {
             plat = index;
         }
     });
 
     data.splice(plat, 2);
 
-    for (var i = data.length - 1; i >= 0; --i) {
+    for (let i = data.length - 1; i >= 0; --i) {
         trim = data[i].trim();
         if (trim.indexOf('}') > -1) {
             plat = i;
@@ -117,7 +165,7 @@ function localize(data) {
 
     data.splice(plat, 4);
 
-    data = data.map(function (line, index) {
+    data = data.map((line, index) => {
         if (line.indexOf('!isUndefined(window)') > -1) {
             plat = index;
         }
@@ -130,48 +178,8 @@ function localize(data) {
     return data;
 }
 
-module.exports = function (config, grunt) {
-    return {
-        main: {
-            options: {
-                process: function (data) {
-                    return stripDocs(useStrict(data.split(/\r\n|\n/)))
-                        .concat(['export = plat;', ''])
-                        .join('\r\n');
-                }
-            },
-            src: config.build.dest.ts,
-            dest: config.build.dest.ts
-        },
-        local: {
-            options: {
-                process: function (data) {
-                    return localize(data.split(/\r\n|\n/))
-                        .join('\r\n');
-                }
-            },
-            src: config.build.dest.ts,
-            dest: config.build.dest.tslocal
-        },
-        typings: {
-            options: {
-                process: function (data) {
-                    data = normalizeBlockComments(data.split(/\r\n|\n/));
-                    return addNodeTypeDefinition(data.split(/\r\n|\n/))
-                        .join('\r\n');
-                }
-            },
-            src: config.build.dest.dts,
-            dest: config.build.dest.dts
-        },
-        typingslocal: {
-            options: {
-                process: function (data) {
-                    return normalizeBlockComments(data.split(/\r\n|\n/));
-                }
-            },
-            src: config.build.dest.dtslocal,
-            dest: config.build.dest.dtslocal
-        }
-    };
+module.exports = {
+    main,
+    typings,
+    typingsLocal
 };

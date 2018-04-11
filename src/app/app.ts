@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -23,7 +23,7 @@ module plat {
          * @description
          * The instance of the registered {@link plat.App|IApp}.
          */
-        static app: App = null;
+        public static app: App = null;
 
         /**
          * @name _compat
@@ -134,7 +134,7 @@ module plat {
          * @description
          * A unique id, created during instantiation.
          */
-        uid: string = uniqueId(__Plat);
+        public uid: string = uniqueId(__Plat);
 
         /**
          * @name navigator
@@ -147,7 +147,7 @@ module plat {
          * @description
          * A Navigator instance, exists when a router is injected into the app.
          */
-        navigator: routing.Navigator;
+        public navigator: routing.Navigator;
 
         /**
          * @name _log
@@ -173,15 +173,21 @@ module plat {
          *
          * @returns {void}
          */
-        static start(): void {
+        public static start(): void {
             if (!App._compat.isCompatible) {
-                return App._log.error(new Error('PlatypusTS only supports modern browsers where ' +
-                    'Object.defineProperty is defined'));
+                App._log.error(
+                    new Error(
+                        'PlatypusTS only supports modern browsers where ' +
+                            'Object.defineProperty is defined'
+                    )
+                );
+
+                return;
             }
 
             App.__addPlatCss();
 
-            let _EventManager = App._EventManager;
+            const _EventManager = App._EventManager;
 
             _EventManager.dispose(__APP);
             _EventManager.on(__APP, __ready, App.__ready);
@@ -205,7 +211,7 @@ module plat {
          *
          * @returns {void}
          */
-        static registerApp(appInjector: dependency.Injector<App>): void {
+        public static registerApp(appInjector: dependency.Injector<App>): void {
             if (!isNull(App.app) && isString(App.app.uid)) {
                 App._EventManager.dispose(App.app.uid);
             }
@@ -228,11 +234,11 @@ module plat {
          *
          * @returns {void}
          */
-        static load(node?: Node): void {
-            let _LifecycleEvent = App._LifecycleEvent,
-                _compiler = App._compiler,
-                body = App._document.body,
-                head = App._document.head;
+        public static load(node?: Node): void {
+            const _LifecycleEvent = App._LifecycleEvent;
+            const _compiler = App._compiler;
+            const body = App._document.body;
+            const head = App._document.head;
 
             _LifecycleEvent.dispatch(__beforeLoad, App);
 
@@ -243,6 +249,7 @@ module plat {
                     _compiler.compile([body]);
                     body.removeAttribute(__Hide);
                 });
+
                 return;
             }
 
@@ -252,6 +259,7 @@ module plat {
                     _compiler.compile([node]);
                     (<Element>node).removeAttribute(__Hide);
                 });
+
                 return;
             }
 
@@ -299,9 +307,9 @@ module plat {
          * @returns {void}
          */
         private static __shutdown(): void {
-            let app = (<any>navigator).app,
-                _LifecycleEvent = App._LifecycleEvent,
-                ev: events.DispatchEvent;
+            const app = (<any>navigator).app;
+            const _LifecycleEvent = App._LifecycleEvent;
+            let ev: events.DispatchEvent;
 
             if (!isNull(app) && isFunction(app.exitApp)) {
                 ev = _LifecycleEvent.dispatch(__exiting, App);
@@ -327,12 +335,12 @@ module plat {
          * @returns {void}
          */
         private static __registerAppEvents(ev: events.LifecycleEvent): void {
-            let appInjector = App.__injector;
+            const appInjector = App.__injector;
             if (isNull(appInjector) || !isFunction(appInjector.inject)) {
                 return;
             }
 
-            let app = App.app = appInjector.inject();
+            const app = (App.app = appInjector.inject());
 
             app.on(__suspend, app.suspend);
             app.on(__resume, app.resume);
@@ -360,15 +368,22 @@ module plat {
          * @returns {void}
          */
         private static __addPlatCss(): void {
-            let _document = App._document;
+            const _document = App._document;
             if (App._compat.platCss) {
                 return;
-            } else if (!isNull(_document.styleSheets) && _document.styleSheets.length > 0) {
-                (<CSSStyleSheet>_document.styleSheets[0]).insertRule('[plat-hide] { display: none !important; }', 0);
+            } else if (
+                !isNull(_document.styleSheets) &&
+                _document.styleSheets.length > 0
+            ) {
+                (<CSSStyleSheet>_document.styleSheets[0]).insertRule(
+                    '[plat-hide] { display: none !important; }',
+                    0
+                );
+
                 return;
             }
 
-            let style = <HTMLStyleElement>document.createElement('style');
+            const style = document.createElement('style');
 
             style.textContent = '[plat-hide] { display: none !important; }';
             document.head.appendChild(style);
@@ -387,8 +402,12 @@ module plat {
          * @returns {plat.App}
          */
         constructor() {
-            let navigator: routing.Navigator = this.navigator = acquire(__NavigatorInstance);
-            navigator.initialize((<routing.IRouterStatic>acquire(__RouterStatic)).currentRouter());
+            const navigator: routing.Navigator = (this.navigator = acquire(
+                __NavigatorInstance
+            ));
+            navigator.initialize(
+                (<routing.IRouterStatic>acquire(__RouterStatic)).currentRouter()
+            );
         }
 
         /**
@@ -405,7 +424,7 @@ module plat {
          *
          * @returns {void}
          */
-        suspend(ev: events.LifecycleEvent): void { }
+        public suspend(ev: events.LifecycleEvent): void {}
 
         /**
          * @name resume
@@ -421,7 +440,7 @@ module plat {
          *
          * @returns {void}
          */
-        resume(ev: events.LifecycleEvent): void { }
+        public resume(ev: events.LifecycleEvent): void {}
 
         /**
          * @name error
@@ -431,13 +450,13 @@ module plat {
          * @virtual
          *
          * @description
-         * Event fired when an internal error occures.
+         * Event fired when an internal error occurs.
          *
          * @param {plat.events.ErrorEvent<Error>} ev The {@link plat.events.ErrorEvent|ErrorEvent} object.
          *
          * @returns {void}
          */
-        error(ev: events.ErrorEvent<Error>): void { }
+        public error(ev: events.ErrorEvent<Error>): void {}
 
         /**
          * @name ready
@@ -453,7 +472,7 @@ module plat {
          *
          * @returns {void}
          */
-        ready(ev: events.LifecycleEvent): void { }
+        public ready(ev: events.LifecycleEvent): void {}
 
         /**
          * @name exiting
@@ -463,13 +482,13 @@ module plat {
          * @virtual
          *
          * @description
-         * Event fired when the app has been programatically shutdown. This event is cancelable.
+         * Event fired when the app has been programmatically shutdown. This event is cancelable.
          *
          * @param {plat.events.LifecycleEvent} ev The {@link plat.events.LifecycleEvent|LifecycleEvent} object.
          *
          * @returns {void}
          */
-        exiting(ev: events.LifecycleEvent): void { }
+        public exiting(ev: events.LifecycleEvent): void {}
 
         /**
          * @name online
@@ -485,7 +504,7 @@ module plat {
          *
          * @returns {void}
          */
-        online(ev: events.LifecycleEvent): void { }
+        public online(ev: events.LifecycleEvent): void {}
 
         /**
          * @name offline
@@ -501,7 +520,7 @@ module plat {
          *
          * @returns {void}
          */
-        offline(ev: events.LifecycleEvent): void { }
+        public offline(ev: events.LifecycleEvent): void {}
 
         /**
          * @name dispatchEvent
@@ -514,14 +533,19 @@ module plat {
          * listeners based on the {@link plat.events.EventManager.DIRECT|DIRECT} method. Propagation
          * will always start with the sender, so the sender can both produce and consume the same event.
          *
-         * @param {string} name The name of the event to send, cooincides with the name used in the
+         * @param {string} name The name of the event to send, coincides with the name used in the
          * {@link plat.App.on|app.on()} method.
          * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
          *
          * @returns {void}
          */
-        dispatchEvent(name: string, ...args: any[]): void {
-            let _EventManager: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
+        public dispatchEvent(name: string, ...args: any[]): void {
+            let _EventManager = App._EventManager;
+
+            if (!isObject(_EventManager)) {
+                _EventManager = acquire(__EventManagerStatic);
+            }
+
             _EventManager.dispatch(name, this, _EventManager.DIRECT, args);
         }
 
@@ -535,14 +559,22 @@ module plat {
          * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when
          * a DispatchEvent is propagating over the app. Any number of listeners can exist for a single event name.
          *
-         * @param {string} name The name of the event, cooinciding with the DispatchEvent name.
+         * @param {string} name The name of the event, coinciding with the DispatchEvent name.
          * @param {(ev: plat.events.DispatchEvent, ...args: Array<any>) => void} listener The method called when
          * the DispatchEvent is fired.
          *
          * @returns {plat.IRemoveListener} A method for removing the listener.
          */
-        on(name: string, listener: (ev: events.DispatchEvent, ...args: any[]) => void): IRemoveListener {
-            let _EventManager: events.IEventManagerStatic = App._EventManager || acquire(__EventManagerStatic);
+        public on(
+            name: string,
+            listener: (ev: events.DispatchEvent, ...args: any[]) => void
+        ): IRemoveListener {
+            let _EventManager = App._EventManager;
+
+            if (!isObject(_EventManager)) {
+                _EventManager = acquire(__EventManagerStatic);
+            }
+
             return _EventManager.on(this.uid, name, listener, this);
         }
 
@@ -562,7 +594,7 @@ module plat {
          *
          * @returns {void}
          */
-        load(node?: Node): void {
+        public load(node?: Node): void {
             App.load(node);
         }
 
@@ -577,7 +609,7 @@ module plat {
          *
          * @returns {void}
          */
-        exit(): void {
+        public exit(): void {
             this.dispatchEvent(__shutdown);
         }
     }
@@ -591,24 +623,31 @@ module plat {
         _document?: Document,
         _compiler?: processing.Compiler,
         _LifecycleEvent?: events.ILifecycleEventStatic,
-        _log?: debug.Log): IAppStatic {
+        _log?: debug.Log
+    ): IAppStatic {
         (<any>App)._compat = _compat;
         (<any>App)._EventManager = _EventManager;
         (<any>App)._document = _document;
         (<any>App)._compiler = _compiler;
         (<any>App)._LifecycleEvent = _LifecycleEvent;
         (<any>App)._log = _log;
+
         return App;
     }
 
-    register.injectable(__AppStatic, IAppStatic, [
-        __Compat,
-        __EventManagerStatic,
-        __Document,
-        __Compiler,
-        __LifecycleEventStatic,
-        __Log
-    ], __STATIC);
+    register.injectable(
+        __AppStatic,
+        IAppStatic,
+        [
+            __Compat,
+            __EventManagerStatic,
+            __Document,
+            __Compiler,
+            __LifecycleEventStatic,
+            __Log,
+        ],
+        __STATIC
+    );
 
     /**
      * The Type for referencing the '_app' injectable as a dependency.
@@ -727,21 +766,7 @@ module plat {
      * Defines a function that will halt further callbacks to a listener.
      * Equivalent to `() => void`.
      */
-    export interface IRemoveListener {
-        /**
-         * @name listener
-         * @memberof plat.IRemoveListener
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * The method signature for {@link plat.IRemoveListener|IRemoveListener}.
-         *
-         * @returns {void}
-         */
-        (): void;
-    }
+    export type IRemoveListener = () => void;
 
     /**
      * @name IPropertyChangedListener
@@ -753,26 +778,10 @@ module plat {
      *
      * @typeparam {any} T The type of each value changing.
      */
-    export interface IPropertyChangedListener<T> {
-        /**
-         * @name listener
-         * @memberof plat.IPropertyChangedListener
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * The method signature for {@link plat.IPropertyChangedListener|IPropertyChangedListener}.
-         *
-         * @typeparam {any} T The type of values.
-         *
-         * @param {T} newValue The new value of the observed property.
-         * @param {T} oldValue The previous value of the observed property.
-         *
-         * @returns {void}
-         */
-        (newValue: T, oldValue: T): void;
-    }
+    export type IPropertyChangedListener<T> = (
+        newValue: T,
+        oldValue: T
+    ) => void;
 
     /**
      * @name IIdentifierChangedListener
@@ -784,25 +793,9 @@ module plat {
      *
      * @typeparam {any} T The type of each value changing.
      */
-    export interface IIdentifierChangedListener<T> {
-        /**
-         * @name listener
-         * @memberof plat.IIdentifierChangedListener
-         * @kind function
-         * @access public
-         * @static
-         *
-         * @description
-         * The method signature for {@link plat.IIdentifierChangedListener|IIdentifierChangedListener}.
-         *
-         * @typeparam {any} T The type of values.
-         *
-         * @param {T} newValue The new value of the observed property.
-         * @param {T} oldValue The previous value of the observed property.
-         * @param {any} identifier The string or number identifier that specifies the changed property.
-         *
-         * @returns {void}
-         */
-        (newValue: T, oldValue: T, identifier: any): void;
-    }
+    export type IIdentifierChangedListener<T> = (
+        newValue: T,
+        oldValue: T,
+        identifier: any
+    ) => void;
 }

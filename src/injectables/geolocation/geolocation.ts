@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -6,7 +6,7 @@ module plat {
      */
     export class Geolocation {
         protected static _inject: any = {
-            _Promise: __Promise
+            _Promise: __Promise,
         };
 
         protected _Promise: async.IPromise;
@@ -15,14 +15,21 @@ module plat {
          * Attempts to acquire position information of the device.
          *
          * @param positionOptions Optional GeolocationPositionOptions for configuring the acquisition.
-         * @returns {async.IThenable<GeolocationPosition, GeolocationPositionError>} A promise,
+         * @returns {async.Promise<GeolocationPosition, GeolocationPositionError>} A promise,
          * resolving when the position is found, and rejecting in the event of a position error.
          */
-        getCurrentPosition(positionOptions?: GeolocationPositionOptions)
-                : async.IThenable<GeolocationPosition> {
-            return new this._Promise<GeolocationPosition>((resolve, reject): void => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, positionOptions);
-            });
+        public getCurrentPosition(
+            positionOptions?: GeolocationPositionOptions
+        ): async.Promise<GeolocationPosition> {
+            return new this._Promise<GeolocationPosition>(
+                (resolve, reject): void => {
+                    navigator.geolocation.getCurrentPosition(
+                        resolve,
+                        reject,
+                        positionOptions
+                    );
+                }
+            );
         }
 
         /**
@@ -35,16 +42,26 @@ module plat {
          *
          * @returns {IRemoveListener} A method for removing the watch listener when the app wants to stop listening for position updates.
          */
-        watchPosition(updateCallback: (position: GeolocationPosition) => void,
+        public watchPosition(
+            updateCallback: (position: GeolocationPosition) => void,
             errorCallback?: (error: PositionError) => void,
-            positionOptions?: GeolocationPositionOptions): IRemoveListener;
-        watchPosition(updateCallback: any, errorCallback?: any, positionOptions?: any): () => void {
+            positionOptions?: GeolocationPositionOptions
+        ): IRemoveListener;
+        public watchPosition(
+            updateCallback: any,
+            errorCallback?: any,
+            positionOptions?: any
+        ): () => void {
             if (!isNull(errorCallback) && !isFunction(errorCallback)) {
                 positionOptions = errorCallback;
                 errorCallback = null;
             }
 
-            let timeoutId = navigator.geolocation.watchPosition(updateCallback, errorCallback, positionOptions);
+            const timeoutId = navigator.geolocation.watchPosition(
+                updateCallback,
+                errorCallback,
+                positionOptions
+            );
 
             return (): void => {
                 navigator.geolocation.clearWatch(timeoutId);
@@ -98,7 +115,7 @@ module plat {
 
         /**
          * The position acquisition failed because the app does not have
-         * sufficient permiossion to use the Geolocation service.
+         * sufficient permission to use the Geolocation service.
          * value = 1;
          */
         PERMISSION_DENIED: number;
@@ -161,7 +178,7 @@ module plat {
     }
 
     /**
-     * Descibes the interface for position options sent to the Geolocation
+     * Describes the interface for position options sent to the Geolocation
      * services.
      */
     export interface GeolocationPositionOptions {
@@ -173,7 +190,7 @@ module plat {
         enableHighAccuracy?: boolean;
 
         /**
-         * Specifies the time (in milliseconds) alotted from when a geolocation
+         * Specifies the time (in milliseconds) alloted from when a geolocation
          * acquisition operation starts to when the value is returned. If it takes
          * longer than the timeout, an error will be thrown. Defaults to 0, meaning
          * there is no timeout.
