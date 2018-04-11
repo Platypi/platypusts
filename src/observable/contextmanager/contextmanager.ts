@@ -7,7 +7,7 @@
  * @description
  * Holds all classes and interfaces related to observable components in platypus.
  */
-module plat.observable {
+namespace plat.observable {
     'use strict';
 
     /**
@@ -23,7 +23,15 @@ module plat.observable {
      * @description
      * The array methods to be overwritten if it is to be observed.
      */
-    const arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+    const arrayMethods = [
+        'push',
+        'pop',
+        'reverse',
+        'shift',
+        'sort',
+        'splice',
+        'unshift',
+    ];
 
     /**
      * @name ContextManager
@@ -60,7 +68,9 @@ module plat.observable {
          * @description
          * A set of functions to be fired when a particular observed array is mutated.
          */
-        static arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>> = {};
+        public static arrayChangeListeners: IObject<
+            IObject<((changes: IArrayChanges<any>[]) => void)[]>
+        > = {};
 
         /**
          * @name __managers
@@ -88,7 +98,7 @@ module plat.observable {
          * @description
          * An object for storing functions to remove listeners for observed identifiers.
          */
-        private static __controls: IObject<IObject<Array<IRemoveListener>>> = {};
+        private static __controls: IObject<IObject<IRemoveListener[]>> = {};
 
         /**
          * @name _compat
@@ -115,7 +125,7 @@ module plat.observable {
          * The root context associated with and to be managed by this
          * {@link plat.observable.ContextManager|ContextManager}.
          */
-        context: any;
+        public context: any;
 
         /**
          * @name __identifiers
@@ -128,7 +138,7 @@ module plat.observable {
          * @description
          * An object for quickly accessing callbacks associated with a given identifier.
          */
-        private __identifiers: IObject<Array<IListener>> = {};
+        private __identifiers: IObject<IListener[]> = {};
 
         /**
          * @name __identifierHash
@@ -213,14 +223,15 @@ module plat.observable {
          * @returns {plat.observable.ContextManager} The {@link plat.observable.ContextManager|ContextManager}
          * associated with the input control.
          */
-        static getManager(control: Control): ContextManager {
-            let contextManager: ContextManager,
-                managers = ContextManager.__managers,
-                uid = control.uid,
-                manager = managers[uid];
+        public static getManager(control: Control): ContextManager {
+            const managers = ContextManager.__managers;
+            const uid = control.uid;
+            const manager = managers[uid];
+            let contextManager: ContextManager;
 
             if (!isNull(manager)) {
                 contextManager = manager;
+
                 return contextManager;
             }
 
@@ -244,25 +255,30 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static dispose(control: Control): void;
-        static dispose(control: ui.TemplateControl): void {
+        public static dispose(control: Control): void;
+        public static dispose(control: ui.TemplateControl): void {
             if (isNull(control)) {
                 return;
             }
 
-            let uid = control.uid,
-                controls = ContextManager.__controls,
-                identifiers = controls[uid] || {},
-                managers = ContextManager.__managers,
-                manager = managers[uid];
+            const uid = control.uid;
+            const controls = ContextManager.__controls;
+            const managers = ContextManager.__managers;
+            const manager = managers[uid];
+
+            let identifiers = controls[uid];
+
+            if (!isObject(identifiers)) {
+                identifiers = {};
+            }
 
             if (!isNull(manager)) {
                 manager.dispose();
                 deleteProperty(managers, uid);
             }
 
-            let keys = Object.keys(identifiers),
-                listeners: Array<IRemoveListener>;
+            const keys = Object.keys(identifiers);
+            let listeners: IRemoveListener[];
 
             while (keys.length > 0) {
                 listeners = identifiers[keys.shift()];
@@ -275,7 +291,14 @@ module plat.observable {
 
             if (control.hasOwnContext && !isNull(control.context)) {
                 ContextManager.unObserve(control.context);
-                ContextManager.defineProperty(control, __CONTEXT, control.context, true, true, true);
+                ContextManager.defineProperty(
+                    control,
+                    __CONTEXT,
+                    control.context,
+                    true,
+                    true,
+                    true
+                );
             }
         }
 
@@ -294,8 +317,12 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static removeArrayListeners(absoluteIdentifier: string, uid: string): void {
-            let listeners = ContextManager.arrayChangeListeners[absoluteIdentifier];
+        public static removeArrayListeners(
+            absoluteIdentifier: string,
+            uid: string
+        ): void {
+            const listeners =
+                ContextManager.arrayChangeListeners[absoluteIdentifier];
 
             if (!isNull(listeners)) {
                 deleteProperty(listeners, uid);
@@ -319,7 +346,7 @@ module plat.observable {
          *
          * @returns {any} The narrowed down context.
          */
-        static getContext(rootContext: any, split: Array<string>): any {
+        public static getContext(rootContext: any, split: string[]): any {
             if (isNull(rootContext)) {
                 return rootContext;
             }
@@ -355,8 +382,22 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void {
-            _defineProperty(obj, key, value, enumerable, configurable, writable);
+        public static defineProperty(
+            obj: any,
+            key: string,
+            value: any,
+            enumerable?: boolean,
+            configurable?: boolean,
+            writable?: boolean
+        ): void {
+            _defineProperty(
+                obj,
+                key,
+                value,
+                enumerable,
+                configurable,
+                writable
+            );
         }
 
         /**
@@ -378,7 +419,13 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void {
+        public static defineGetter(
+            obj: any,
+            key: string,
+            value: any,
+            enumerable?: boolean,
+            configurable?: boolean
+        ): void {
             _defineGetter(obj, key, value, enumerable, configurable);
         }
 
@@ -398,10 +445,14 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void {
-            let controls = ContextManager.__controls,
-                control = controls[uid],
-                listeners: Array<IRemoveListener>;
+        public static pushRemoveListener(
+            identifier: string,
+            uid: string,
+            listener: IRemoveListener
+        ): void {
+            const controls = ContextManager.__controls;
+            let control = controls[uid];
+            let listeners: IRemoveListener[];
 
             if (isNull(control)) {
                 control = controls[uid] = {};
@@ -432,10 +483,14 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void {
-            let controls = ContextManager.__controls,
-                control = controls[uid],
-                listeners: Array<IRemoveListener>;
+        public static spliceRemoveListener(
+            identifier: string,
+            uid: string,
+            listener: IRemoveListener
+        ): void {
+            const controls = ContextManager.__controls;
+            const control = controls[uid];
+            let listeners: IRemoveListener[];
 
             if (isNull(control)) {
                 return;
@@ -447,7 +502,7 @@ module plat.observable {
                 return;
             }
 
-            let index = listeners.indexOf(listener);
+            const index = listeners.indexOf(listener);
             if (index === -1) {
                 return;
             }
@@ -473,12 +528,15 @@ module plat.observable {
          *
          * @returns {void}
          */
-        static removeIdentifier(uids: Array<string>, identifier: string): void {
-            let length = uids.length,
-                controls = ContextManager.__controls,
-                identifiers: IObject<Array<IRemoveListener>>;
+        public static removeIdentifier(
+            uids: string[],
+            identifier: string
+        ): void {
+            const length = uids.length;
+            const controls = ContextManager.__controls;
+            let identifiers: IObject<IRemoveListener[]>;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 identifiers = controls[uids[i]];
 
                 if (isNull(identifiers)) {
@@ -507,22 +565,28 @@ module plat.observable {
          *
          * @returns {any} The newly created context object.
          */
-        static createContext(control: ui.TemplateControl, identifier: string): any {
+        public static createContext(
+            control: ui.TemplateControl,
+            identifier: string
+        ): any {
             let context = control.context;
 
             if (!isObject(context)) {
                 if (isNull(context)) {
                     context = control.context = {};
                 } else {
-                    ContextManager._log.warn('A child control is trying to create a child context that has ' +
-                        'a parent control with a primitive type context');
+                    ContextManager._log.warn(
+                        'A child control is trying to create a child context that has ' +
+                            'a parent control with a primitive type context'
+                    );
+
                     return;
                 }
             }
 
-            let split = identifier.split('.'),
-                property: string,
-                temp: any;
+            const split = identifier.split('.');
+            let property: string;
+            let temp: any;
 
             while (split.length > 0) {
                 property = split.shift();
@@ -557,7 +621,7 @@ module plat.observable {
          *
          * @returns {void} The newly created context object.
          */
-        static unObserve(obj: any): void {
+        public static unObserve(obj: any): void {
             _extend(true, true, obj);
         }
 
@@ -578,7 +642,7 @@ module plat.observable {
          *
          * @returns {any} The obtained context.
          */
-        getContext(split: Array<string>, observe?: boolean): any {
+        public getContext(split: string[], observe?: boolean): any {
             return this._getContext(split.join('.'), split, observe);
         }
 
@@ -593,23 +657,26 @@ module plat.observable {
          * object changes.
          *
          * @param {string} absoluteIdentifier The period-delimited identifier noting the property to be observed.
-         * @param {plat.observable.IListener} observableListener An object implmenting IObservableListener. The listener will be
+         * @param {plat.observable.IListener} observableListener An object implementing IObservableListener. The listener will be
          * notified of object changes.
          *
          * @returns {plat.IRemoveListener} A function to stop observing the object identified by the absoluteIdentifier.
          */
-        observe(absoluteIdentifier: string, observableListener: IListener): IRemoveListener {
+        public observe(
+            absoluteIdentifier: string,
+            observableListener: IListener
+        ): IRemoveListener {
             if (isEmpty(absoluteIdentifier)) {
                 return noop;
             }
 
-            let split = absoluteIdentifier.split('.'),
-                key = split.pop(),
-                isLength = key === 'length',
-                hasIdentifier = this._hasIdentifier(absoluteIdentifier),
-                hasObservableListener = !isNull(observableListener),
-                join: string,
-                context: any;
+            const split = absoluteIdentifier.split('.');
+            const key = split.pop();
+            const isLength = key === 'length';
+            const hasObservableListener = !isNull(observableListener);
+            let hasIdentifier = this._hasIdentifier(absoluteIdentifier);
+            let join: string;
+            let context: any;
 
             if (split.length > 0) {
                 join = split.join('.');
@@ -622,12 +689,26 @@ module plat.observable {
             if (!isObject(context)) {
                 if (hasObservableListener) {
                     if (isLength) {
-                        this.__lengthListeners[absoluteIdentifier] = observableListener;
-                        ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, (): void => {
-                            deleteProperty(this.__lengthListeners, absoluteIdentifier);
-                        });
+                        this.__lengthListeners[
+                            absoluteIdentifier
+                        ] = observableListener;
+                        ContextManager.pushRemoveListener(
+                            absoluteIdentifier,
+                            observableListener.uid,
+                            (): void => {
+                                deleteProperty(
+                                    this.__lengthListeners,
+                                    absoluteIdentifier
+                                );
+                            }
+                        );
                     }
-                    return this._addObservableListener(absoluteIdentifier, observableListener, isLength);
+
+                    return this._addObservableListener(
+                        absoluteIdentifier,
+                        observableListener,
+                        isLength
+                    );
                 }
 
                 return noop;
@@ -639,20 +720,28 @@ module plat.observable {
             this.__contextObjects[absoluteIdentifier] = context[key];
 
             // if observedIdentifier is not null, the primitive is already being watched
-            let observedIdentifier = this.__observedIdentifier,
-                isObserved = !isNull(observedIdentifier),
-                removeCallback = noop;
+            const observedIdentifier = this.__observedIdentifier;
+            const isObserved = !isNull(observedIdentifier);
+            let removeCallback = noop;
 
             if (isObserved) {
                 hasIdentifier = true;
             }
 
             if (hasObservableListener) {
-                let removeObservedCallback = noop,
-                    removeAbsoluteCallback = this._addObservableListener(absoluteIdentifier, observableListener, isLength);
+                const removeAbsoluteCallback = this._addObservableListener(
+                    absoluteIdentifier,
+                    observableListener,
+                    isLength
+                );
+                let removeObservedCallback = noop;
 
                 if (isObserved && absoluteIdentifier !== observedIdentifier) {
-                    removeObservedCallback = this._addObservableListener(observedIdentifier, observableListener, isLength);
+                    removeObservedCallback = this._addObservableListener(
+                        observedIdentifier,
+                        observableListener,
+                        isLength
+                    );
                 }
 
                 removeCallback = (): void => {
@@ -661,14 +750,14 @@ module plat.observable {
                 };
             }
 
-            let parentIsArray = isArray(context),
-                removeObservableListener = removeCallback,
-                removeListener = noop,
-                removeArrayObserve = noop,
-                numKey = Number(key);
+            const parentIsArray = isArray(context);
+            const removeObservableListener = removeCallback;
+            const numKey = Number(key);
+            let removeListener = noop;
+            let removeArrayObserve = noop;
 
             if (parentIsArray && numKey >= context.length) {
-                removeListener = this.observe(join + '.length', {
+                removeListener = this.observe(`${join}.length`, {
                     uid: observableListener.uid,
                     listener: (newValue: number, oldValue: number): void => {
                         if (numKey >= newValue) {
@@ -677,7 +766,7 @@ module plat.observable {
 
                         removeListener();
                         this._define(absoluteIdentifier, context, key);
-                    }
+                    },
                 });
 
                 removeCallback = (): void => {
@@ -687,8 +776,8 @@ module plat.observable {
             } else if (!hasIdentifier) {
                 // check if value is defined and context manager hasn't seen this identifier
                 if (parentIsArray && isLength) {
-                    let property = split.pop(),
-                        parentContext = this.getContext(split, false);
+                    const property = split.pop();
+                    const parentContext = this.getContext(split, false);
 
                     this.__observedIdentifier = null;
                     access(parentContext, property);
@@ -698,14 +787,29 @@ module plat.observable {
                     }
 
                     if (hasObservableListener) {
-                        let uid = observableListener.uid;
-                        removeListener = this.observeArrayMutation(uid, noop, join, context, null);
+                        const uid = observableListener.uid;
+                        removeListener = this.observeArrayMutation(
+                            uid,
+                            noop,
+                            join,
+                            context,
+                            null
+                        );
                         removeArrayObserve = this.observe(join, {
                             uid: uid,
-                            listener: (newValue: Array<any>, oldValue: Array<any>): void => {
+                            listener: (
+                                newValue: any[],
+                                oldValue: any[]
+                            ): void => {
                                 removeListener();
-                                removeListener = this.observeArrayMutation(uid, noop, join, newValue, oldValue);
-                            }
+                                removeListener = this.observeArrayMutation(
+                                    uid,
+                                    noop,
+                                    join,
+                                    newValue,
+                                    oldValue
+                                );
+                            },
                         });
                     }
 
@@ -742,8 +846,13 @@ module plat.observable {
          *
          * @returns {plat.IRemoveListener} A function to stop observing the array identified by the absoluteIdentifier.
          */
-        observeArrayMutation(uid: string, listener: (changes: Array<IArrayChanges<any>>) => void, absoluteIdentifier: string,
-            array: Array<any>, oldArray: Array<any>): IRemoveListener {
+        public observeArrayMutation(
+            uid: string,
+            listener: (changes: IArrayChanges<any>[]) => void,
+            absoluteIdentifier: string,
+            array: any[],
+            oldArray: any[]
+        ): IRemoveListener {
             if (isArray(oldArray)) {
                 this._restoreArray(oldArray);
             }
@@ -752,9 +861,9 @@ module plat.observable {
                 return noop;
             }
 
-            let split = absoluteIdentifier.split('.'),
-                property = split.pop(),
-                context = this.getContext(split, false);
+            const split = absoluteIdentifier.split('.');
+            const property = split.pop();
+            const context = this.getContext(split, false);
 
             this.__observedIdentifier = null;
             access(context, property);
@@ -763,9 +872,11 @@ module plat.observable {
                 absoluteIdentifier = this.__observedIdentifier;
             }
 
-            let removeListeners: Array<IRemoveListener> = [];
+            const removeListeners: IRemoveListener[] = [];
             if (isFunction(listener)) {
-                removeListeners.push(this._pushArrayListener(uid, absoluteIdentifier, listener));
+                removeListeners.push(
+                    this._pushArrayListener(uid, absoluteIdentifier, listener)
+                );
             }
 
             this._overwriteArray(absoluteIdentifier, array);
@@ -788,7 +899,7 @@ module plat.observable {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this.context = null;
             this.__identifiers = {};
             this.__identifierHash = {};
@@ -810,10 +921,13 @@ module plat.observable {
          *
          * @returns {plat.IRemoveListener} A function that will remove this listener from execution.
          */
-        protected _pushArrayListener(uid: string, absoluteIdentifier: string,
-            listener: (changes: Array<IArrayChanges<any>>) => void): IRemoveListener {
-            let arrayListeners = ContextManager.arrayChangeListeners,
-                arrayCallbacks = arrayListeners[absoluteIdentifier];
+        protected _pushArrayListener(
+            uid: string,
+            absoluteIdentifier: string,
+            listener: (changes: IArrayChanges<any>[]) => void
+        ): IRemoveListener {
+            const arrayListeners = ContextManager.arrayChangeListeners;
+            let arrayCallbacks = arrayListeners[absoluteIdentifier];
 
             if (isNull(arrayCallbacks)) {
                 arrayCallbacks = arrayListeners[absoluteIdentifier] = {};
@@ -824,31 +938,39 @@ module plat.observable {
                 callbacks = arrayCallbacks[uid] = [];
             }
 
-            let listenerRemoved = false,
-                removeListener = (): void => {
-                    if (listenerRemoved) {
-                        return;
-                    }
+            let listenerRemoved = false;
+            const removeListener = (): void => {
+                if (listenerRemoved) {
+                    return;
+                }
 
-                    listenerRemoved = true;
-                    ContextManager.spliceRemoveListener(absoluteIdentifier, uid, removeListener);
+                listenerRemoved = true;
+                ContextManager.spliceRemoveListener(
+                    absoluteIdentifier,
+                    uid,
+                    removeListener
+                );
 
-                    let index = callbacks.indexOf(listener);
-                    if (index === -1) {
-                        return;
-                    }
+                const index = callbacks.indexOf(listener);
+                if (index === -1) {
+                    return;
+                }
 
-                    callbacks.splice(index, 1);
-                    if (callbacks.length === 0) {
-                        deleteProperty(arrayCallbacks, uid);
-                        if (isEmpty(arrayCallbacks)) {
-                            deleteProperty(arrayListeners, absoluteIdentifier);
-                        }
+                callbacks.splice(index, 1);
+                if (callbacks.length === 0) {
+                    deleteProperty(arrayCallbacks, uid);
+                    if (isEmpty(arrayCallbacks)) {
+                        deleteProperty(arrayListeners, absoluteIdentifier);
                     }
-                };
+                }
+            };
 
             callbacks.push(listener);
-            ContextManager.pushRemoveListener(absoluteIdentifier, uid, removeListener);
+            ContextManager.pushRemoveListener(
+                absoluteIdentifier,
+                uid,
+                removeListener
+            );
 
             return removeListener;
         }
@@ -866,18 +988,21 @@ module plat.observable {
          *
          * @returns {void}
          */
-        protected _restoreArray(array: Array<any>): void {
-            let _compat = this._compat;
+        protected _restoreArray(array: any[]): void {
+            const _compat = this._compat;
 
             if (_compat.setProto) {
-                (<any>Object).setPrototypeOf(array, Object.create(Array.prototype));
+                (<any>Object).setPrototypeOf(
+                    array,
+                    Object.create(Array.prototype)
+                );
             } else if (_compat.proto) {
                 (<any>array).__proto__ = Object.create(Array.prototype);
             } else {
-                let length = arrayMethods.length,
-                    method: string;
+                const length = arrayMethods.length;
+                let method: string;
 
-                for (var i = 0; i < length; ++i) {
+                for (let i = 0; i < length; i += 1) {
                     method = arrayMethods[i];
                     (<any>array)[method] = (<any>Array.prototype)[method];
                 }
@@ -898,18 +1023,24 @@ module plat.observable {
          *
          * @returns {void}
          */
-        protected _overwriteArray(absoluteIdentifier: string, array: Array<any>): void {
-            let _compat = this._compat,
-                length = arrayMethods.length,
-                method: string,
-                i: number;
+        protected _overwriteArray(
+            absoluteIdentifier: string,
+            array: any[]
+        ): void {
+            const _compat = this._compat;
+            const length = arrayMethods.length;
+            let method: string;
+            let i: number;
 
             if (_compat.proto) {
-                let obj: any = Object.create(Array.prototype);
+                const obj: any = Object.create(Array.prototype);
 
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     method = arrayMethods[i];
-                    obj[method] = this._overwriteArrayFunction(absoluteIdentifier, method);
+                    obj[method] = this._overwriteArrayFunction(
+                        absoluteIdentifier,
+                        method
+                    );
                 }
 
                 if (_compat.setProto) {
@@ -921,10 +1052,16 @@ module plat.observable {
                 return;
             }
 
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 method = arrayMethods[i];
-                ContextManager.defineProperty(array, method,
-                    this._overwriteArrayFunction(absoluteIdentifier, method), false, true, true);
+                ContextManager.defineProperty(
+                    array,
+                    method,
+                    this._overwriteArrayFunction(absoluteIdentifier, method),
+                    false,
+                    true,
+                    true
+                );
             }
         }
 
@@ -945,12 +1082,18 @@ module plat.observable {
          *
          * @returns {any} The immediate context denoted by the identifier.
          */
-        protected _getContext(identifier: string, split: Array<string>, observe?: boolean): any {
+        protected _getContext(
+            identifier: string,
+            split: string[],
+            observe?: boolean
+        ): any {
             let context = this.__contextObjects[identifier];
 
             if (isNull(context)) {
                 if (observe === true) {
-                    context = this.__contextObjects[identifier] = this._observeImmediateContext(split, identifier);
+                    context = this.__contextObjects[
+                        identifier
+                    ] = this._observeImmediateContext(split, identifier);
                 } else {
                     context = this._getImmediateContext(split);
                 }
@@ -973,7 +1116,7 @@ module plat.observable {
          *
          * @returns {any} The immediate context denoted by the identifier.
          */
-        protected _getImmediateContext(split: Array<string>): any {
+        protected _getImmediateContext(split: string[]): any {
             let context = this.context;
 
             while (split.length > 0) {
@@ -996,13 +1139,16 @@ module plat.observable {
          * Gets the immediate context of identifier by splitting on "."
          * and observes the objects along the way.
          *
-         * @param {Array<string>} split The identifier's split string array containing properties
+         * @param {Array<string>} split The identifier split string array containing properties
          * used to index into the context.
          * @param {string} identifier The identifier being observed.
          *
          * @returns {any} The immediate context denoted by the identifier.
          */
-        protected _observeImmediateContext(split: Array<string>, identifier: string): any {
+        protected _observeImmediateContext(
+            split: string[],
+            identifier: string
+        ): any {
             if (isNull(this.__identifiers[identifier])) {
                 this.observe(identifier, null);
             }
@@ -1027,10 +1173,14 @@ module plat.observable {
          * @returns {{ newValue: any; oldValue: any; }} An object containing the old value and new value of a
          * property upon a potential context change.
          */
-        protected _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): { newValue: any; oldValue: any; } {
-            let property: string,
-                doNew = isObject(newRootContext),
-                doOld = isObject(oldRootContext);
+        protected _getValues(
+            split: string[],
+            newRootContext: any,
+            oldRootContext: any
+        ): { newValue: any; oldValue: any } {
+            let property: string;
+            let doNew = isObject(newRootContext);
+            let doOld = isObject(oldRootContext);
 
             while (split.length > 1) {
                 property = split.shift();
@@ -1054,8 +1204,8 @@ module plat.observable {
 
             property = split[0];
 
-            let newValue: any,
-                oldValue: any;
+            let newValue: any;
+            let oldValue: any;
 
             if (!isNull(newRootContext)) {
                 newValue = newRootContext[property];
@@ -1067,7 +1217,7 @@ module plat.observable {
 
             return {
                 newValue: newValue,
-                oldValue: oldValue
+                oldValue: oldValue,
             };
         }
 
@@ -1088,31 +1238,45 @@ module plat.observable {
          *
          * @returns {void}
          */
-        protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any, mappings?: Array<string>): void {
-            mappings = mappings || Object.keys(this.__identifierHash[identifier] || {});
-            let length = mappings.length,
-                binding: string,
-                property: string,
-                parentProperty: string,
-                split: Array<string>,
-                values: IObject<any> = {},
-                value: any,
-                period = '.',
-                lengthStr = 'length',
-                key: string,
-                keyIsLength: boolean,
-                start = identifier.length + 1,
-                newParent: any,
-                oldParent: any,
-                newChild: any,
-                oldChild: any;
+        protected _notifyChildProperties(
+            identifier: string,
+            newValue: any,
+            oldValue: any,
+            mappings?: string[]
+        ): void {
+            if (!isObject(mappings)) {
+                let hash = this.__identifierHash[identifier];
 
-            for (let i = 0; i < length; ++i) {
+                if (!isObject(hash)) {
+                    hash = {};
+                }
+
+                mappings = Object.keys(hash);
+            }
+
+            const length = mappings.length;
+            const period = '.';
+            const lengthStr = 'length';
+            const start = identifier.length + 1;
+            let values: IObject<any> = {};
+            let value: any;
+            let key: string;
+            let keyIsLength: boolean;
+            let newParent: any;
+            let oldParent: any;
+            let newChild: any;
+            let oldChild: any;
+            let binding: string;
+            let property: string;
+            let parentProperty: string;
+            let split: string[];
+
+            for (let i = 0; i < length; i += 1) {
                 binding = mappings[i];
                 property = binding.slice(start);
                 split = property.split(period);
                 key = split.pop();
-                keyIsLength = (key === lengthStr);
+                keyIsLength = key === lengthStr;
                 parentProperty = split.join(period);
 
                 if (isEmpty(parentProperty)) {
@@ -1121,16 +1285,24 @@ module plat.observable {
                     newChild = isNull(newParent) ? undefined : newParent[key];
                     oldChild = isNull(oldParent) ? undefined : oldParent[key];
 
-                    if (keyIsLength && !isArray(oldParent) && isArray(newParent)) {
-                        let lengthListener = this.__lengthListeners[binding];
+                    if (
+                        keyIsLength &&
+                        !isArray(oldParent) &&
+                        isArray(newParent)
+                    ) {
+                        const lengthListener = this.__lengthListeners[binding];
                         if (!isNull(lengthListener)) {
-                            var uid = lengthListener.uid;
+                            const uid = lengthListener.uid;
 
-                            let arraySplit = identifier.split(period),
-                                arrayKey = arraySplit.pop();
+                            const arraySplit = identifier.split(period);
+                            const arrayKey = arraySplit.pop();
 
-                            var join = arraySplit.join(period);
-                            let arrayParent = this._getContext(join, arraySplit, false);
+                            let join = arraySplit.join(period);
+                            const arrayParent = this._getContext(
+                                join,
+                                arraySplit,
+                                false
+                            );
 
                             this.__observedIdentifier = null;
                             access(arrayParent, arrayKey);
@@ -1138,13 +1310,28 @@ module plat.observable {
                                 join = this.__observedIdentifier;
                             }
 
-                            var removeListener = this.observeArrayMutation(uid, noop, join, newParent, null);
+                            let removeListener = this.observeArrayMutation(
+                                uid,
+                                noop,
+                                join,
+                                newParent,
+                                null
+                            );
                             this.observe(join, {
                                 uid: uid,
-                                listener: (nValue: Array<any>, oValue: Array<any>): void => {
+                                listener: (
+                                    nValue: any[],
+                                    oValue: any[]
+                                ): void => {
                                     removeListener();
-                                    removeListener = this.observeArrayMutation(uid, noop, join, nValue, oValue);
-                                }
+                                    removeListener = this.observeArrayMutation(
+                                        uid,
+                                        noop,
+                                        join,
+                                        nValue,
+                                        oValue
+                                    );
+                                },
                             });
 
                             deleteProperty(this.__lengthListeners, binding);
@@ -1154,7 +1341,11 @@ module plat.observable {
                     value = values[parentProperty];
 
                     if (isNull(value)) {
-                        value = values[parentProperty] = this._getValues(split, newValue, oldValue);
+                        value = values[parentProperty] = this._getValues(
+                            split,
+                            newValue,
+                            oldValue
+                        );
                     }
 
                     newParent = value.newValue;
@@ -1165,10 +1356,13 @@ module plat.observable {
 
                 values[property] = {
                     newValue: newChild,
-                    oldValue: oldChild
+                    oldValue: oldChild,
                 };
 
-                if (isObject(newParent) && (!isArray(newParent) || newParent.length > key)) {
+                if (
+                    isObject(newParent) &&
+                    (!isArray(newParent) || newParent.length > key)
+                ) {
                     this._define(binding, newParent, key);
                 }
 
@@ -1194,34 +1388,45 @@ module plat.observable {
          *
          * @returns {plat.IRemoveListener} A function for removing the given listener for the given absoluteIdentifier.
          */
-        protected _addObservableListener(absoluteIdentifier: string, observableListener: IListener, isLength?: boolean): IRemoveListener {
+        protected _addObservableListener(
+            absoluteIdentifier: string,
+            observableListener: IListener,
+            isLength?: boolean
+        ): IRemoveListener {
             if (isLength === true) {
-                let split = absoluteIdentifier.split('.');
+                const split = absoluteIdentifier.split('.');
                 // pop length key
                 split.pop();
 
-                let property = split.pop(),
-                    context = this.getContext(split, false);
+                const property = split.pop();
+                const context = this.getContext(split, false);
 
                 if (isObject(context)) {
                     this.__observedIdentifier = null;
                     access(context, property);
 
                     if (isString(this.__observedIdentifier)) {
-                        absoluteIdentifier = this.__observedIdentifier + (isLength === true ? '.length' : '');
+                        absoluteIdentifier =
+                            this.__observedIdentifier +
+                            (isLength === true ? '.length' : '');
                     }
                 }
             }
 
             this.__add(absoluteIdentifier, observableListener);
 
-            let uid = observableListener.uid,
-                remove = (): void => {
-                    ContextManager.spliceRemoveListener(absoluteIdentifier, uid, remove);
-                    this._removeCallback(absoluteIdentifier, observableListener);
-                };
+            const uid = observableListener.uid;
+            const remove = (): void => {
+                ContextManager.spliceRemoveListener(
+                    absoluteIdentifier,
+                    uid,
+                    remove
+                );
+                this._removeCallback(absoluteIdentifier, observableListener);
+            };
 
             ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
+
             return remove;
         }
 
@@ -1241,7 +1446,11 @@ module plat.observable {
          *
          * @returns {void}
          */
-        protected _define(identifier: string, immediateContext: any, key: string): void {
+        protected _define(
+            identifier: string,
+            immediateContext: any,
+            key: string
+        ): void {
             if (isObject(immediateContext[key])) {
                 this.__defineObject(identifier, immediateContext, key);
             } else {
@@ -1264,29 +1473,41 @@ module plat.observable {
          * @returns {(...args: any[]) => any} A function that acts as an intercept for an observed
          * array function.
          */
-        protected _overwriteArrayFunction(absoluteIdentifier: string, method: string): (...args: any[]) => any {
-            let callbackObjects = ContextManager.arrayChangeListeners[absoluteIdentifier] || {},
-                _this = this;
+        protected _overwriteArrayFunction(
+            absoluteIdentifier: string,
+            method: string
+        ): (...args: any[]) => any {
+            // tslint:disable-next-line
+            const _this = this;
+            let callbackObjects =
+                ContextManager.arrayChangeListeners[absoluteIdentifier];
+
+            if (!isObject(callbackObjects)) {
+                callbackObjects = {};
+            }
 
             // we can't use a fat-arrow function here because we need the array context.
             return function observedArrayFn(...args: any[]): any {
-                let oldLength = this.length,
-                    originalArray = _clone(this, true),
-                    returnValue: any,
-                    isUnshift = method === 'unshift',
-                    isShift = method === 'shift',
-                    isSplice = method === 'splice',
-                    selfNotify = isShift || isUnshift || isSplice,
-                    isUpdate = method === 'sort' || method === 'reverse',
-                    oldArray: Array<any>,
-                    addedCount: number,
-                    index: number,
-                    newLength: number,
-                    removed: Array<any>;
+                const oldLength = this.length;
+                const originalArray = _clone(this, true);
+                const isUnshift = method === 'unshift';
+                const isShift = method === 'shift';
+                const isSplice = method === 'splice';
+                const selfNotify = isShift || isUnshift || isSplice;
+                const isUpdate = method === 'sort' || method === 'reverse';
+                let oldArray: any[];
+                let addedCount: number;
+                let index: number;
+                let newLength: number;
+                let removed: any[];
+                let returnValue: any;
 
                 if (selfNotify) {
                     _this.__isArrayFunction = true;
-                    returnValue = (<any>Array.prototype)[method].apply(this, args);
+                    returnValue = (<any>Array.prototype)[method].apply(
+                        this,
+                        args
+                    );
                     _this.__isArrayFunction = false;
                     newLength = this.length;
 
@@ -1303,7 +1524,10 @@ module plat.observable {
                         removed = returnValue;
                     }
                 } else {
-                    returnValue = (<any>Array.prototype)[method].apply(this, args);
+                    returnValue = (<any>Array.prototype)[method].apply(
+                        this,
+                        args
+                    );
                     newLength = this.length;
 
                     if (isUpdate) {
@@ -1323,33 +1547,43 @@ module plat.observable {
                     ContextManager.unObserve(returnValue);
                 }
 
-                let keys = Object.keys(callbackObjects),
-                    length = keys.length,
-                    callbacks: Array<(changes: Array<IArrayChanges<any>>) => void>,
-                    jLength: number,
-                    i: number,
-                    j: number;
+                const keys = Object.keys(callbackObjects);
+                const length = keys.length;
+                let callbacks: ((changes: IArrayChanges<any>[]) => void)[];
+                let jLength: number;
+                let i: number;
+                let j: number;
 
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     callbacks = callbackObjects[keys[i]];
                     jLength = callbacks.length;
 
-                    for (j = 0; j < jLength; ++j) {
-                        callbacks[j]([{
-                            object: this,
-                            type: method,
-                            index: index,
-                            removed: removed,
-                            addedCount: addedCount,
-                            oldArray: oldArray
-                        }]);
+                    for (j = 0; j < jLength; j += 1) {
+                        callbacks[j]([
+                            {
+                                object: this,
+                                type: method,
+                                index: index,
+                                removed: removed,
+                                addedCount: addedCount,
+                                oldArray: oldArray,
+                            },
+                        ]);
                     }
                 }
 
                 if (selfNotify) {
-                    _this._notifyChildProperties(absoluteIdentifier, this, originalArray);
+                    _this._notifyChildProperties(
+                        absoluteIdentifier,
+                        this,
+                        originalArray
+                    );
                 } else {
-                    _this._execute(absoluteIdentifier + '.length', newLength, oldLength);
+                    _this._execute(
+                        `${absoluteIdentifier}.length`,
+                        newLength,
+                        oldLength
+                    );
                 }
 
                 return returnValue;
@@ -1370,14 +1604,17 @@ module plat.observable {
          *
          * @returns {void}
          */
-        protected _removeCallback(identifier: string, listener: IListener): void {
-            let callbacks = this.__identifiers[identifier];
+        protected _removeCallback(
+            identifier: string,
+            listener: IListener
+        ): void {
+            const callbacks = this.__identifiers[identifier];
             if (isNull(callbacks)) {
                 return;
             }
 
             // splice the observed listener
-            let index = callbacks.indexOf(listener);
+            const index = callbacks.indexOf(listener);
             if (index === -1) {
                 return;
             }
@@ -1401,7 +1638,7 @@ module plat.observable {
          *
          * @param {string} identifier The identifier being observed.
          *
-         * @returns {boolean} Whether or not the identiifer is already being observed.
+         * @returns {boolean} Whether or not the identifier is already being observed.
          */
         protected _hasIdentifier(identifier: string): boolean {
             return !isEmpty(this.__identifiers[identifier]);
@@ -1425,8 +1662,12 @@ module plat.observable {
          *
          * @returns {void}
          */
-        protected _execute(identifier: string, value: any, oldValue: any): void {
-            let observableListeners = this.__identifiers[identifier];
+        protected _execute(
+            identifier: string,
+            value: any,
+            oldValue: any
+        ): void {
+            const observableListeners = this.__identifiers[identifier];
 
             if (isUndefined(value)) {
                 deleteProperty(this.__contextObjects, identifier);
@@ -1438,10 +1679,10 @@ module plat.observable {
                 return;
             }
 
-            let listeners = observableListeners.slice(0),
-                length = listeners.length;
+            const listeners = observableListeners.slice(0);
+            const length = listeners.length;
 
-            for (var i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 listeners[i].listener(value, oldValue);
             }
         }
@@ -1461,7 +1702,11 @@ module plat.observable {
          *
          * @returns {void}
          */
-        private __defineObject(identifier: string, immediateContext: any, key: string): void {
+        private __defineObject(
+            identifier: string,
+            immediateContext: any,
+            key: string
+        ): void {
             let value = immediateContext[key];
 
             Object.defineProperty(immediateContext, key, {
@@ -1469,6 +1714,7 @@ module plat.observable {
                 enumerable: true,
                 get: (): any => {
                     this.__observedIdentifier = identifier;
+
                     return value;
                 },
                 set: (newValue): void => {
@@ -1476,7 +1722,7 @@ module plat.observable {
                         return;
                     }
 
-                    let oldValue = value;
+                    const oldValue = value;
                     value = newValue;
 
                     if (this.__isArrayFunction) {
@@ -1485,9 +1731,9 @@ module plat.observable {
 
                     ContextManager.unObserve(oldValue);
 
-                    let props = this.__identifierHash[identifier],
-                        childPropertiesExist = false,
-                        mappings: Array<string>;
+                    const props = this.__identifierHash[identifier];
+                    let childPropertiesExist = false;
+                    let mappings: string[];
 
                     if (isObject(props)) {
                         mappings = Object.keys(props);
@@ -1497,16 +1743,36 @@ module plat.observable {
                     this._execute(identifier, value, oldValue);
 
                     if (childPropertiesExist) {
-                        this._notifyChildProperties(identifier, value, oldValue, mappings);
+                        this._notifyChildProperties(
+                            identifier,
+                            value,
+                            oldValue,
+                            mappings
+                        );
                         if (!isObject(value)) {
-                            this.__definePrimitive(identifier, immediateContext, key);
+                            this.__definePrimitive(
+                                identifier,
+                                immediateContext,
+                                key
+                            );
                         }
                     } else if (isEmpty(this.__identifiers[identifier])) {
-                        ContextManager.defineProperty(immediateContext, key, value, true, true, true);
+                        ContextManager.defineProperty(
+                            immediateContext,
+                            key,
+                            value,
+                            true,
+                            true,
+                            true
+                        );
                     } else if (!isObject(value)) {
-                        this.__definePrimitive(identifier, immediateContext, key);
+                        this.__definePrimitive(
+                            identifier,
+                            immediateContext,
+                            key
+                        );
                     }
-                }
+                },
             });
         }
 
@@ -1525,9 +1791,13 @@ module plat.observable {
          *
          * @returns {void}
          */
-        private __definePrimitive(identifier: string, immediateContext: any, key: string): void {
-            let value = immediateContext[key],
-                isDefined = !isNull(value);
+        private __definePrimitive(
+            identifier: string,
+            immediateContext: any,
+            key: string
+        ): void {
+            let value = immediateContext[key];
+            let isDefined = !isNull(value);
 
             if (isArray(immediateContext) && key === 'length') {
                 return;
@@ -1538,22 +1808,23 @@ module plat.observable {
                 enumerable: true,
                 get: (): any => {
                     this.__observedIdentifier = identifier;
+
                     return value;
                 },
                 set: (newValue): void => {
                     if (value === newValue) {
                         return;
                     }
-                    let oldValue = value;
+                    const oldValue = value;
                     value = newValue;
 
                     if (this.__isArrayFunction && isArray(immediateContext)) {
                         return;
                     }
 
-                    let props = this.__identifierHash[identifier],
-                        childPropertiesExist = false,
-                        mappings: Array<string>;
+                    const props = this.__identifierHash[identifier];
+                    let childPropertiesExist = false;
+                    let mappings: string[];
 
                     if (isObject(props)) {
                         mappings = Object.keys(props);
@@ -1562,18 +1833,37 @@ module plat.observable {
 
                     this._execute(identifier, newValue, oldValue);
 
-                    if (!childPropertiesExist && isEmpty(this.__identifiers[identifier])) {
-                        ContextManager.defineProperty(immediateContext, key, value, true, true, true);
+                    if (
+                        !childPropertiesExist &&
+                        isEmpty(this.__identifiers[identifier])
+                    ) {
+                        ContextManager.defineProperty(
+                            immediateContext,
+                            key,
+                            value,
+                            true,
+                            true,
+                            true
+                        );
                     } else if (isObject(value)) {
                         this.__defineObject(identifier, immediateContext, key);
                         if (childPropertiesExist) {
-                            this._notifyChildProperties(identifier, newValue, oldValue, mappings);
+                            this._notifyChildProperties(
+                                identifier,
+                                newValue,
+                                oldValue,
+                                mappings
+                            );
                         }
                     } else if (!isDefined) {
-                        this.__definePrimitive(identifier, immediateContext, key);
+                        this.__definePrimitive(
+                            identifier,
+                            immediateContext,
+                            key
+                        );
                         isDefined = true;
                     }
-                }
+                },
             });
         }
 
@@ -1592,18 +1882,18 @@ module plat.observable {
          * @returns {void}
          */
         private __add(identifier: string, observableListener: IListener): void {
-            let callbacks = this.__identifiers[identifier],
-                priority = observableListener.priority,
-                found = false;
+            const priority = observableListener.priority;
+            let callbacks = this.__identifiers[identifier];
+            let found = false;
 
             if (isNull(callbacks)) {
                 callbacks = this.__identifiers[identifier] = [];
             }
 
             if (isNumber(priority)) {
-                let length = callbacks.length;
+                const length = callbacks.length;
 
-                for (var i = 0; i < length; ++i) {
+                for (let i = 0; i < length; i += 1) {
                     if (priority > callbacks[i].priority) {
                         callbacks.splice(i, 0, observableListener);
                         found = true;
@@ -1636,22 +1926,24 @@ module plat.observable {
          * @returns {void}
          */
         private __addHashValues(identifier: string): void {
-            let identifierHash = this.__identifierHash;
+            const identifierHash = this.__identifierHash;
             if (isObject(identifierHash[identifier])) {
                 return;
             }
 
             identifierHash[identifier] = {};
 
-            let index: number,
-                period = '.',
-                ident = identifier,
-                hashValue: IObject<boolean>,
-                previous: Array<string> = [],
-                i: number,
-                length: number;
+            const period = '.';
+            const previous: string[] = [];
+            let index: number;
+            let ident = identifier;
+            let hashValue: IObject<boolean>;
+            let i: number;
+            let length: number;
 
-            while ((index = ident.lastIndexOf(period)) !== -1) {
+            index = ident.lastIndexOf(period);
+
+            while (index !== -1) {
                 ident = ident.slice(0, index);
                 hashValue = identifierHash[ident];
                 length = previous.length;
@@ -1661,11 +1953,12 @@ module plat.observable {
                 }
 
                 hashValue[identifier] = true;
-                for (i = 0; i < length; ++i) {
+                for (i = 0; i < length; i += 1) {
                     hashValue[previous[i]] = true;
                 }
 
                 previous.push(ident);
+                index = ident.lastIndexOf(period);
             }
         }
     }
@@ -1673,15 +1966,26 @@ module plat.observable {
     /**
      * The Type for referencing the '_ContextManager' injectable as a dependency.
      */
-    export function IContextManagerStatic(_log?: debug.Log): IContextManagerStatic {
+    export function IContextManagerStatic(
+        _log?: debug.Log
+    ): IContextManagerStatic {
         (<any>ContextManager)._log = _log;
+
         return ContextManager;
     }
 
-    register.injectable(__ContextManagerStatic, IContextManagerStatic, [
-        __Log
-    ], __STATIC);
-    register.injectable(__ContextManagerInstance, ContextManager, null, __INSTANCE);
+    register.injectable(
+        __ContextManagerStatic,
+        IContextManagerStatic,
+        [__Log],
+        __STATIC
+    );
+    register.injectable(
+        __ContextManagerInstance,
+        ContextManager,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name IContextManagerStatic
@@ -1705,7 +2009,9 @@ module plat.observable {
          * @description
          * A set of functions to be fired when a particular observed array is mutated.
          */
-        arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>>;
+        arrayChangeListeners: IObject<
+            IObject<((changes: IArrayChanges<any>[]) => void)[]>
+        >;
 
         /**
          * @name getManager
@@ -1775,7 +2081,7 @@ module plat.observable {
          *
          * @returns {any} The narrowed down context.
          */
-        getContext(rootContext: any, split: Array<string>): any;
+        getContext(rootContext: any, split: string[]): any;
 
         /**
          * @name defineProperty
@@ -1797,7 +2103,14 @@ module plat.observable {
          *
          * @returns {void}
          */
-        defineProperty(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean, writable?: boolean): void;
+        defineProperty(
+            obj: any,
+            key: string,
+            value: any,
+            enumerable?: boolean,
+            configurable?: boolean,
+            writable?: boolean
+        ): void;
 
         /**
          * @name defineGetter
@@ -1818,7 +2131,13 @@ module plat.observable {
          *
          * @returns {void}
          */
-        defineGetter(obj: any, key: string, value: any, enumerable?: boolean, configurable?: boolean): void;
+        defineGetter(
+            obj: any,
+            key: string,
+            value: any,
+            enumerable?: boolean,
+            configurable?: boolean
+        ): void;
 
         /**
          * @name pushRemoveListener
@@ -1836,7 +2155,11 @@ module plat.observable {
          *
          * @returns {void}
          */
-        pushRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;
+        pushRemoveListener(
+            identifier: string,
+            uid: string,
+            listener: IRemoveListener
+        ): void;
 
         /**
          * @name spliceRemoveListener
@@ -1854,7 +2177,11 @@ module plat.observable {
          *
          * @returns {void}
          */
-        spliceRemoveListener(identifier: string, uid: string, listener: IRemoveListener): void;
+        spliceRemoveListener(
+            identifier: string,
+            uid: string,
+            listener: IRemoveListener
+        ): void;
 
         /**
          * @name removeIdentifier
@@ -1871,7 +2198,7 @@ module plat.observable {
          *
          * @returns {void}
          */
-        removeIdentifier(uids: Array<string>, identifier: string): void;
+        removeIdentifier(uids: string[], identifier: string): void;
 
         /**
          * @name createContext
@@ -1971,7 +2298,7 @@ module plat.observable {
          * @description
          * The new value of the array.
          */
-        object: Array<T>;
+        object: T[];
 
         /**
          * @name type
@@ -2012,7 +2339,7 @@ module plat.observable {
          * @description
          * An array of the removed elements. Only available on Array mutation methods.
          */
-        removed?: Array<T>;
+        removed?: T[];
 
         /**
          * @name addedCount
@@ -2039,7 +2366,6 @@ module plat.observable {
          * The old Array prior to a 'reverse' or 'sort' mutation type.
          * Only available when the type is either 'reverse' or 'sort'.
          */
-        oldArray?: Array<T>;
+        oldArray?: T[];
     }
 }
-

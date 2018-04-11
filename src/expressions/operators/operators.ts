@@ -1,4 +1,3 @@
-/* tslint:disable:no-unused-variable */
 /**
  * @name OPERATORS
  * @memberof plat.expressions
@@ -13,229 +12,229 @@
  * @description
  * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every operator.
  */
-var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
+let OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
     'u+': {
         precedence: 4, associativity: 'rtl',
         fn: (context: any, aliases: any,
-            a: (context: any, aliases: any) => any): any => +a(context, aliases)
+            a: (context: any, aliases: any) => any): any => +a(context, aliases),
     },
     '+': {
         precedence: 6, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) + b(context, aliases)
+            b: (context: any, aliases: any) => any): any => (<number>a(context, aliases)) + (<number>b(context, aliases)),
     },
     'u-': {
         precedence: 4, associativity: 'rtl',
         fn: (context: any, aliases: any,
-            a: (context: any, aliases: any) => any): any => -a(context, aliases)
+            a: (context: any, aliases: any) => any): any => -a(context, aliases),
     },
     '-': {
         precedence: 6, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) - b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) - b(context, aliases),
     },
     '*': {
         precedence: 5, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) * b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) * b(context, aliases),
     },
     '/': {
         precedence: 5, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) / b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) / b(context, aliases),
     },
     '%': {
         precedence: 5, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) % b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) % b(context, aliases),
     },
     '?': {
         precedence: 15, associativity: 'rtl',
-        fn: (): void => undefined
+        fn: (): void => undefined,
     },
     ':': {
         precedence: 15, associativity: 'rtl',
-        fn: (): void => undefined
+        fn: (): void => undefined,
     },
     '>': {
         precedence: 8, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) > b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) > b(context, aliases),
     },
     '<': {
         precedence: 8, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) < b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) < b(context, aliases),
     },
     '!': {
         precedence: 4, associativity: 'rtl',
         fn: (context: any, aliases: any,
-            a: (context: any, aliases: any) => any): any => !a(context, aliases)
+            a: (context: any, aliases: any) => any): any => !a(context, aliases),
     },
     '~': {
         precedence: 4, associativity: 'rtl',
         fn: (context: any, aliases: any,
-            a: (context: any, aliases: any) => any): any => ~a(context, aliases)
+            a: (context: any, aliases: any) => any): any => ~a(context, aliases),
     },
     '&': {
         precedence: 10, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) & b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) & b(context, aliases),
     },
     '|': {
         precedence: 12, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) | b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) | b(context, aliases),
     },
     '>>': {
         precedence: 7, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) >> b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) >> b(context, aliases),
     },
     '<<': {
         precedence: 7, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) << b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) << b(context, aliases),
     },
     '>>>': {
         precedence: 7, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) >>> b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) >>> b(context, aliases),
     },
     '&&': {
         precedence: 13, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) && b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) && b(context, aliases),
     },
     '||': {
         precedence: 14, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) || b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) || b(context, aliases),
     },
     '==': {
         precedence: 9, associativity: 'ltr',
         /* tslint:disable:triple-equals */
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) == b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) == b(context, aliases),
         /* tslint:enable:triple-equals */
     },
     '===': {
         precedence: 9, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) === b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) === b(context, aliases),
     },
     '!=': {
         precedence: 9, associativity: 'ltr',
         /* tslint:disable:triple-equals */
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) != b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) != b(context, aliases),
         /* tslint:enable:triple-equals */
     },
     '!==': {
         precedence: 9, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) !== b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) !== b(context, aliases),
     },
     '>=': {
         precedence: 8, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) >= b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) >= b(context, aliases),
     },
     '<=': {
         precedence: 8, associativity: 'ltr',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
-            b: (context: any, aliases: any) => any): any => a(context, aliases) <= b(context, aliases)
+            b: (context: any, aliases: any) => any): any => a(context, aliases) <= b(context, aliases),
     },
     '=': {
         precedence: 17, associativity: 'rtl',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '++': {
         precedence: 3, associativity: '',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '--': {
         precedence: 3, associativity: '',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '+=': {
         precedence: 17, associativity: 'rtl',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '-=': {
         precedence: 17, associativity: 'rtl',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '*=': {
         precedence: 17, associativity: 'rtl',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '/=': {
         precedence: 17, associativity: 'rtl',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
+        },
     },
     '%=': {
         precedence: 17, associativity: 'rtl',
         fn: (context: any, aliases: any,
             a: (context: any, aliases: any) => any,
             b: (context: any, aliases: any) => any): void => {
-            let _log: plat.debug.Log = plat.acquire(__Log);
+            const _log: plat.debug.Log = plat.acquire(__Log);
             _log.error(new Error('Assignment operators are not supported'));
-        }
-    }
+        },
+    },
 };
 
 /**
@@ -256,7 +255,7 @@ const ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
     '()': { precedence: 2, associativity: null, fn: null },
     '[]': { precedence: 2, associativity: null, fn: null },
     '.': { precedence: 2, associativity: null, fn: null },
-    '{}': { precedence: 1, associativity: null, fn: null }
+    '{}': { precedence: 1, associativity: null, fn: null },
 };
 
 /**
@@ -283,7 +282,7 @@ const DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
     '.': { precedence: 2, associativity: null, fn: null },
     ',': { precedence: 18, associativity: null, fn: null },
     '\'': { precedence: 0, associativity: null, fn: null },
-    '"': { precedence: 0, associativity: null, fn: null }
+    '"': { precedence: 0, associativity: null, fn: null },
 };
 
 /**
@@ -304,7 +303,7 @@ const KEYWORDS: plat.IObject<any> = {
     false: false,
     true: true,
     null: null,
-    undefined: 'undefined'
+    undefined: 'undefined',
 };
 
 /**
@@ -382,4 +381,3 @@ function isOperator(key: string): boolean {
 function isKeyword(key: string): boolean {
     return !isUndefined(KEYWORDS[key]);
 }
-/* tslint:enable:no-unused-variable */

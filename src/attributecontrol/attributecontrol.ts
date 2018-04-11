@@ -1,4 +1,4 @@
-module plat {
+namespace plat {
     'use strict';
 
     /**
@@ -6,11 +6,11 @@ module plat {
      * @memberof plat
      * @kind class
      * @access public
-     * 
+     *
      * @extends {plat.Control}
-     * 
+     *
      * @description
-     * A type of control that can be used as an attribute but will 
+     * A type of control that can be used as an attribute but will
      * not be used to add, remove, or modify DOM.
      */
     export class AttributeControl extends Control {
@@ -19,15 +19,15 @@ module plat {
          * @memberof plat.AttributeControl
          * @kind property
          * @access public
-         * 
+         *
          * @type {plat.ui.TemplateControl}
-         * 
+         *
          * @description
          * Specifies the {@link plat.ui.TemplateControl|TemplateControl} associated with this
          * control's element. Can be null if no {@link plat.ui.TemplateControl|TemplateControl}
          * exists.
          */
-        templateControl: ui.TemplateControl = null;
+        public templateControl: ui.TemplateControl = null;
 
         /**
          * @name dispose
@@ -35,16 +35,16 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Method for disposing an attribute control. Removes any 
+         * Method for disposing an attribute control. Removes any
          * necessary objects from the control.
-         * 
+         *
          * @param {plat.AttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
-         * 
+         *
          * @returns {void}
          */
-        static dispose(control: AttributeControl): void {
+        public static dispose(control: AttributeControl): void {
             deleteProperty(control, 'templateControl');
 
             Control.dispose(control);
@@ -56,13 +56,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns a new instance of {@link plat.AttributeControl|AttributeControl}.
-         * 
+         *
          * @returns {plat.AttributeControl}
          */
-        static getInstance(): AttributeControl {
+        public static getInstance(): AttributeControl {
             return new AttributeControl();
         }
     }
@@ -74,13 +74,18 @@ module plat {
         return AttributeControl;
     }
 
-    register.injectable(__AttributeControlFactory, IAttributeControlFactory, null, __FACTORY);
+    register.injectable(
+        __AttributeControlFactory,
+        IAttributeControlFactory,
+        null,
+        __FACTORY
+    );
 
     /**
      * @name IAttributeControlFactory
      * @memberof plat
      * @kind interface
-     * 
+     *
      * @description
      * Creates and manages instances of {@link plat.AttributeControl|AttributeControl}.
      */
@@ -91,13 +96,13 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
-         * Method for disposing an attribute control. Removes any 
+         * Method for disposing an attribute control. Removes any
          * necessary objects from the control.
-         * 
+         *
          * @param {plat.AttributeControl} control The {@link plat.AttributeControl|AttributeControl} to dispose.
-         * 
+         *
          * @returns {void}
          */
         dispose(control: AttributeControl): void;
@@ -108,10 +113,10 @@ module plat {
          * @kind function
          * @access public
          * @static
-         * 
+         *
          * @description
          * Returns a new instance of {@link plat.AttributeControl|AttributeControl}.
-         * 
+         *
          * @returns {plat.AttributeControl}
          */
         getInstance(): AttributeControl;

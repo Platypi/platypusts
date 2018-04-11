@@ -7,7 +7,7 @@
  * @description
  * Holds all classes and interfaces related to attribute control components in platypus.
  */
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -19,14 +19,15 @@ module plat.controls {
      * @implements {plat.observable.IImplementTwoWayBinding}
      *
      * @description
-     * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
+     * Facilitates two-way data-binding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
      */
-    export class Bind extends AttributeControl implements observable.IImplementTwoWayBinding {
+    export class Bind extends AttributeControl
+        implements observable.IImplementTwoWayBinding {
         protected static _inject: any = {
             _parser: __Parser,
             _ContextManager: __ContextManagerStatic,
             _compat: __Compat,
-            _document: __Document
+            _document: __Document,
         };
 
         /**
@@ -42,7 +43,7 @@ module plat.controls {
          * other controls that may be listening to the same
          * event.
          */
-        priority: number = 100;
+        public priority: number = 100;
 
         /**
          * @name _parser
@@ -137,7 +138,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setter: (newValue: any, oldValue?: any, firstTime?: boolean) => void;
+        protected _setter: (
+            newValue: any,
+            oldValue?: any,
+            firstTime?: boolean
+        ) => void;
 
         /**
          * @name _expression
@@ -231,6 +236,7 @@ module plat.controls {
          * @description
          * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
          */
+        // tslint:disable-next-line
         protected _dateTimeLocalRegex: RegExp = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
 
         /**
@@ -244,7 +250,8 @@ module plat.controls {
          * @description
          * Whether or not the File API is supported.
          */
-        private __fileSupported: boolean = (<Compat>acquire(__Compat)).fileSupported;
+        private __fileSupported: boolean = (<Compat>acquire(__Compat))
+            .fileSupported;
 
         /**
          * @name __fileNameRegex
@@ -257,7 +264,8 @@ module plat.controls {
          * @description
          * Used to grab a filename from input[type="file"].
          */
-        private __fileNameRegex: RegExp = (<expressions.Regex>acquire(__Regex)).fileNameRegex;
+        private __fileNameRegex: RegExp = (<expressions.Regex>acquire(__Regex))
+            .fileNameRegex;
 
         /**
          * @name __isSelf
@@ -284,7 +292,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        initialize(): void {
+        public initialize(): void {
             this._determineType();
         }
 
@@ -299,43 +307,54 @@ module plat.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
-            let parent = this.parent;
+        public loaded(): void {
+            const parent = this.parent;
             if (isNull(parent) || isNull(this.element)) {
                 return;
             }
 
-            let attr = camelCase(this.type),
-                _parser = this._parser,
-                expression = this._expression = _parser.parse(this.attributes[attr]);
+            const attr = camelCase(this.type);
+            const _parser = this._parser;
+            const expression = (this._expression = _parser.parse(
+                this.attributes[attr]
+            ));
 
-            let identifiers = expression.identifiers;
+            const identifiers = expression.identifiers;
 
             if (identifiers.length !== 1) {
-                this._log.warn('Only 1 identifier allowed in a ' + this.type + ' expression.');
+                this._log.warn(
+                    `Only 1 identifier allowed in a ${this.type} expression.`
+                );
                 this._contextExpression = null;
+
                 return;
             }
 
-            let split = identifiers[0].split('.');
+            const split = identifiers[0].split('.');
             this._property = split.pop();
 
             if (expression.aliases.length > 0) {
-                let alias = expression.aliases[0],
-                    resourceObj = parent.findResource(alias),
-                    type: string;
+                const alias = expression.aliases[0];
+                let resourceObj = parent.findResource(alias);
+                let type: string;
 
                 if (isObject(resourceObj)) {
                     type = resourceObj.resource.type;
 
-                    if (type !== __OBSERVABLE_RESOURCE && type !== __LITERAL_RESOURCE) {
+                    if (
+                        type !== __OBSERVABLE_RESOURCE &&
+                        type !== __LITERAL_RESOURCE
+                    ) {
                         return;
                     }
                 } else {
                     resourceObj = <any>{ resource: {} };
                 }
 
-                if (alias === __CONTEXT_RESOURCE || alias === __ROOT_CONTEXT_RESOURCE) {
+                if (
+                    alias === __CONTEXT_RESOURCE ||
+                    alias === __ROOT_CONTEXT_RESOURCE
+                ) {
                     this._contextExpression = _parser.parse(split.join('.'));
                 } else {
                     this._property = 'value';
@@ -346,7 +365,7 @@ module plat.controls {
                         },
                         aliases: [],
                         identifiers: [],
-                        expression: ''
+                        expression: '',
                     };
                 }
             } else if (split.length > 0) {
@@ -358,7 +377,7 @@ module plat.controls {
                     },
                     aliases: [],
                     identifiers: [],
-                    expression: ''
+                    expression: '',
                 };
             }
 
@@ -386,7 +405,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        contextChanged(): void {
+        public contextChanged(): void {
             this._watchExpression();
         }
 
@@ -401,7 +420,7 @@ module plat.controls {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this._addEventType = null;
         }
 
@@ -416,8 +435,8 @@ module plat.controls {
          *
          * @returns {any} The current value of the bound property.
          */
-        evaluate(): any {
-            let expression = this._expression;
+        public evaluate(): any {
+            const expression = this._expression;
             if (isUndefined(expression)) {
                 return;
             }
@@ -430,7 +449,6 @@ module plat.controls {
          * @memberof plat.controls.Bind
          * @kind function
          * @access public
-         * @variation 0
          *
          * @description
          * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe
@@ -440,34 +458,16 @@ module plat.controls {
          *
          * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
          * specified child changes.
-         * @param {string} identifier? The identifier of the child property of the bound item.
+         * @param {number | string} identifier? The path of the child property of the bound item if the bound item is an Array.
          * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
          *
          * @returns {plat.IRemoveListener} A function for removing the listener.
          */
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
-        /**
-         * @name observeProperty
-         * @memberof plat.controls.Bind
-         * @kind function
-         * @access public
-         * @variation 1
-         *
-         * @description
-         * The function that allows a control implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding} to observe
-         * changes to the bound property and/or its child properties.
-         *
-         * @typeparam {any} T The type of item being observed.
-         *
-         * @param {plat.observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
-         * specified child changes.
-         * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
-         * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
-         *
-         * @returns {plat.IRemoveListener} A function for removing the listener.
-         */
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: any, autocast?: boolean): IRemoveListener {
+        public observeProperty<T>(
+            listener: observable.IBoundPropertyChangedListener<T>,
+            identifier?: string | number,
+            autocast?: boolean
+        ): IRemoveListener {
             return this._observeProperty(listener, identifier, autocast);
         }
 
@@ -491,7 +491,13 @@ module plat.controls {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
+        public observeArrayChange<T>(
+            listener: (
+                changes: observable.IArrayChanges<T>[],
+                identifier: string
+            ) => void,
+            identifier?: string
+        ): IRemoveListener;
         /**
          * @name observeArrayChange
          * @memberof plat.observable.IImplementTwoWayBinding
@@ -512,8 +518,20 @@ module plat.controls {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
-        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: any) => void, identifier?: any): IRemoveListener {
+        public observeArrayChange<T>(
+            listener: (
+                changes: observable.IArrayChanges<T>[],
+                identifier: number
+            ) => void,
+            index?: number
+        ): IRemoveListener;
+        public observeArrayChange<T>(
+            listener: (
+                changes: observable.IArrayChanges<T>[],
+                identifier: any
+            ) => void,
+            identifier?: any
+        ): IRemoveListener {
             return this._observeProperty(listener, identifier, false, true);
         }
 
@@ -530,55 +548,88 @@ module plat.controls {
          * @returns {void}
          */
         protected _addTextEventListener(): void {
-            let element = this.element,
-                _compat = this._compat,
-                composing = false,
-                input = 'input',
-                timeout: IRemoveListener,
-                eventListener = (): void => {
-                    if (composing) {
-                        return;
-                    }
+            const element = this.element;
+            const _compat = this._compat;
+            const input = 'input';
+            let composing = false;
+            let timeout: IRemoveListener;
+            const eventListener = (): void => {
+                if (composing) {
+                    return;
+                }
 
-                    this._propertyChanged();
-                },
-                postponedEventListener = (): void => {
-                    if (isFunction(timeout)) {
-                        return;
-                    }
+                this._propertyChanged();
+            };
+            const postponedEventListener = (): void => {
+                if (isFunction(timeout)) {
+                    return;
+                }
 
-                    timeout = postpone((): void => {
-                        eventListener();
-                        timeout = null;
-                    });
-                };
+                timeout = postpone((): void => {
+                    eventListener();
+                    timeout = null;
+                });
+            };
 
             if (isUndefined(_compat.ANDROID)) {
-                this.addEventListener(element, 'compositionstart', (): void => { composing = true; }, false);
-                this.addEventListener(element, 'compositionend', (): void => {
-                    composing = false;
-                    eventListener();
-                }, false);
+                this.addEventListener(
+                    element,
+                    'compositionstart',
+                    (): void => {
+                        composing = true;
+                    },
+                    false
+                );
+                this.addEventListener(
+                    element,
+                    'compositionend',
+                    (): void => {
+                        composing = false;
+                        eventListener();
+                    },
+                    false
+                );
             }
 
             if (_compat.hasEvent(input)) {
                 this.addEventListener(element, input, eventListener, false);
             } else {
-                this.addEventListener(element, 'keydown', (ev: KeyboardEvent): void => {
-                    let key = ev.keyCode || ev.which,
-                        codes = KeyCodes;
+                this.addEventListener(
+                    element,
+                    'keydown',
+                    (ev: KeyboardEvent): void => {
+                        const codes = KeyCodes;
+                        let key = ev.keyCode;
 
-                    if (key === codes.lwk ||
-                        key === codes.rwk ||
-                        (key >= codes.shift && key <= codes.escape) ||
-                        (key > codes.space && key <= codes.down)) {
-                        return;
-                    }
+                        if (isNull(key) || key === 0) {
+                            key = ev.which;
+                        }
 
-                    postponedEventListener();
-                }, false);
-                this.addEventListener(element, 'cut', postponedEventListener, false);
-                this.addEventListener(element, 'paste', postponedEventListener, false);
+                        if (
+                            key === codes.lwk ||
+                            key === codes.rwk ||
+                            (key >= codes.shift && key <= codes.escape) ||
+                            (key > codes.space && key <= codes.down)
+                        ) {
+                            return;
+                        }
+
+                        postponedEventListener();
+                    },
+                    false
+                );
+                this.addEventListener(
+                    element,
+                    'cut',
+                    postponedEventListener,
+                    false
+                );
+                this.addEventListener(
+                    element,
+                    'paste',
+                    postponedEventListener,
+                    false
+                );
             }
 
             this.addEventListener(element, 'change', eventListener, false);
@@ -597,7 +648,12 @@ module plat.controls {
          * @returns {void}
          */
         protected _addChangeEventListener(): void {
-            this.addEventListener(this.element, 'change', this._propertyChanged, false);
+            this.addEventListener(
+                this.element,
+                'change',
+                this._propertyChanged,
+                false
+            );
         }
 
         /**
@@ -613,7 +669,12 @@ module plat.controls {
          * @returns {void}
          */
         protected _addButtonEventListener(): void {
-            this.addEventListener(this.element, __tap, this._propertyChanged, false);
+            this.addEventListener(
+                this.element,
+                __tap,
+                this._propertyChanged,
+                false
+            );
         }
 
         /**
@@ -629,14 +690,24 @@ module plat.controls {
          * @returns {void}
          */
         protected _addRangeEventListener(): void {
-            let element = this.element,
-                input = 'input';
+            const element = this.element;
+            const input = 'input';
 
             if (this._compat.hasEvent(input)) {
-                this.addEventListener(element, input, this._propertyChanged, false);
+                this.addEventListener(
+                    element,
+                    input,
+                    this._propertyChanged,
+                    false
+                );
             }
 
-            this.addEventListener(element, 'change', this._propertyChanged, false);
+            this.addEventListener(
+                element,
+                'change',
+                this._propertyChanged,
+                false
+            );
         }
 
         /**
@@ -698,13 +769,17 @@ module plat.controls {
          * and the user didn't initially bind to a valid string value else just the string value.
          */
         protected _getDate(): any {
-            let value = (<HTMLInputElement>this.element).value,
-                regex = this._dateRegex;
+            const value = (<HTMLInputElement>this.element).value;
+            const regex = this._dateRegex;
 
             if (this._propertyType !== 'string' && regex.test(value)) {
-                let exec = regex.exec(value);
+                const exec = regex.exec(value);
                 if (exec.length === 4) {
-                    return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]));
+                    return new Date(
+                        Number(exec[1]),
+                        Number(exec[2]) - 1,
+                        Number(exec[3])
+                    );
                 }
             }
 
@@ -724,19 +799,40 @@ module plat.controls {
          * and the user didn't initially bind to a valid string value else just the string value.
          */
         protected _getDateTimeLocal(): Date {
-            let value = (<HTMLInputElement>this.element).value,
-                regex = this._dateTimeLocalRegex;
+            const value = (<HTMLInputElement>this.element).value;
+            const regex = this._dateTimeLocalRegex;
 
             if (this._propertyType !== 'string' && regex.test(value)) {
-                let exec = regex.exec(value);
+                const exec = regex.exec(value);
                 if (exec.length === 8) {
                     if (isNull(exec[6])) {
-                        return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]));
+                        return new Date(
+                            Number(exec[1]),
+                            Number(exec[2]) - 1,
+                            Number(exec[3]),
+                            Number(exec[4]),
+                            Number(exec[5])
+                        );
                     } else if (isNull(exec[7])) {
-                        return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]), Number(exec[6]));
+                        return new Date(
+                            Number(exec[1]),
+                            Number(exec[2]) - 1,
+                            Number(exec[3]),
+                            Number(exec[4]),
+                            Number(exec[5]),
+                            Number(exec[6])
+                        );
                     }
 
-                    return new Date(Number(exec[1]), Number(exec[2]) - 1, Number(exec[3]), Number(exec[4]), Number(exec[5]), Number(exec[6]), Number(exec[7]));
+                    return new Date(
+                        Number(exec[1]),
+                        Number(exec[2]) - 1,
+                        Number(exec[3]),
+                        Number(exec[4]),
+                        Number(exec[5]),
+                        Number(exec[6]),
+                        Number(exec[7])
+                    );
                 }
             }
 
@@ -756,8 +852,8 @@ module plat.controls {
          * @returns {plat.controls.IFile} The input file.
          */
         protected _getFile(): IFile {
-            let element = <HTMLInputElement>this.element,
-                value = element.value;
+            const element = <HTMLInputElement>this.element;
+            const value = element.value;
 
             if (this.__fileSupported) {
                 if (element.files.length > 0) {
@@ -775,7 +871,7 @@ module plat.controls {
                 size: undefined,
                 msDetachStream: noop,
                 msClose: noop,
-                slice: (): Blob => <Blob>{ }
+                slice: (): Blob => <Blob>{},
             };
         }
 
@@ -790,8 +886,8 @@ module plat.controls {
          *
          * @returns {Array<plat.controls.IFile>} The input files.
          */
-        protected _getFiles(): Array<IFile> {
-            let element = <HTMLInputElement>this.element;
+        protected _getFiles(): IFile[] {
+            const element = <HTMLInputElement>this.element;
 
             if (this.__fileSupported) {
                 return Array.prototype.slice.call(element.files);
@@ -799,14 +895,14 @@ module plat.controls {
 
             // this case should never be hit since ie9 does not support multi-file uploads,
             // but kept in here for now for consistency's sake
-            let filelist = element.value.split(/,|;/g),
-                length = filelist.length,
-                files: Array<IFile> = [],
-                fileValue: string,
-                blobSlice = (): Blob => <Blob>{};
+            const fileList = element.value.split(/,|;/g);
+            const length = fileList.length;
+            const files: IFile[] = [];
+            let fileValue: string;
+            const blobSlice = (): Blob => <Blob>{};
 
-            for (let i = 0; i < length; ++i) {
-                fileValue = filelist[i];
+            for (let i = 0; i < length; i += 1) {
+                fileValue = fileList[i];
                 files.push(<any>{
                     name: fileValue.replace(this.__fileNameRegex, ''),
                     path: fileValue,
@@ -815,7 +911,7 @@ module plat.controls {
                     size: undefined,
                     msDetachStream: noop,
                     msClose: noop,
-                    slice: blobSlice
+                    slice: blobSlice,
                 });
             }
 
@@ -833,14 +929,14 @@ module plat.controls {
          *
          * @returns {Array<string>} The selected values.
          */
-        protected _getSelectedValues(): Array<string> {
-            let options = (<HTMLSelectElement>this.element).options,
-                length = options.length,
-                option: HTMLOptionElement,
-                selectedValues: Array<string> = [];
+        protected _getSelectedValues(): string[] {
+            const options = (<HTMLSelectElement>this.element).options;
+            const length = options.length;
+            const selectedValues: string[] = [];
+            let option: HTMLOptionElement;
 
-            for (let i = 0; i < length; ++i) {
-                option = <HTMLOptionElement>options[i];
+            for (let i = 0; i < length; i += 1) {
+                option = options[i];
                 if (option.selected) {
                     selectedValues.push(option.value);
                 }
@@ -866,7 +962,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setText(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setText(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
@@ -879,6 +979,7 @@ module plat.controls {
                         this._setValue(newValue);
                     }
                     this._propertyChanged();
+
                     return;
                 }
             }
@@ -902,7 +1003,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setRange(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setRange(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
@@ -915,6 +1020,7 @@ module plat.controls {
                         this._setValue(newValue);
                     }
                     this._propertyChanged();
+
                     return;
                 }
             }
@@ -938,7 +1044,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setHidden(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setHidden(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
@@ -951,6 +1061,7 @@ module plat.controls {
                         this._setValue(newValue);
                     }
                     this._propertyChanged();
+
                     return;
                 }
             }
@@ -972,7 +1083,7 @@ module plat.controls {
          * @returns {void}
          */
         protected _setValue(newValue: any): void {
-            let element = <HTMLInputElement>this.element;
+            const element = <HTMLInputElement>this.element;
 
             if (!isString(newValue)) {
                 if (isNumber(newValue)) {
@@ -1007,7 +1118,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setChecked(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setChecked(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             } else if (!isBoolean(newValue)) {
@@ -1015,6 +1130,7 @@ module plat.controls {
                 if (firstTime === true) {
                     (<HTMLInputElement>this.element).checked = newValue;
                     this._propertyChanged();
+
                     return;
                 }
             }
@@ -1036,13 +1152,14 @@ module plat.controls {
          * @returns {void}
          */
         protected _setRadio(newValue: any): void {
-            let element = <HTMLInputElement>this.element;
+            const element = <HTMLInputElement>this.element;
             if (this.__isSelf) {
                 return;
             } else if (isNull(newValue)) {
                 if (element.checked) {
                     this._propertyChanged();
                 }
+
                 return;
             } else if (!isString(newValue)) {
                 if (isNumber(newValue)) {
@@ -1054,7 +1171,7 @@ module plat.controls {
                 }
             }
 
-            element.checked = (element.value === newValue);
+            element.checked = element.value === newValue;
         }
 
         /**
@@ -1073,7 +1190,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setDate(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setDate(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
@@ -1082,6 +1203,7 @@ module plat.controls {
                 if (this._dateRegex.test(newValue)) {
                     this._propertyType = 'string';
                     this._setValue(newValue);
+
                     return;
                 }
 
@@ -1094,8 +1216,8 @@ module plat.controls {
                 return;
             }
 
-            let day = (`0${newValue.getDate()}`).slice(-2),
-                month = (`0${(newValue.getMonth() + 1)}`).slice(-2);
+            const day = `0${newValue.getDate()}`.slice(-2);
+            const month = `0${<number>newValue.getMonth() + 1}`.slice(-2);
 
             this._setValue(`${newValue.getFullYear()}-${month}-${day}`);
         }
@@ -1116,7 +1238,11 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setDateTimeLocal(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setDateTimeLocal(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
@@ -1125,6 +1251,7 @@ module plat.controls {
                 if (this._dateTimeLocalRegex.test(newValue)) {
                     this._propertyType = 'string';
                     this._setValue(newValue);
+
                     return;
                 }
 
@@ -1137,14 +1264,16 @@ module plat.controls {
                 return;
             }
 
-            let day = (`0${newValue.getDate()}`).slice(-2),
-                month = (`0${(newValue.getMonth() + 1)}`).slice(-2),
-                hour = (`0${newValue.getHours()}`).slice(-2),
-                minutes = (`0${newValue.getMinutes()}`).slice(-2),
-                seconds = (`0${newValue.getSeconds()}`).slice(-2),
-                ms = newValue.getMilliseconds();
+            const day = `0${newValue.getDate()}`.slice(-2);
+            const month = `0${<number>newValue.getMonth() + 1}`.slice(-2);
+            const hour = `0${newValue.getHours()}`.slice(-2);
+            const minutes = `0${newValue.getMinutes()}`.slice(-2);
+            const seconds = `0${newValue.getSeconds()}`.slice(-2);
+            const ms = newValue.getMilliseconds();
 
-            this._setValue(`${newValue.getFullYear()}-${month}-${day}T${hour}:${minutes}:${seconds}.${ms}`);
+            this._setValue(
+                `${newValue.getFullYear()}-${month}-${day}T${hour}:${minutes}:${seconds}.${ms}`
+            );
         }
 
         /**
@@ -1163,20 +1292,29 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setSelectedIndex(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setSelectedIndex(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
 
-            let element = <HTMLSelectElement>this.element,
-                value = element.value;
+            const element = <HTMLSelectElement>this.element;
+            const value = element.value;
 
             if (isNull(newValue)) {
-                if (firstTime === true || !this._document.body.contains(element)) {
+                if (
+                    firstTime === true ||
+                    !this._document.body.contains(element)
+                ) {
                     this._propertyChanged();
+
                     return;
                 }
                 element.selectedIndex = -1;
+
                 return;
             } else if (!isString(newValue)) {
                 if (isNumber(newValue)) {
@@ -1186,7 +1324,11 @@ module plat.controls {
                     this._propertyType = 'boolean';
                     newValue = newValue.toString();
                 } else {
-                    this._log.info('Trying to bind an invalid value to a <select> element using a ' + this.type + '.');
+                    this._log.info(
+                        `Trying to bind an invalid value to a <select> element using a ${
+                            this.type
+                        }.`
+                    );
                 }
             }
 
@@ -1198,6 +1340,7 @@ module plat.controls {
                     element.value = value;
                     this._propertyChanged();
                 }
+
                 return;
             }
 
@@ -1225,40 +1368,48 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setSelectedIndices(newValue: any, oldValue: any, firstTime?: boolean): void {
+        protected _setSelectedIndices(
+            newValue: any,
+            oldValue: any,
+            firstTime?: boolean
+        ): void {
             if (this.__isSelf) {
                 return;
             }
 
-            let options = (<HTMLSelectElement>this.element).options,
-                length = isNull(options) ? 0 : options.length,
-                option: HTMLOptionElement,
-                nullValue = isNull(newValue);
+            const nullValue = isNull(newValue);
+            const options = (<HTMLSelectElement>this.element).options;
+            let length = isNull(options) ? 0 : options.length;
+            let option: HTMLOptionElement;
 
             if (nullValue || !isArray(newValue)) {
                 if (firstTime === true) {
                     this._propertyChanged();
                 }
                 // unselects the options unless a match is found
-                while (length-- > 0) {
-                    option = <HTMLOptionElement>options[length];
-                    if (!nullValue && option.value === '' + newValue) {
+                while (length > 0) {
+                    length -= 1;
+                    option = options[length];
+                    if (!nullValue && option.value === `${newValue}`) {
                         option.selected = true;
+
                         return;
                     }
 
                     option.selected = false;
                 }
+
                 return;
             }
 
-            let value: any,
-                numberValue: number,
-                index: number,
-                highestIndex = Infinity;
+            let value: any;
+            let numberValue: number;
+            let index: number;
+            let highestIndex = Infinity;
 
-            while (length-- > 0) {
-                option = <HTMLOptionElement>options[length];
+            while (length > 0) {
+                length -= 1;
+                option = options[length];
                 value = option.value;
 
                 if (newValue.indexOf(value) !== -1) {
@@ -1267,15 +1418,28 @@ module plat.controls {
                 }
 
                 numberValue = Number(value);
-                if (isNumber(numberValue) && (index = newValue.indexOf(numberValue)) !== -1) {
+                index = newValue.indexOf(numberValue);
+
+                const trueIndex = newValue.indexOf(true);
+                const falseIndex = newValue.indexOf(false);
+
+                if (isNumber(numberValue) && index !== -1) {
                     if (index < highestIndex) {
                         this._propertyType = 'number';
                         highestIndex = index;
                     }
                     option.selected = true;
                     continue;
-                } else if ((value === 'true' && (index = newValue.indexOf(true)) !== -1) ||
-                    value === 'false' && (index = newValue.indexOf(false)) !== -1) {
+                } else if (
+                    (value === 'true' && trueIndex !== -1) ||
+                    (value === 'false' && falseIndex !== -1)
+                ) {
+                    if (trueIndex !== -1) {
+                        index = trueIndex;
+                    } else {
+                        index = falseIndex;
+                    }
+
                     if (index < highestIndex) {
                         this._propertyType = 'boolean';
                         highestIndex = index;
@@ -1305,7 +1469,7 @@ module plat.controls {
                 return;
             }
 
-            let element = this.element;
+            const element = this.element;
             if (isNull(element)) {
                 return;
             }
@@ -1347,9 +1511,11 @@ module plat.controls {
                             break;
                         case 'file':
                             this._propertyType = 'nullable';
-                            let multi = (<HTMLInputElement>element).multiple;
+                            const multi = (<HTMLInputElement>element).multiple;
                             this._addEventType = this._addChangeEventListener;
-                            this._getter = multi ? this._getFiles : this._getFile;
+                            this._getter = multi
+                                ? this._getFiles
+                                : this._getFile;
                             break;
                         case 'hidden':
                             this._getter = this._getValue;
@@ -1361,7 +1527,6 @@ module plat.controls {
                             this._addEventType = this._addTextEventListener;
                             this._getter = this._getValue;
                             this._setter = this._setText;
-                            break;
                     }
                     break;
                 case 'textarea':
@@ -1376,6 +1541,7 @@ module plat.controls {
                     this._addEventType = this._addButtonEventListener;
                     this._getter = this._getTextContent;
                     break;
+                default:
             }
         }
 
@@ -1391,17 +1557,24 @@ module plat.controls {
          * @returns {void}
          */
         protected _watchExpression(): void {
-            let contextExpression = this._contextExpression,
-                context = this.evaluateExpression(contextExpression);
+            const contextExpression = this._contextExpression;
+            let context = this.evaluateExpression(contextExpression);
 
             if (!isObject(context)) {
-                if (isNull(context) && contextExpression.identifiers.length > 0) {
-                    context = this._createContext(contextExpression.identifiers[0]);
+                if (
+                    isNull(context) &&
+                    contextExpression.identifiers.length > 0
+                ) {
+                    context = this._createContext(
+                        contextExpression.identifiers[0]
+                    );
                 } else {
-                    this._log.warn(this.type + ' is trying to index into a primitive type. ' +
-                        this._contextExpression.expression + ' is already defined and not ' +
-                        'an object when trying to evaluate ' + this.type + '="' +
-                        this._expression.expression + '"');
+                    this._log.warn(
+                        `Cannot index into a non-object type: ${this.type}="${
+                            this._expression.expression
+                        }"`
+                    );
+
                     return;
                 }
             }
@@ -1414,12 +1587,15 @@ module plat.controls {
                 if (isNull(context[property])) {
                     context[property] = [];
                 }
-                this.observeArray((arrayInfo: Array<observable.IArrayChanges<string>>): void => {
-                    this._setter(arrayInfo[0].object, null, true);
-                }, contextExpression + '.' + property);
+                this.observeArray(
+                    (arrayInfo: observable.IArrayChanges<string>[]): void => {
+                        this._setter(arrayInfo[0].object, null, true);
+                    },
+                    `${contextExpression}.${property}`
+                );
             }
 
-            let expression = this._expression;
+            const expression = this._expression;
             this.observeExpression((newValue: any, oldValue: any): void => {
                 this._setter(newValue, oldValue);
             }, expression);
@@ -1440,9 +1616,9 @@ module plat.controls {
          * @returns {any} The created context.
          */
         protected _createContext(identifier: string): any {
-            let split = identifier.split('.'),
-                start = split.shift().slice(1),
-                parent = this.parent;
+            const split = identifier.split('.');
+            const start = split.shift().slice(1);
+            let parent = this.parent;
 
             if (start === __ROOT_CONTEXT_RESOURCE) {
                 identifier = split.join('.');
@@ -1471,24 +1647,32 @@ module plat.controls {
         protected _castProperty(value: any, type?: any): any {
             let castValue: any;
 
-            type = type || this._propertyType;
+            if (isNull(type)) {
+                type = this._propertyType;
+            }
 
             if (isNull(type)) {
                 return value;
             } else if (isObject(value)) {
                 if (isArray(value)) {
-                    let length = value.length;
+                    const length = value.length;
 
                     castValue = [];
 
-                    for (let i = 0; i < length; ++i) {
+                    for (let i = 0; i < length; i += 1) {
                         castValue.push(this._castProperty(value[i], type));
                     }
-                } else if (isDate(value) || isFile(value) || isPromise(value) || isWindow(value) || isNode(value)) {
+                } else if (
+                    isDate(value) ||
+                    isFile(value) ||
+                    isPromise(value) ||
+                    isWindow(value) ||
+                    isNode(value)
+                ) {
                     castValue = value;
                 } else {
-                    let keys = Object.keys(value),
-                        key: string;
+                    const keys = Object.keys(value);
+                    let key: string;
 
                     castValue = {};
 
@@ -1524,7 +1708,6 @@ module plat.controls {
                                 break;
                             default:
                                 castValue = !!value;
-                                break;
                         }
                         break;
                     case 'nullable':
@@ -1534,7 +1717,6 @@ module plat.controls {
                         break;
                     default:
                         castValue = value;
-                        break;
                 }
             }
 
@@ -1558,14 +1740,14 @@ module plat.controls {
                 return;
             }
 
-            let context = this.evaluateExpression(this._contextExpression);
+            const context = this.evaluateExpression(this._contextExpression);
 
             if (!isObject(context)) {
                 return;
             }
 
-            let property = this._property,
-                newValue = this._castProperty(this._getter());
+            const property = this._property;
+            const newValue = this._castProperty(this._getter());
 
             if (context[property] === newValue) {
                 return;
@@ -1589,15 +1771,15 @@ module plat.controls {
          * @returns {void}
          */
         protected _initializeRadio(): void {
-            let element = this.element;
+            const element = this.element;
 
             this._addEventType = this._addChangeEventListener;
             this._getter = this._getValue;
             this._setter = this._setRadio;
 
             if (!element.hasAttribute('name')) {
-                let attr = camelCase(this.type),
-                    expression = this.attributes[attr];
+                const attr = camelCase(this.type);
+                const expression = this.attributes[attr];
 
                 element.setAttribute('name', expression);
             }
@@ -1621,11 +1803,11 @@ module plat.controls {
          * @returns {void}
          */
         protected _initializeSelect(): void {
-            let element = <HTMLSelectElement>this.element,
-                multiple = element.multiple,
-                options = element.options,
-                length = options.length,
-                option: HTMLOptionElement;
+            const element = <HTMLSelectElement>this.element;
+            const multiple = element.multiple;
+            const options = element.options;
+            const length = options.length;
+            let option: HTMLOptionElement;
 
             this._addEventType = this._addChangeEventListener;
             if (multiple) {
@@ -1636,8 +1818,8 @@ module plat.controls {
                 this._setter = this._setSelectedIndex;
             }
 
-            for (let i = 0; i < length; ++i) {
-                option = <HTMLOptionElement>options[i];
+            for (let i = 0; i < length; i += 1) {
+                option = options[i];
                 if (!option.hasAttribute('value')) {
                     option.setAttribute('value', option.textContent);
                 }
@@ -1658,9 +1840,13 @@ module plat.controls {
          * is implementing {@link plat.observable.ISupportTwoWayBinding|ISupportTwoWayBinding}.
          */
         protected _observingBindableProperty(): boolean {
-            let templateControl = <ui.BindControl>this.templateControl;
+            const templateControl = <ui.BindControl>this.templateControl;
 
-            if (isObject(templateControl) && isFunction(templateControl.onInput) && isFunction(templateControl.observeProperties)) {
+            if (
+                isObject(templateControl) &&
+                isFunction(templateControl.onInput) &&
+                isFunction(templateControl.observeProperties)
+            ) {
                 templateControl.onInput((newValue: any): void => {
                     this._getter = (): any => newValue;
                     this._propertyChanged();
@@ -1691,39 +1877,57 @@ module plat.controls {
          *
          * @returns {plat.IRemoveListener} A function to stop listening for changes.
          */
-        protected _observeProperty(listener: Function, identifier?: any, autocast?: boolean, arrayMutations?: boolean): IRemoveListener {
+        protected _observeProperty(
+            listener: Function,
+            identifier?: any,
+            autocast?: boolean,
+            arrayMutations?: boolean
+        ): IRemoveListener {
             let parsedIdentifier: string;
             if (isEmpty(identifier)) {
                 parsedIdentifier = this._expression.expression;
             } else if (isNumber(identifier)) {
-                parsedIdentifier = this._expression.expression + '.' + identifier;
+                parsedIdentifier = `${
+                    this._expression.expression
+                }.${identifier}`;
             } else {
-                let _parser = this._parser,
-                    identifierExpression = _parser.parse(identifier),
-                    identifiers = identifierExpression.identifiers;
+                const _parser = this._parser;
+                const identifierExpression = _parser.parse(identifier);
+                const identifiers = identifierExpression.identifiers;
 
                 if (identifiers.length !== 1) {
-                    this._log.warn('Only 1 identifier path allowed when observing changes to a bound property\'s child with a control ' +
-                        'implementing observable.ISupportTwoWayBinding and working with ' + this.type);
+                    this._log.warn(
+                        `Only 1 identifier path allowed with ${this.type}`
+                    );
+
                     return;
                 }
 
-                let expression = _parser.parse(this._expression.expression + '.' + identifiers[0]);
+                const expression = _parser.parse(
+                    `${this._expression.expression}.${identifiers[0]}`
+                );
 
                 parsedIdentifier = expression.identifiers[0];
 
-                let split = parsedIdentifier.split('.');
+                const split = parsedIdentifier.split('.');
                 split.pop();
 
-                let contextExpression = split.join('.'),
-                    context = this.evaluateExpression(contextExpression);
+                const contextExpression = split.join('.');
+                let context = this.evaluateExpression(contextExpression);
 
                 if (!isObject(context)) {
                     if (isNull(context)) {
-                        context = this._ContextManager.createContext(this.parent, contextExpression);
+                        context = this._ContextManager.createContext(
+                            this.parent,
+                            contextExpression
+                        );
                     } else {
-                        this._log.warn('A control implementing observable.ISupportTwoWayBinding is trying to index into a primitive type ' +
-                            'when trying to evaluate ' + this.type + '="' + this._expression.expression + '"');
+                        this._log.warn(
+                            `Cannot index a primitive type: ${this.type}="${
+                                this._expression.expression
+                            }"`
+                        );
+
                         return;
                     }
                 }
@@ -1734,21 +1938,29 @@ module plat.controls {
 
             let removeListener: IRemoveListener;
             if (arrayMutations === true) {
-                removeListener = this.observeArray((changes: Array<observable.IArrayChanges<any>>): void => {
-                    listener(changes, identifier);
-                }, parsedIdentifier);
+                removeListener = this.observeArray(
+                    (changes: observable.IArrayChanges<any>[]): void => {
+                        listener(changes, identifier);
+                    },
+                    parsedIdentifier
+                );
             } else {
-                removeListener = this.observe((newValue: any, oldValue: any): void => {
-                    if (this.__isSelf || newValue === oldValue) {
-                        return;
-                    } else if (autocast) {
-                        this._propertyType = this._getPropertyType(newValue);
-                    }
+                removeListener = this.observe(
+                    (newValue: any, oldValue: any): void => {
+                        if (this.__isSelf || newValue === oldValue) {
+                            return;
+                        } else if (autocast) {
+                            this._propertyType = this._getPropertyType(
+                                newValue
+                            );
+                        }
 
-                    listener(newValue, oldValue, identifier);
-                }, parsedIdentifier);
+                        listener(newValue, oldValue, identifier);
+                    },
+                    parsedIdentifier
+                );
 
-                let value = this.evaluateExpression(parsedIdentifier);
+                const value = this.evaluateExpression(parsedIdentifier);
                 if (autocast) {
                     this._propertyType = this._getPropertyType(value);
                 }

@@ -1,33 +1,33 @@
-﻿/// <reference path="../../references.d.ts" />
+/// <reference path="../../references.d.ts" />
 
 module tests.app {
-    var called = false;
+    let called = false;
     class App extends plat.App {
-        suspend() {
+        public suspend() {
             called = true;
         }
-        resume() {
+        public resume() {
             called = true;
         }
-        online() {
+        public online() {
             called = true;
         }
-        offline() {
+        public offline() {
             called = true;
         }
-        error() {
+        public error() {
             called = true;
         }
-        customEvent() {
+        public customEvent() {
             called = true;
         }
     }
 
-    var _AppStatic = plat.acquire(plat.IAppStatic),
-        _EventManager = plat.acquire(plat.events.IEventManagerStatic),
-        _LifecycleEvent = plat.acquire(plat.events.ILifecycleEventStatic),
-        compat: plat.Compat = plat.acquire(plat.Compat),
-        app: App;
+    const _AppStatic = plat.acquire(plat.IAppStatic);
+    const _EventManager = plat.acquire(plat.events.IEventManagerStatic);
+    const _LifecycleEvent = plat.acquire(plat.events.ILifecycleEventStatic);
+    const compat: plat.Compat = plat.acquire(plat.Compat);
+    let app: App;
 
     describe('App Tests', () => {
         beforeEach(() => {
@@ -68,7 +68,7 @@ module tests.app {
         });
 
         it('should test on and dispatchEvent', () => {
-            var remove = app.on('customEvent', app.customEvent);
+            const remove = app.on('customEvent', app.customEvent);
 
             app.dispatchEvent('customEvent');
 

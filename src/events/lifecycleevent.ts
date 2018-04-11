@@ -1,4 +1,4 @@
-﻿module plat.events {
+namespace plat.events {
     'use strict';
 
     /**
@@ -29,8 +29,8 @@
          *
          * @returns {plat.events.LifecycleEvent} The event instance.
          */
-        static dispatch(name: string, sender: any): LifecycleEvent {
-            let event: LifecycleEvent = acquire(__LifecycleEventInstance);
+        public static dispatch(name: string, sender: any): LifecycleEvent {
+            const event: LifecycleEvent = acquire(__LifecycleEventInstance);
             event.initialize(name, sender);
             EventManager.sendEvent(event);
 
@@ -49,7 +49,7 @@
          * @param {string} name The name of the event.
          * @param {any} sender The sender of the event.
          */
-        initialize(name: string, sender: any): void {
+        public initialize(name: string, sender: any): void {
             super.initialize(name, sender, this._EventManager.DIRECT);
         }
     }
@@ -61,9 +61,19 @@
         return LifecycleEvent;
     }
 
-    register.injectable(__LifecycleEventStatic, ILifecycleEventStatic, null, __STATIC);
+    register.injectable(
+        __LifecycleEventStatic,
+        ILifecycleEventStatic,
+        null,
+        __STATIC
+    );
 
-    register.injectable(__LifecycleEventInstance, LifecycleEvent, null, __INSTANCE);
+    register.injectable(
+        __LifecycleEventInstance,
+        LifecycleEvent,
+        null,
+        __INSTANCE
+    );
 
     /**
      * @name ILifecycleEventStatic

@@ -1,4 +1,3 @@
-﻿
 /**
  * @name animations
  * @memberof plat.ui
@@ -8,7 +7,7 @@
  * @description
  * Holds all the classes and interfaces related to UI animation components for platypus.
  */
-module plat.ui.animations {
+namespace plat.ui.animations {
     'use strict';
 
     /**
@@ -34,7 +33,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the animated element.
          */
-        className: string = __SimpleAnimation;
+        public className: string = __SimpleAnimation;
 
         /**
          * @name options
@@ -47,7 +46,7 @@ module plat.ui.animations {
          * @description
          * An optional options object that can denote a pseudo element animation.
          */
-        options: ISimpleCssAnimationOptions;
+        public options: ISimpleCssAnimationOptions;
 
         /**
          * @name _cancelAnimation
@@ -73,7 +72,7 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        initialize(): void {
+        public initialize(): void {
             addClass(this.element, this.className + __INIT_SUFFIX);
         }
 
@@ -88,28 +87,41 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        start(): void {
+        public start(): void {
             this._cancelAnimation = requestAnimationFrameGlobal((): void => {
-                let element = this.element,
-                    className = this.className;
+                const element = this.element;
+                const className = this.className;
 
                 if (element.offsetParent === null) {
                     this._dispose();
                     this.end();
+
                     return;
                 }
 
                 addClass(element, className);
 
-                let animationId = this._animationEvents.$animation,
-                    options = this.options || <ISimpleCssAnimationOptions>{},
-                    computedStyle = this._window.getComputedStyle(element, options.pseudo),
-                    animationName = computedStyle[<any>(animationId + 'Name')];
+                const animationId = this._animationEvents.$animation;
+                let options = this.options;
 
-                if (animationName === '' || animationName === 'none' ||
-                    computedStyle[<any>(animationId + 'PlayState')] === 'paused') {
+                if (!isObject(options)) {
+                    options = <any>{};
+                }
+
+                const computedStyle = this._window.getComputedStyle(
+                    element,
+                    options.pseudo
+                );
+                const animationName = computedStyle[<any>`${animationId}Name`];
+
+                if (
+                    animationName === '' ||
+                    animationName === 'none' ||
+                    computedStyle[<any>`${animationId}PlayState`] === 'paused'
+                ) {
                     this._dispose();
                     this.end();
+
                     return;
                 }
 
@@ -118,10 +130,12 @@ module plat.ui.animations {
                 }
 
                 this._cancelAnimation = this.animationEnd((): void => {
-                    this._cancelAnimation = requestAnimationFrameGlobal((): void => {
-                        this._dispose();
-                        this.end();
-                    });
+                    this._cancelAnimation = requestAnimationFrameGlobal(
+                        (): void => {
+                            this._dispose();
+                            this.end();
+                        }
+                    );
                 });
             });
         }
@@ -136,18 +150,22 @@ module plat.ui.animations {
          * @description
          * A function to be called to pause the animation.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has been paused.
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation has been paused.
          */
-        pause(): async.IThenable<void> {
+        public pause(): async.Promise<void> {
             if (this._cancelAnimation === noop) {
                 return this._Promise.resolve();
             }
 
-            let animationEvents = this._compat.animationEvents;
+            const animationEvents = this._compat.animationEvents;
+
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     if (this._cancelAnimation !== noop) {
-                        this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'paused';
+                        this.element.style[
+                            <any>`${animationEvents.$animation}PlayState`
+                        ] =
+                            'paused';
                     }
                     resolve();
                 });
@@ -164,18 +182,22 @@ module plat.ui.animations {
          * @description
          * A function to be called to resume a paused animation.
          *
-         * @returns {plat.async.IThenable<void>} A new promise that resolves when the animation has resumed.
+         * @returns {plat.async.Promise<void>} A new promise that resolves when the animation has resumed.
          */
-        resume(): async.IThenable<void> {
+        public resume(): async.Promise<void> {
             if (this._cancelAnimation === noop) {
                 return this._Promise.resolve();
             }
 
-            let animationEvents = this._compat.animationEvents;
+            const animationEvents = this._compat.animationEvents;
+
             return new this._Promise<void>((resolve): void => {
                 requestAnimationFrameGlobal((): void => {
                     if (this._cancelAnimation !== noop) {
-                        this.element.style[<any>(animationEvents.$animation + 'PlayState')] = 'running';
+                        this.element.style[
+                            <any>`${animationEvents.$animation}PlayState`
+                        ] =
+                            'running';
                     }
                     resolve();
                 });
@@ -194,7 +216,7 @@ module plat.ui.animations {
          *
          * @returns {void}
          */
-        cancel(): void {
+        public cancel(): void {
             this._cancelAnimation();
             this._dispose();
             this.end();
@@ -212,8 +234,11 @@ module plat.ui.animations {
          * @returns {void}
          */
         protected _dispose(): void {
-            let className = this.className;
-            removeClass(this.element, className + ' ' + className + __INIT_SUFFIX);
+            const className = this.className;
+            removeClass(
+                this.element,
+                `${className} ${className}${__INIT_SUFFIX}`
+            );
             this._cancelAnimation = noop;
         }
     }
@@ -280,7 +305,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the element fading in.
          */
-        className: string = __FadeIn;
+        public className: string = __FadeIn;
     }
 
     register.animation(__FadeIn, FadeIn);
@@ -307,7 +332,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the element fading out.
          */
-        className: string = __FadeOut;
+        public className: string = __FadeOut;
     }
 
     register.animation(__FadeOut, FadeOut);
@@ -334,7 +359,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the entering element.
          */
-        className: string = __Enter;
+        public className: string = __Enter;
     }
 
     register.animation(__Enter, Enter);
@@ -361,7 +386,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the leaving element.
          */
-        className: string = __Leave;
+        public className: string = __Leave;
     }
 
     register.animation(__Leave, Leave);
@@ -388,7 +413,7 @@ module plat.ui.animations {
          * @description
          * The class name added to the leaving element.
          */
-        className: string = __Move;
+        public className: string = __Move;
     }
 
     register.animation(__Move, Move);

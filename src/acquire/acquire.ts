@@ -6,7 +6,7 @@
  * @description
  * The entry point into the platypus library.
  */
-module plat {
+namespace plat {
     'use strict';
 
     if (!isUndefined(window)) {
@@ -23,107 +23,6 @@ module plat {
      * @name acquire
      * @memberof plat
      * @kind function
-     * @variation 0
-     * @access public
-     * @static
-     *
-     * @description
-     * Returns the requested injectable dependency.
-     *
-     * @typeparam {any} T The type of the requested dependency.
-     *
-     * @param {() => T} dependency The dependency Type to return.
-     *
-     * @returns T The requested dependency.
-     */
-    export function acquire<T>(dependency: (...args: Array<any>) => T): T;
-    /**
-     * @name acquire
-     * @memberof plat
-     * @kind function
-     * @variation 0
-     * @access public
-     * @static
-     *
-     * @description
-     * Returns the requested injectable dependency.
-     *
-     * @typeparam {any} T The type of the requested dependency.
-     *
-     * @param {() => T} dependency The dependency Type to return.
-     *
-     * @returns T The requested dependency.
-     */
-    export function acquire<T>(dependency: new (...args: Array<any>) => T): T;
-    /**
-     * @name acquire
-     * @memberof plat
-     * @kind function
-     * @variation 1
-     * @access public
-     * @static
-     *
-     * @description
-     * Returns the requested injectable dependency.
-     *
-     * @param {Function} dependency The dependency Type to return.
-     *
-     * @returns {any} The requested dependency.
-     */
-    export function acquire(dependency: Function): any;
-    /**
-     * @name acquire
-     * @memberof plat
-     * @kind function
-     * @variation 2
-     * @access public
-     * @static
-     *
-     * @description
-     * Returns the requested injectable dependency.
-     *
-     * @param {Function} dependency An array of Types specifying the injectable dependencies.
-     *
-     * @returns {Array<any>} The dependencies, in the order they were requested.
-     */
-    export function acquire(dependencies: Array<Function>): Array<any>;
-    /**
-     * @name acquire
-     * @memberof plat
-     * @kind function
-     * @variation 3
-     * @access public
-     * @static
-     *
-     * @description
-     * Returns the requested injectable dependency.
-     *
-     * @param {string} dependency The injectable dependency type to return.
-     *
-     * @returns {any} The requested dependency.
-     */
-    export function acquire(dependency: string): any;
-    /**
-     * @name acquire
-     * @memberof plat
-     * @kind function
-     * @variation 4
-     * @access public
-     * @static
-     *
-     * @description
-     * Gathers dependencies and returns them as an array in the order they were requested.
-     *
-     * @param {Array<string>} dependencies An array of strings specifying the injectable dependencies.
-     *
-     * @returns {Array<any>} The dependencies, in the order they were requested.
-     */
-    export function acquire(dependencies: Array<string>): Array<any>;
-    /**
-     * @name acquire
-     * @memberof plat
-     * @kind function
-     * @variation 5
      * @access public
      * @static
      *
@@ -134,21 +33,123 @@ module plat {
      *
      * @returns {Array<any>} The dependencies, in the order they were requested.
      */
-    export function acquire(dependencies: Array<any>): Array<any>;
-    export function acquire(dependencies: any): Array<any> {
-        let deps: Array<dependency.Injector<any>>,
-            array = isArray(dependencies);
+    export function acquire<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4),
+            ((...args: any[]) => T5) | (new (...args: any[]) => T5),
+            ((...args: any[]) => T6) | (new (...args: any[]) => T6),
+            ((...args: any[]) => T7) | (new (...args: any[]) => T7),
+            ((...args: any[]) => T8) | (new (...args: any[]) => T8),
+            ((...args: any[]) => T9) | (new (...args: any[]) => T9),
+            ((...args: any[]) => T10) | (new (...args: any[]) => T10)
+        ]
+    ): [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10];
+    export function acquire<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4),
+            ((...args: any[]) => T5) | (new (...args: any[]) => T5),
+            ((...args: any[]) => T6) | (new (...args: any[]) => T6),
+            ((...args: any[]) => T7) | (new (...args: any[]) => T7),
+            ((...args: any[]) => T8) | (new (...args: any[]) => T8),
+            ((...args: any[]) => T9) | (new (...args: any[]) => T9)
+        ]
+    ): [T1, T2, T3, T4, T5, T6, T7, T8, T9];
+    export function acquire<T1, T2, T3, T4, T5, T6, T7, T8>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4),
+            ((...args: any[]) => T5) | (new (...args: any[]) => T5),
+            ((...args: any[]) => T6) | (new (...args: any[]) => T6),
+            ((...args: any[]) => T7) | (new (...args: any[]) => T7),
+            ((...args: any[]) => T8) | (new (...args: any[]) => T8)
+        ]
+    ): [T1, T2, T3, T4, T5, T6, T7, T8];
+    export function acquire<T1, T2, T3, T4, T5, T6, T7>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4),
+            ((...args: any[]) => T5) | (new (...args: any[]) => T5),
+            ((...args: any[]) => T6) | (new (...args: any[]) => T6),
+            ((...args: any[]) => T7) | (new (...args: any[]) => T7)
+        ]
+    ): [T1, T2, T3, T4, T5, T6, T7];
+    export function acquire<T1, T2, T3, T4, T5, T6>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4),
+            ((...args: any[]) => T5) | (new (...args: any[]) => T5),
+            ((...args: any[]) => T6) | (new (...args: any[]) => T6)
+        ]
+    ): [T1, T2, T3, T4, T5, T6];
+    export function acquire<T1, T2, T3, T4, T5>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4),
+            ((...args: any[]) => T5) | (new (...args: any[]) => T5)
+        ]
+    ): [T1, T2, T3, T4, T5];
+    export function acquire<T1, T2, T3, T4>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3),
+            ((...args: any[]) => T4) | (new (...args: any[]) => T4)
+        ]
+    ): [T1, T2, T3, T4];
+    export function acquire<T1, T2, T3>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2),
+            ((...args: any[]) => T3) | (new (...args: any[]) => T3)
+        ]
+    ): [T1, T2, T3];
+    export function acquire<T1, T2>(
+        dependencies: [
+            ((...args: any[]) => T1) | (new (...args: any[]) => T1),
+            ((...args: any[]) => T2) | (new (...args: any[]) => T2)
+        ]
+    ): [T1, T2];
+    export function acquire<T>(
+        dependency: ((...args: any[]) => T) | (new (...args: any[]) => T)
+    ): T;
+    export function acquire(
+        dependencies:
+            | ((...args: any[]) => any)
+            | (new (...args: any[]) => any)
+            | Function
+            | Function[]
+            | string
+            | string[]
+            | any[]
+    ): any;
+    export function acquire(dependencies: any): any {
+        const array = isArray(dependencies);
+        let deps: dependency.Injector<any>[];
 
         if (array) {
-            deps = dependency.Injector.getDependencies(dependencies);
+            deps = dependency.Injector.getDependencies(<any[]>dependencies);
         } else {
             deps = dependency.Injector.getDependencies([dependencies]);
         }
 
-        let length = deps.length,
-            output: Array<any> = [];
+        const length = deps.length;
+        const output: any[] = [];
 
-        for (let i = 0; i < length; ++i) {
+        for (let i = 0; i < length; i += 1) {
             output.push(deps[i].inject());
         }
 

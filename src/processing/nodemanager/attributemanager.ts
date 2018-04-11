@@ -1,5 +1,4 @@
-﻿module plat.processing {
-
+namespace plat.processing {
     /**
      * @name AttributeManager
      * @memberof plat.processing
@@ -21,7 +20,7 @@
          * @description
          * The element that contains the attribute for this manager.
          */
-        element: HTMLElement;
+        public element: HTMLElement;
 
         /**
          * @name node
@@ -34,7 +33,7 @@
          * @description
          * The {@link plat.processing.INode|INode} that contains the attribute for this manager.
          */
-        node: INode;
+        public node: INode;
 
         /**
          * @name parent
@@ -47,7 +46,7 @@
          * @description
          * The parent control for the controls associated with this manager.
          */
-        parent: ui.TemplateControl;
+        public parent: ui.TemplateControl;
 
         /**
          * @name replace
@@ -60,7 +59,7 @@
          * @description
          * Whether or not the element that contains this attribute is replaced in the DOM.
          */
-        replace: boolean;
+        public replace: boolean;
 
         /**
          * @name attributeChanged
@@ -73,7 +72,7 @@
          * @description
          * The public interface for sending notifications of changes to this attribute.
          */
-        attributeChanged: () => void;
+        public attributeChanged: () => void;
 
         /**
          * @name _NodeManager
@@ -99,7 +98,7 @@
          * @description
          * The controls which need to be notified of changes to this attribute.
          */
-        protected _controls: Array<Control>;
+        protected _controls: Control[];
 
         /**
          * @name _bindingExpressions
@@ -112,7 +111,7 @@
          * @description
          * The filtered expressions for a "dynamic" attribute.
          */
-        protected _bindingExpressions: Array<expressions.IParsedExpression>;
+        protected _bindingExpressions: expressions.IParsedExpression[];
 
         /**
          * @name _lastValues
@@ -139,9 +138,12 @@
          *
          * @returns {plat.processing.AttributeManager}
          */
-        static getInstance(): AttributeManager {
-            let manager = new AttributeManager();
-            manager._NodeManager = <INodeManagerStatic>acquire(__NodeManagerStatic);
+        public static getInstance(): AttributeManager {
+            const manager = new AttributeManager();
+            manager._NodeManager = <INodeManagerStatic>acquire(
+                __NodeManagerStatic
+            );
+
             return manager;
         }
 
@@ -163,7 +165,13 @@
          *
          * @returns {void}
          */
-        initialize(element: Element, node: INode, parent: ui.TemplateControl, controls: Array<Control>, replace?: boolean): void {
+        public initialize(
+            element: Element,
+            node: INode,
+            parent: ui.TemplateControl,
+            controls: Control[],
+            replace?: boolean
+        ): void {
             this.element = <HTMLElement>element;
             this.node = node;
             this.parent = parent;
@@ -190,42 +198,54 @@
          * @returns {void}
          */
         protected _dynamicAttributeChanged(): void {
-            let node = this.node,
-                attr: Attr = <Attr>node.node,
-                nodeManager = this._NodeManager,
-                nodeValue = attr.value,
-                classes = nodeManager.build(node.expressions, this.parent).trim().split(/\s+/),
-                last = this._lastValues,
-                element: HTMLElement = this.element,
-                c: string,
-                length = classes.length,
-                i: number;
+            const node = this.node;
+            const attr: Attr = <Attr>node.node;
+            const nodeManager = this._NodeManager;
+            const last = this._lastValues;
+            const element: HTMLElement = this.element;
+            let nodeValue = attr.value;
+            let classes = nodeManager
+                .build(node.expressions, this.parent)
+                .trim()
+                .split(/\s+/);
+            let c: string;
+            let length = classes.length;
+            let i: number;
 
             if (nodeManager.hasMarkup(nodeValue)) {
-                let start: number,
-                    end: number,
-                    startLength = __startSymbol.length,
-                    endLength = __endSymbol.length,
-                    endChar = __endSymbol[endLength - 1];
+                const startLength = __startSymbol.length;
+                const endLength = __endSymbol.length;
+                const endChar = __endSymbol[endLength - 1];
+                let start: number = nodeValue.indexOf(__startSymbol);
+                let end: number = nodeValue.indexOf(__endSymbol);
 
-                while ((start = nodeValue.indexOf(__startSymbol)) !== -1 && (end = nodeValue.indexOf(__endSymbol)) !== -1) {
-                    // incremement with while loop instead of just += 2 for nested object literal case.
-                    while (nodeValue[end++] !== endChar || nodeValue[end] === endChar) { }
+                while (start !== -1 && end !== -1) {
+                    // increment with while loop instead of just += 2 for nested object literal case.
+                    while (
+                        nodeValue[end] !== endChar ||
+                        nodeValue[end + 1] === endChar
+                    ) {
+                        end += 1;
+                    }
 
-                    nodeValue = nodeValue.slice(0, start).trim() + ' ' + nodeValue.slice(end).trim();
+                    nodeValue = `${nodeValue
+                        .slice(0, start)
+                        .trim()} ${nodeValue.slice(end).trim()}`;
+                    start = nodeValue.indexOf(__startSymbol);
+                    end = nodeValue.indexOf(__endSymbol);
                 }
 
                 attr.value = nodeValue.trim();
             }
 
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 last[classes[i]] = true;
             }
 
             classes = Object.keys(last);
             length = classes.length;
 
-            for (i = 0; i < length; ++i) {
+            for (i = 0; i < length; i += 1) {
                 c = classes[i];
                 if (last[c]) {
                     addClass(element, c);
@@ -252,10 +272,13 @@
          * @returns {void}
          */
         protected _staticAttributeChanged(): void {
-            let controls = this._controls,
-                node = this.node,
-                key = camelCase(node.nodeName),
-                value = this._NodeManager.build(node.expressions, this.parent);
+            const controls = this._controls;
+            const node = this.node;
+            const key = camelCase(node.nodeName);
+            const value = this._NodeManager.build(
+                node.expressions,
+                this.parent
+            );
 
             this._notifyAttributes(key, value);
 
@@ -276,13 +299,13 @@
          * @returns {void}
          */
         protected _notifyAttributes(key: string, value: any): void {
-            let controls = this._controls,
-                length = controls.length,
-                attributes: ui.Attributes,
-                oldValue: any;
+            const controls = this._controls;
+            const length = controls.length;
+            let attributes: ui.Attributes;
+            let oldValue: any;
 
-            for (var i = 0; i < length; ++i) {
-                attributes = <ui.Attributes>controls[i].attributes;
+            for (let i = 0; i < length; i += 1) {
+                attributes = controls[i].attributes;
                 oldValue = attributes[key];
                 attributes[key] = value;
 

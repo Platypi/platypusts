@@ -3,6 +3,8 @@ const fs = require('fs-extra');
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
+const platRegex = /(?:module|namespace)\splat\s/;
+
 async function strip() {
     const data = await readFile('dist/platypus.ts', 'utf8');
 
@@ -103,14 +105,14 @@ function useStrict(data) {
             let trim = line.trim();
             if (trim === '\'use strict\';') {
                 return '';
-            } else if (trim.indexOf('module plat ') > -1) {
+            } else if (platRegex.test(trim)) {
                 plat = index + 1;
             }
 
             return line;
         });
 
-    data.splice(plat, 0, '    \'use strict;\'');
+    data.splice(plat, 0, '    \'use strict\';');
     return data;
 }
 
@@ -146,7 +148,7 @@ function localize(data) {
     data.some((line, index) => {
         trim = line.trim();
 
-        if (trim.indexOf('module plat ') > -1) {
+        if (platRegex.test(trim)) {
             plat = index;
         }
     });

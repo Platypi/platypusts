@@ -1,7 +1,7 @@
 /**
   * Holds all the classes and interfaces related to registering components for platypus.
   */
-export declare module register {
+export declare namespace register {
     /**
       * Registers the IApp with the framework. The framework will instantiate the IApp
       * when needed, and wire up the Application Lifecycle events. The dependencies array corresponds to injectables that will be
@@ -10,7 +10,7 @@ export declare module register {
       * @param {new (...args: any[]) => App} Type The constructor for the IApp.
       * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the app injector.
       */
-    function app(name: string, Type: new (...args: any[]) => App, dependencies?: Array<any>): typeof register;
+    const app: IRegisterFunction<App>;
     /**
       * Registers an Control with the framework. The framework will instantiate the
       * Control when needed. The dependencies array corresponds to injectables that
@@ -20,7 +20,7 @@ export declare module register {
       * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the Control
       * injector.
       */
-    function control(name: string, Type: new (...args: any[]) => Control, dependencies?: Array<any>, isStatic?: boolean): typeof register;
+    const control: IExtendedRegisterFunction<Control, boolean>;
     /**
       * Registers an ViewControl with the framework. The framework will
       * instantiate the control when needed. The dependencies array corresponds to injectables that will be
@@ -31,20 +31,7 @@ export declare module register {
       * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the
       * ViewControl injector.
       */
-    function viewControl<T extends ui.ViewControl>(name: string, Type: new (...args: any[]) => T, dependencies?: Array<any>): typeof register;
-    /**
-      * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
-      * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
-      * @param {string} name The name of the injector, used when another component is specifying dependencies.
-      * @param {new (...args: any[]) => any} Type The constructor for the injectable. The injectable will only be
-      * instantiated once during the application lifetime.
-      * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the injectable's injector.
-      * @param {string} injectableType? Specifies the type of injectable, either SINGLETON,
-      * STATIC, INSTANCE,
-      * FACTORY, CLASS
-      * (defaults to SINGLETON).
-      */
-    function injectable(name: string, Type: new (...args: any[]) => any, dependencies?: Array<any>, injectableType?: string): typeof register;
+    const viewControl: IRegisterFunction<ui.ViewControl>;
     /**
       * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
       * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
@@ -56,82 +43,60 @@ export declare module register {
       * FACTORY, CLASS
       * (defaults to SINGLETON).
       */
-    function injectable(name: string, method: (...args: any[]) => any, dependencies?: Array<any>, injectableType?: string): typeof register;
-    /**
-      * Contains constants for injectable type.
-      */
-    module injectable {
-        /**
-          * Static injectables will be injected before the application loads. This provides a way to create
-          * a static constructor and load dependencies into static class properties.
-          */
-        let STATIC: string;
-        /**
-          * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and
-          * used throughout the application lifetime. It will be instantiated when another component is injected
-          * and lists it as a dependency.
-          */
-        let SINGLETON: string;
-        /**
-          * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times
-          * throughout the application lifetime. It will be instantiated whenever another component is injected
-          * and lists it as a dependency.
-          */
-        let INSTANCE: string;
-        /**
-          * Factory injectables will not contain a constructor but will instead contain a method for obtaining an
-          * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static
-          * injectable.
-          */
-        let FACTORY: string;
-        /**
-          * Class injectables are essentially a direct reference to a class's constructor. It may contain both
-          * static and instance methods as well as a constructor for creating a new instance.
-          */
-        let CLASS: string;
+    const injectable: IInjectableType & IExtendedRegisterFunction<any, string>;
+    interface IInjectableType {
+        STATIC?: string;
+        SINGLETON?: string;
+        INSTANCE?: string;
+        FACTORY?: string;
+        CLASS?: string;
     }
-    /**
-      * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a
-      * JS implementation as well.
-      * @param {string} name The unique idenitifer of the animation.
-      * @param {new (...args: any[]) => ui.animations.CssAnimation} Type The constructor for the custom animation.
-      * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at
-      * instantiation.
-      * @param {string} animationType The type of animation. Both the intended type and default value are
-      * CSS.
-      */
-    function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation, dependencies?: Array<any>, animationType?: 'css'): typeof register;
-    function animation(name: string, Type: new (...args: any[]) => ui.animations.CssAnimation, dependencies?: Array<any>, animationType?: string): typeof register;
     /**
       * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers
       * is desired.
-      * @param {string} name The unique idenitifer of the animation.
+      * @param {string} name The unique identifer of the animation.
       * @param {new (...args: any[]) => ui.animations.BaseAnimation} Type The constructor for the custom animation.
       * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at
       * instantiation.
       * @param {string} animationType The type of animation. Both the intended type and default value are
       * JS.
       */
-    function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation, dependencies: Array<any>, animationType: 'js'): typeof register;
-    function animation(name: string, Type: new (...args: any[]) => ui.animations.BaseAnimation, dependencies: Array<any>, animationType: string): typeof register;
-    /**
-      * Contains constants for animation type.
-      */
-    module animation {
-        /**
-          * A CSS animation.
-          */
-        const CSS = "css";
-        /**
-          * A JavaScript animation.
-          */
-        const JS = "js";
+    const animation: IAnimationType & IExtendedRegisterFunction<ui.animations.BaseAnimation | ui.animations.CssAnimation, string>;
+    interface IAnimationType {
+        CSS?: string;
+        JS?: string;
+    }
+    interface IRegisterFunction<RegisterType> {
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string, ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string, ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string, ((...args: any[]) => D10) | (new (...args: any[]) => D10) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string, ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string, ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string, ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string]): typeof register;
+        <T extends RegisterType, D1, D2, D3>(name: string, Type: ((d1: D1, d2: D2, d3: D3) => T) | (new (d1: D1, d2: D2, d3: D3) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string]): typeof register;
+        <T extends RegisterType, D1, D2>(name: string, Type: ((d1: D1, d2: D2) => T) | (new (d1: D1, d2: D2) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string]): typeof register;
+        <T extends RegisterType, D1>(name: string, Type: ((d1: D1) => T) | (new (d1: D1) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string]): typeof register;
+        <T extends RegisterType>(name: string, Type: (() => T) | (new () => T)): typeof register;
+    }
+    interface IExtendedRegisterFunction<RegisterType, XT> {
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9, d10: D10) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string, ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string, ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string, ((...args: any[]) => D10) | (new (...args: any[]) => D10) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8, D9>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8, d9: D9) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string, ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string, ((...args: any[]) => D9) | (new (...args: any[]) => D9) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7, D8>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7, d8: D8) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string, ((...args: any[]) => D8) | (new (...args: any[]) => D8) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6, D7>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6, d7: D7) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string, ((...args: any[]) => D7) | (new (...args: any[]) => D7) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5, D6>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5, d6: D6) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string, ((...args: any[]) => D6) | (new (...args: any[]) => D6) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4, D5>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4, d5: D5) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string, ((...args: any[]) => D5) | (new (...args: any[]) => D5) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3, D4>(name: string, Type: ((d1: D1, d2: D2, d3: D3, d4: D4) => T) | (new (d1: D1, d2: D2, d3: D3, d4: D4) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string, ((...args: any[]) => D4) | (new (...args: any[]) => D4) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2, D3>(name: string, Type: ((d1: D1, d2: D2, d3: D3) => T) | (new (d1: D1, d2: D2, d3: D3) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string, ((...args: any[]) => D3) | (new (...args: any[]) => D3) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1, D2>(name: string, Type: ((d1: D1, d2: D2) => T) | (new (d1: D1, d2: D2) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string, ((...args: any[]) => D2) | (new (...args: any[]) => D2) | string], type?: XT): typeof register;
+        <T extends RegisterType, D1>(name: string, Type: ((d1: D1) => T) | (new (d1: D1) => T), dependencies: [((...args: any[]) => D1) | (new (...args: any[]) => D1) | string], type?: XT): typeof register;
+        <T extends RegisterType>(name: string, Type: (() => T) | (new () => T)): typeof register;
     }
 }
 /**
   * Holds classes and interfaces related to dependency injection components in platypus.
   */
-export declare module dependency {
+export declare namespace dependency {
     /**
       * The Injector class is used for dependency injection. You can create an injector object,
       * specify dependencies and a constructor for your component. When the injector object is
@@ -139,13 +104,13 @@ export declare module dependency {
       * to the constructor.
       */
     class Injector<T> {
-        name: string;
-        Constructor: new () => T;
-        type: string;
         /**
           * The dependencies for this injector
           */
-        dependencies: Array<string>;
+        dependencies: string[];
+        name: string;
+        Constructor: new () => T;
+        type: string;
         /**
           * Initializes all static injectors.
           */
@@ -155,7 +120,7 @@ export declare module dependency {
           * @param {Array<any>} dependencies The array of dependencies specified
           * by either their Constructor or their registered name.
           */
-        static getDependencies(dependencies: Array<any>): Array<Injector<any>>;
+        static getDependencies(dependencies: any[]): Injector<any>[];
         /**
           * Finds and returns the dependency.
           * @param {any} dependency an object/string used to find the dependency.
@@ -168,7 +133,7 @@ export declare module dependency {
           * @param {Array<any>} dependencies The array of dependencies specified
           * by either their Constructor or their registered name.
           */
-        static convertDependencies(dependencies: Array<any>): Array<string>;
+        static convertDependencies(dependencies: any[]): string[];
         /**
           * Converts a dependency specified by its Constructors into an
           * equivalent dependency specified by its registered string
@@ -209,7 +174,7 @@ export declare module dependency {
           * Finds an injector object with the associated constructor in the given InjectorObject.
           * @param {Function} Constructor The Function
           */
-        private static __findInjector(Constructor, injectors);
+        private static __findInjector(Constructor, injectorsArr);
         /**
           * Once an injector is injected, it is wrapped to prevent further injection.
           * @param {any} value The injected value.
@@ -234,7 +199,7 @@ export declare module dependency {
           * @param {string} type The type of injector, used for injectables specifying a injectableType of
           * STATIC, SINGLETON, FACTORY, INSTANCE, or CLASS. The default is SINGLETON.
           */
-        constructor(name: string, Constructor: new () => T, dependencies?: Array<any>, type?: string);
+        constructor(name: string, Constructor: new () => T, dependencies?: any[], type?: string);
         /**
           * Gathers the dependencies for the Injector object and creates a new instance of the
           * Constructor, passing in the dependencies in the order they were specified. If the
@@ -255,9 +220,9 @@ export declare module dependency {
     interface InjectorObject<T> extends IObject<Injector<T>> {
     }
     /**
-      * Publically exposes all the dependency injector objects.
+      * Publicly exposes all the dependency injector objects.
       */
-    module injectors {
+    namespace injectors {
         /**
           * An InjectorObject of Controls.
           * Contains all the registered controls for an application.
@@ -289,44 +254,24 @@ export declare module dependency {
     }
 }
 /**
-  * Returns the requested injectable dependency.
-  * @param {() => T} dependency The dependency Type to return.
-  */
-export declare function acquire<T>(dependency: (...args: Array<any>) => T): T;
-/**
-  * Returns the requested injectable dependency.
-  * @param {() => T} dependency The dependency Type to return.
-  */
-export declare function acquire<T>(dependency: new (...args: Array<any>) => T): T;
-/**
-  * Returns the requested injectable dependency.
-  * @param {Function} dependency The dependency Type to return.
-  */
-export declare function acquire(dependency: Function): any;
-/**
-  * Returns the requested injectable dependency.
-  * @param {Function} dependency An array of Types specifying the injectable dependencies.
-  */
-export declare function acquire(dependencies: Array<Function>): Array<any>;
-/**
-  * Returns the requested injectable dependency.
-  * @param {string} dependency The injectable dependency type to return.
-  */
-export declare function acquire(dependency: string): any;
-/**
-  * Gathers dependencies and returns them as an array in the order they were requested.
-  * @param {Array<string>} dependencies An array of strings specifying the injectable dependencies.
-  */
-export declare function acquire(dependencies: Array<string>): Array<any>;
-/**
   * Gathers dependencies and returns them as an array in the order they were requested.
   * @param {Array<any>} dependencies An array of strings or Functions specifying the injectable dependencies.
   */
-export declare function acquire(dependencies: Array<any>): Array<any>;
+export declare function acquire<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4), ((...args: any[]) => T5) | (new (...args: any[]) => T5), ((...args: any[]) => T6) | (new (...args: any[]) => T6), ((...args: any[]) => T7) | (new (...args: any[]) => T7), ((...args: any[]) => T8) | (new (...args: any[]) => T8), ((...args: any[]) => T9) | (new (...args: any[]) => T9), ((...args: any[]) => T10) | (new (...args: any[]) => T10)]): [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10];
+export declare function acquire<T1, T2, T3, T4, T5, T6, T7, T8, T9>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4), ((...args: any[]) => T5) | (new (...args: any[]) => T5), ((...args: any[]) => T6) | (new (...args: any[]) => T6), ((...args: any[]) => T7) | (new (...args: any[]) => T7), ((...args: any[]) => T8) | (new (...args: any[]) => T8), ((...args: any[]) => T9) | (new (...args: any[]) => T9)]): [T1, T2, T3, T4, T5, T6, T7, T8, T9];
+export declare function acquire<T1, T2, T3, T4, T5, T6, T7, T8>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4), ((...args: any[]) => T5) | (new (...args: any[]) => T5), ((...args: any[]) => T6) | (new (...args: any[]) => T6), ((...args: any[]) => T7) | (new (...args: any[]) => T7), ((...args: any[]) => T8) | (new (...args: any[]) => T8)]): [T1, T2, T3, T4, T5, T6, T7, T8];
+export declare function acquire<T1, T2, T3, T4, T5, T6, T7>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4), ((...args: any[]) => T5) | (new (...args: any[]) => T5), ((...args: any[]) => T6) | (new (...args: any[]) => T6), ((...args: any[]) => T7) | (new (...args: any[]) => T7)]): [T1, T2, T3, T4, T5, T6, T7];
+export declare function acquire<T1, T2, T3, T4, T5, T6>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4), ((...args: any[]) => T5) | (new (...args: any[]) => T5), ((...args: any[]) => T6) | (new (...args: any[]) => T6)]): [T1, T2, T3, T4, T5, T6];
+export declare function acquire<T1, T2, T3, T4, T5>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4), ((...args: any[]) => T5) | (new (...args: any[]) => T5)]): [T1, T2, T3, T4, T5];
+export declare function acquire<T1, T2, T3, T4>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3), ((...args: any[]) => T4) | (new (...args: any[]) => T4)]): [T1, T2, T3, T4];
+export declare function acquire<T1, T2, T3>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2), ((...args: any[]) => T3) | (new (...args: any[]) => T3)]): [T1, T2, T3];
+export declare function acquire<T1, T2>(dependencies: [((...args: any[]) => T1) | (new (...args: any[]) => T1), ((...args: any[]) => T2) | (new (...args: any[]) => T2)]): [T1, T2];
+export declare function acquire<T>(dependency: ((...args: any[]) => T) | (new (...args: any[]) => T)): T;
+export declare function acquire(dependencies: ((...args: any[]) => any) | (new (...args: any[]) => any) | Function | Function[] | string | string[] | any[]): any;
 /**
   * Holds all classes and interfaces related to debugging components in platypus.
   */
-export declare module debug {
+export declare namespace debug {
     /**
       * Handles all logging/debugging for the framework. All logs will be bubbled up to the
       * App.error event to allow for easy debugging.
@@ -368,69 +313,38 @@ export declare module debug {
         error(error: Error): void;
         /**
           * Logs at the warn level.
-          * @param {string} message The message to log.
-          */
-        warn(message: string): void;
-        /**
-          * Logs at the warn level.
           * @param {Error} message The message to log.
           */
-        warn(message: Error): void;
+        warn(message: string | Error): void;
         /**
           * Logs at the info level.
           * @param {string} message The message to log.
           */
-        info(message: string): void;
-        /**
-          * Logs at the info level.
-          * @param {string} message The message to log.
-          */
-        info(message: Error): void;
+        info(message: string | Error): void;
         /**
           * Logs at the debug level.
           * @param {string} message The message to log.
           */
-        debug(message: string): void;
-        /**
-          * Logs at the debug level.
-          * @param {string} message The message to log.
-          */
-        debug(message: Error): void;
+        debug(message: string | Error): void;
         /**
           * Logs at the trace level.
           * @param {string} message The message to log.
           */
-        trace(message: string): void;
-        /**
-          * Logs at the trace level.
-          * @param {string} message The message to log.
-          */
-        trace(message: Error): void;
-        /**
-          * Sets the log level level.
-          * @param {number} level The log level to set.
-          */
-        setLogLevel(level: number): void;
+        trace(message: string | Error): void;
         /**
           * Sets the log level level.
           * @param {string} level A string related to the log level to set (e.g. 'error'). It will be mapped to
           * the proper number. If the corresponding number level is not found, INFO
           * will be used.
           */
-        setLogLevel(level: string): void;
-        /**
-          * Dispatches an ErrorEvent to the app.
-          * @param {number} level The log level denoting the severity of the message.
-          * param {boolean} isFatal? Whether or not the severity of the error is fatal.
-          */
-        protected _log(message: string, level: number, isFatal?: boolean): void;
+        setLogLevel(level: number | string): void;
         /**
           * Dispatches an ErrorEvent to the app.
           * @param {number} level The log level denoting the severity of the message.
           */
-        protected _log(message: Error, level: number): void;
+        protected _log(message: string | Error, level: number): void;
         /**
-          * Detemines whether or not a log level is at or above the current minimum log level.
+          * Determines whether or not a log level is at or above the current minimum log level.
           * @param {number} level The log level to check against the current minimum log level.
           */
         protected _shouldLog(level: number): boolean;
@@ -820,7 +734,7 @@ export declare class Utils {
       * @param {Array<T>} array The Array to filter.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    filter<T>(iterator: IListIterator<T, boolean>, array: Array<T>, context?: any): Array<T>;
+    filter<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): T[];
     /**
       * Takes in an object/array and a function to evaluate the properties in the object/array.
       * Returns a filtered array of objects resulting from evaluating the function.
@@ -829,13 +743,13 @@ export declare class Utils {
       * @param {IObject<T>} obj The object to filter.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): Array<T>;
+    filter<T>(iterator: IObjectIterator<T, boolean>, obj: IObject<T>, context?: any): T[];
     /**
       * Takes in a list and object containing key/value pairs to search for in the list.
-      * @param {Object} properties An object containing key/value pairs to match with obj's values.
+      * @param {Object} properties An object containing key/value pairs to match with object's values.
       * @param {Array<T>} array The list used for searching for properties.
       */
-    where<T>(properties: Object, array: Array<T>): Array<T>;
+    where<T>(properties: Object, array: T[]): T[];
     /**
       * Takes in an Array and a function to iterate over. Calls the iterator function with every property
       * in the Array, then returns the object.
@@ -843,7 +757,7 @@ export declare class Utils {
       * @param {Array<T>} array An Array.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    forEach<T>(iterator: IListIterator<T, void>, array: Array<T>, context?: any): Array<T>;
+    forEach<T>(iterator: IListIterator<T, void>, array: T[], context?: any): T[];
     /**
       * Takes in an Array and a function to iterate over. Calls the iterator function with every property
       * in the Array, then returns the object.
@@ -860,7 +774,7 @@ export declare class Utils {
       * @param {Array<T>} array An Array.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    map<T, R>(iterator: IListIterator<T, R>, array: Array<T>, context?: any): Array<R>;
+    map<T, R>(iterator: IListIterator<T, R>, array: T[], context?: any): R[];
     /**
       * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
       * iterator can transform the object and return it. The returned values will be pushed to an Array and
@@ -869,50 +783,50 @@ export declare class Utils {
       * @param {IObject<T>} obj An Object.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): Array<R>;
+    map<T, R>(iterator: IObjectIterator<T, R>, obj: IObject<T>, context?: any): R[];
     /**
       * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
       * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
       * to an Array. A promise is returned that will resolve when all the iterators have resolved.
-      * @param {IListIterator<T, async.IThenable<R>>} iterator The transformation function.
+      * @param {IListIterator<T, async.Promise<R>>} iterator The transformation function.
       * @param {Array<T>} array An array.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    mapAsync<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): async.IThenable<Array<R>>;
+    mapAsync<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[], context?: any): async.Promise<R[]>;
     /**
       * Takes in an object and an iterator function. Calls the iterator with all the values in the object. The
       * iterator can return a promise the will resolve with the mapped value. The returned values will be pushed
       * to an Array. A promise is returned that will resolve when all the iterators have resolved.
-      * @param {IObjectIterator<T, async.IThenable<R>>} iterator The transformation function.
+      * @param {IObjectIterator<T, async.Promise<R>>} iterator The transformation function.
       * @param {IObject<T>} obj An Object.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    mapAsync<T, R>(iterator: IObjectIterator<T, async.IThenable<R>>, obj: IObject<T>, context?: any): async.IThenable<Array<R>>;
+    mapAsync<T, R>(iterator: IObjectIterator<T, async.Promise<R>>, obj: IObject<T>, context?: any): async.Promise<R[]>;
     /**
       * Takes in an array and an iterator function. Calls the iterator with all the values in the array. The
       * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
       * the iterator until the previous promise fulfills.
-      * @param {IListIterator<T, async.IThenable<R>>} iterator The transformation function.
+      * @param {IListIterator<T, async.Promise<R>>} iterator The transformation function.
       * @param {Array<T>} array An Array.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): async.IThenable<Array<R>>;
+    mapAsyncInOrder<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[], context?: any): async.Promise<R[]>;
     /**
       * Takes in an array and an iterator function. Calls the iterator with all the values in the array in descending order. The
       * iterator can return a promise the will resolve with the mapped value. The next value in the array will not be passed to
       * the iterator until the previous promise fulfills.
-      * @param {IListIterator<T, async.IThenable<R>>} iterator The transformation function.
+      * @param {IListIterator<T, async.Promise<R>>} iterator The transformation function.
       * @param {Array<T>} array An Array.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.IThenable<R>>, array: Array<T>, context?: any): async.IThenable<Array<R>>;
+    mapAsyncInDescendingOrder<T, R>(iterator: IListIterator<T, async.Promise<R>>, array: T[], context?: any): async.Promise<R[]>;
     /**
       * Takes in an object and a property to extract from all of the object's values. Returns an array of
       * the 'plucked' values.
       * @param {string} key The property to 'pluck' from each value in the array.
       * @param {Array<T>} array The array to pluck the key from
       */
-    pluck<T extends {}>(key: string, array: Array<T>): Array<any>;
+    pluck<T extends {}>(key: string, array: T[]): any[];
     /**
       * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
       * Returns true if any of the iterators return true, otherwise returns false.
@@ -920,7 +834,7 @@ export declare class Utils {
       * @param {Array<T>} array An array.
       * @param {any} context? An optional context to bind to the iterator.
       */
-    some<T>(iterator: IListIterator<T, boolean>, array: Array<T>, context?: any): boolean;
+    some<T>(iterator: IListIterator<T, boolean>, array: T[], context?: any): boolean;
     /**
       * Takes in an array and an iterator. Evaluates all the values in the array with the iterator.
       * Returns true if any of the iterators return true, otherwise returns false.
@@ -936,7 +850,7 @@ export declare class Utils {
       * @param {Array<any>} args? The arguments to apply to the method.
       * @param {any} context? An optional context to bind to the method.
       */
-    postpone(method: (...args: any[]) => void, args?: Array<any>, context?: any): IRemoveListener;
+    postpone(method: (...args: any[]) => void, args?: any[], context?: any): IRemoveListener;
     /**
       * Takes in a method and array of arguments to pass to that method. Delays calling the method until
       * after the current call stack is clear. Equivalent to a setTimeout with the specified timeout value.
@@ -945,7 +859,7 @@ export declare class Utils {
       * @param {Array<any>} args? The arguments to apply to the method.
       * @param {any} context? An optional context to bind to the method.
       */
-    defer(method: (...args: any[]) => void, timeout: number, args?: Array<any>, context?: any): IRemoveListener;
+    defer(method: (...args: any[]) => void, timeout: number, args?: any[], context?: any): IRemoveListener;
     /**
       * Takes in a method and array of arguments to pass to that method. Adds the method to the call stack every
       * interval amount of time. Equivalent to a setInterval with the specified interval value.
@@ -954,7 +868,7 @@ export declare class Utils {
       * @param {Array<any>} args? The arguments to apply to the method.
       * @param {any} context? An optional context to bind to the method.
       */
-    setInterval(method: (...args: any[]) => void, interval: number, args?: Array<any>, context?: any): IRemoveListener;
+    setInterval(method: (...args: any[]) => void, interval: number, args?: any[], context?: any): IRemoveListener;
     /**
       * Uses requestAnimationFrame if it is available, else it does a setTimeout.
       * @param {FrameRequestCallback} method The method to call when the request is fulfilled.
@@ -962,15 +876,15 @@ export declare class Utils {
       */
     requestAnimationFrame(method: FrameRequestCallback, context?: any): IRemoveListener;
     /**
-      * Takes in a prefix and returns a unique identifier string with the prefix preprended. If no prefix
+      * Takes in a prefix and returns a unique identifier string with the prefix prepended. If no prefix
       * is specified, none will be prepended.
-      * @param {string} prefix? A string prefix to prepend tothe unique ID.
+      * @param {string} prefix? A string prefix to prepend to the unique ID.
       */
     uniqueId(prefix?: string): string;
     /**
       * Takes in a spinal-case, dot.case, or snake_case string and returns
       * a camelCase string. Also can turn a string into camelCase with space
-      * as a delimeter.
+      * as a delimiter.
       * @param {string} str The spinal-case, dot.case, or snake_case string.
       */
     camelCase(str: string): string;
@@ -984,27 +898,11 @@ export declare class Utils {
 /**
   * The Type for a Utils list iterator callback method.
   */
-export interface IListIterator<T, R> {
-    /**
-      * A method signature for IListIterator.
-      * @param {T} value The value for an object during an iteration.
-      * @param {number} index The index where the value can be found.
-      * @param {Array<T>} list The array passed into the util method.
-      */
-    (value: T, index: number, list: Array<T>): R;
-}
+export declare type IListIterator<T, R> = (value: T, index: number, list: T[]) => R;
 /**
   * The Type for a Utils object iterator callback method.
   */
-export interface IObjectIterator<T, R> {
-    /**
-      * A method signature for IObjectIterator.
-      * @param {T} value The value for an object during an iteration.
-      * @param {string} key The key where the value can be found.
-      * @param {IObject<T>} obj The object passed into the util method.
-      */
-    (value: T, key: string, obj: IObject<T>): R;
-}
+export declare type IObjectIterator<T, R> = (value: T, key: string, obj: IObject<T>) => R;
 /**
   */
 export declare function Window(): Window;
@@ -1014,7 +912,7 @@ export declare function Document(_window?: Window): Document;
 /**
   * Holds classes and interfaces related to expression handling in platypus.
   */
-export declare module expressions {
+export declare namespace expressions {
     /**
       * A class for keeping track of commonly used regular expressions.
       */
@@ -1033,7 +931,7 @@ export declare module expressions {
           */
         initialUrlRegex: RegExp;
         /**
-          * Finds a protocol delimeter in a string (e.g. ://).
+          * Finds a protocol delimiter in a string (e.g. ://).
           */
         protocolRegex: RegExp;
         /**
@@ -1090,9 +988,9 @@ export declare module expressions {
           */
         readonly escapeRouteRegex: RegExp;
         /**
-          * Finds delimeters for spinal-case, snake_case, and dot.case.
+          * Finds delimiters for spinal-case, snake_case, and dot.case.
           * useful for converting to camelCase. Also can turn a string
-          * into camelCase with space as a delimeter.
+          * into camelCase with space as a delimiter.
           */
         readonly camelCaseRegex: RegExp;
         /**
@@ -1164,7 +1062,7 @@ export declare module expressions {
           * ITokens.
           * @param {string} input The JavaScript expression string to tokenize.
           */
-        createTokens(input: string): Array<IToken>;
+        createTokens(input: string): IToken[];
         /**
           * Determines character type.
           * @param {string} char The character to check.
@@ -1253,7 +1151,7 @@ export declare module expressions {
           * @param {number} index The current index in the string being tokenized.
           * @param {string} char The current char.
           */
-        private __handleAplhaNumeric(index, char);
+        private __handleAlphaNumeric(index, char);
         /**
           * Handles tokenizing a "." character.
           * @param {number} index The current index in the string being tokenized.
@@ -1393,7 +1291,7 @@ export declare module expressions {
         /**
           * A single expression's token representation created by a Tokenizer.
           */
-        protected _tokens: Array<IToken>;
+        protected _tokens: IToken[];
         /**
           * An expression cache. Used so that a JavaScript expression is only ever parsed once.
           */
@@ -1415,7 +1313,7 @@ export declare module expressions {
           */
         private __aliases;
         /**
-          * The constant that needs to be prepended to every dyanmic eval function.
+          * The constant that needs to be prepended to every dynamic eval function.
           */
         private __fnEvalConstant;
         /**
@@ -1559,12 +1457,12 @@ export declare module expressions {
           * Contains all the identifiers found in an expression. Useful for determining
           * properties to watch on a context.
           */
-        identifiers: Array<string>;
+        identifiers: string[];
         /**
           * Contains all the aliases (denoted without `@` as the first character) for this
           * IParsedExpression.
           */
-        aliases: Array<string>;
+        aliases: string[];
         /**
           * Specifies whether or not you want to do a one-time binding on identifiers
           * for this expression. Typically this is added to a clone of this
@@ -1583,7 +1481,7 @@ export declare module expressions {
 /**
   * Holds classes and interfaces related to web components in platypus.
   */
-export declare module web {
+export declare namespace web {
     /**
       */
     function Location(_window?: Window): Location;
@@ -1627,7 +1525,7 @@ export declare module web {
         /**
           * Keeps a history stack if using a windows store app.
           */
-        protected _stack: Array<string>;
+        protected _stack: string[];
         /**
           * A unique string identifier.
           */
@@ -1860,16 +1758,16 @@ export declare module web {
 /**
   * Holds all classes and interfaces related to async components in platypus.
   */
-export declare module async {
+export declare namespace async {
     /**
-      * Takes in a generic type corresponding to the fullfilled success type.
+      * Takes in a generic type corresponding to the fulfilled success type.
       */
     class Promise<R> implements IThenable<R> {
         /**
           * The configuration for creating asynchronous promise flushing.
           */
         static config: {
-            async: (callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>) => void;
+            async(callback: (arg?: IThenable<any>) => void, arg?: IThenable<any>): void;
         };
         /**
           * Holds all the subscriber promises
@@ -1889,49 +1787,38 @@ export declare module async {
           * returned promise is an array containing the fulfillment result arguments
           * in-order. The rejection argument is the rejection argument of the
           * first-rejected promise.
-          * @param {Array<async.IThenable<R>>} promises An array of promises, although every argument is potentially
-          * cast to a promise meaning not every item in the array needs to be a promise.
-          */
-        static all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
-        /**
-          * Returns a promise that fulfills when every item in the array is fulfilled.
-          * Casts arguments to promises if necessary. The result argument of the
-          * returned promise is an array containing the fulfillment result arguments
-          * in-order. The rejection argument is the rejection argument of the
-          * first-rejected promise.
           * @param {Array<R>} promises An array of objects, if an object is not a promise, it will be cast.
           */
-        static all<R>(promises: Array<R>): IThenable<Array<R>>;
-        /**
-          * Returns a promise that fulfills as soon as any of the promises fulfill,
-          * or rejects as soon as any of the promises reject (whichever happens first).
-          * @param {Array<async.IThenable<R>>} promises An Array of promises to 'race'.
-          */
-        static race<R>(promises: Array<IThenable<R>>): IThenable<R>;
+        static all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+        static all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        static all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+        static all<T1, T2, T3, T4, T5, T6, T7>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+        static all<T1, T2, T3, T4, T5, T6>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>]): Promise<[T1, T2, T3, T4, T5, T6]>;
+        static all<T1, T2, T3, T4, T5>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>]): Promise<[T1, T2, T3, T4, T5]>;
+        static all<T1, T2, T3, T4>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>]): Promise<[T1, T2, T3, T4]>;
+        static all<T1, T2, T3>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]): Promise<[T1, T2, T3]>;
+        static all<T1, T2>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>]): Promise<[T1, T2]>;
+        static all<T1>(values: (T1 | IThenable<T1>)[]): Promise<[T1]>;
         /**
           * Returns a promise that fulfills as soon as any of the promises fulfill,
           * or rejects as soon as any of the promises reject (whichever happens first).
           * @param {Array<R>} promises An Array of anything to 'race'. Objects that aren't promises will
           * be cast.
           */
-        static race<R>(promises: Array<R>): IThenable<R>;
-        /**
-          * Returns a promise that resolves immediately.
-          */
-        static resolve(): IThenable<void>;
+        static race<R>(promises: (R | IThenable<R>)[]): Promise<R>;
         /**
           * Returns a promise that resolves with the input value.
           * @param {R} value The value to resolve.
           */
-        static resolve<R>(value: R): IThenable<R>;
+        static resolve<R>(value?: R | IThenable<R>): Promise<R>;
         /**
           * Returns a promise that rejects with the input value.
           * @param {any} error The value to reject.
           */
-        static reject(error?: any): IThenable<any>;
+        static reject<R>(error?: any): Promise<R>;
         /**
           * Invokes the resolve function for a promise. Handles error catching.
-          * @param {async.IResolveFunction<R>} resolveFunction The resolve function to invoke.
+          * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
           * @param {async.Promise<R>} promise The promise on which to invoke the resolve function.
           */
         private static __invokeResolveFunction<R>(resolveFunction, promise);
@@ -1987,61 +1874,32 @@ export declare module async {
           * Adds a child promise to the parent's subscribers.
           * @param {async.Promise<any>} parent The parent promise.
           * @param {async.Promise<any>} value The child promise.
-          * @param {(success: any) => any} onFullfilled The fulfilled method for the child.
+          * @param {(success: any) => any} onfulfilled The fulfilled method for the child.
           * @param {(error: any) => any} onRejected The rejected method for the child.
           */
         private static __subscribe(parent, child, onFulfilled, onRejected);
         /**
           * An ES6 implementation of the Promise API. Useful for asynchronous programming.
-          * Takes in 2 generic types corresponding to the fullfilled success and error types.
+          * Takes in 2 generic types corresponding to the fulfilled success and error types.
           * The error type (U) should extend Error in order to get proper stack tracing.
-          * @param {async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
+          * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
+          * A function for fulfilling/rejecting the Promise.
           */
-        constructor(resolveFunction: IResolveFunction<R>);
+        constructor(resolveFunction: (resolve: (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void);
         /**
           * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
-          * onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
+          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
           * onFulfilled method in the promise chain will be called.
           * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
           * onRejected method in the promise chain will be called.
           */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-          * onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-          * onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-          * A wrapper method for Promise.then(undefined, onRejected);
-          * @param {(error: any) => async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
+        then<U>(onFulfilled?: (value: R) => U | IThenable<U>, onRejected?: (error: any) => U | IThenable<U> | void): Promise<U>;
         /**
           * A wrapper method for Promise.then(undefined, onRejected);
           * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
           * onRejected method in the promise chain will be called.
           */
-        catch<U>(onRejected: (error: any) => U): IThenable<U>;
+        catch<U>(onRejected?: (error: any) => U | IThenable<U>): Promise<U>;
         /**
           * Outputs the Promise as a readable string.
           */
@@ -2054,122 +1912,33 @@ export declare module async {
     interface IThenable<R> {
         /**
           * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
-          * onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
+          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
           * onFulfilled method in the promise chain will be called.
           * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
           * onRejected method in the promise chain will be called.
           */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-          * onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
-          * onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IThenable<U>;
-        /**
-          * A wrapper method for Promise.then(undefined, onRejected);
-          * @param {(error: any) => async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        catch<U>(onRejected: (error: any) => IThenable<U>): IThenable<U>;
-        /**
-          * A wrapper method for Promise.then(undefined, onRejected);
-          * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
-          * onRejected method in the promise chain will be called.
-          */
-        catch<U>(onRejected: (error: any) => U): IThenable<U>;
-    }
-    /**
-      */
-    interface IResolveFunction<R> {
-        /**
-          * @param resolve A method for resolving a Promise. If you pass in a 'thenable' argument
-          * (meaning if you pass in a Promise-like object), then the promise will resolve with the
-          * outcome of the object. Else the promise will resolve with the argument.
-          * @param reject A method for rejecting a promise. The argument should be an instancof Error
-          * to assist with debugging. If a method in the constructor for a Promise throws an error,
-          * the promise will reject with the error.
-          */
-        (resolve: (value?: R) => void, reject: (reason?: any) => void): void;
+        then<U>(onFulfilled?: (value: R) => U | IThenable<U>, onRejected?: (error: any) => U | IThenable<U> | void): IThenable<U>;
     }
     /**
       */
     function IPromise(_window?: any): IPromise;
     /**
-      * The injectable reference for the ES6 Promise implementation.
       */
     interface IPromise {
-        /**
-          * An ES6 implementation of the Promise API. Useful for asynchronous programming.
-          * Takes in 2 generic types corresponding to the fullfilled success and error types.
-          * The error type (U) should extend Error in order to get proper stack tracing.
-          * @param {async.IResolveFunction<R>} resolveFunction A IResolveFunction for fulfilling/rejecting the Promise.
-          */
-        new <R>(resolveFunction: IResolveFunction<R>): IThenable<R>;
-        /**
-          * Returns a promise that fulfills when every item in the array is fulfilled.
-          * Casts arguments to promises if necessary. The result argument of the
-          * returned promise is an array containing the fulfillment result arguments
-          * in-order. The rejection argument is the rejection argument of the
-          * first-rejected promise.
-          * @param {Array<async.IThenable<R>>} promises An array of promises, although every argument is potentially
-          * cast to a promise meaning not every item in the array needs to be a promise.
-          */
-        all<R>(promises: Array<IThenable<R>>): IThenable<Array<R>>;
-        /**
-          * Returns a promise that fulfills when every item in the array is fulfilled.
-          * Casts arguments to promises if necessary. The result argument of the
-          * returned promise is an array containing the fulfillment result arguments
-          * in-order. The rejection argument is the rejection argument of the
-          * first-rejected promise.
-          * @param {Array<R>} promises An array of objects, if an object is not a promise, it will be cast.
-          */
-        all<R>(promises: Array<R>): IThenable<Array<R>>;
-        /**
-          * Returns a promise that fulfills as soon as any of the promises fulfill,
-          * or rejects as soon as any of the promises reject (whichever happens first).
-          * @param {Array<async.IThenable<R>>} promises An Array of promises to 'race'.
-          */
-        race<R>(promises: Array<IThenable<R>>): IThenable<R>;
-        /**
-          * Returns a promise that fulfills as soon as any of the promises fulfill,
-          * or rejects as soon as any of the promises reject (whichever happens first).
-          * @param {Array<R>} promises An Array of anything to 'race'. Objects that aren't promises will
-          * be cast.
-          */
-        race<R>(promises: Array<R>): IThenable<R>;
-        /**
-          * Returns a promise that resolves immediately.
-          */
-        resolve(): IThenable<void>;
-        /**
-          * Returns a promise that resolves with the input value.
-          * @param {R} value The value to resolve.
-          */
-        resolve<R>(value: R): IThenable<R>;
-        /**
-          * Returns a promise that rejects with the input value.
-          * @param {any} value The value to reject.
-          */
-        reject(error?: any): IThenable<any>;
+        new <R>(resolveFunction: (resolve: (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void): Promise<R>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>, T10 | IThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>, T9 | IThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+        all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>, T8 | IThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+        all<T1, T2, T3, T4, T5, T6, T7>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>, T7 | IThenable<T7>]): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+        all<T1, T2, T3, T4, T5, T6>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>, T6 | IThenable<T6>]): Promise<[T1, T2, T3, T4, T5, T6]>;
+        all<T1, T2, T3, T4, T5>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>, T5 | IThenable<T5>]): Promise<[T1, T2, T3, T4, T5]>;
+        all<T1, T2, T3, T4>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>, T4 | IThenable<T4>]): Promise<[T1, T2, T3, T4]>;
+        all<T1, T2, T3>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]): Promise<[T1, T2, T3]>;
+        all<T1, T2>(values: [T1 | IThenable<T1>, T2 | IThenable<T2>]): Promise<[T1, T2]>;
+        all<T1>(values: (T1 | IThenable<T1>)[]): Promise<[T1]>;
+        race<R>(promises: (R | IThenable<R>)[]): Promise<R>;
+        resolve<R>(value?: R | IThenable<R>): Promise<R>;
+        reject<R>(error?: any): Promise<R>;
     }
     /**
       * HttpRequest provides a wrapper for the XMLHttpRequest object. Allows for
@@ -2335,7 +2104,7 @@ export declare module async {
           * An array of data transform functions that fire in order and consecutively
           * pass the returned result from one function to the next.
           */
-        transforms?: Array<IHttpTransformFunction>;
+        transforms?: IHttpTransformFunction[];
         /**
           * Forces a JSONP, cross-domain request when set to true.
           * The default is false.
@@ -2345,14 +2114,7 @@ export declare module async {
     /**
       * A function that is used to transform XMLHttpRequest data.
       */
-    interface IHttpTransformFunction {
-        /**
-          * The method signature for IHttpTransformFunction.
-          * @param {any} data The data for the XMLHttpRequest.
-          * @param {XMLHttpRequest} xhr The XMLHttpRequest for the data.
-          */
-        (data: any, xhr: XMLHttpRequest): any;
-    }
+    type IHttpTransformFunction = (data: any, xhr: XMLHttpRequest) => any;
     /**
       * Describes an object which contains JSONP configuration properties.
       */
@@ -2371,7 +2133,7 @@ export declare module async {
         jsonpIdentifier?: string;
         /**
           * A specified name for the JSONP callback (in case the server has
-          * it hardcoded and/or does not get it from the given url). The
+          * it hard-coded and/or does not get it from the given url). The
           * default is a unique plat id generated separately for
           * each JSONP callback seen as 'plat_callback00' in
           * http://platypi.io/data?callback=plat_callback00.
@@ -2395,27 +2157,18 @@ export declare module async {
           */
         status: number;
         /**
-          * A method for getting the XHR response headers.
-          */
-        getAllResponseHeaders?: () => string;
-        /**
           * The XMLHttpRequest object associated with the AJAX call
           */
         xhr?: XMLHttpRequest;
+        /**
+          * A method for getting the XHR response headers.
+          */
+        getAllResponseHeaders?(): string;
     }
     /**
       * Describes the AjaxPromise's resolve function
       */
-    interface IAjaxResolveFunction<R> {
-        /**
-          * The method signature for an IAjaxResolveFunction.
-          * @param {(value?: async.IAjaxResponse<R>) => any} resolve The function to call when the
-          * AJAX call has successfully fulfilled.
-          * @param {(reason?: async.AjaxError) => any} reject The function to call when the
-          * AJAX call fails.
-          */
-        (resolve: (value?: IAjaxResponse<R>) => any, reject: (reason?: AjaxError) => any): void;
-    }
+    type IAjaxResolveFunction<R> = (resolve: (value?: IAjaxResponse<R>) => any, reject: (reason?: AjaxError) => any) => void;
     /**
       * A class that forms an Error object with an IAjaxResponse.
       */
@@ -2458,7 +2211,7 @@ export declare module async {
       * Describes a type of Promise that fulfills with an IAjaxResponse
       * and can be optionally cancelled.
       */
-    class AjaxPromise<R> extends Promise<IAjaxResponse<R>> implements IAjaxThenable<IAjaxResponse<R>> {
+    class AjaxPromise<R> extends Promise<IAjaxResponse<R>> {
         /**
           * The Window object.
           */
@@ -2470,14 +2223,9 @@ export declare module async {
         /**
           * The constructor method for the {@link async.AjaxPromise}.
           * @param {async.IAjaxResolveFunction} resolveFunction The promise resolve function.
-          */
-        constructor(resolveFunction: IAjaxResolveFunction<R>);
-        /**
-          * The constructor method for the {@link async.AjaxPromise}.
-          * @param {async.IAjaxResolveFunction} resolveFunction The promise resolve function.
           * @param {any} promise The promise object to allow for cancelling the {@link async.AjaxPromise}.
           */
-        constructor(resolveFunction: IAjaxResolveFunction<R>, promise: any);
+        constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any);
         /**
           * A method to initialize this AjaxPromise, passing it the
           * associated IHttpRequest.
@@ -2490,101 +2238,18 @@ export declare module async {
         cancel(): void;
         /**
           * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: async.IAjaxResponse<R>) => async.IAjaxThenable<U>} onFulfilled A method called when/if
-          * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: async.AjaxError) => async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: AjaxError) => any): IAjaxThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: async.IAjaxResponse<R>) => async.IAjaxThenable<U>} onFulfilled A method called when/if
-          * the promise fulfills. If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: async.AjaxError) => U} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: AjaxError) => IThenable<U>): IAjaxThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills.
-          * If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: async.AjaxError) => async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>, onRejected?: (error: AjaxError) => any): IAjaxThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
           * @param {(success: async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills.
           * If undefined the next onFulfilled method in the promise chain will be called.
           * @param {(error: async.AjaxError) => U} onRejected A method called when/if the promise rejects.
           * If undefined the next onRejected method in the promise chain will be called.
           */
-        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U, onRejected?: (error: AjaxError) => IThenable<U>): IAjaxThenable<U>;
-        /**
-          * A wrapper method for Promise.then(undefined, onRejected);
-          * @param {(error: any) => async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+        then<U>(onFulfilled: (success: IAjaxResponse<R>) => U | Promise<U>, onRejected?: (error: AjaxError) => U | Promise<U> | void): Promise<U>;
         /**
           * A wrapper method for Promise.then(undefined, onRejected);
           * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
           * onRejected method in the promise chain will be called.
           */
-        catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
-    }
-    /**
-      * Describes a type of IThenable that can optionally cancel it's associated AJAX call.
-      */
-    interface IAjaxThenable<R> extends IThenable<R> {
-        /**
-          * A method to cancel the AJAX call associated with this {@link async.AjaxPromise}.
-          */
-        cancel(): void;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-          * If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => async.IAjaxThenable<U>} onFulfilled A method called when/if the promise fulfills.
-          * If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => U} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => IThenable<U>, onRejected?: (error: any) => U): IAjaxThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
-          * If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IThenable<U>): IAjaxThenable<U>;
-        /**
-          * Takes in two methods, called when/if the promise fulfills/rejects.
-          * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
-          * If undefined the next onFulfilled method in the promise chain will be called.
-          * @param {(error: any) => U} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAjaxThenable<U>;
-        /**
-          * A wrapper method for Promise.then(undefined, onRejected);
-          * @param {(error: any) => async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        catch<U>(onRejected: (error: any) => IThenable<U>): IAjaxThenable<U>;
-        /**
-          * A wrapper method for Promise.then(undefined, onRejected);
-          * @param {(error: any) => U} onRejected A method called when/if the promise rejects.
-          * If undefined the next onRejected method in the promise chain will be called.
-          */
-        catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
+        catch<U>(onRejected: (error: any) => U | IThenable<U> | void): Promise<U>;
     }
     /**
       * Describes an object that provides value mappings for XMLHttpRequestResponseTypes
@@ -2630,7 +2295,7 @@ export declare module async {
         JSON: string;
         /**
           * Standard denotation for a multi-part Webform. Associated with
-          * an entype of 'multipart/form-data'.
+          * a content-type of 'multipart/form-data'.
           */
         MULTIPART_FORM: string;
         /**
@@ -2695,7 +2360,7 @@ export declare module async {
 /**
   * Holds classes and interfaces related to storage in platypus.
   */
-export declare module storage {
+export declare namespace storage {
     /**
       * A Cache class, for use with the ICacheFactory injectable.
       * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
@@ -2836,7 +2501,7 @@ export declare module storage {
       * clone a template when you put it in the cache. It will
       * also clone the template when you retrieve it.
       */
-    class TemplateCache extends Cache<async.IThenable<DocumentFragment>> {
+    class TemplateCache extends Cache<async.Promise<DocumentFragment>> {
         protected static _inject: any;
         /**
           * Reference to the IPromise injectable.
@@ -2852,30 +2517,18 @@ export declare module storage {
           */
         constructor();
         /**
-          * Serializes a string into a DocumentFragment and stores it in the cache.
-          * @param {string} key The key to use for storage/retrieval of the object.
-          * @param {string} value The string html.
-          */
-        put(key: string, value?: string): async.IThenable<DocumentFragment>;
-        /**
-          * Stores a Node in the cache as a DocumentFragment.
-          * @param {string} key The key to use for storage/retrieval of the object.
-          * @param {Node} value The Node.
-          */
-        put(key: string, value?: Node): async.IThenable<DocumentFragment>;
-        /**
           * Stores a IPromise in the cache.
           * @param {string} key The key to use for storage/retrieval of the object.
-          * @param {async.IThenable<Node>} value Promise that
+          * @param {async.Promise<Node>} value Promise that
           * should resolve with a Node.
           */
-        put(key: string, value?: async.IThenable<Node>): async.IThenable<DocumentFragment>;
+        put(key: string, value?: string | DocumentFragment | Node | async.Promise<Node>): async.Promise<DocumentFragment>;
         /**
           * Method for retrieving a Node from this cache. The DocumentFragment that resolves from the returned
           * Promise will be cloned to avoid manipulating the cached template.
           * @param {string} key The key to search for in this cache.
           */
-        read(key: string): async.IThenable<DocumentFragment>;
+        read(key: string): async.Promise<DocumentFragment>;
     }
     /**
       * A base class for storing data with a designated storage type.
@@ -2939,7 +2592,7 @@ export declare module storage {
 /**
   * Holds all classes and interfaces related to observable components in platypus.
   */
-export declare module observable {
+export declare namespace observable {
     /**
       * A class for managing both context inheritance and observable properties on controls and
       * facilitating in data-binding.
@@ -2952,7 +2605,7 @@ export declare module observable {
         /**
           * A set of functions to be fired when a particular observed array is mutated.
           */
-        static arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>>;
+        static arrayChangeListeners: IObject<IObject<((changes: IArrayChanges<any>[]) => void)[]>>;
         /**
           * An object for quickly accessing a previously created ContextManager.
           */
@@ -3020,7 +2673,7 @@ export declare module observable {
           * @param {Array<string>} split The string array containing properties used to index into
           * the rootContext.
           */
-        static getContext(rootContext: any, split: Array<string>): any;
+        static getContext(rootContext: any, split: string[]): any;
         /**
           * Defines an object property with the associated value. Useful for unobserving objects.
           * @param {any} obj The object on which to define the property.
@@ -3061,7 +2714,7 @@ export declare module observable {
           * @param {Array<string>} uids The set of unique Ids for which to remove the specified identifier.
           * @param {string} identifier The identifier to stop observing.
           */
-        static removeIdentifier(uids: Array<string>, identifier: string): void;
+        static removeIdentifier(uids: string[], identifier: string): void;
         /**
           * Ensures that an identifier path will exist on a given control. Will create
           * objects/arrays if necessary.
@@ -3084,12 +2737,12 @@ export declare module observable {
           * @param {boolean} observe? Whether or not to observe the identifier indicated by the
           * split Array.
           */
-        getContext(split: Array<string>, observe?: boolean): any;
+        getContext(split: string[], observe?: boolean): any;
         /**
           * Given a period-delimited identifier, observes an object and calls the given listener when the
           * object changes.
           * @param {string} absoluteIdentifier The period-delimited identifier noting the property to be observed.
-          * @param {observable.IListener} observableListener An object implmenting IObservableListener. The listener will be
+          * @param {observable.IListener} observableListener An object implementing IObservableListener. The listener will be
           * notified of object changes.
           */
         observe(absoluteIdentifier: string, observableListener: IListener): IRemoveListener;
@@ -3104,7 +2757,7 @@ export declare module observable {
           * @param {Array<any>} array The array to be observed.
           * @param {Array<any>} oldArray The old array to stop observing.
           */
-        observeArrayMutation(uid: string, listener: (changes: Array<IArrayChanges<any>>) => void, absoluteIdentifier: string, array: Array<any>, oldArray: Array<any>): IRemoveListener;
+        observeArrayMutation(uid: string, listener: (changes: IArrayChanges<any>[]) => void, absoluteIdentifier: string, array: any[], oldArray: any[]): IRemoveListener;
         /**
           * Disposes the memory for an ContextManager.
           */
@@ -3115,18 +2768,18 @@ export declare module observable {
           * @param {string} absoluteIdentifier The identifier of the Array being observed.
           * @param {(changes: Array<observable.IArrayChanges<any>>) => void} listener The Array mutation listener.
           */
-        protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (changes: Array<IArrayChanges<any>>) => void): IRemoveListener;
+        protected _pushArrayListener(uid: string, absoluteIdentifier: string, listener: (changes: IArrayChanges<any>[]) => void): IRemoveListener;
         /**
           * Restores an array to use Array.prototype instead of listener functions.
           * @param {Array<any>} array The array to restore.
           */
-        protected _restoreArray(array: Array<any>): void;
+        protected _restoreArray(array: any[]): void;
         /**
           * Overwrites an Array's prototype to observe mutation functions.
           * @param {string} absoluteIdentifier The identifier for the Array off context.
           * @param {Array<any>} array The array to overwrite.
           */
-        protected _overwriteArray(absoluteIdentifier: string, array: Array<any>): void;
+        protected _overwriteArray(absoluteIdentifier: string, array: any[]): void;
         /**
           * Gets the context object of an identifier.
           * @param {string} identifier The identifier for which we're getting the context.
@@ -3135,21 +2788,21 @@ export declare module observable {
           * @param {boolean} observe? Whether or not to observe the identifier indicated by the
           * split Array.
           */
-        protected _getContext(identifier: string, split: Array<string>, observe?: boolean): any;
+        protected _getContext(identifier: string, split: string[], observe?: boolean): any;
         /**
           * Gets the immediate context of identifier by splitting on ".".
           * @param {Array<string>} split The string array containing properties used to index into
           * the context.
           */
-        protected _getImmediateContext(split: Array<string>): any;
+        protected _getImmediateContext(split: string[]): any;
         /**
           * Gets the immediate context of identifier by splitting on "."
           * and observes the objects along the way.
-          * @param {Array<string>} split The identifier's split string array containing properties
+          * @param {Array<string>} split The identifier split string array containing properties
           * used to index into the context.
           * @param {string} identifier The identifier being observed.
           */
-        protected _observeImmediateContext(split: Array<string>, identifier: string): any;
+        protected _observeImmediateContext(split: string[], identifier: string): any;
         /**
           * Obtains the old value and new value of a given context
           * property on a property changed event.
@@ -3157,7 +2810,7 @@ export declare module observable {
           * @param {any} newRootContext The new context.
           * @param {any} oldRootContext The old context.
           */
-        protected _getValues(split: Array<string>, newRootContext: any, oldRootContext: any): {
+        protected _getValues(split: string[], newRootContext: any, oldRootContext: any): {
             newValue: any;
             oldValue: any;
         };
@@ -3169,7 +2822,7 @@ export declare module observable {
           * @param {any} oldValue The old value of the property.
           * @param {Array<string>} mappings? An array of mapped child identifier keys to notify.
           */
-        protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any, mappings?: Array<string>): void;
+        protected _notifyChildProperties(identifier: string, newValue: any, oldValue: any, mappings?: string[]): void;
         /**
           * Adds a listener to be fired for a particular identifier.
           * @param {string} absoluteIdentifier The identifier being observed.
@@ -3252,7 +2905,7 @@ export declare module observable {
         /**
           * A set of functions to be fired when a particular observed array is mutated.
           */
-        arrayChangeListeners: IObject<IObject<Array<(changes: Array<IArrayChanges<any>>) => void>>>;
+        arrayChangeListeners: IObject<IObject<((changes: IArrayChanges<any>[]) => void)[]>>;
         /**
           * Gets the ContextManager associated to the given control. If no
           * ContextManager exists, one is created for that control.
@@ -3277,7 +2930,7 @@ export declare module observable {
           * @param {Array<string>} split The string array containing properties used to index into
           * the rootContext.
           */
-        getContext(rootContext: any, split: Array<string>): any;
+        getContext(rootContext: any, split: string[]): any;
         /**
           * Defines an object property with the associated value. Useful for unobserving objects.
           * @param {any} obj The object on which to define the property.
@@ -3318,7 +2971,7 @@ export declare module observable {
           * @param {Array<string>} uids The set of unique Ids for which to remove the specified identifier.
           * @param {string} identifier The identifier to stop observing.
           */
-        removeIdentifier(uids: Array<string>, identifier: string): void;
+        removeIdentifier(uids: string[], identifier: string): void;
         /**
           * Ensures that an identifier path will exist on a given control. Will create
           * objects/arrays if necessary.
@@ -3358,7 +3011,7 @@ export declare module observable {
         /**
           * The new value of the array.
           */
-        object: Array<T>;
+        object: T[];
         /**
           * The method name that was called. Array mutation methods are:
           * 'push', 'pop', 'reverse', 'shift', 'sort', 'splice',
@@ -3372,7 +3025,7 @@ export declare module observable {
         /**
           * An array of the removed elements. Only available on Array mutation methods.
           */
-        removed?: Array<T>;
+        removed?: T[];
         /**
           * The number of elements added. Only available on Array mutation methods.
           */
@@ -3381,7 +3034,7 @@ export declare module observable {
           * The old Array prior to a 'reverse' or 'sort' mutation type.
           * Only available when the type is either 'reverse' or 'sort'.
           */
-        oldArray?: Array<T>;
+        oldArray?: T[];
     }
     /**
       * Defines the object added to a template control when its element
@@ -3413,9 +3066,9 @@ export declare module observable {
           * A function that allows this control to observe both the bound property itself as well as
           * potential child properties if being bound to an object.
           * @param {observable.IImplementTwoWayBinding} binder The control that facilitates the
-          * databinding.
+          * data-binding.
           */
-        observeProperties(binder: observable.IImplementTwoWayBinding): void;
+        observeProperties(binder: IImplementTwoWayBinding): void;
     }
     /**
       * Defines methods that interact with a control that implements ISupportTwoWayBinding
@@ -3426,20 +3079,11 @@ export declare module observable {
           * A function that allows a ISupportTwoWayBinding to observe both the
           * bound property itself as well as potential child properties if being bound to an object.
           * @param {observable.IBoundPropertyChangedListener<T>} listener The listener function.
-          * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
-          * the listener will listen for changes to the bound item itself.
-          * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
-          */
-        observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
-        /**
-          * A function that allows a ISupportTwoWayBinding to observe both the
-          * bound property itself as well as potential child properties if being bound to an object.
-          * @param {observable.IBoundPropertyChangedListener<T>} listener The listener function.
-          * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
+          * @param {number | string} identifier? The path off of the bound object to listen to for changes if the bound object is an Array.
           * If undefined or empty the listener will listen for changes to the bound Array itself.
           * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
           */
-        observeProperty<T>(listener: IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
+        observeProperty<T>(listener: IBoundPropertyChangedListener<T>, identifier?: number | string, autocast?: boolean): IRemoveListener;
         /**
           * A function that allows a ISupportTwoWayBinding to observe array mutations of the
           * bound property.
@@ -3447,7 +3091,7 @@ export declare module observable {
           * @param {string} identifier? The identifier off of the bound object to listen to for changes. If undefined or empty
           * the listener will listen for changes to the bound item itself.
           */
-        observeArrayChange<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
+        observeArrayChange<T>(listener: (changes: IArrayChanges<T>[], identifier: string) => void, identifier?: string): IRemoveListener;
         /**
           * A function that allows a ISupportTwoWayBinding to observe array mutations of the
           * bound property.
@@ -3455,7 +3099,7 @@ export declare module observable {
           * @param {number} index? The index off of the bound object to listen to for changes if the bound object is an Array.
           * If undefined or empty the listener will listen for changes to the bound Array itself.
           */
-        observeArrayChange<T>(listener: (changes: Array<IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
+        observeArrayChange<T>(listener: (changes: IArrayChanges<T>[], identifier: number) => void, index?: number): IRemoveListener;
         /**
           * Gets the current value of the bound property.
           */
@@ -3464,21 +3108,12 @@ export declare module observable {
     /**
       * Defines a function that will be called whenever a bound property specified by a given identifier has changed.
       */
-    interface IBoundPropertyChangedListener<T> {
-        /**
-          * The method signature for IBoundPropertyChangedListener.
-          * @param {T} newValue The new value of the observed property.
-          * @param {T} oldValue The previous value of the observed property.
-          * @param {any} identifier The string or number identifier that specifies the changed property.
-          * @param {boolean} firstTime? True if this is the first case where the bound property is being set.
-          */
-        (newValue: T, oldValue: T, identifier: any, firstTime?: boolean): void;
-    }
+    type IBoundPropertyChangedListener<T> = (newValue: T, oldValue: T, identifier: any, firstTime?: boolean) => void;
 }
 /**
   * Holds classes and interfaces related to event management components in platypus.
   */
-export declare module events {
+export declare namespace events {
     /**
       * An event class that propagates through a control tree.
       * Propagation of the event always starts at the sender, allowing a control to both
@@ -3522,30 +3157,9 @@ export declare module events {
           * Initializes the event, populating its public properties.
           * @param {string} name The name of the event.
           * @param {any} sender The object that initiated the event.
-          * @param {string} direction='up' Equivalent to EventManager.UP.
-          */
-        initialize(name: string, sender: any, direction?: 'up'): void;
-        /**
-          * Initializes the event, populating its public properties.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object that initiated the event.
-          * @param {string} direction='down' Equivalent to EventManager.DOWN.
-          */
-        initialize(name: string, sender: any, direction?: 'down'): void;
-        /**
-          * Initializes the event, populating its public properties.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object that initiated the event.
-          * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
-          */
-        initialize(name: string, sender: any, direction?: 'direct'): void;
-        /**
-          * Initializes the event, populating its public properties.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object that initiated the event.
           * @param {string} direction The direction of propagation
           */
-        initialize(name: string, sender: any, direction?: string): void;
+        initialize(name: string, sender: any, direction?: 'up' | 'down' | 'direct' | string): void;
         /**
           * Cancels the default action (if there is one) for an event. Does not affect propagation.
           */
@@ -3615,16 +3229,16 @@ export declare module events {
           * An upward-moving event will start at the sender and move
           * up the parent chain.
           */
-        static UP: string;
+        static UP: 'up';
         /**
           * A downward-moving event will start at the sender and move
           * to its children and beyond.
           */
-        static DOWN: string;
+        static DOWN: 'down';
         /**
           * Goes through all listeners for an event name, ignoring order.
           */
-        static DIRECT: string;
+        static DIRECT: 'direct';
         /**
           * Keeps track of which events are currently propagating.
           */
@@ -3652,7 +3266,8 @@ export declare module events {
           */
         static dispose(uid: string): void;
         /**
-          * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
+          * Registers a listener for a DispatchEvent.
+          * The listener will be called when a DispatchEvent is
           * propagating over the given uid. Any number of listeners can exist for a single event name.
           * @param {string} uid A unique id to associate with the object registering the listener.
           * @param {string} eventName The name of the event to listen to.
@@ -3665,37 +3280,10 @@ export declare module events {
           * event direction.
           * @param {string} name The name of the event.
           * @param {any} sender The object sending the event.
-          * @param {string} direction='up' Equivalent to EventManager.UP.
-          * @param {Array<any>} args? The arguments to send to the listeners.
-          */
-        static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): DispatchEvent;
-        /**
-          * Looks for listeners to a given event name, and fires the listeners using the specified
-          * event direction.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object sending the event.
-          * @param {string} direction='down' Equivalent to EventManager.DOWN.
-          * @param {Array<any>} args? The arguments to send to the listeners.
-          */
-        static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): DispatchEvent;
-        /**
-          * Looks for listeners to a given event name, and fires the listeners using the specified
-          * event direction.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object sending the event.
-          * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
-          * @param {Array<any>} args? The arguments to send to the listeners.
-          */
-        static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): DispatchEvent;
-        /**
-          * Looks for listeners to a given event name, and fires the listeners using the specified
-          * event direction.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object sending the event.
           * @param {string} direction The direction in which to send the event.
           * @param {Array<any>} args? The arguments to send to the listeners.
           */
-        static dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
+        static dispatch(name: string, sender: any, direction: 'down' | 'up' | 'direct', args?: any[]): DispatchEvent;
         /**
           * Returns whether or not the given string is a registered direction.
           * @param {string} direction The direction of the event
@@ -3706,25 +3294,25 @@ export declare module events {
           * @param {events.DispatchEvent} event The DispatchEvent to send
           * @param {Array<any>} args The arguments associated with the event
           */
-        static sendEvent(event: DispatchEvent, args?: Array<any>): void;
+        static sendEvent(event: DispatchEvent, args?: any[]): void;
         /**
           * Dispatches the event up the control chain.
           * @param {events.DispatchEvent} event The event being dispatched.
           * @param {Array<any>} args The arguments associated with the event.
           */
-        protected static _dispatchUp(event: DispatchEvent, args: Array<any>): void;
+        protected static _dispatchUp(event: DispatchEvent, args: any[]): void;
         /**
           * Dispatches the event down the control chain.
           * @param {events.DispatchEvent} event The event being dispatched.
           * @param {Array<any>} args The arguments associated with the event.
           */
-        protected static _dispatchDown(event: DispatchEvent, args: Array<any>): void;
+        protected static _dispatchDown(event: DispatchEvent, args: any[]): void;
         /**
           * Dispatches the event directly to all listeners.
           * @param {events.DispatchEvent} event The event being dispatched.
           * @param {Array<any>} args The arguments associated with the event.
           */
-        protected static _dispatchDirect(event: DispatchEvent, args: Array<any>): void;
+        protected static _dispatchDirect(event: DispatchEvent, args: any[]): void;
         /**
           * Dispatches the event to the listeners for the given uid.
           * @param {string} uid The uid used to find the event listeners.
@@ -3752,16 +3340,16 @@ export declare module events {
           * An upward-moving event will start at the sender and move
           * up the parent chain.
           */
-        UP: string;
+        UP: string | 'up';
         /**
           * A downward-moving event will start at the sender and move
           * to its children and beyond.
           */
-        DOWN: string;
+        DOWN: string | 'down';
         /**
           * Goes through all listeners for an event name, ignoring order.
           */
-        DIRECT: string;
+        DIRECT: string | 'direct';
         /**
           * Keeps track of which events are currently propagating.
           */
@@ -3777,69 +3365,6 @@ export declare module events {
           */
         dispose(uid: string): void;
         /**
-          * Registers a listener for the ready AlmEvent. The ready event will be called when the app
-          * is ready to start.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName='ready' Specifies that the listener is for the ready event.
-          * @param {(ev: events.LifecycleEvent) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: 'ready', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
-        /**
-          * Registers a listener for the suspend AlmEvent. The listener will be called when an app
-          * is being suspended.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName='suspend' Specifies the listener is for the suspend event.
-          * @param {(ev: events.LifecycleEvent) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: 'suspend', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
-        /**
-          * Registers a listener for the resume AlmEvent. The listener will be called when an app
-          * is being resumeed.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName='suspend' Specifies the listener is for the resume event.
-          * @param {(ev: events.LifecycleEvent) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: 'resume', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
-        /**
-          * Registers a listener for the online AlmEvent. This event fires when the app's network
-          * connection changes to be online.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName='online' Specifies the listener is for the online event.
-          * @param {(ev: events.LifecycleEvent) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: 'online', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
-        /**
-          * Registers a listener for the offline AlmEvent. This event fires when the app's network
-          * connection changes to be offline.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName='offline' Specifies the listener is for the offline event.
-          * @param {(ev: events.LifecycleEvent) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: 'offline', listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
-        /**
-          * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
-          * propagating over the given uid. Any number of listeners can exist for a single event name.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName The name of the event to listen to.
-          * @param {(ev: events.LifecycleEvent) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: string, listener: (ev: LifecycleEvent) => void, context?: any): IRemoveListener;
-        /**
-          * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
-          * propagating over the given uid. Any number of listeners can exist for a single event name.
-          * @param {string} uid A unique id to associate with the object registering the listener.
-          * @param {string} eventName The name of the event to listen to.
-          * @param {(ev: events.ErrorEvent<Error>) => void} listener The method called when the event is fired.
-          * @param {any} context? The context with which to call the listener method.
-          */
-        on(uid: string, eventName: 'error', listener: (ev: ErrorEvent<Error>) => void, context?: any): IRemoveListener;
-        /**
           * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
           * propagating over the given uid. Any number of listeners can exist for a single event name.
           * @param {string} uid A unique id to associate with the object registering the listener.
@@ -3847,34 +3372,7 @@ export declare module events {
           * @param {(ev: events.DispatchEvent, ...args: any[]) => void} listener The method called when the event is fired.
           * @param {any} context? The context with which to call the listener method.
           */
-        on(uid: string, eventName: string, listener: (ev: DispatchEvent, ...args: any[]) => void, context?: any): IRemoveListener;
-        /**
-          * Looks for listeners to a given event name, and fires the listeners using the specified
-          * event direction.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object sending the event.
-          * @param {string} direction='up' Equivalent to EventManager.UP.
-          * @param {Array<any>} args? The arguments to send to the listeners.
-          */
-        dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): DispatchEvent;
-        /**
-          * Looks for listeners to a given event name, and fires the listeners using the specified
-          * event direction.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object sending the event.
-          * @param {string} direction='down' Equivalent to EventManager.DOWN.
-          * @param {Array<any>} args? The arguments to send to the listeners.
-          */
-        dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): DispatchEvent;
-        /**
-          * Looks for listeners to a given event name, and fires the listeners using the specified
-          * event direction.
-          * @param {string} name The name of the event.
-          * @param {any} sender The object sending the event.
-          * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
-          * @param {Array<any>} args? The arguments to send to the listeners.
-          */
-        dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): DispatchEvent;
+        on(uid: string, eventName: 'ready' | 'suspend' | 'resume' | 'online' | 'offline' | 'error' | string, listener: (ev: DispatchEvent | LifecycleEvent | ErrorEvent<Error>, ...args: any[]) => void, context?: any): IRemoveListener;
         /**
           * Looks for listeners to a given event name, and fires the listeners using the specified
           * event direction.
@@ -3883,7 +3381,7 @@ export declare module events {
           * @param {string} direction The direction in which to send the event.
           * @param {Array<any>} args? The arguments to send to the listeners.
           */
-        dispatch(name: string, sender: any, direction: string, args?: Array<any>): DispatchEvent;
+        dispatch(name: string, sender: any, direction: 'up' | 'down' | 'direct' | string, args?: any[]): DispatchEvent;
         /**
           * Returns whether or not the given string is a registered direction.
           * @param {string} direction The direction of the event
@@ -3894,7 +3392,7 @@ export declare module events {
           * @param {events.DispatchEvent} event The DispatchEvent to send
           * @param {Array<any>} args The arguments associated with the event
           */
-        sendEvent(event: DispatchEvent, args?: Array<any>): void;
+        sendEvent(event: DispatchEvent, args?: any[]): void;
     }
     /**
       * Represents an internal Error Event. This is used for any
@@ -3926,18 +3424,10 @@ export declare module events {
           * Initializes the event, populating its public properties.
           * @param {string} name The name of the event.
           * @param {any} sender The sender of the event.
-          * @param {string} direction='direct' Equivalent to EventManager.DIRECT.
-          * @param {E} error The error that occurred, resulting in the event.
-          */
-        initialize(name: string, sender: any, direction?: 'direct', error?: E): void;
-        /**
-          * Initializes the event, populating its public properties.
-          * @param {string} name The name of the event.
-          * @param {any} sender The sender of the event.
           * @param {string} direction This is always a direct event.
           * @param {E} error The error that occurred, resulting in the event.
           */
-        initialize(name: string, sender: any, direction?: string, error?: E): void;
+        initialize(name: string, sender: any, direction?: string | 'direct', error?: E): void;
     }
     /**
       */
@@ -4043,7 +3533,7 @@ export declare class Control {
       * Given a control, calls the loaded method for the control if it exists.
       * @param {Control} control The control to load.
       */
-    static load(control: Control): async.IThenable<void>;
+    static load(control: Control): async.Promise<void>;
     /**
       * Disposes all the necessary memory for a control. Uses specific dispose
       * methods related to a control's constructor if necessary.
@@ -4084,7 +3574,7 @@ export declare class Control {
       * @param {string} key The key to search for on all the controls in the tree.
       * @param {string} value The expected value used to find similar controls.
       */
-    private static __getControls(control, key, value);
+    private static __getControls<T>(control, key, value);
     /**
       * The constructor for a control. Any injectables specified during control registration will be
       * passed into the constructor as arguments as long as the control is instantiated with its associated
@@ -4109,27 +3599,12 @@ export declare class Control {
       * Retrieves all the controls with the specified name.
       * @param {string} name The string name with which to populate the returned controls array.
       */
-    getControlsByName(name: string): Array<Control>;
-    /**
-      * Retrieves all the controls of the specified type.
-      * @param {string} type The type used to find controls (e.g. 'plat-foreach')
-      */
-    getControlsByType<T extends Control>(type: string): Array<T>;
+    getControlsByName(name: string): Control[];
     /**
       * Retrieves all the controls of the specified type.
       * @param {new () => T} Constructor The constructor used to find controls.
       */
-    getControlsByType<T extends Control>(Constructor: new () => T): Array<T>;
-    /**
-      * Adds an event listener of the specified type to the specified element. Removal of the
-      * event is handled automatically upon disposal.
-      * @param {EventTarget} element The element to add the event listener to.
-      * @param {string} type The type of event to listen to.
-      * @param {ui.IGestureListener} listener The listener to fire when the event occurs.
-      * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-      * of event propagation.
-      */
-    addEventListener(element: EventTarget, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+    getControlsByType<T extends Control>(type: string | (new () => T)): T[];
     /**
       * Adds an event listener of the specified type to the specified element. Removal of the
       * event is handled automatically upon disposal.
@@ -4139,16 +3614,7 @@ export declare class Control {
       * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
       * of event propagation.
       */
-    addEventListener(element: EventTarget, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-    /**
-      * Allows a Control to observe any property on its context and receive updates when
-      * the property is changed.
-      * @param {IIdentifierChangedListener<T>} listener The method called when the property is changed.
-      * This method will have its 'this' context set to the control instance.
-      * @param {string} identifier? The property string that denotes the item in the context (e.g. "foo.bar.baz" is observing the
-      * property `baz` in the object `bar` in the object `foo` in the control's context.
-      */
-    observe<T>(listener: (value: T, oldValue: T, identifier: string) => void, identifier?: string): IRemoveListener;
+    addEventListener(element: EventTarget, type: string, listener: ui.IGestureListener | EventListener, useCapture?: boolean): IRemoveListener;
     /**
       * Allows a Control to observe any property on its context and receive updates when
       * the property is changed.
@@ -4156,7 +3622,7 @@ export declare class Control {
       * will have its 'this' context set to the control instance.
       * @param {number} index? The index that denotes the item in the context if the context is an Array.
       */
-    observe<T>(listener: (value: T, oldValue: T, index: number) => void, index?: number): IRemoveListener;
+    observe<T>(listener: (value: T, oldValue: T, identifier: number | string) => void, identifier?: number | string): IRemoveListener;
     /**
       * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
       * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
@@ -4165,7 +3631,7 @@ export declare class Control {
       * after an array-changing method is called. This method will have its 'this' context set to the control instance.
       * @param {string} identifier? The property string that denotes the array in the context.
       */
-    observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
+    observeArray<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: string) => void, identifier?: string): IRemoveListener;
     /**
       * Allows a Control to observe an array and receive updates when certain array-changing methods are called.
       * The methods watched are push, pop, shift, sort, splice, reverse, and unshift. This method currently does not watch
@@ -4174,33 +3640,20 @@ export declare class Control {
       * after an array-changing method is called. This method will have its 'this' context set to the control instance.
       * @param {number} identifier? The index that denotes the array in the context if the context is an Array.
       */
-    observeArray<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, identifier?: number): IRemoveListener;
-    /**
-      * Parses an expression string and observes any associated identifiers. When an identifier
-      * value changes, the listener will be called.
-      * @param {IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
-      * @param {string} expression The expression string to watch for changes.
-      */
-    observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: string): IRemoveListener;
+    observeArray<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: number) => void, identifier?: number): IRemoveListener;
     /**
       * Using a IParsedExpression observes any associated identifiers. When an identifier
       * value changes, the listener will be called.
       * @param {IIdentifierChangedListener<T>} listener The listener to call when the expression identifer values change.
       * @param {expressions.IParsedExpression} expression The expression string to watch for changes.
       */
-    observeExpression<T>(listener: (value: T, oldValue: T, expression: string) => void, expression: expressions.IParsedExpression): IRemoveListener;
-    /**
-      * Evaluates an expression string, using the control.parent.context.
-      * @param {string} expression The expression string to evaluate.
-      * @param {IObject<any>} aliases Optional alias values to parse with the expression
-      */
-    evaluateExpression(expression: string, aliases?: IObject<any>): any;
+    observeExpression<T>(listener: (value: T, oldValue: T, expression: expressions.IParsedExpression | string) => void, expression: expressions.IParsedExpression | string): IRemoveListener;
     /**
       * Evaluates an IParsedExpression using the control.parent.context.
       * @param {string} expression The expression string to evaluate.
       * @param {IObject<any>} aliases Optional alias values to parse with the expression
       */
-    evaluateExpression(expression: expressions.IParsedExpression, aliases?: IObject<any>): any;
+    evaluateExpression(expression: string | expressions.IParsedExpression, aliases?: IObject<any>): any;
     /**
       * Finds the first instance of the specified property
       * in the parent control chain. Returns undefined if not found.
@@ -4217,51 +3670,15 @@ export declare class Control {
       * event.
       * @param {string} name The name of the event to send, coincides with the name used in the
       * control.on() method.
-      * @param {string} direction='up' Equivalent to EventManager.UP
-      * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-      */
-    dispatchEvent(name: string, direction?: 'up', ...args: any[]): void;
-    /**
-      * Creates a new DispatchEvent and propagates it to controls based on the
-      * provided direction mechanism. Controls in the propagation chain that registered
-      * the event using the control.on() method will receive the event. Propagation will
-      * always start with the sender, so the sender can both produce and consume the same
-      * event.
-      * @param {string} name The name of the event to send, coincides with the name used in the
-      * control.on() method.
-      * @param {string} direction='down' Equivalent to EventManager.DOWN
-      * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-      */
-    dispatchEvent(name: string, direction?: 'down', ...args: any[]): void;
-    /**
-      * Creates a new DispatchEvent and propagates it to controls based on the
-      * provided direction mechanism. Controls in the propagation chain that registered
-      * the event using the control.on() method will receive the event. Propagation will
-      * always start with the sender, so the sender can both produce and consume the same
-      * event.
-      * @param {string} name The name of the event to send, coincides with the name used in the
-      * control.on() method.
-      * @param {string} direction='direct' Equivalent to EventManager.DIRECT
-      * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
-      */
-    dispatchEvent(name: string, direction?: 'direct', ...args: any[]): void;
-    /**
-      * Creates a new DispatchEvent and propagates it to controls based on the
-      * provided direction mechanism. Controls in the propagation chain that registered
-      * the event using the control.on() method will receive the event. Propagation will
-      * always start with the sender, so the sender can both produce and consume the same
-      * event.
-      * @param {string} name The name of the event to send, coincides with the name used in the
-      * control.on() method.
       * @param {string} direction The direction in which to send the event.
       * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
       */
-    dispatchEvent(name: string, direction?: string, ...args: any[]): void;
+    dispatchEvent(name: string, direction?: 'up' | 'down' | 'direct' | string, ...args: any[]): void;
     /**
       * Registers a listener for a DispatchEvent. The listener will be called when a
       * DispatchEvent is propagating over the control. Any number of listeners can exist
       * for a single event name.
-      * @param {string} name The name of the event, cooinciding with the DispatchEvent name.
+      * @param {string} name The name of the event, coinciding with the DispatchEvent name.
       * @param {(ev: events.DispatchEvent, ...args: Array<any>) => void} listener The method called when the
       * DispatchEvent is fired.
       */
@@ -4289,7 +3706,7 @@ export interface IControlFactory {
       * Given a control, calls the loaded method for the control if it exists.
       * @param {Control} control The control to load.
       */
-    load(control: Control): async.IThenable<void>;
+    load(control: Control): async.Promise<void>;
     /**
       * Disposes all the necessary memory for a control. Uses specific dispose
       * methods related to a control's constructor if necessary.
@@ -4319,7 +3736,7 @@ export interface IControlProperty {
     /**
       * The parsed expression of the control property.
       */
-    expresssion: expressions.IParsedExpression;
+    expression: expressions.IParsedExpression;
     /**
       * The value of the property.
       */
@@ -4372,7 +3789,7 @@ export interface IAttributeControlFactory {
 /**
   * Holds all the classes and interfaces related to UI components for platypus.
   */
-export declare module ui {
+export declare namespace ui {
     /**
       * The base control for any control that affects the UI. They provide properties for the control to use
       * to manage its body HTML.
@@ -4473,23 +3890,23 @@ export declare module ui {
           * An array of child controls. Any controls created by this control can be found in this array. The controls in
           * this array will have reference to this control in their parent property.
           */
-        controls: Array<Control>;
+        controls: Control[];
         /**
           * A Node array for managing the TemplateControl's childNodes in the event that this control
           * replaces its element. This property will only exist/be of use for a TemplateControl that
-          * implements the replaceWith property. This is an expirimental API.
+          * implements the replaceWith property. This is an experimental API.
           */
-        elementNodes: Array<Node>;
+        elementNodes: Node[];
         /**
           * The first node in the TemplateControl's body. This property allows an
           * TemplateControl to add nodes to its body in the event that it replaces its element.
-          * This is an expirimental API.
+          * This is an experimental API.
           */
         startNode: Comment;
         /**
           * The last node in the TemplateControl's body. This property allows a
           * TemplateControl to add nodes to its body in the event that it replaces its element.
-          * This is an expirimental API.
+          * This is an experimental API.
           */
         endNode: Comment;
         /**
@@ -4511,21 +3928,13 @@ export declare module ui {
         root: TemplateControl;
         /**
           * Evaluates an expression string with a given control and optional control's context and aliases.
-          * @param {string} expression The expression string (e.g. `foo + foo`).
-          * @param {ui.TemplateControl} control? The control used for evaluation context.
-          * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
-          * not include the `@` character).
-          */
-        static evaluateExpression(expression: string, control?: TemplateControl, aliases?: IObject<any>): any;
-        /**
-          * Evaluates an expression string with a given control and optional control's context and aliases.
           * @param {expressions.IParsedExpression} expression A parsed expression object created using the
           * expressions.Parser injectable.
           * @param {ui.TemplateControl} control? The control used for evaluation context.
           * @param {IObject<any>} aliases? An optional alias object containing resource alias values (property keys should
           * not include the `@` character).
           */
-        static evaluateExpression(expression: expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
+        static evaluateExpression(expression: string | expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
         /**
           * Given a control and Array of aliases, finds the associated resources and builds a context object containing
           * the values. Returns the object.
@@ -4534,7 +3943,7 @@ export declare module ui {
           * @param {IObject<any>} resources? An optional resources object to extend, if no resources object is passed in a
           * new one will be created.
           */
-        static getResources(control: TemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
+        static getResources(control: TemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
         /**
           * Starts at a control and searches up its parent chain for a particular resource alias.
           * If the resource is found, it will be returned along with the control instance on which
@@ -4587,7 +3996,7 @@ export declare module ui {
           * @param {ui.TemplateControl} control The control whose template is being determined.
           * @param {string} templateUrl? The potential template URL to use to grab the template.
           */
-        static determineTemplate(control: TemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
+        static determineTemplate(control: TemplateControl, templateUrl?: string): async.Promise<DocumentFragment>;
         /**
           * Detaches a TemplateControl. Disposes its children,
           * but does not dispose the TemplateControl.
@@ -4619,7 +4028,7 @@ export declare module ui {
           * @param {IObject<any>} resources? An optional resources object to extend,
           * if no resources object is passed in a new one will be created.
           */
-        getResources(aliases: Array<string>, resources?: IObject<any>): IObject<any>;
+        getResources(aliases: string[], resources?: IObject<any>): IObject<any>;
         /**
           * Starts at a control and searches up its parent chain for a particular resource alias.
           * If the resource is found, it will be returned along with the control instance on which
@@ -4632,18 +4041,11 @@ export declare module ui {
         };
         /**
           * Evaluates an expression string, using the input context or control.context.
-          * @param {string} expression The expression string to evaluate.
-          * @param {any} context? An optional context with which to parse. If
-          * no context is specified, the control.context will be used.
-          */
-        evaluateExpression(expression: string, context?: any): any;
-        /**
-          * Evaluates an expression string, using the input context or control.context.
           * @param {expressions.IParsedExpression} expression The previously parsed expression to evaluate.
           * @param {any} context? An optional context with which to parse. If
           * no context is specified, the control.context will be used.
           */
-        evaluateExpression(expression: expressions.IParsedExpression, context?: any): any;
+        evaluateExpression(expression: string | expressions.IParsedExpression, context?: any): any;
     }
     /**
       */
@@ -4654,19 +4056,12 @@ export declare module ui {
     interface ITemplateControlFactory {
         /**
           * Evaluates an expression string with a given control and optional control's context and aliases.
-          * @param {string} expression The expression string (e.g. `foo + foo`).
-          * @param {ui.TemplateControl} control? The control used for evaluation context.
-          * @param {IObject<any>} aliases? An optional alias object containing resource alias values
-          */
-        evaluateExpression(expression: string, control?: TemplateControl, aliases?: IObject<any>): any;
-        /**
-          * Evaluates an expression string with a given control and optional control's context and aliases.
           * @param {expressions.IParsedExpression} expression A parsed expression object created using the
           * expressions.Parser injectable.
           * @param {ui.TemplateControl} control? The control used for evaluation context.
           * @param {IObject<any>} aliases? An optional alias object containing resource alias values
           */
-        evaluateExpression(expression: expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
+        evaluateExpression(expression: string | expressions.IParsedExpression, control?: TemplateControl, aliases?: IObject<any>): any;
         /**
           * Given a control and Array of aliases, finds the associated resources and builds a context object containing
           * the values. Returns the object.
@@ -4675,7 +4070,7 @@ export declare module ui {
           * @param {IObject<any>} resources? An optional resources object to extend,
           * if no resources object is passed in a new one will be created.
           */
-        getResources(control: TemplateControl, aliases: Array<string>, resources?: IObject<any>): IObject<any>;
+        getResources(control: TemplateControl, aliases: string[], resources?: IObject<any>): IObject<any>;
         /**
           * Starts at a control and searches up its parent chain for a particular resource alias.
           * If the resource is found, it will be returned along with the control instance on which
@@ -4728,7 +4123,7 @@ export declare module ui {
           * @param {ui.TemplateControl} control The control whose template is being determined.
           * @param {string} templateUrl? The potential template URL to use to grab the template.
           */
-        determineTemplate(control: TemplateControl, templateUrl?: string): async.IThenable<DocumentFragment>;
+        determineTemplate(control: TemplateControl, templateUrl?: string): async.Promise<DocumentFragment>;
         /**
           * Detaches a TemplateControl. Disposes its children,
           * but does not dispose the TemplateControl.
@@ -4754,7 +4149,7 @@ export declare module ui {
           * The set of functions added externally that listens
           * for property changes.
           */
-        protected _listeners: Array<IPropertyChangedListener<any>>;
+        protected _listeners: IPropertyChangedListener<any>[];
         /**
           * Adds a listener to be called when the bindable property changes.
           * @param {IPropertyChangedListener<any>} listener The function that acts as a listener.
@@ -4764,7 +4159,7 @@ export declare module ui {
           * A function that allows this control to observe both the bound property itself as well as
           * potential child properties if being bound to an object.
           * @param {observable.IImplementTwoWayBinding} binder The control that facilitates the
-          * databinding.
+          * data-binding.
           */
         observeProperties(binder: observable.IImplementTwoWayBinding): void;
         /**
@@ -4808,13 +4203,13 @@ export declare module ui {
         /**
           * Allows a ViewControl to asynchronously decide if the app is able to navigate away from the
           * current view. A possible use of this method might be to popup a confirmation modal. You can
-          * return a boolean or IThenable<boolean> to accept/reject navigation.
+          * return a boolean or Promise<boolean> to accept/reject navigation.
           * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
           */
         canNavigateFrom(): any;
         /**
           * Allows a ViewControl to asynchronously decide if it can be navigated to with the given parameters/query.
-          * You can return a boolean or IThenable<boolean> to accept/reject navigation.
+          * You can return a boolean or Promise<boolean> to accept/reject navigation.
           * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
           */
         canNavigateTo(parameters: any, query: any): any;
@@ -4842,13 +4237,13 @@ export declare module ui {
         /**
           * Allows a control to asynchronously decide if the app is able to navigate away from the
           * current view. A possible use of this method might be to popup a confirmation modal. You can
-          * return a boolean or IThenable<boolean> to accept/reject navigation.
+          * return a boolean or Promise<boolean> to accept/reject navigation.
           * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
           */
         canNavigateFrom(): any;
         /**
           * Allows a control to asynchronously decide if it can be navigated to with the given parameters/query.
-          * You can return a boolean or IThenable<boolean> to accept/reject navigation.
+          * You can return a boolean or Promise<boolean> to accept/reject navigation.
           * A word of caution, this is a navigation-blocking function. It is best to avoid long-running functions.
           */
         canNavigateTo(parameters: any, query: any): any;
@@ -4871,34 +4266,7 @@ export declare module ui {
         /**
           * Reference to the DomEvents injectable.
           */
-        protected _domEvents: ui.DomEvents;
-        /**
-          * Adds an event listener of the specified type to the specified element.
-          * @param {Node} element The element to add the event listener to.
-          * @param {string} type The type of event to listen to.
-          * @param {ui.IGestureListener} listener The listener to fire when the event occurs.
-          * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-          * of event propagation.
-          */
-        addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-          * Adds an event listener of the specified type to the specified element.
-          * @param {Window} element The window object.
-          * @param {string} type The type of event to listen to.
-          * @param {ui.IGestureListener} listener The listener to fire when the event occurs.
-          * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-          * of event propagation.
-          */
-        addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-          * Adds an event listener of the specified type to the specified element.
-          * @param {Node} element The element to add the event listener to.
-          * @param {string} type The type of event to listen to.
-          * @param {EventListener} listener The listener to fire when the event occurs.
-          * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
-          * of event propagation.
-          */
-        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        protected _domEvents: DomEvents;
         /**
           * Adds an event listener of the specified type to the specified element.
           * @param {Window} element The window object.
@@ -4907,25 +4275,7 @@ export declare module ui {
           * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
           * of event propagation.
           */
-        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-        /**
-          * Takes a Node Array and creates a DocumentFragment and adds the nodes to the Fragment.
-          * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
-          */
-        appendChildren(nodeList: Array<Node>): DocumentFragment;
-        /**
-          * Takes a NodeList and creates a DocumentFragment and adds the NodeList to the Fragment.
-          * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
-          */
-        appendChildren(nodeList: NodeList): DocumentFragment;
-        /**
-          * Takes a Node Array and either adds it to the passed in Node,
-          * or creates a DocumentFragment and adds the nodes to the
-          * Fragment.
-          * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
-          * @param {Node} root? An optional Node to append the nodeList.
-          */
-        appendChildren(nodeList: Array<Node>, root?: Node): Node;
+        addEventListener(element: Window | Node, type: string, listener: IGestureListener | EventListener, useCapture?: boolean): IRemoveListener;
         /**
           * Takes a NodeList and either adds it to the passed in Node,
           * or creates a DocumentFragment and adds the NodeList to the
@@ -4933,25 +4283,7 @@ export declare module ui {
           * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
           * @param {Node} root? An optional Node to append the nodeList.
           */
-        appendChildren(nodeList: NodeList, root?: Node): Node;
-        /**
-          * Takes a Node Array, clones them, and creates a DocumentFragment and adds the nodes to the Fragment.
-          * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
-          */
-        cloneChildren(nodeList: Array<Node>): DocumentFragment;
-        /**
-          * Takes a NodeList, clones it, and creates a DocumentFragment and adds the NodeList to the Fragment.
-          * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
-          */
-        cloneChildren(nodeList: NodeList): DocumentFragment;
-        /**
-          * Takes a Node Array, clones the nodes, and either adds it to the passed in Node,
-          * or creates a DocumentFragment and adds the nodes to the
-          * Fragment.
-          * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
-          * @param {Node} root? An optional Node to append the nodeList.
-          */
-        cloneChildren(nodeList: Array<Node>, root?: Node): Node;
+        appendChildren(nodeList: Node[] | NodeList, root?: Node): Node;
         /**
           * Takes a NodeList, clones the nodes, and either adds it to the passed in Node,
           * or creates a DocumentFragment and adds the NodeList to the
@@ -4959,24 +4291,18 @@ export declare module ui {
           * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
           * @param {Node} root? An optional Node to append the nodeList.
           */
-        cloneChildren(nodeList: NodeList, root?: Node): Node;
+        cloneChildren(nodeList: Node[] | NodeList, root?: Node): Node;
         /**
           * Clears a DOM Node by removing all of its childNodes.
           * @param {Node} node The DOM Node to clear.
           */
         clearNode(node: Node): void;
         /**
-          * Removes all the Nodes in the Array from the parent Node.
-          * @param {Array<Node>} nodeList The Node Array to remove from the parent Node.
-          * @param {Node} parent? The parent Node used to remove the nodeList.
-          */
-        clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
-        /**
           * Removes all the Nodes in the NodeList from the parent Node.
           * @param {NodeList} nodeList The NodeList to remove from the parent Node.
           * @param {Node} parent? The parent Node used to remove the nodeList.
           */
-        clearNodeBlock(nodeList: NodeList, parent?: Node): void;
+        clearNodeBlock(nodeList: Node[] | NodeList, parent?: Node): void;
         /**
           * Sets the innerHTML of a Node. Can take in a Node rather than an Element
           * because it does not use innerHTML on the passed-in Node (it appends its
@@ -4986,39 +4312,18 @@ export declare module ui {
           */
         setInnerHtml(node: Node, html: string): Node;
         /**
-          * Inserts a list of Nodes before the designated end Node.
-          * @param {Node} parent The parent node into which to insert nodes.
-          * @param {Array<Node>} nodes The Node Array to insert into the parent.
-          * @param {Node} endNode? An optional endNode to use to insert nodes.
-          */
-        insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
-        /**
-          * Inserts a list of Nodes before the designated end Node.
-          * @param {Node} parent The parent node into which to insert nodes.
-          * @param {NodeList} nodes The NodeList to insert into the parent.
-          * @param {Node} endNode? An optional endNode to use to insert nodes.
-          */
-        insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
-        /**
-          * Inserts a DocumentFragment before the designated end Node.
-          * @param {Node} parent The parent node into which to insert nodes.
-          * @param {DocumentFragment} fragment The DocumentFragment to insert into the parent.
-          * @param {Node} endNode? An optional endNode to use to insert nodes.
-          */
-        insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
-        /**
           * Inserts a Node before the designated end Node.
           * @param {Node} parent The parent node into which to insert nodes.
           * @param {Node} node The Node to insert into the parent.
           * @param {Node} endNode? An optional endNode to use to insert nodes.
           */
-        insertBefore(parent: Node, node: Node, endNode?: Node): Array<Node>;
+        insertBefore(parent: Node, nodes: Node[] | NodeList | DocumentFragment | Node, endNode?: Node): Node[];
         /**
           * Takes the child nodes of the given node and places them above the node
           * in the DOM. Then removes the given node.
           * @param {Node} node The Node to replace.
           */
-        replace(node: Node): Array<Node>;
+        replace(node: Node): Node[];
         /**
           * Takes the childNodes of the given element and appends them to the newElement.
           * Then replaces the element in its parent's tree with the newElement.
@@ -5102,7 +4407,7 @@ export declare module ui {
           * as well.
           * @param {string} templateUrl The url where the HTML template is stored.
           */
-        getTemplate(templateUrl: string): async.IThenable<DocumentFragment>;
+        getTemplate(templateUrl: string): async.Promise<DocumentFragment>;
         /**
           * Inspects the Element and resolves when the Element is present in the DOM body.
           * @param {() => void} cb A callback that will fire when the element is present in the DOM body.
@@ -5198,7 +4503,7 @@ export declare module ui {
           * All created templates are DocumentFragments, allowing an TemplateControl to
           * easily insert the template into the DOM (without iterating over childNodes).
           */
-        templates: IObject<async.IThenable<DocumentFragment>>;
+        templates: IObject<async.Promise<DocumentFragment>>;
         /**
           * A keyed cache of ElementManagers that represent the roots of compiled templates
           * created by this instance.
@@ -5231,138 +4536,6 @@ export declare module ui {
         /**
           * Adds a template to this object. The template will be stored with the key,
           * and it will be transformed into a DocumentFragment.
-          * @param {Element} template An Element representing the DOM template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: Element, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {Element} template An Element representing the DOM template.
-          * @param {number} relativeIdentifier? The identifier number relative to this control's context
-          * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: Element, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {Array<Node>} template A node Array representing the DOM template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: Array<Node>, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {Array<Node>} template A node Array representing the DOM template.
-          * @param {number} relativeIdentifier? The identifier number relative to this control's context
-          * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: Array<Node>, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {NodeList} template A NodeList representing the DOM template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: NodeList, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {NodeList} template A NodeList representing the DOM template.
-          * @param {number} relativeIdentifier? The identifier number relative to this control's context
-          * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: NodeList, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: DocumentFragment, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
-          * @param {number} relativeIdentifier? The identifier number relative to this control's context
-          * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: DocumentFragment, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {Node} template A Node representing the DOM template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: Node, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {Node} template A Node representing the DOM template.
-          * @param {number} relativeIdentifier? The identifier number relative to this control's context
-          * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: Node, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {string} template A template string representing the DOM template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        once(template: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
           * @param {string} template A template string representing the DOM template.
           * @param {number} relativeIdentifier? The identifier number relative to this control's context
           * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
@@ -5371,20 +4544,7 @@ export declare module ui {
           * @param {IObject<IResource>} resources? An object used as the resources for any top-level
           * controls created in the template.
           */
-        once(template: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Method for linking a compiled template to a data context and returning a clone of the template,
-          * with all new Controls created if the template contains controls. If no data context
-          * is specified, it will be inherited.
-          * @param {string} key The key used to retrieve the template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        bind(key: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+        once(template: Element | Node | DocumentFragment | Node[] | NodeList | string, relativeIdentifier?: string | number, resources?: IObject<IResource>): async.Promise<DocumentFragment>;
         /**
           * Method for linking a compiled template to a data context and returning a clone of the template,
           * with all new Controls created if the template contains controls. If no data context
@@ -5395,47 +4555,7 @@ export declare module ui {
           * @param {IObject<IResource>} resources? An object used as the resources for any top-level
           * controls created in the template.
           */
-        bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {string} key The key used to store the template.
-          * @param {Element} template An Element representing the DOM template.
-          * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-          */
-        add(key: string, template: Element, overwrite?: boolean): void;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {string} key The key used to store the template.
-          * @param {Array<Node>} template A node Array representing the DOM template.
-          * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-          */
-        add(key: string, template: Array<Node>, overwrite?: boolean): void;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {string} key The key used to store the template.
-          * @param {NodeList} template A NodeList representing the DOM template.
-          * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-          */
-        add(key: string, template: NodeList, overwrite?: boolean): void;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {string} key The key used to store the template.
-          * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
-          * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-          */
-        add(key: string, template: DocumentFragment, overwrite?: boolean): void;
-        /**
-          * Adds a template to this object. The template will be stored with the key,
-          * and it will be transformed into a DocumentFragment.
-          * @param {string} key The key used to store the template.
-          * @param {Node} template A Node representing the DOM template.
-          * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
-          */
-        add(key: string, template: Node, overwrite?: boolean): void;
+        bind(key: any, relativeIdentifier?: string | number, resources?: IObject<IResource>): async.Promise<DocumentFragment>;
         /**
           * Adds a template to this object. The template will be stored with the key,
           * and it will be transformed into a DocumentFragment.
@@ -5443,22 +4563,7 @@ export declare module ui {
           * @param {string} template A template string representing the DOM template.
           * @param {boolean} overwrite Specifies whether an already-existing template should be overwritten.
           */
-        add(key: string, template: string, overwrite?: boolean): void;
-        /**
-          * Replaces the bound TemplateControl in the child control Array
-          * specified by the index with another bound control generated by the template key, relative context
-          * identifier, and resources.
-          * @param {number} index The index of the bound TemplateControl
-          * in the child control Array to replace.
-          * @param {string} key The key used to retrieve the template.
-          * @param {string} relativeIdentifier? The identifier string relative to this control's context
-          * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the
-          * most efficient way of specifying context, else the framework has to search for the
-          * object.
-          * @param {IObject<IResource>} resources? An object used as the resources for any top-level
-          * controls created in the template.
-          */
-        replace(index: number, key: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<Array<Node>>;
+        add(key: string, template: Element | Node[] | NodeList | DocumentFragment | Node | string, overwrite?: boolean): void;
         /**
           * Replaces the bound TemplateControl in the child control Array
           * specified by the index with another bound control generated by the template key, relative context
@@ -5471,7 +4576,7 @@ export declare module ui {
           * @param {IObject<IResource>} resources? An object used as the resources for any top-level
           * controls created in the template.
           */
-        replace(index: number, key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<Array<Node>>;
+        replace(index: number, key: string, relativeIdentifier?: number | string, resources?: IObject<IResource>): async.Promise<Node[]>;
         /**
           * Clears the memory being held by this instance.
           */
@@ -5490,14 +4595,14 @@ export declare module ui {
           * @param {number} index? An optional index only to be used if the newly bound template is intended to
           * replace an existing Control in the child controls Array and its element in the DOM.
           */
-        protected _bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>, index?: number): async.IThenable<any>;
+        protected _bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>, index?: number): async.Promise<any>;
         /**
           * Creates the template's bound control and INodeMap and initiates
           * the binding of the INodeMap for a cloned template.
           * @param {string} key The template key.
           * @param {processing.INodeMap} nodeMap The node map to bind.
           */
-        protected _bindTemplate(key: string, nodeMap: processing.INodeMap): async.IThenable<DocumentFragment>;
+        protected _bindTemplate(key: string, nodeMap: processing.INodeMap): async.Promise<DocumentFragment>;
         /**
           * Clones the compiled ElementManager using the newly created
           * INodeMap and binds and loads this control's
@@ -5505,7 +4610,7 @@ export declare module ui {
           * @param {string} key The template key used to grab the ElementManager.
           * @param {processing.INodeMap} nodeMap The node map to bind.
           */
-        protected _bindNodeMap(key: string, nodeMap: processing.INodeMap): async.IThenable<void>;
+        protected _bindNodeMap(key: string, nodeMap: processing.INodeMap): async.Promise<void>;
         /**
           * Creates the template's compiled, bound control and INodeMap and initiates
           * the compilation of the template.
@@ -5528,7 +4633,7 @@ export declare module ui {
           * @param {Node} template The template being compiled.
           * @param {string} childContext? A potential child context string identifier.
           */
-        protected _createNodeMap(uiControl: TemplateControl, template: Node, childContext?: string): processing.INodeMap;
+        protected _createNodeMap(uiControl: TemplateControl, template: Node, childContext?: string | number): processing.INodeMap;
         /**
           * Creates a TemplateControl used for binding either a template being compiled
           * or a template being bound.
@@ -5537,7 +4642,7 @@ export declare module ui {
           * @param {IObject<ui.IResource>} resources? A set of resources to add to the control used to
           * compile/bind this template.
           */
-        protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string, resources?: IObject<IResource>): TemplateControl;
+        protected _createBoundControl(key: string, template: DocumentFragment, childContext?: string | number, resources?: IObject<IResource>): TemplateControl;
     }
     /**
       */
@@ -5741,34 +4846,15 @@ export declare module ui {
         /**
           * Initializes this Resources instance.
           * @param {ui.TemplateControl} control The control containing this Resources instance.
-          * @param {Element} element? An optional element used to create initial IResource objects.
-          */
-        initialize(control: TemplateControl, element?: Element): void;
-        /**
-          * Initializes this Resources instance.
-          * @param {ui.TemplateControl} control The control containing this Resources instance.
-          * @param {IObject<IResource>} resources? An optional object used to populate initial
-          * IResource objects.
-          */
-        initialize(control: TemplateControl, resources?: IObject<IResource>): void;
-        /**
-          * Initializes this Resources instance.
-          * @param {ui.TemplateControl} control The control containing this Resources instance.
           * @param {ui.Resources} resources? An optional Resources object used to populate initial
           * IResource objects.
           */
-        initialize(control: TemplateControl, resources?: Resources): void;
+        initialize(controlInstance: TemplateControl, resources?: Element | IObject<IResource> | Resources): void;
         /**
-          * Used for programatically adding IResource objects.
-          * @param resources An IObject<IResource> used to add
-          * resources, keyed by their alias.
-          */
-        add(resources: IObject<IResource>): void;
-        /**
-          * Used for programatically adding IResource objects.
+          * Used for programmatically adding IResource objects.
           * @param {Element} element An Element containing resource element children.
           */
-        add(element: Element): void;
+        add(resources: IObject<IResource> | Element): void;
     }
     /**
       */
@@ -5966,11 +5052,11 @@ export declare module ui {
           */
         private __cancelDeferredHold;
         /**
-          * A regular expressino for determining a "cancel" event.
+          * A regular expression for determining a "cancel" event.
           */
         private __cancelRegex;
         /**
-          * A regular expressino for determining a pointer end event.
+          * A regular expression for determining a pointer end event.
           */
         private __pointerEndRegex;
         /**
@@ -6044,36 +5130,12 @@ export declare module ui {
         constructor();
         /**
           * Add an event listener for the specified event type on the specified element.
-          * @param {Node} element The node listening for the event.
-          * @param {string} type The type of event being listened to.
-          * @param {ui.IGestureListener} listener The listener to be fired.
-          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-          */
-        addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-          * Add an event listener for the specified event type on the specified element.
-          * @param {Window} element The window object.
-          * @param {string} type The type of event being listened to.
-          * @param {ui.IGestureListener} listener The listener to be fired.
-          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-          */
-        addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
-        /**
-          * Add an event listener for the specified event type on the specified element.
-          * @param {Node} element The node listening for the event.
-          * @param {string} type The type of event being listened to.
-          * @param {EventListener} listener The listener to be fired.
-          * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
-          */
-        addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-        /**
-          * Add an event listener for the specified event type on the specified element.
           * @param {Window} element The window object.
           * @param {string} type The type of event being listened to.
           * @param {EventListener} listener The listener to be fired.
           * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
           */
-        addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+        addEventListener(element: Node | Window, type: string, listener: EventListener | IGestureListener, useCapture?: boolean): IRemoveListener;
         /**
           * If DomEvents is inactive, will initialize behavior and
           * begin listening for events.
@@ -6159,7 +5221,7 @@ export declare module ui {
           */
         private __registerTypes();
         /**
-          * Unregisters for and stops listening to all touch events on the document.
+          * Un-registers for and stops listening to all touch events on the document.
           */
         private __unregisterTypes();
         /**
@@ -6168,7 +5230,7 @@ export declare module ui {
           */
         private __registerType(events);
         /**
-          * Unregisters for and stops listening to a particular touch event type.
+          * Un-registers for and stops listening to a particular touch event type.
           * @param {string} events The events to stop listening for.
           */
         private __unregisterType(events);
@@ -6184,7 +5246,7 @@ export declare module ui {
           */
         private __registerElement(element, type);
         /**
-          * Unregisters and disassociates an element with an event.
+          * Un-registers and disassociates an element with an event.
           * @param {ui.ICustomElement} element The element being disassociated with the given custom event.
           * @param {string} type The type of event.
           */
@@ -6238,7 +5300,7 @@ export declare module ui {
           */
         private __standardizeEventObject(ev);
         /**
-          * Normalizes the 'buttons' property on an IExetendedEvent.
+          * Normalizes the 'buttons' property on an IExtendedEvent.
           * @param {ui.IExtendedEvent} ev The event.
           */
         private __normalizeButtons(ev);
@@ -6279,7 +5341,7 @@ export declare module ui {
         /**
           * Checks to see if a swipe direction has changed to recalculate
           * an origin point.
-          * @param {ui.IDirection} direction The current vertical and horiztonal directions of movement.
+          * @param {ui.IDirection} direction The current vertical and horizontal directions of movement.
           */
         private __handleOriginChange(direction);
         /**
@@ -6316,7 +5378,7 @@ export declare module ui {
         private __waitForBlur(target);
         /**
           * Handles a click target case.
-          * @param {HTMLInputElement} target The target to handle click functionaliy for.
+          * @param {HTMLInputElement} target The target to handle click functionality for.
           */
         private __clickTarget(target);
         /**
@@ -6375,20 +5437,12 @@ export declare module ui {
         eventType: string;
         /**
           * Initializes the element and event of this DomEvent object.
-          * @param {Node} element The element associated with this DomEvent object.
-          * @param {string} event The event associated with this DomEvent object.
-          * @param {string} eventType? The event type associated with this DomEvent object.
-          * If not specified, it will default to 'CustomEvent'.
-          */
-        initialize(element: Node, event: string, eventType?: string): void;
-        /**
-          * Initializes the element and event of this DomEvent object.
           * @param {Window} element The window object.
           * @param {string} event The event associated with this DomEvent object.
           * @param {string} eventType? The event type associated with this DomEvent object.
           * If not specified, it will default to 'CustomEvent'.
           */
-        initialize(element: Window, event: string, eventType?: string): void;
+        initialize(element: Node | Window, event: string, eventType?: string): void;
         /**
           * Triggers its event on its element.
           * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
@@ -6524,17 +5578,17 @@ export declare module ui {
           * The potential velocity associated with the event.
           */
         velocity?: IVelocity;
-        _touches?: Array<IExtendedEvent>;
+        _touches?: IExtendedEvent[];
         /**
           * An array containing all current touch points. The IExtendedEvents
           * may slightly differ depending on the browser implementation.
           */
-        touches?: Array<IExtendedEvent>;
+        touches?: IExtendedEvent[];
         /**
           * An array containing all recently changed touch points. This should not be present on
           * the triggered custom event.
           */
-        changedTouches?: Array<IExtendedEvent>;
+        changedTouches?: IExtendedEvent[];
         /**
           * A unique touch identifier.
           */
@@ -6616,7 +5670,7 @@ export declare module ui {
           * An array containing all current touch points. The IExtendedEvents
           * may slightly differ depending on the browser implementation.
           */
-        touches?: Array<IExtendedEvent>;
+        touches?: IExtendedEvent[];
         /**
           * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '').
           */
@@ -6629,14 +5683,7 @@ export declare module ui {
     /**
       * The listener interface for our custom DOM events.
       */
-    interface IGestureListener {
-        /**
-          * The method signature for a IGestureListener.
-          * An EventListener with the argument as an IGestureEvent.
-          * @param {ui.IGestureEvent} ev The gesture event object.
-          */
-        (ev?: IGestureEvent): void;
-    }
+    type IGestureListener = (ev?: IGestureEvent) => void;
     /**
       * Describes an object containing information
       * regarding our base custom events.
@@ -6836,7 +5883,7 @@ export declare module ui {
           * CSS identifier : value
           * (e.g. 'width : 100px')
           */
-        styles: Array<string>;
+        styles: string[];
     }
     /**
       * Describes a configuration object for all custom DOM events.
@@ -6860,12 +5907,12 @@ export declare module ui {
         /**
           * The default CSS styles applied to elements listening for custom DOM events.
           */
-        styleConfig: Array<IDefaultStyle>;
+        styleConfig: IDefaultStyle[];
     }
     /**
       * Holds all the classes and interfaces related to UI animation components for platypus.
       */
-    module animations {
+    namespace animations {
         /**
           * A class used for animating elements.
           */
@@ -6889,57 +5936,12 @@ export declare module ui {
             protected _animatedElements: IObject<IAnimatedElement>;
             /**
               * Creates the defined animation denoted by the key but does not start the animation.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            create(element: Element, key: string, options?: any): IAnimationCreation;
-            /**
-              * Creates the defined animation denoted by the key but does not start the animation.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            create(element: DocumentFragment, key: string, options?: any): IAnimationCreation;
-            /**
-              * Creates the defined animation denoted by the key but does not start the animation.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            create(elements: NodeList, key: string, options?: any): IAnimationCreation;
-            /**
-              * Creates the defined animation denoted by the key but does not start the animation.
               * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
               * the same parent, otherwise the animation will not function correctly.
               * @param {string} key The identifier specifying the type of animation.
               * @param {any} options? Specified options for the animation.
               */
-            create(elements: Array<Node>, key: string, options?: any): IAnimationCreation;
-            /**
-              * Animates the element with the defined animation denoted by the key. Similar to `create` but
-              * immediately begins the animation.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            animate(element: Element, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the element with the defined animation denoted by the key. Similar to `create` but
-              * immediately begins the animation.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            animate(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the element with the defined animation denoted by the key. Similar to `create` but
-              * immediately begins the animation.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            animate(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+            create(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimationCreation;
             /**
               * Animates the element with the defined animation denoted by the key. Similar to `create` but
               * immediately begins the animation.
@@ -6948,40 +5950,7 @@ export declare module ui {
               * @param {string} key The identifier specifying the type of animation.
               * @param {any} options? Specified options for the animation.
               */
-            animate(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Adds the element to the DOM and animates it with the defined animation denoted by the key.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {Element} parent The parent element used for adding the element to the DOM.
-              * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-              * just before itself using the insertBefore function. If this argument is specified, the parent argument
-              * is ignored.
-              * @param {any} options? Specified options for the animation.
-              */
-            enter(element: Element, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-            /**
-              * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {Element} parent The parent element used for adding the elements to the DOM.
-              * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-              * just before itself using the insertBefore function. If this argument is specified, the parent argument
-              * is ignored.
-              * @param {any} options? Specified options for the animation.
-              */
-            enter(element: DocumentFragment, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-            /**
-              * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {Element} parent The parent element used for adding the elements to the DOM.
-              * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-              * just before itself using the insertBefore function. If this argument is specified, the parent argument
-              * is ignored.
-              * @param {any} options? Specified options for the animation.
-              */
-            enter(elements: NodeList, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+            animate(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable;
             /**
               * Adds the elements to the DOM and animates them with the defined animation denoted by the key.
               * @param {Array<Node>} elements The Array of Nodes to be animated. All nodes in the Array must have
@@ -6993,31 +5962,7 @@ export declare module ui {
               * is ignored.
               * @param {any} options? Specified options for the animation.
               */
-            enter(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-            /**
-              * Animates the element with the defined animation denoted by the key and removes it from the DOM when
-              * the animation is finished.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            leave(element: Element, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
-              * the animation is finished.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            leave(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
-              * the animation is finished.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            leave(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+            enter(elements: Element | DocumentFragment | NodeList | Node[], key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
             /**
               * Animates the elements with the defined animation denoted by the key and removes them from the DOM when
               * the animation is finished.
@@ -7026,46 +5971,7 @@ export declare module ui {
               * @param {string} key The identifier specifying the type of animation.
               * @param {any} options? Specified options for the animation.
               */
-            leave(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Removes the element from the DOM based on the parent argument, initializes it, adds it back to the
-              * DOM using either the refChild or the parent, and animates it with the defined animation denoted by the key.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
-              * refChild is not specified.
-              * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-              * just before itself using the insertBefore function. If this argument is specified, the parent argument
-              * is ignored during DOM insertion.
-              * @param {any} options? Specified options for the animation.
-              */
-            move(element: Element, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-            /**
-              * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
-              * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
-              * refChild is not specified.
-              * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-              * just before itself using the insertBefore function. If this argument is specified, the parent argument
-              * is ignored during DOM insertion.
-              * @param {any} options? Specified options for the animation.
-              */
-            move(element: DocumentFragment, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-            /**
-              * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
-              * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {Element} parent The parent element used for placing the element back into the DOM at its end if a
-              * refChild is not specified.
-              * @param {Node} refChild? An optional reference node used for placing the element into the DOM
-              * just before itself using the insertBefore function. If this argument is specified, the parent argument
-              * is ignored during DOM insertion.
-              * @param {any} options? Specified options for the animation.
-              */
-            move(elements: NodeList, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
+            leave(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable;
             /**
               * Removes the elements from the DOM based on the parent argument, initializes them, adds them back to the
               * DOM using either the refChild or the parent, and animates them with the defined animation denoted by the key.
@@ -7079,31 +5985,7 @@ export declare module ui {
               * is ignored during DOM insertion.
               * @param {any} options? Specified options for the animation.
               */
-            move(elements: Array<Node>, key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
-            /**
-              * Shows the element just after initialization by removing the `plat-hide` attribute and animates them
-              * with the defined animation denoted by the key.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            show(element: Element, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
-              * with the defined animation denoted by the key.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            show(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
-              * with the defined animation denoted by the key.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            show(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+            move(elements: Element | DocumentFragment | NodeList | Node[], key: string, parent: Element, refChild?: Node, options?: any): IAnimatingThenable;
             /**
               * Shows the elements just after initialization by removing the `plat-hide` attribute and animates them
               * with the defined animation denoted by the key.
@@ -7112,31 +5994,7 @@ export declare module ui {
               * @param {string} key The identifier specifying the type of animation.
               * @param {any} options? Specified options for the animation.
               */
-            show(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the element with the defined animation denoted by the key and hides them by adding the
-              * `plat-hide` attribute after the animation is finished.
-              * @param {Element} element The Element to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            hide(element: Element, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the elements with the defined animation denoted by the key and hides them by adding the
-              * `plat-hide` attribute after the animation is finished.
-              * @param {DocumentFragment} elements The DocumentFragment whose childNodes are to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            hide(element: DocumentFragment, key: string, options?: any): IAnimatingThenable;
-            /**
-              * Animates the elements with the defined animation denoted by the key and hides them by adding the
-              * `plat-hide` attribute after the animation is finished.
-              * @param {NodeList} elements The list of Nodes to be animated.
-              * @param {string} key The identifier specifying the type of animation.
-              * @param {any} options? Specified options for the animation.
-              */
-            hide(elements: NodeList, key: string, options?: any): IAnimatingThenable;
+            show(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable;
             /**
               * Animates the elements with the defined animation denoted by the key and hides them by adding the
               * `plat-hide` attribute after the animation is finished.
@@ -7145,11 +6003,20 @@ export declare module ui {
               * @param {string} key The identifier specifying the type of animation.
               * @param {any} options? Specified options for the animation.
               */
-            hide(elements: Array<Node>, key: string, options?: any): IAnimatingThenable;
+            hide(elements: Element | DocumentFragment | NodeList | Node[], key: string, options?: any): IAnimatingThenable;
             /**
               * Returns a promise that fulfills when every animation promise in the input array is fulfilled.
               */
-            all(promises: Array<IAnimationThenable<any>>): IAnimationThenable<void>;
+            all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>, T5 | IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>, T9 | IAnimationThenable<T9>, T10 | IAnimationThenable<T10>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
+            all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>, T5 | IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>, T9 | IAnimationThenable<T9>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
+            all<T1, T2, T3, T4, T5, T6, T7, T8>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>, T5 | IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>, T8 | IAnimationThenable<T8>]): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
+            all<T1, T2, T3, T4, T5, T6, T7>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>, T5 | IAnimationThenable<T5>, T6 | IAnimationThenable<T6>, T7 | IAnimationThenable<T7>]): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
+            all<T1, T2, T3, T4, T5, T6>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>, T5 | IAnimationThenable<T5>, T6 | IAnimationThenable<T6>]): Promise<[T1, T2, T3, T4, T5, T6]>;
+            all<T1, T2, T3, T4, T5>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>, T5 | IAnimationThenable<T5>]): Promise<[T1, T2, T3, T4, T5]>;
+            all<T1, T2, T3, T4>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>, T4 | IAnimationThenable<T4>]): Promise<[T1, T2, T3, T4]>;
+            all<T1, T2, T3>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>, T3 | IAnimationThenable<T3>]): Promise<[T1, T2, T3]>;
+            all<T1, T2>(values: [T1 | IAnimationThenable<T1>, T2 | IAnimationThenable<T2>]): Promise<[T1, T2]>;
+            all<T1>(values: [T1 | IAnimationThenable<T1>]): Promise<[T1]>;
             /**
               * Immediately resolves an empty AnimationPromise.
               */
@@ -7181,21 +6048,21 @@ export declare module ui {
               * @param {Array<Element>} elementNodes The animatable nodes being animated (only of type Node.ELEMENT_NODE).
               * @param {ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
               */
-            protected _handlePreInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
+            protected _handlePreInitFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void;
             /**
               * Handles different specialized functionalities immediately after the init portion of the animation cycle.
               * @param {Array<Node>} nodes All the nodes being animated.
               * @param {Array<Element>} elementNodes The animatable nodes being animated (only of type Node.ELEMENT_NODE).
               * @param {ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
               */
-            protected _handlePostInitFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
+            protected _handlePostInitFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void;
             /**
               * Handles different specialized functionalities at the end portion of the animation cycle.
               * @param {Array<Node>} nodes All the nodes being animated.
               * @param {Array<Element>} elementNodes The animatable nodes being animated (only of type Node.ELEMENT_NODE).
               * @param {ui.animations.IAnimationFunction} functionality The specialized animation function attributes.
               */
-            protected _handleEndFunctionality(nodes: Array<Node>, elementNodes: Array<Element>, functionality: IAnimationFunction): void;
+            protected _handleEndFunctionality(nodes: Node[], elementNodes: Element[], functionality: IAnimationFunction): void;
             /**
               * Sets a new, unique animation ID and denotes the elements as currently being animated.
               * @param {string} id The animation ID.
@@ -7250,32 +6117,27 @@ export declare module ui {
             refChild?: Node;
         }
         /**
-          * Describes an object representing a currenlty animated element.
+          * Describes an object representing a currently animated element.
           */
         interface IAnimatedElement {
-            /**
-              * The function called at the conclusion of the animation.
-              * @param {boolean} cancel? Specifies whether the animation is being cancelled.
-              */
-            animationEnd: (cancel?: boolean) => void;
             /**
               * A promise representing an element's current state of animation.
               */
             promise?: IAnimationThenable<any>;
+            /**
+              * The function called at the conclusion of the animation.
+              * @param {boolean} cancel? Specifies whether the animation is being cancelled.
+              */
+            animationEnd(cancel?: boolean): void;
         }
         /**
           * Describes a function used to obtain an animating parent element's animation thenable.
           */
-        interface IGetAnimatingThenable {
-            /**
-              * The method signature for IGetAnimatingThenable.
-              */
-            (): IAnimationThenable<void>;
-        }
+        type IGetAnimatingThenable = () => IAnimationThenable<void>;
         /**
           * Describes a type of Promise that can be optionally cancelled.
           * Further, in the case where it may have a parent that is animating (which will cause it to immediately cancel and fulfill
-          * itself, it resolves with a IGetAnimatingThenable for acccessing
+          * itself, it resolves with a IGetAnimatingThenable for accessing
           * the IAnimationThenable of the animating parent element.
           */
         class AnimationPromise extends async.Promise<IGetAnimatingThenable> implements IAnimationEssentials, IAnimatingThenable {
@@ -7296,31 +6158,19 @@ export declare module ui {
               * The constructor method for the {@link async.AjaxPromise}.
               * @param {(resolve: (value?: ui.animations.IParentAnimationFn) => any) => void} resolveFunction A resolve function
               * that only allows for a resolve of void and no reject.
+              * @param {any} promise? The promise object to allow for cancelling the {@link ui.animations.AnimationPromise}.
               */
-            constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void);
-            /**
-              * The constructor method for the {@link async.AjaxPromise}.
-              * @param {(resolve: (value?: ui.animations.IParentAnimationFn) => any) => void} resolveFunction A resolve function
-              * that only allows for a resolve of void and no reject.
-              * @param {any} promise The promise object to allow for cancelling the {@link ui.animations.AnimationPromise}.
-              */
-            constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise: any);
-            /**
-              * Initializes the promise, providing it with the {@link ui.animations.BaseAnimation} instance.
-              * @param {ui.animations.IAnimationEssentials} instance The animation instance or animation
-              * promises for this promise.
-              */
-            initialize(instance: IAnimationEssentials): void;
+            constructor(resolveFunction: (resolve: (value?: IGetAnimatingThenable) => any) => void, promise?: any);
             /**
               * Initializes the promise, providing it with the {@link ui.animations.BaseAnimation} instance.
               * @param {Array<ui.animations.IAnimationEssentials>} instances The animation instances or
               * animation promises for this promise.
               */
-            initialize(instances: Array<IAnimationEssentials>): void;
+            initialize(instances: IAnimationEssentials | IAnimationEssentials[]): void;
             /**
               * Gets the associated animation instances or animated promises.
               */
-            getInstances(): Array<IAnimationEssentials>;
+            getInstances(): IAnimationEssentials[];
             /**
               * Fires the start method on the animation instances to kickoff the animations.
               */
@@ -7328,57 +6178,38 @@ export declare module ui {
             /**
               * Fires the pause method on the animation instance.
               */
-            pause(): async.IThenable<void>;
+            pause(): async.Promise<void>;
             /**
               * Fires the resume method on the animation instance.
               */
-            resume(): async.IThenable<void>;
+            resume(): async.Promise<void>;
             /**
               * A method to cancel the associated animation.
               */
-            cancel(): IAnimatingThenable;
+            cancel(): AnimationPromise;
             /**
               * A method to determine whether or not this promise has been canceled.
               */
             isCanceled(): boolean;
             /**
               * Takes in two methods, called when/if the promise fulfills.
-              * @param {(success: ui.animations.IGetAnimatingThenable) => U} onFulfilled A method called when/if the promise fulfills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
-              */
-            then<U>(onFulfilled: (success?: IGetAnimatingThenable) => U): IAnimationThenable<U>;
-            /**
-              * Takes in two methods, called when/if the promise fulfills.
-              * @param {(success: ui.animations.IGetAnimatingThenable) => ui.animations.IAnimationThenable<U>} onFulfilled
+              * @param {(success: ui.animations.IGetAnimatingThenable) => async.Promise<U>} onFulfilled
               * A method called when/if the promise fulfills.
               * If undefined the next onFulfilled method in the promise chain will be called.
               */
-            then<U>(onFulfilled: (success?: IGetAnimatingThenable) => IAnimationThenable<U>): IAnimationThenable<U>;
-            /**
-              * Takes in two methods, called when/if the promise fulfills.
-              * @param {(success: ui.animations.IGetAnimatingThenable) => async.IThenable<U>} onFulfilled
-              * A method called when/if the promise fulfills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
-              */
-            then<U>(onFulfilled: (success?: IGetAnimatingThenable) => async.IThenable<U>): IAnimationThenable<U>;
-            /**
-              * A wrapper method for Promise.then(undefined, onRejected);
-              * @param {(error: any) => ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects.
-              * If undefined the next onRejected method in the promise chain will be called.
-              */
-            catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+            then<U>(onFulfilled?: (value: any) => U | IAnimatingThenable, onRejected?: (error: any) => U | IAnimatingThenable | void): AnimationPromise;
             /**
               * A wrapper method for Promise.then(undefined, onRejected);
               * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
               * onRejected method in the promise chain will be called.
               */
-            catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+            catch<U>(onRejected?: (error: any) => U | IAnimatingThenable): AnimationPromise;
         }
         /**
           * Describes a chaining function that fulfills when the previous link is complete and is
           * able to be caught in the case of an error.
           */
-        interface IAnimationThenable<R> extends async.IThenable<R>, IAnimationEssentials {
+        interface IAnimationThenable<R> extends async.Promise<R>, IAnimationEssentials {
             /**
               * Initializes the promise, providing it with the {@link ui.animations.BaseAnimation} instance.
               * @param {ui.animations.BaseAnimation} instance The animation instance for this promise.
@@ -7387,7 +6218,7 @@ export declare module ui {
             /**
               * Gets the associated animation instances or animated promises.
               */
-            getInstances(): Array<IAnimationEssentials>;
+            getInstances(): IAnimationEssentials[];
             /**
               * Fires the start method on the animation instances to kickoff the animations.
               */
@@ -7395,69 +6226,39 @@ export declare module ui {
             /**
               * Fires the pause method on the animation instance.
               */
-            pause(): async.IThenable<void>;
+            pause(): async.Promise<void>;
             /**
               * Fires the resume method on the animation instance.
               */
-            resume(): async.IThenable<void>;
+            resume(): async.Promise<void>;
             /**
               * A method to cancel the associated animation.
               */
-            cancel(): IAnimationThenable<R>;
+            cancel(): AnimationPromise;
             /**
               * A method to determine whether or not this promise has been canceled.
               */
             isCanceled(): boolean;
             /**
               * Takes in two methods, called when/if the promise fulfills/rejects.
-              * @param {(success: R) => ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
-              * @param {(error: any) => ui.animations.IAnimationThenable<U>} onRejected? A method called when/if the promise rejects.
-              * If undefined the next onRejected method in the promise chain will be called.
-              */
-            then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-            /**
-              * Takes in two methods, called when/if the promise fulfills/rejects.
-              * @param {(success: R) => ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills.
+              * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
               * If undefined the next onFulfilled method in the promise chain will be called.
               * @param {(error: any) => U} onRejected? A method called when/if the promise rejects.
               * If undefined the next onRejected method in the promise chain will be called.
               */
-            then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => U): IAnimationThenable<U>;
-            /**
-              * Takes in two methods, called when/if the promise fulfills/rejects.
-              * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
-              * @param {(error: any) => ui.animations.IAnimationThenable<U>} onRejected? A method called when/if the promise rejects.
-              * If undefined the next onRejected method in the promise chain will be called.
-              */
-            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-            /**
-              * Takes in two methods, called when/if the promise fulfills/rejects.
-              * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills.
-              * If undefined the next onFulfilled method in the promise chain will be called.
-              * @param {(error: any) => U} onRejected? A method called when/if the promise rejects.
-              * If undefined the next onRejected method in the promise chain will be called.
-              */
-            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAnimationThenable<U>;
-            /**
-              * A wrapper method for Promise.then(undefined, onRejected);
-              * @param {(error: any) => ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects.
-              * If undefined the next onRejected method in the promise chain will be called.
-              */
-            catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+            then<U>(onFulfilled?: (value: R) => U | async.Promise<U>, onRejected?: (error: any) => U | async.Promise<U> | void): IAnimationThenable<U>;
             /**
               * A wrapper method for Promise.then(undefined, onRejected);
               * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
               * onRejected method in the promise chain will be called.
               */
-            catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+            catch<U>(onRejected: (error: any) => async.Promise<U> | U): IAnimationThenable<U>;
         }
         /**
           * Describes a type of IPromise that resolves when an animation is
           * finished. It can be optionally cancelled. Further, in the case where it may have
           * a parent that is animating (which will cause it to immediately cancel and fulfill itself, it resolves
-          * with a IGetAnimatingThenable for acccessing
+          * with a IGetAnimatingThenable for accessing
           * the IAnimationThenable of the animating parent element.
           */
         interface IAnimatingThenable extends IAnimationThenable<IGetAnimatingThenable> {
@@ -7470,7 +6271,7 @@ export declare module ui {
             /**
               * A promise that resolves when a potential previous animation is done.
               */
-            previous: async.IThenable<void>;
+            previous: async.Promise<void>;
             /**
               * An animation promise that resolves when the current animation is complete.
               */
@@ -7487,11 +6288,11 @@ export declare module ui {
             /**
               * Fires the pause method on the animation instances.
               */
-            pause(): async.IThenable<void>;
+            pause(): async.Promise<void>;
             /**
               * Fires the resume method on the animation instances.
               */
-            resume(): async.IThenable<void>;
+            resume(): async.Promise<void>;
             /**
               * A method to cancel the associated animations.
               */
@@ -7561,11 +6362,11 @@ export declare module ui {
             /**
               * A function to be called to pause the animation.
               */
-            pause(): async.IThenable<void>;
+            pause(): async.Promise<void>;
             /**
               * A function to be called to resume a paused animation.
               */
-            resume(): async.IThenable<void>;
+            resume(): async.Promise<void>;
             /**
               * A function to be called to let it be known the animation is being cancelled. Although not
               * necessary, we call end() in this function as well for safe measure.
@@ -7650,11 +6451,11 @@ export declare module ui {
             /**
               * A function to be called to pause the animation.
               */
-            pause(): async.IThenable<void>;
+            pause(): async.Promise<void>;
             /**
               * A function to be called to resume a paused animation.
               */
-            resume(): async.IThenable<void>;
+            resume(): async.Promise<void>;
             /**
               * A function to be called to let it be known the animation is being cancelled.
               * Removes the animation class and the animation "-init" class.
@@ -7746,7 +6547,7 @@ export declare module ui {
             /**
               * An Array of all the properties the transition will be affecting.
               */
-            protected _properties: Array<string>;
+            protected _properties: string[];
             /**
               * A regular expression to normalize modified property keys.
               */
@@ -7804,18 +6605,18 @@ export declare module ui {
               */
             protected _animate(): boolean;
             /**
+              * A function that converts a string value expressed as either seconds or milliseconds
+              * to a numerical millisecond value.
+              * @param {string} duration The transition duration specified by the computed style.
+              */
+            protected _toMs(duration: string): number;
+            /**
               * Handles element transitions that are defined with CSS.
               * @param {CSSStyleDeclaration} computedStyle The computed style of the
               * element.
               * @param {Array<string>} durations The array of declared transition duration values.
               */
             private __cssTransition(computedStyle, durations);
-            /**
-              * A function that converts a string value expressed as either seconds or milliseconds
-              * to a numerical millisecond value.
-              * @param {string} duration The transition duration specified by the computed style.
-              */
-            protected _toMs(duration: string): number;
         }
         /**
           * An interface describing the options for SimpleCssTransition.
@@ -7844,7 +6645,7 @@ export declare module ui {
     /**
       * Holds classes and interfaces related to UI control components in platypus.
       */
-    module controls {
+    namespace controls {
         /**
           * A control that facilitates routing between ViewControls. A Viewport is
           * the link between a ViewControl, a Navigator, and a Router.
@@ -7856,7 +6657,7 @@ export declare module ui {
             /**
               * Viewports contain ViewControls.
               */
-            controls: Array<ViewControl>;
+            controls: ViewControl[];
             /**
               * The options for the Viewport control.
               */
@@ -7930,13 +6731,13 @@ export declare module ui {
               * @param {routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
               * the view and feed it the route parameters/query.
               */
-            canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean>;
+            canNavigateTo(routeInfo: routing.IRouteInfo): async.Promise<boolean>;
             /**
               * The viewport's router has matched a route and is asking the viewport if it is safe to
               * navigate from the current state. Here the viewport can query the current ViewControl and
               * ask it if it is safe to navigate from its current state.
               */
-            canNavigateFrom(): async.IThenable<boolean>;
+            canNavigateFrom(): async.Promise<boolean>;
             /**
               * The viewport's router has matched a route and determined that it is safe to navigate to the
               * next view. The viewport will now go through the steps to compile and link the next view then append
@@ -7944,12 +6745,12 @@ export declare module ui {
               * @param {routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
               * the view and feed it the route parameters/query.
               */
-            navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void>;
+            navigateTo(routeInfo: routing.IRouteInfo): async.Promise<void>;
             /**
               * The viewport's router has matched a route and determined that it is safe to navigate to the
               * next view. It is now safe for the viewport to dispose of the current state.
               */
-            navigateFrom(): async.IThenable<void>;
+            navigateFrom(): async.Promise<void>;
             /**
               * The viewport is going out of scope, so it needs to unregister from its router in order to stop receiving routing
               * events.
@@ -8051,10 +6852,10 @@ export declare module ui {
               * Waits for the template promise to resolve, then initializes
               * the binding of the bindable template and places it into the
               * DOM.
-              * @param {async.IThenable<ui.controls.Template>} templatePromise The promise
+              * @param {async.Promise<ui.controls.Template>} templatePromise The promise
               * associated with the first instance of the control with this ID.
               */
-            protected _waitForTemplateControl(templatePromise: async.IThenable<Template>): void;
+            protected _waitForTemplateControl(templatePromise: async.Promise<Template>): void;
             /**
               * Maps the bindable templates cache and html templates of the first
               * control with the proper ID to this control's bindable templates.
@@ -8109,7 +6910,7 @@ export declare module ui {
             /**
               * The required context of the control (must be of type Array).
               */
-            context: Array<any>;
+            context: any[];
             /**
               * The load priority of the control (needs to load before a Bind control).
               */
@@ -8117,11 +6918,11 @@ export declare module ui {
             /**
               * The child controls of the control. All will be of type TemplateControl.
               */
-            controls: Array<TemplateControl>;
+            controls: TemplateControl[];
             /**
               * A Promise that fulfills when the items are loaded.
               */
-            itemsLoaded: async.IThenable<void>;
+            itemsLoaded: async.Promise<void>;
             /**
               * The options for the ForEach control.
               */
@@ -8149,14 +6950,14 @@ export declare module ui {
             /**
               * A collection of all the current animations and their animation operation.
               */
-            protected _animationQueue: Array<{
+            protected _animationQueue: {
                 animation: animations.IAnimationThenable<any>;
                 op: string;
-            }>;
+            }[];
             /**
               * A queue representing all current add operations.
               */
-            protected _addQueue: Array<async.IThenable<void>>;
+            protected _addQueue: async.Promise<void>[];
             /**
               * The number of items currently in the list or in the process of being added
               * or removed from the list.
@@ -8188,7 +6989,7 @@ export declare module ui {
               * @param {Array<any>} newValue The new Array
               * @param {Array<any>} oldValue The old Array
               */
-            contextChanged(newValue: Array<any>, oldValue: Array<any>): void;
+            contextChanged(newValue: any[], oldValue: any[]): void;
             /**
               * Observes the Array context for changes and adds initial items to the DOM.
               */
@@ -8208,12 +7009,12 @@ export declare module ui {
               * @param {number} numberOfItems The number of items to add.
               * @param {number} animateItems The number of items to animate.
               */
-            protected _addItems(index: number, numberOfItems: number, animateItems: number): async.IThenable<void>;
+            protected _addItems(index: number, numberOfItems: number, animateItems: number): async.Promise<void>;
             /**
               * Adds an Array of items to the element without animating.
               * @param {Array<Node>} items The Array of items to add.
               */
-            protected _appendItems(items: Array<Node>): void;
+            protected _appendItems(items: Node[]): void;
             /**
               * Adds an item to the control's element animating its elements.
               * @param {DocumentFragment} item The HTML fragment representing a single item.
@@ -8228,11 +7029,11 @@ export declare module ui {
             /**
               * Binds the item to a template at that index.
               */
-            protected _bindItem(index: number): async.IThenable<DocumentFragment>;
+            protected _bindItem(index: number): async.Promise<DocumentFragment>;
             /**
               * Sets the corresponding block length for animation.
               */
-            protected _setBlockLength(templates: Array<Node>): void;
+            protected _setBlockLength(templates: Node[]): void;
             /**
               * Updates a child resource object when
               * the array changes.
@@ -8248,7 +7049,7 @@ export declare module ui {
               * method to its associated method handler.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _executeEvent(changes: observable.IArrayChanges<any>[]): void;
             /**
               * Returns a resource alias object for an item in the array. The
               * resource object contains index:number, even:boolean, odd:boolean,
@@ -8260,29 +7061,29 @@ export declare module ui {
               * Handles items being pushed into the array.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _push(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _push(changes: observable.IArrayChanges<any>[]): void;
             /**
               * Handles items being popped off the array.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _pop(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _pop(changes: observable.IArrayChanges<any>[]): void;
             /**
-              * Handles items being unshifted into the array.
+              * Handles items being un-shifted into the array.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _unshift(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _unshift(changes: observable.IArrayChanges<any>[]): void;
             /**
               * Handles items being shifted off the array.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _shift(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _shift(changes: observable.IArrayChanges<any>[]): void;
             /**
               * Handles adding/removing items when an array is spliced.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _splice(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _splice(changes: observable.IArrayChanges<any>[]): void;
             /**
-              * Grabs the total blocklength of the specified items.
+              * Grabs the total block length of the specified items.
               * @param {number} startIndex The starting index of items.
               * @param {number} numberOfItems The number of consecutive items.
               */
@@ -8295,7 +7096,7 @@ export declare module ui {
               * @param {string} animationOp Denotes animation operation.
               * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
               */
-            protected _animateItems(startIndex: number, numberOfItems: number, key: string, animationOp: string, cancel: boolean): async.IThenable<void>;
+            protected _animateItems(startIndex: number, numberOfItems: number, key: string, animationOp: string, cancel: boolean): async.Promise<void>;
             /**
               * Handles a simple animation of a block of elements.
               * @param {number} startNode The starting childNode of the ForEach to animate.
@@ -8303,14 +7104,14 @@ export declare module ui {
               * @param {string} key The animation key/type.
               * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
               */
-            protected _handleSimpleAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void>;
+            protected _handleSimpleAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.Promise<void>;
             /**
               * Handles a simple animation of a block of elements.
               * @param {number} startNode The starting childNode of the ForEach to animate.
               * @param {number} endNode The ending childNode of the ForEach to animate.
               * @param {string} key The animation key/type.
               */
-            protected _handleLeave(startNode: number, endNode: number, key: string): async.IThenable<void>;
+            protected _handleLeave(startNode: number, endNode: number, key: string): async.Promise<void>;
             /**
               * Handles a simple animation of a block of elements.
               * @param {number} startNode The starting childNode of the ForEach to animate.
@@ -8318,11 +7119,11 @@ export declare module ui {
               * @param {string} key The animation key/type.
               * @param {boolean} cancel Whether or not to cancel the current animation before beginning this one.
               */
-            protected _handleClonedContainerAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.IThenable<void>;
+            protected _handleClonedContainerAnimation(startNode: number, endNode: number, key: string, cancel: boolean): async.Promise<void>;
             /**
               * Cancels all current animations.
               */
-            protected _cancelCurrentAnimations(): async.IThenable<any>;
+            protected _cancelCurrentAnimations(): async.Promise<any>;
         }
         /**
           * The options object for the
@@ -8374,7 +7175,7 @@ export declare module ui {
           * control will not exist unless you register it as a control with the name 'head'. It is static, so you can inject
           * it into other components and get access to its properties.
           */
-        class Head extends ui.TemplateControl {
+        class Head extends TemplateControl {
             protected static _inject: any;
             /**
               * This control is specifically for use with the <head /> HTML element.
@@ -8395,7 +7196,7 @@ export declare module ui {
             /**
               * A reference to all the structured data elements added to the DOM for this page.
               */
-            protected _structuredDataElements: Array<HTMLElement>;
+            protected _structuredDataElements: HTMLElement[];
             /**
               * A reference to the the <title /> element.
               */
@@ -8505,12 +7306,12 @@ export declare module ui {
               * Sets the image elements.
               * @param {Array<string>} images For each image, a tag will be created
               */
-            images(images: Array<string>): void;
+            images(images: string[]): void;
             /**
               * Sets the video elements.
               * @param {Array<string>} videos For each video, a tag will be created
               */
-            videos(videos: Array<string>): void;
+            videos(videos: string[]): void;
             /**
               * Adds a structured data ld+json element to the DOM.
               * @param {any} The object, it will be stringified and put in the ld+json tag.
@@ -8520,7 +7321,7 @@ export declare module ui {
               * Takes in one or more BlogPosting <http://schema.org/BlogPosting> objects and sets them as ld+json tags in the head.
               * @param {ui.controls.IBlogPosting} The posting object, it will be stringified and put in the ld+json tag.
               */
-            blogPostings(...postings: Array<IBlogPosting>): void;
+            blogPostings(...postings: IBlogPosting[]): void;
             /**
               * Sets the url elements initially.
               */
@@ -8539,7 +7340,7 @@ export declare module ui {
               * is added to the dom right after the <title /> element.
               * @param {Array<HTMLElement>} elements The elements for which to set values.
               */
-            protected _setContent(elements: Array<HTMLElement>, value: string): void;
+            protected _setContent(elements: HTMLElement[], value: string): void;
             /**
               * Creates an element with the specified tag and name. The name corresponds to
               * the type of the meta/link tag (i.e. title/description/author etc), and is also the
@@ -8558,7 +7359,7 @@ export declare module ui {
             /**
               * Removes elements from the <head />
               */
-            protected _removeElements(...elements: Array<HTMLElement>): void;
+            protected _removeElements(...elements: HTMLElement[]): void;
         }
         /**
           * An interface for the http://schema.org/Article type.
@@ -8663,7 +7464,7 @@ export declare module ui {
             /**
               * The child controls of the control. All will be of type TemplateControl.
               */
-            controls: Array<TemplateControl>;
+            controls: TemplateControl[];
             /**
               * Reference to the ITemplateControlFactory injectable.
               */
@@ -8723,11 +7524,11 @@ export declare module ui {
             /**
               * The required context of the control (must be of type Array).
               */
-            context: Array<any>;
+            context: any[];
             /**
               * The child controls of the control. All will be of type TemplateControl.
               */
-            controls: Array<TemplateControl>;
+            controls: TemplateControl[];
             /**
               * An object that keeps track of unique
               * optgroups.
@@ -8740,7 +7541,7 @@ export declare module ui {
             /**
               * A Promise that will fulfill whenever all items are loaded.
               */
-            itemsLoaded: async.IThenable<void>;
+            itemsLoaded: async.Promise<void>;
             /**
               * Reference to the IPromise injectable.
               */
@@ -8763,7 +7564,7 @@ export declare module ui {
               */
             protected _defaultOption: HTMLOptionElement;
             /**
-              * The complementary control implementing two way databinding.
+              * The complementary control implementing two way data-binding.
               */
             protected _binder: observable.IImplementTwoWayBinding;
             /**
@@ -8801,7 +7602,7 @@ export declare module ui {
               * @param {Array<any>} newValue The new array context.
               * @param {Array<any>} oldValue The old array context.
               */
-            contextChanged(newValue: Array<any>, oldValue: Array<any>): void;
+            contextChanged(newValue: any[], oldValue: any[]): void;
             /**
               * Observes the new array context and adds
               * the options accordingly.
@@ -8815,7 +7616,7 @@ export declare module ui {
               * A function that allows this control to observe both the bound property itself as well as
               * potential child properties if being bound to an object.
               * @param {observable.IImplementTwoWayBinding} binder The control that facilitates the
-              * databinding.
+              * data-binding.
               */
             observeProperties(binder: observable.IImplementTwoWayBinding): void;
             /**
@@ -8833,7 +7634,7 @@ export declare module ui {
               * @param {string} identifier The child identifier of the bound property.
               * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
               */
-            protected _setSelectedIndices(newValue: Array<any>, oldValue: Array<any>, identifier: string, firstTime?: boolean): void;
+            protected _setSelectedIndices(newValue: any[], oldValue: any[], identifier: string, firstTime?: boolean): void;
             /**
               * Fires the inputChanged event when the select's value changes.
               */
@@ -8841,7 +7642,7 @@ export declare module ui {
             /**
               * Getter for select-multiple.
               */
-            protected _getSelectedValues(): Array<string>;
+            protected _getSelectedValues(): string[];
             /**
               * Casts a value to the determined initial property type.
               */
@@ -8855,14 +7656,14 @@ export declare module ui {
               * method to its associated method handler.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _executeEvent(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _executeEvent(changes: observable.IArrayChanges<any>[]): void;
             /**
               * Adds the options to the select element.
               * @param {number} numberOfItems The number of items to add.
               * @param {number} index The starting index of the next
               * set of items to add.
               */
-            protected _addItems(numberOfItems: number, index: number): async.IThenable<void>;
+            protected _addItems(numberOfItems: number, index: number): async.Promise<void>;
             /**
               * The callback used to add an option after
               * its template has been bound.
@@ -8870,7 +7671,7 @@ export declare module ui {
               * @param {DocumentFragment} option The bound DocumentFragment to be
               * inserted into the DOM.
               */
-            protected _insertOption(index: number, option: DocumentFragment): async.IThenable<any>;
+            protected _insertOption(index: number, option: DocumentFragment): async.Promise<any>;
             /**
               * Removes a specified number of elements.
               * @param {number} numberOfItems The number of items
@@ -8892,43 +7693,43 @@ export declare module ui {
               * the array context.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _push(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _push(changes: observable.IArrayChanges<any>[]): void;
             /**
               * The function called when an item is popped
               * from the array context.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _pop(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _pop(changes: observable.IArrayChanges<any>[]): void;
             /**
-              * The function called when an item is unshifted
+              * The function called when an item is un-shifted
               * onto the array context.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _unshift(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _unshift(changes: observable.IArrayChanges<any>[]): void;
             /**
               * The function called when an item is shifted
               * from the array context.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _shift(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _shift(changes: observable.IArrayChanges<any>[]): void;
             /**
               * The function called when items are spliced
               * from the array context.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _splice(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _splice(changes: observable.IArrayChanges<any>[]): void;
             /**
               * The function called when the array context
               * is sorted.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _sort(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _sort(changes: observable.IArrayChanges<any>[]): void;
             /**
               * The function called when the array context
               * is reversed.
               * @param {Array<observable.IArrayChanges<any>>} changes The Array mutation event information.
               */
-            protected _reverse(changes: Array<observable.IArrayChanges<any>>): void;
+            protected _reverse(changes: observable.IArrayChanges<any>[]): void;
         }
         /**
           * The available options for the Select control.
@@ -9037,7 +7838,7 @@ export declare module ui {
               * Checks the options and initializes the
               * evaluation.
               */
-            contextChanged(): async.IThenable<void>;
+            contextChanged(): async.Promise<void>;
             /**
               * Creates a bindable template with the control element's childNodes (innerHTML).
               */
@@ -9047,7 +7848,7 @@ export declare module ui {
               * defined, kicks off the evaluation, and observes
               * the options for changes.
               */
-            loaded(): async.IThenable<void>;
+            loaded(): async.Promise<void>;
             /**
               * Stops listening to the options for changes.
               */
@@ -9057,15 +7858,15 @@ export declare module ui {
               * whether or not to add or remove
               * the node from the DOM.
               */
-            protected _setter(options: IIfOptions): async.IThenable<void>;
+            protected _setter(options: IIfOptions): async.Promise<void>;
             /**
               * Adds the conditional nodes to the DOM.
               */
-            protected _addItem(): async.IThenable<void>;
+            protected _addItem(): async.Promise<void>;
             /**
               * Adds the template to the DOM.
               */
-            protected _elementEntrance(): async.IThenable<void>;
+            protected _elementEntrance(): async.Promise<void>;
             /**
               * Animates the template as it enters the DOM.
               */
@@ -9073,11 +7874,11 @@ export declare module ui {
             /**
               * Removes the conditional nodes from the DOM.
               */
-            protected _removeItem(): async.IThenable<void>;
+            protected _removeItem(): async.Promise<void>;
             /**
               * Removes the template from the DOM.
               */
-            protected _elementLeave(): async.IThenable<void>;
+            protected _elementLeave(): async.Promise<void>;
             /**
               * Animates the template as it leaves the DOM.
               */
@@ -9098,7 +7899,7 @@ export declare module ui {
             condition: boolean;
         }
         /**
-          * A TemplateControl for adding additonal
+          * A TemplateControl for adding additional
           * functionality to a native HTML anchor tag.
           */
         class Link extends TemplateControl {
@@ -9156,6 +7957,10 @@ export declare module ui {
               */
             getHref(): string;
             /**
+              * Calls to remove the click eater after a delay.
+              */
+            dispose(): void;
+            /**
               * Determines Whether or not the default click behavior should be prevented.
               */
             protected _handleClick(ev: Event): void;
@@ -9163,10 +7968,6 @@ export declare module ui {
               * Determines the proper link upon $tap.
               */
             protected _handleTap(ev: IGestureEvent): void;
-            /**
-              * Calls to remove the click eater after a delay.
-              */
-            dispose(): void;
         }
         /**
           * The available options for the Link control.
@@ -9183,7 +7984,7 @@ export declare module ui {
 /**
   * Holds classes and interfaces related to Document processing in platypus.
   */
-export declare module processing {
+export declare namespace processing {
     /**
       * Responsible for iterating through the DOM and collecting controls.
       */
@@ -9206,29 +8007,13 @@ export declare module processing {
           */
         protected _managerCache: storage.Cache<NodeManager>;
         /**
-          * Goes through the child Nodes of the given Node, finding elements that contain controls as well as
-          * text that contains markup.
-          * @param {Node} node The node whose childNodes are going to be compiled.
-          * @param {ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
-          * TemplateControl interface since only they can contain templates.
-          */
-        compile(node: Node, control?: ui.TemplateControl): void;
-        /**
-          * Goes through the Node array, finding elements that contain controls as well as
-          * text that contains markup.
-          * @param {Array<Node>} nodes The nodes that are going to be compiled.
-          * @param {ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
-          * TemplateControl interface since only they can contain templates.
-          */
-        compile(nodes: Array<Node>, control?: ui.TemplateControl): void;
-        /**
           * Goes through the NodeList, finding elements that contain controls as well as
           * text that contains markup.
           * @param {NodeList} nodes The NodeList that is going to be compiled.
           * @param {ui.TemplateControl} control? The parent control for the given Node. The parent must implement the
           * TemplateControl interface since only they can contain templates.
           */
-        compile(nodes: NodeList, control?: ui.TemplateControl): void;
+        compile(node: Node | Node[] | NodeList, control?: ui.TemplateControl): void;
         /**
           * Iterates through the array of nodes creating ElementManagers on Element
           * nodes, TextManagers on text nodes, and
@@ -9237,11 +8022,7 @@ export declare module processing {
           * @param {processing.ElementManager} manager The parent ElementManagers
           * for the given array of nodes.
           */
-        /**
-          * @param nodes The NodeList to be compiled.
-          * @param manager The parent Element Manager for the given array of nodes.
-          */
-        protected _compileNodes(nodes: Array<Node>, manager: ElementManager): void;
+        protected _compileNodes(nodes: Node[], manager: ElementManager): void;
     }
     /**
       * Responsible for data binding a data context to a Node.
@@ -9298,7 +8079,7 @@ export declare module processing {
           * IParsedExpression.
           * @param {string} text The text string in which to search for markup.
           */
-        static findMarkup(text: string): Array<expressions.IParsedExpression>;
+        static findMarkup(text: string): expressions.IParsedExpression[];
         /**
           * Takes in a control with a data context and an array of IParsedExpression
           * and outputs a string of the evaluated expressions.
@@ -9306,7 +8087,7 @@ export declare module processing {
           * @param {ui.TemplateControl} control? The TemplateControl used to parse
           * the expressions.
           */
-        static build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string;
+        static build(expressions: expressions.IParsedExpression[], control?: ui.TemplateControl): string;
         /**
           * Registers a listener to be notified of a change in any associated identifier.
           * @param {Array<expressions.IParsedExpression>} expressions An Array of
@@ -9315,7 +8096,7 @@ export declare module processing {
           * to the identifiers.
           * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
           */
-        static observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl, listener: (...args: Array<any>) => void): void;
+        static observeExpressions(expressions: expressions.IParsedExpression[], control: ui.TemplateControl, listener: (...args: any[]) => void): void;
         /**
           * Wraps constant text as a static IParsedExpression.
           * @param text The text to wrap into a static expression.
@@ -9375,7 +8156,7 @@ export declare module processing {
           * IParsedExpression.
           * @param {string} text The text string in which to search for markup.
           */
-        findMarkup(text: string): Array<expressions.IParsedExpression>;
+        findMarkup(text: string): expressions.IParsedExpression[];
         /**
           * Takes in a control with a data context and an array of IParsedExpression
           * and outputs a string of the evaluated expressions.
@@ -9383,7 +8164,7 @@ export declare module processing {
           * @param {ui.TemplateControl} control? The TemplateControl used to parse
           * the expressions.
           */
-        build(expressions: Array<expressions.IParsedExpression>, control?: ui.TemplateControl): string;
+        build(expressions: expressions.IParsedExpression[], control?: ui.TemplateControl): string;
         /**
           * Registers a listener to be notified of a change in any associated identifier.
           * @param {Array<expressions.IParsedExpression>} expressions An Array of
@@ -9392,7 +8173,7 @@ export declare module processing {
           * to the identifiers.
           * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
           */
-        observeExpressions(expressions: Array<expressions.IParsedExpression>, control: ui.TemplateControl, listener: (...args: Array<any>) => void): void;
+        observeExpressions(expressions: expressions.IParsedExpression[], control: ui.TemplateControl, listener: (...args: any[]) => void): void;
     }
     /**
       * Describes a compiled Node.
@@ -9413,7 +8194,7 @@ export declare module processing {
         /**
           * Any IParsedExpressions contained in the Node.
           */
-        expressions?: Array<expressions.IParsedExpression>;
+        expressions?: expressions.IParsedExpression[];
         /**
           * The injector for a control associated with the Node, if one exists.
           */
@@ -9445,7 +8226,7 @@ export declare module processing {
         /**
           * The compiled attribute Nodes for the Element.
           */
-        nodes: Array<INode>;
+        nodes: INode[];
         /**
           * An object of key/value attribute pairs.
           */
@@ -9454,7 +8235,7 @@ export declare module processing {
           * The relative context path for the node's corresponding
           * TemplateControl, if specified.
           */
-        childContext?: string;
+        childContext?: string | number;
         /**
           * Indicates whether or not an Control was found on the Element.
           */
@@ -9531,7 +8312,7 @@ export declare module processing {
         /**
           * The child managers for this manager.
           */
-        children: Array<NodeManager>;
+        children: NodeManager[];
         /**
           * Specifies the type for this NodeManager.
           * It's value is "element".
@@ -9553,15 +8334,15 @@ export declare module processing {
           */
         replaceNodeLength: number;
         /**
-          * In the event that a control does not have its own context, we need a promise to fullfill
+          * In the event that a control does not have its own context, we need a promise to fulfill
           * when the control's context has been set.
           */
-        contextPromise: async.IThenable<void>;
+        contextPromise: async.Promise<void>;
         /**
           * A promise that is set when an TemplateControl specifies a templateUrl
           * and its HTML needs to be asynchronously obtained.
           */
-        templatePromise: async.IThenable<void>;
+        templatePromise: async.Promise<void>;
         /**
           * Determines if the associated Element has controls that need to be instantiated or Attr nodes
           * containing text markup. If controls exist or markup is found a new
@@ -9609,7 +8390,7 @@ export declare module processing {
           * @param {Element} newElement? An optional element to use for attributes (used in cloning).
           * @param {boolean} isClone? Whether or not these controls are clones.
           */
-        static createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode>;
+        static createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): INode[];
         /**
           * Returns a new instance of an ElementManager.
           */
@@ -9626,7 +8407,7 @@ export declare module processing {
           * @param {Array<processing.INode>} nodes The compiled INodes
           * to be cloned.
           */
-        protected static _copyAttributeNodes(nodes: Array<INode>): Array<INode>;
+        protected static _copyAttributeNodes(nodes: INode[]): INode[];
         /**
           * Clones an INode with a new node.
           * @param {processing.INode} sourceNode The original INode.
@@ -9666,7 +8447,7 @@ export declare module processing {
         /**
           * Links the data context to the DOM (data-binding).
           */
-        bind(): Array<Control>;
+        bind(): Control[];
         /**
           * Sets the template for an manager by obtaining any needed HTML templates and
           * calling its associated TemplateControl's
@@ -9681,26 +8462,26 @@ export declare module processing {
           */
         getUiControl(): ui.TemplateControl;
         /**
-          * Fullfills any template promises and finishes the compile phase for the HTML template associated
+          * Fulfills any template promises and finishes the compile phase for the HTML template associated
           * with this ElementManager.
           */
-        fulfillTemplate(): async.IThenable<void>;
+        fulfillTemplate(): async.Promise<void>;
         /**
           * Fulfills the template promise prior to binding and loading the control.
           */
-        fulfillAndLoad(): async.IThenable<void>;
+        fulfillAndLoad(): async.Promise<void>;
         /**
           * Binds context to the DOM and loads controls.
           */
-        bindAndLoad(): async.IThenable<void>;
+        bindAndLoad(): async.Promise<void>;
         /**
           * Observes the root context for controls that specify their own context, and initiates
           * a load upon a successful set of the context.
           * @param {ui.TemplateControl} root The TemplateControl specifying its own context.
-          * @param {() => async.IThenable<void>} loadMethod The function to initiate the loading of the root control and its
+          * @param {() => async.Promise<void>} loadMethod The function to initiate the loading of the root control and its
           * children.
           */
-        observeRootContext(root: ui.TemplateControl, loadMethod: () => async.IThenable<void>): async.IThenable<void>;
+        observeRootContext(root: ui.TemplateControl, loadMethod: () => async.Promise<void>): async.Promise<void>;
         /**
           * Finalizes all the properties on an TemplateControl
           * before loading.
@@ -9711,7 +8492,7 @@ export declare module processing {
         /**
           * Binds context to the DOM and calls bindAndLoad on all children.
           */
-        protected _bindChildren(): async.IThenable<void[]>;
+        protected _bindChildren(): async.Promise<void[]>;
         /**
           * Loads the potential attribute based controls associated with this
           * ElementManager and
@@ -9720,7 +8501,7 @@ export declare module processing {
           * @param {ui.TemplateControl} templateControl The TemplateControl
           * associated with this manager.
           */
-        protected _loadControls(controls: Array<AttributeControl>, templateControl: ui.TemplateControl): async.IThenable<void>;
+        protected _loadControls(controls: AttributeControl[], templateControl: ui.TemplateControl): async.Promise<void>;
         /**
           * Populates the TemplateControl properties associated with this manager
           * if one exists.
@@ -9749,11 +8530,11 @@ export declare module processing {
           * @param {Array<Control>} controls The array of controls whose attributes will need to be updated
           * upon the context changing.
           */
-        protected _observeControlIdentifiers(nodes: Array<INode>, parent: ui.TemplateControl, controls: Array<Control>, element: Element): void;
+        protected _observeControlIdentifiers(nodes: INode[], parent: ui.TemplateControl, controls: Control[], element: Element): void;
         /**
           * Runs through all the children of this manager and calls fulfillTemplate.
           */
-        protected _fulfillChildTemplates(): async.IThenable<void>;
+        protected _fulfillChildTemplates(): async.Promise<void>;
     }
     /**
       */
@@ -9785,7 +8566,7 @@ export declare module processing {
           * @param {Element} newElement? An optional element to use for attributes (used in cloning).
           * @param {boolean} isClone? Whether or not these controls are clones.
           */
-        createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): Array<INode>;
+        createAttributeControls(nodeMap: INodeMap, parent: ui.TemplateControl, templateControl?: ui.TemplateControl, newElement?: Element, isClone?: boolean): INode[];
         /**
           * Clones an TemplateControl with a new INodeMap.
           * @param {processing.INodeMap} sourceMap The source INodeMap used to clone the
@@ -9866,7 +8647,7 @@ export declare module processing {
           * @param {Array<expressions.IParsedExpression>} expressions An array of parsed expressions used to build
           * the node value.
           */
-        protected _setText(node: Node, control: ui.TemplateControl, expressions: Array<expressions.IParsedExpression>): void;
+        protected _setText(node: Node, control: ui.TemplateControl, expressions: expressions.IParsedExpression[]): void;
     }
     /**
       */
@@ -9958,11 +8739,11 @@ export declare module processing {
         /**
           * The controls which need to be notified of changes to this attribute.
           */
-        protected _controls: Array<Control>;
+        protected _controls: Control[];
         /**
           * The filtered expressions for a "dynamic" attribute.
           */
-        protected _bindingExpressions: Array<expressions.IParsedExpression>;
+        protected _bindingExpressions: expressions.IParsedExpression[];
         /**
           * Keeps track of the previous bound values of a "dynamic" attribute.
           */
@@ -9980,7 +8761,7 @@ export declare module processing {
           * @param {Array<Control>} controls The controls associated with the element.
           * @param {boolean} replace? Whether or not the element is replaced.
           */
-        initialize(element: Element, node: INode, parent: ui.TemplateControl, controls: Array<Control>, replace?: boolean): void;
+        initialize(element: Element, node: INode, parent: ui.TemplateControl, controls: Control[], replace?: boolean): void;
         /**
           * Handles changes to dynamic attributes. Takes into account that the attribute may have been changed programmatically, and
           * we need to only mutate the piece of the attribute corresponding to expressions with markup.
@@ -10000,7 +8781,7 @@ export declare module processing {
 /**
   * Holds all classes and interfaces related to routing components in platypus.
   */
-export declare module routing {
+export declare namespace routing {
     /**
       * Ties the browser and routers together, facilitating app navigation at every router level.
       * Listens for url changes and responds accordingly. Also contains functionality for generating
@@ -10086,15 +8867,15 @@ export declare module routing {
           * @param {any} view The view to which the Navigator should navigate.
           * @param {routing.INavigateOptions} options used to generate the url and perform navigation.
           */
-        navigate(view: any, options?: INavigateOptions): async.IThenable<void>;
+        navigate(view: any, options?: INavigateOptions): async.Promise<void>;
         /**
           * Returns a promise that resolves when all navigation has finished.
           */
-        finishNavigating(): async.IThenable<void>;
+        finishNavigating(): async.Promise<void>;
         /**
           * Tells the router to go back with the given options.
           */
-        goBack(options?: IBackNavigateOptions): async.IThenable<void>;
+        goBack(options?: IBackNavigateOptions): async.Promise<void>;
         /**
           * Indicates whether or not the current navigation is a backward navigation.
           */
@@ -10106,11 +8887,11 @@ export declare module routing {
         /**
           * Internal method for navigating to the specified url.
           */
-        protected _navigate(url: string, replace?: boolean): async.IThenable<void>;
+        protected _navigate(url: string, replace?: boolean): async.Promise<void>;
         /**
           * Internal method for going back a certain length in history
           */
-        protected _goBack(length: number): async.IThenable<void>;
+        protected _goBack(length: number): async.Promise<void>;
         /**
           * The root navigator will always observe for url changes and handle them accordingly. This means instructing the
           * router to navigate, and determining what to do in the event that navigation is prevented.
@@ -10196,7 +8977,7 @@ export declare module routing {
           * @param {Array<string>} names An array to populate with dynamic/splat segment names
           * @param {routing.ISegmentTypeCount} types An object to use for counting segment types in the route.
           */
-        static parse(route: string, names: Array<string>, types: ISegmentTypeCount): Array<BaseSegment>;
+        static parse(route: string, names: string[], types: ISegmentTypeCount): BaseSegment[];
         /**
           * Parses a route into segments, populating an array of names (for dynamic and splat segments) as well as
           * an ISegmentTypeCount object.
@@ -10346,7 +9127,7 @@ export declare module routing {
         /**
           * The possible next states for the current state.
           */
-        nextStates: Array<State>;
+        nextStates: State[];
         /**
           * The specification for the
           * assigned route segment for this state.
@@ -10356,7 +9137,7 @@ export declare module routing {
           * The associated delegate objects for this
           * state, with their parameter names.
           */
-        delegates: Array<IDelegateParameterNames>;
+        delegates: IDelegateParameterNames[];
         /**
           * A regular expression to match this state to a path.
           */
@@ -10383,12 +9164,12 @@ export declare module routing {
           * @param {string} char The character used to match next states.
           * @param {Array<routing.State>} states The states with which to match the character.
           */
-        static recognize(char: string, states: Array<State>): Array<State>;
+        static recognize(char: string, states: State[]): State[];
         /**
           * Sorts states by statics/dynamics/splats.
           * @param {Array<routing.State>} states The states to sort.
           */
-        static sort(states: Array<State>): Array<State>;
+        static sort(states: State[]): State[];
         /**
           * The constructor for a State.
           */
@@ -10412,7 +9193,7 @@ export declare module routing {
           * a match.
           * @param {string} char The character with which to match next states.
           */
-        match(char: string): Array<State>;
+        match(char: string): State[];
         /**
           * Finds the next state that shares the same specification
           * as the input spec.
@@ -10421,18 +9202,11 @@ export declare module routing {
           */
         protected _find(spec: ICharacterSpecification): State;
         /**
-          * Iterates through the next states and calls the input callback with each state. Acts like
-          * Utils.some. If the callback returns true, it will break out of the loop.
-          * @param {(child: routing.State) => boolean} iterator The function with which to call for each
-          * State. Can return true to break out of the loop
-          */
-        protected _someChildren(iterator: (child: State) => boolean): boolean;
-        /**
           * Iterates through the next states and calls the input callback with each state.
           * @param {(child: routing.State) => void} iterator The function with which to call for each
           * State.
           */
-        protected _someChildren(iterator: (child: State) => void): boolean;
+        protected _someChildren(iterator: (child: State) => boolean | void): boolean;
     }
     /**
       */
@@ -10449,7 +9223,7 @@ export declare module routing {
         /**
           * Contains the parameter names for a given delegate
           */
-        names: Array<string>;
+        names: string[];
     }
     /**
       * Assists in compiling and linking route strings. You can register route strings using
@@ -10482,7 +9256,7 @@ export declare module routing {
           * @param {routing.IRegisterOptions} options? An object containing options for the
           * registered route.
           */
-        register(routes: Array<IRouteDelegate>, options?: IRegisterOptions): void;
+        register(routes: IRouteDelegate[], options?: IRegisterOptions): void;
         /**
           * Searches for a match to the provided path. If a match is found, the path is deconstructed
           * to populate a parameters object (if the registered route was a dynamic/splat route).
@@ -10501,7 +9275,7 @@ export declare module routing {
           * Finds the delegates for an INamedRoute
           * @param {string} name The named route from which to get the delegates.
           */
-        delegatesFor(name: string): Array<IDelegateParameterNames>;
+        delegatesFor(name: string): IDelegateParameterNames[];
         /**
           * Determines whether or not an INamedRoute is registered.
           * @param {string} name The named route to search for.
@@ -10520,21 +9294,21 @@ export declare module routing {
           * @param {string} regex The regular expression string built for the compiled routes. Used to recognize
           * routes and associate them with the compiled routes.
           */
-        protected _finalize(state: State, regex: Array<string>): State;
+        protected _finalize(state: State, regex: string[]): State;
         /**
           * Parses a route into different segments;
           * @param {routing.IRouteDelegate} route The route options to be parsed.
           * @param {Array<routing.IDelegateParameterNames>} delegates The delegates and associated names for mapping parameters.
           * @param {routing.ISegmentTypeCount} types A count of all the segment types in the route.
           */
-        protected _parse(route: IRouteDelegate, delegates: Array<IDelegateParameterNames>, types: ISegmentTypeCount): Array<BaseSegment>;
+        protected _parse(route: IRouteDelegate, delegates: IDelegateParameterNames[], types: ISegmentTypeCount): BaseSegment[];
         /**
           * Compiles a list of segments into a series of states.
           * @param {Array<routing.BaseSegment>} segments The segments to compile.
           * @param {routing.State} state The initial state used to compile.
           * @param {Array<string>} regex A regular expression string to build in order to match the segments.
           */
-        protected _compile(segments: Array<BaseSegment>, state: State, regex: Array<string>): State;
+        protected _compile(segments: BaseSegment[], state: State, regex: string[]): State;
         /**
           * Adds a leading slash to the passed-in string if necessary.
           * @param {string} path The path to which to add the slash.
@@ -10549,12 +9323,12 @@ export declare module routing {
           * Finds the compiled states for a given path.
           * @param {string} path The path with which to look for compiled states.
           */
-        protected _findStates(path: string): Array<State>;
+        protected _findStates(path: string): State[];
         /**
           * Filters out states with no delegates, and sorts the states.
           * @param {Array<routing.State>} states The states to filter.
           */
-        protected _filter(states: Array<State>): Array<State>;
+        protected _filter(states: State[]): State[];
         /**
           * Links a state to a path, producing an IRecognizeResult.
           * @param {routing.State} states The state to link.
@@ -10605,14 +9379,14 @@ export declare module routing {
         /**
           * All the segments for the named route.
           */
-        segments: Array<BaseSegment>;
+        segments: BaseSegment[];
         /**
           * All the delegates for the named route.
           */
-        delegates: Array<IDelegateParameterNames>;
+        delegates: IDelegateParameterNames[];
     }
     /**
-      * Used during route registeration to specify a delegate object to associate
+      * Used during route registration to specify a delegate object to associate
       * with a route.
       */
     interface IRouteDelegate {
@@ -10642,7 +9416,7 @@ export declare module routing {
       * has the opportunity to reject/delay navigation. The next view can also reject navigation,
       * or redirect.
       * This is done asynchronously, giving the application the ability to make web service calls
-      * to determing
+      * to determining
       */
     class Router {
         protected static _inject: any;
@@ -10658,7 +9432,7 @@ export declare module routing {
         /**
           * A Promise That resolves when the router is done navigating.
           */
-        finishNavigating: async.IThenable<void>;
+        finishNavigating: async.Promise<void>;
         /**
           * The route information for the active route state.
           */
@@ -10670,7 +9444,7 @@ export declare module routing {
         /**
           * All the registered children for this router. Useful for generating and matching routes.
           */
-        children: Array<Router>;
+        children: Router[];
         /**
           * A unique id for the router.
           */
@@ -10718,7 +9492,7 @@ export declare module routing {
         /**
           * An object containing interceptor methods for particular routes.
           */
-        protected _interceptors: IObject<Array<(routeInfo: IRouteInfo) => any>>;
+        protected _interceptors: IObject<((routeInfo: IRouteInfo) => any)[]>;
         /**
           * A handler for unknown routes.
           */
@@ -10726,7 +9500,7 @@ export declare module routing {
         /**
           * All the registered Viewports for the router.
           */
-        protected _ports: Array<ISupportRouteNavigation>;
+        protected _ports: ISupportRouteNavigation[];
         /**
           * The Promise injectable
           */
@@ -10777,9 +9551,9 @@ export declare module routing {
           * router, and triggers a navigation if possible.
           * @param {routing.ISupportRouteNavigation} port An object that supports all the navigation events.
           */
-        register(port: ISupportRouteNavigation): async.IThenable<void>;
+        register(port: ISupportRouteNavigation): async.Promise<void>;
         /**
-          * Unregisters a Viewport (or similar object) with the
+          * Un-registers a Viewport (or similar object) with the
           * router in order to stop receiving navigation events.
           * @param {routing.ISupportRouteNavigation} port An object that supports all the navigation events.
           */
@@ -10787,17 +9561,10 @@ export declare module routing {
         /**
           * Configures routes for the router to match. Routes contain the information necessary to map a
           * route to a particular ViewControl. Also forces a navigation.
-          * @param {routing.IRouteMapping} route A route mapping to register.
-          * @param {boolean} force whether or not we should force navigate.
-          */
-        configure(route: IRouteMapping, force?: boolean): async.IThenable<void>;
-        /**
-          * Configures routes for the router to match. Routes contain the information necessary to map a
-          * route to a particular ViewControl. Also forces a navigation.
           * @param {Array<routing.IRouteMapping>} routes Route mappings to register.
           * @param {boolean} force whether or not we should force navigate.
           */
-        configure(routes: Array<IRouteMapping>, force?: boolean): async.IThenable<void>;
+        configure(routes: IRouteMapping | IRouteMapping[], force?: boolean): async.Promise<void>;
         /**
           * Allows for dynamic routing. Call this method in order to register a handler for dynamically determining what view to
           * use when a registered route is not found.
@@ -10812,31 +9579,9 @@ export declare module routing {
           * query param handlers have been processed. Param handlers are called prior to calling the "canNavigateTo" pipeline.
           * @param {(value: any, parameters: any, query: any) => any} handler A method that will manipulate the registered parameter.
           * @param {string} parameter The parameter that the registered handler will modify.
-          * @param {new (...args: any[]) => any} view The view used to match the route. If left out, all routes will be matched.
-          */
-        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view?: new (...args: any[]) => any): Router;
-        /**
-          * Registers a handler for a route parameter. When a route is a variable route (e.g. /posts/:id), all the param handlers
-          * registered for the particular view and parameter "id" will be called. The call to the handler is blocking, so the handler
-          * can return a promise while it processes the parameter. All the handlers for a parameter will be called in the order in which
-          * they were registered, with the catch-all (i.e. '*') handlers being called first. Param handlers will be called after all the
-          * query param handlers have been processed. Param handlers are called prior to calling the "canNavigateTo" pipeline.
-          * @param {(value: any, parameters: any, query: any) => any} handler A method that will manipulate the registered parameter.
-          * @param {string} parameter The parameter that the registered handler will modify.
           * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
           */
-        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view?: string): Router;
-        /**
-          * Registers a handler for a query parameter. When a route contains a query string (e.g. '?start=0'), it will be serialized into an object.
-          * Then, all the queryParam handlers registered for the particular view and query parameter "start" will be called. The call to the handler
-          * is blocking, so the handler can return a promise while it processes the parameter. All the handlers for a parameter will be called in the
-          * order in which they were registered, with the catch-all (i.e. '*') handlers being called first. Query param handlers are called prior to
-          * calling the "canNavigateTo" pipeline.
-          * @param {(value: any, query: any) => any} handler A method that will manipulate the registered parameter.
-          * @param {string} parameter The parameter that the registered handler will modify.
-          * @param {new (...args: any[]) => any} view The view used to match the route. If left out, all routes will be matched.
-          */
-        queryParam(handler: (value: any, query: any) => any, parameter: string, view?: new (...args: any[]) => any): Router;
+        param(handler: (value: any, parameters: any, query: any) => any, parameter: string, view?: string | (new (...args: any[]) => any)): Router;
         /**
           * Registers a handler for a query parameter. When a route contains a query string (e.g. '?start=0'), it will be serialized into an object.
           * Then, all the queryParam handlers registered for the particular view and query parameter "start" will be called. The call to the handler
@@ -10847,23 +9592,15 @@ export declare module routing {
           * @param {string} parameter The parameter that the registered handler will modify.
           * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
           */
-        queryParam(handler: (value: any, query: any) => any, parameter: string, view?: string): Router;
+        queryParam(handler: (value: string, query: any) => any, parameter: string, view?: string | (new (...args: any[]) => any)): Router;
         /**
           * Registers a handler for a particular route, or all routes. When the route changes, the interceptors registered for the route will be
           * called in-order (starting with the catch-all interceptors), and they have the opportunity to modify the route information, as well as
-          * prevent navigation from occuring. Interceptors are called prior to calling the "canNavigateTo" pipeline.
-          * @param {(routeInfo: routing.IRouteInfo) => any} interceptor A method that will process the current route.
-          * @param {new (...args: any[]) => any} view The view used to match the route. If left out, all routes will be matched.
-          */
-        intercept(handler: (routeInfo: IRouteInfo) => any, view?: new (...args: any[]) => any): Router;
-        /**
-          * Registers a handler for a particular route, or all routes. When the route changes, the interceptors registered for the route will be
-          * called in-order (starting with the catch-all interceptors), and they have the opportunity to modify the route information, as well as
-          * prevent navigation from occuring. Interceptors are called prior to calling the "canNavigateTo" pipeline.
+          * prevent navigation from occurring. Interceptors are called prior to calling the "canNavigateTo" pipeline.
           * @param {(routeInfo: routing.IRouteInfo) => any} interceptor A method that will process the current route.
           * @param {string} view The view's registered token used to match the route. If left out, all routes will be matched.
           */
-        intercept(interceptor: (routeInfo: IRouteInfo) => any, view?: string): Router;
+        intercept(interceptor: (routeInfo: IRouteInfo) => any, view?: string | (new (...args: any[]) => any)): Router;
         /**
           * Tells the router to match a new route. The router will attempt to find the route and if it succeeds it will
           * attempt to navigate to it. If it fails, it will return a Promise that rejects.
@@ -10871,15 +9608,7 @@ export declare module routing {
           * @param {IObject<any>} query The query parameters for the route.
           * @param {boolean} force Whether or not to force navigation, even if the same url has already been matched.
           */
-        navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.IThenable<void>;
-        /**
-          * Attempts to generate a route with the specified route name. Will generate the full-path from the root
-          * router.
-          * @param {new (...args: any[]) => any} name The Constructor of the named-route to generate.
-          * @param {IObject<string>} parameters? Any parameters used to generate the route.
-          * @param {IObject<string>} query? Any query parameters to append to the generated route.
-          */
-        generate(name: new (...args: any[]) => any, parameters?: IObject<string>, query?: IObject<string>): string;
+        navigate(url: string, query?: IObject<any>, force?: boolean, poll?: boolean): async.Promise<void>;
         /**
           * Attempts to generate a route with the specified route name. Will generate the full-path from the root
           * router.
@@ -10887,7 +9616,7 @@ export declare module routing {
           * @param {IObject<string>} parameters? Any parameters used to generate the route.
           * @param {IObject<string>} query? Any query parameters to append to the generated route.
           */
-        generate(name: string, parameters?: IObject<string>, query?: IObject<string>): string;
+        generate(name: string | (new (...args: any[]) => any), parameters?: IObject<string>, query?: IObject<string>): string;
         /**
           * Configures a route mapping and registers it with the RouteRecognizer and the child
           * RouteRecognizer.
@@ -10905,12 +9634,12 @@ export declare module routing {
         /**
           * Forces a navigation if possible.
           */
-        protected _forceNavigate(): async.IThenable<void>;
+        protected _forceNavigate(): async.Promise<void>;
         /**
           * Navigates the child routers.
           * @param {routing.IRouteInfo} info The information necessary to build the childRoute for the child routers.
           */
-        protected _navigateChildren(info: IRouteInfo, poll?: boolean): async.IThenable<void>;
+        protected _navigateChildren(info: IRouteInfo, poll?: boolean): async.Promise<void>;
         /**
           * Parses out the child route from route information.
           * @param {routing.IRouteInfo} info The information necessary to get the child route.
@@ -10920,35 +9649,35 @@ export declare module routing {
           * It is safe to navigate, so perform the navigation.
           * @param {routing.IRouteInfo} info The route information.
           */
-        protected _performNavigation(info: IRouteInfo): async.IThenable<void>;
+        protected _performNavigation(info: IRouteInfo): async.Promise<void>;
         /**
           * It is safe to navigate, so fire the navigateFrom events.
           * @param {boolean} ignorePorts? Ignores the ports if necessary.
           */
-        protected _performNavigateFrom(ignorePorts?: boolean): async.IThenable<void>;
+        protected _performNavigateFrom(ignorePorts?: boolean): async.Promise<void>;
         /**
           * Determines if we can navigate from the current state and navigate to the next state.
           * @param {routing.IRouteInfo} info The route information.
           */
-        protected _canNavigate(info: IRouteInfo, poll?: boolean): async.IThenable<boolean>;
+        protected _canNavigate(info: IRouteInfo, poll?: boolean): async.Promise<boolean>;
         /**
           * Determines if we can navigate from the current state and navigate to the next state.
           * @param {boolean} ignorePorts Ignores the ports if necessary.
           */
-        protected _canNavigateFrom(ignorePorts?: boolean): async.IThenable<boolean>;
+        protected _canNavigateFrom(ignorePorts?: boolean): async.Promise<boolean>;
         /**
           * Determines if we can navigate to the next state.
           * @param {routing.IRouteInfo} info The route information.
           * @param {boolean} ignorePorts Ignores the ports if necessary.
           */
-        protected _canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.IThenable<boolean>;
+        protected _canNavigateTo(info: IRouteInfo, ignorePorts?: boolean): async.Promise<boolean>;
         /**
           * Calls all the registered query and param transforms for a route.
           * @param {string} view The associated view for the route.
           * @param {any} parameters The route parameters.
           * @param {any} query? The query parameters.
           */
-        protected _callAllHandlers(view: string, parameters: any, query?: any): async.IThenable<void>;
+        protected _callAllHandlers(view: string, parameters: any, query?: any): async.Promise<void>;
         /**
           * Calls the associated transform functions.
           * @param {routing.IRouteTransforms} allHandlers The transform functions
@@ -10956,12 +9685,12 @@ export declare module routing {
           * @param {any} query? The query parameters.
           * @param {boolean} force? Whether or not the handler should be called if its param/queryParam does not exist.
           */
-        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any, force?: boolean): async.IThenable<void>;
+        protected _callHandlers(allHandlers: IRouteTransforms, obj: any, query?: any, force?: boolean): async.Promise<void>;
         /**
           * Calls the interceptors for a particular route.
           * @param {routing.IRouteInfo} info The route information.
           */
-        protected _callInterceptors(info: IRouteInfo): async.IThenable<boolean>;
+        protected _callInterceptors(info: IRouteInfo): async.Promise<boolean>;
         /**
           * Checks a passed-in route against the current route to determine if it is the same.
           * @param {routing.IRouteInfo} info The route information.
@@ -11029,7 +9758,7 @@ export declare module routing {
         query?: IObject<any>;
     }
     /**
-      * Information for an unkown route. If an unknown handler is registered with the router, it will be called.
+      * Information for an unknown route. If an unknown handler is registered with the router, it will be called.
       * The handler can use the `segment` property to figure out what `view` to use. Setting the `view` property will
       * tell the router what view to use. The `view` will become the configured view for that route.
       */
@@ -11046,7 +9775,7 @@ export declare module routing {
     /**
       * An object that contains an Array of route transform functions.
       */
-    interface IRouteTransforms extends IObject<Array<(value: string, values: any, query?: any) => any>> {
+    interface IRouteTransforms extends IObject<((value: string, values: any, query?: any) => any)[]> {
     }
     /**
       * Describes an object that supports all the routing events (e.g. a Viewport).
@@ -11056,19 +9785,19 @@ export declare module routing {
           * The router has matched a route and is asking if it is safe to navigate from the current state.
           * Here you cancan query the current ViewControl and ask it if it is safe to navigate from its current state.
           */
-        canNavigateFrom(): async.IThenable<boolean>;
+        canNavigateFrom(): async.Promise<boolean>;
         /**
           * The router has matched a route and is asking if it is safe to navigate. Here
           * you can instantiate the new view and ask it if it is safe to navigate to the view.
           * @param {routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
           * the view and feed it the route parameters/query.
           */
-        canNavigateTo(routeInfo: IRouteInfo): async.IThenable<boolean>;
+        canNavigateTo(routeInfo: IRouteInfo): async.Promise<boolean>;
         /**
           * The router has matched a route and determined that it is safe to navigate to the
           * next view. It is now safe for to dispose of the current state.
           */
-        navigateFrom(): async.IThenable<any>;
+        navigateFrom(): async.Promise<any>;
         /**
           * The router has matched a route and determined that it is safe to navigate to the
           * next view. You can now go through the steps to compile and link the next view then append
@@ -11076,13 +9805,13 @@ export declare module routing {
           * @param {routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
           * the view and feed it the route parameters/query.
           */
-        navigateTo(routeInfo: IRouteInfo): async.IThenable<any>;
+        navigateTo(routeInfo: IRouteInfo): async.Promise<any>;
     }
 }
 /**
   * Holds all classes and interfaces related to attribute control components in platypus.
   */
-export declare module controls {
+export declare namespace controls {
     /**
       * Allows for assigning a name to an Element or TemplateControl and referencing it
       * from parent controls.
@@ -11158,7 +9887,7 @@ export declare module controls {
         /**
           * An array of the aliases used in the expression.
           */
-        protected _aliases: Array<string>;
+        protected _aliases: string[];
         /**
           * A parsed form of an Array of the arguments to be passed into the function to be fired.
           */
@@ -11180,9 +9909,9 @@ export declare module controls {
           * into account.
           */
         protected _buildExpression(): {
-            fn: () => void;
             context: any;
-            args: Array<expressions.IParsedExpression>;
+            args: expressions.IParsedExpression[];
+            fn(): void;
         };
         /**
           * Calls the specified function when the DOM event is fired.
@@ -11472,108 +10201,108 @@ export declare module controls {
     /**
       * A mapping of all keys to their equivalent keyCode.
       */
-    var KeyCodes: {
-        'backspace': number;
-        'tab': number;
-        'enter': number;
-        'shift': number;
-        'ctrl': number;
-        'alt': number;
-        'pause': number;
-        'break': number;
+    let KeyCodes: {
+        backspace: number;
+        tab: number;
+        enter: number;
+        shift: number;
+        ctrl: number;
+        alt: number;
+        pause: number;
+        break: number;
         'caps lock': number;
-        'escape': number;
-        'space': number;
+        escape: number;
+        space: number;
         'page up': number;
         'page down': number;
-        'end': number;
-        'home': number;
-        'left': number;
+        end: number;
+        home: number;
+        left: number;
         'left arrow': number;
-        'up': number;
+        up: number;
         'up arrow': number;
-        'right': number;
+        right: number;
         'right arrow': number;
-        'down': number;
+        down: number;
         'down arrow': number;
-        'insert': number;
-        'delete': number;
-        '0': number;
-        'zero': number;
+        insert: number;
+        delete: number;
+        0: number;
+        zero: number;
         ')': number;
         'right parenthesis': number;
-        '1': number;
-        'one': number;
+        1: number;
+        one: number;
         '!': number;
-        'exclamation': number;
+        exclamation: number;
         'exclamation point': number;
-        '2': number;
-        'two': number;
+        2: number;
+        two: number;
         '@': number;
-        'at': number;
-        '3': number;
-        'three': number;
+        at: number;
+        3: number;
+        three: number;
         '#': number;
         'number sign': number;
-        'hash': number;
-        'pound': number;
-        '4': number;
-        'four': number;
-        '$': number;
-        'dollar': number;
+        hash: number;
+        pound: number;
+        4: number;
+        four: number;
+        $: number;
+        dollar: number;
         'dollar sign': number;
-        '5': number;
-        'five': number;
+        5: number;
+        five: number;
         '%': number;
-        'percent': number;
+        percent: number;
         'percent sign': number;
-        '6': number;
-        'six': number;
+        6: number;
+        six: number;
         '^': number;
-        'caret': number;
-        '7': number;
-        'seven': number;
+        caret: number;
+        7: number;
+        seven: number;
         '&': number;
-        'ampersand': number;
-        '8': number;
-        'eight': number;
+        ampersand: number;
+        8: number;
+        eight: number;
         '*': number;
-        'asterisk': number;
-        '9': number;
-        'nine': number;
+        asterisk: number;
+        9: number;
+        nine: number;
         '(': number;
         'left parenthesis': number;
-        'a': number;
-        'b': number;
-        'c': number;
-        'd': number;
-        'e': number;
-        'f': number;
-        'g': number;
-        'h': number;
-        'i': number;
-        'j': number;
-        'k': number;
-        'l': number;
-        'm': number;
-        'n': number;
-        'o': number;
-        'p': number;
-        'q': number;
-        'r': number;
-        's': number;
-        't': number;
-        'u': number;
-        'v': number;
-        'w': number;
-        'x': number;
-        'y': number;
-        'z': number;
-        'lwk': number;
+        a: number;
+        b: number;
+        c: number;
+        d: number;
+        e: number;
+        f: number;
+        g: number;
+        h: number;
+        i: number;
+        j: number;
+        k: number;
+        l: number;
+        m: number;
+        n: number;
+        o: number;
+        p: number;
+        q: number;
+        r: number;
+        s: number;
+        t: number;
+        u: number;
+        v: number;
+        w: number;
+        x: number;
+        y: number;
+        z: number;
+        lwk: number;
         'left window key': number;
-        'rwk': number;
+        rwk: number;
         'right window key': number;
-        'select': number;
+        select: number;
         'select key': number;
         'numpad 0': number;
         'numpad 1': number;
@@ -11585,48 +10314,48 @@ export declare module controls {
         'numpad 7': number;
         'numpad 8': number;
         'numpad 9': number;
-        'multiply': number;
-        'add': number;
-        'subtract': number;
+        multiply: number;
+        add: number;
+        subtract: number;
         'decimal point': number;
-        'divide': number;
-        'f1': number;
-        'f2': number;
-        'f3': number;
-        'f4': number;
-        'f5': number;
-        'f6': number;
-        'f7': number;
-        'f8': number;
-        'f9': number;
-        'f10': number;
-        'f11': number;
-        'f12': number;
+        divide: number;
+        f1: number;
+        f2: number;
+        f3: number;
+        f4: number;
+        f5: number;
+        f6: number;
+        f7: number;
+        f8: number;
+        f9: number;
+        f10: number;
+        f11: number;
+        f12: number;
         'num lock': number;
         'scroll lock': number;
         ';': number;
         'semi-colon': number;
         ':': number;
-        'colon': number;
+        colon: number;
         '=': number;
-        'equal': number;
+        equal: number;
         'equal sign': number;
         '+': number;
-        'plus': number;
+        plus: number;
         ',': number;
-        'comma': number;
+        comma: number;
         '<': number;
-        'lt': number;
+        lt: number;
         'less than': number;
         'left angle bracket': number;
         '-': number;
-        'dash': number;
-        '_': number;
-        'underscore': number;
+        dash: number;
+        _: number;
+        underscore: number;
         '.': number;
-        'period': number;
+        period: number;
         '>': number;
-        'gt': number;
+        gt: number;
         'greater than': number;
         'right angle bracket': number;
         '/': number;
@@ -11636,7 +10365,7 @@ export declare module controls {
         '`': number;
         'grave accent': number;
         '~': number;
-        'tilde': number;
+        tilde: number;
         '[': number;
         'open bracket': number;
         '{': number;
@@ -11644,12 +10373,12 @@ export declare module controls {
         '\\': number;
         'back slash': number;
         '|': number;
-        'pipe': number;
+        pipe: number;
         ']': number;
         'close bracket': number;
         '}': number;
         'close brace': number;
-        '\'': number;
+        "'": number;
         'single quote': number;
         '"': number;
         'double quote': number;
@@ -11670,7 +10399,7 @@ export declare module controls {
         /**
           * Parses the proper method args and finds any key code filters.
           */
-        protected _filterArgs(input: IKeyboardEventInput): Array<any>;
+        protected _filterArgs(input: IKeyboardEventInput): any[];
         /**
           * Matches the event's keyCode if necessary and then handles the event if
           * a match is found or if there are no filter keyCodes.
@@ -11688,7 +10417,7 @@ export declare module controls {
           * @param {Array<string>} keys? The array of defined keys to satisfy the
           * key press condition.
           */
-        protected _setKeyCodes(keys?: Array<string>): void;
+        protected _setKeyCodes(keys?: string[]): void;
     }
     /**
       * An attribute object that binds to specified key code scenarios.
@@ -11717,7 +10446,7 @@ export declare module controls {
           * An optional array of keys or key codes if more than one key can satisfy the condition. Used for keydown,
           * keypress, and keyup events where capitalization is disregarded.
           */
-        keys?: Array<any>;
+        keys?: any[];
         /**
           * The character to satisfy the press condition. Can be specified either as a numeric char code
           * or the char itself. Used for the charpress event where capitalization is regarded.
@@ -11727,7 +10456,7 @@ export declare module controls {
           * An optional array of characters or char codes if more than one char can satisfy the condition.
           * Used for the charpress event where capitalization is regarded.
           */
-        chars?: Array<any>;
+        chars?: any[];
     }
     /**
       * Used for filtering keys on keydown events. Does not take capitalization into account.
@@ -11778,7 +10507,7 @@ export declare module controls {
         /**
           * Parses the proper method args and finds any char code filters.
           */
-        protected _filterArgs(input: IKeyboardEventInput): Array<any>;
+        protected _filterArgs(input: IKeyboardEventInput): any[];
         /**
           * Matches the event's keyCode if necessary and then handles the event if
           * a match is found or if there are no filter keyCodes.
@@ -11796,7 +10525,7 @@ export declare module controls {
           * @param {Array<string>} keys? The array of defined keys to satisfy the
           * key press condition.
           */
-        protected _setKeyCodes(keys?: Array<string>): void;
+        protected _setKeyCodes(keys?: string[]): void;
     }
     /**
       * An AttributeControl that deals with binding to a specified property on its element.
@@ -12001,7 +10730,7 @@ export declare module controls {
         setter(): void;
     }
     /**
-      * Facilitates two-way databinding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
+      * Facilitates two-way data-binding for HTMLInputElements, HTMLSelectElements, and HTMLTextAreaElements.
       */
     class Bind extends AttributeControl implements observable.IImplementTwoWayBinding {
         protected static _inject: any;
@@ -12108,19 +10837,10 @@ export declare module controls {
           * changes to the bound property and/or its child properties.
           * @param {observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
           * specified child changes.
-          * @param {string} identifier? The identifier of the child property of the bound item.
+          * @param {number | string} identifier? The path of the child property of the bound item if the bound item is an Array.
           * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
           */
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string, autocast?: boolean): IRemoveListener;
-        /**
-          * The function that allows a control implementing ISupportTwoWayBinding to observe
-          * changes to the bound property and/or its child properties.
-          * @param {observable.IBoundPropertyChangedListener<T>} listener The listener to fire when the bound property or its
-          * specified child changes.
-          * @param {number} index? The index of the child property of the bound item if the bound item is an Array.
-          * @param {boolean} autocast? Will cast a primitive value to whatever it was set to in code.
-          */
-        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, index?: number, autocast?: boolean): IRemoveListener;
+        observeProperty<T>(listener: observable.IBoundPropertyChangedListener<T>, identifier?: string | number, autocast?: boolean): IRemoveListener;
         /**
           * A function that allows a ISupportTwoWayBinding to observe both the
           * bound property itself as well as potential child properties if being bound to an object.
@@ -12129,7 +10849,7 @@ export declare module controls {
           * the listener will listen for changes to the bound item itself.
           * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
           */
-        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: string) => void, identifier?: string): IRemoveListener;
+        observeArrayChange<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: string) => void, identifier?: string): IRemoveListener;
         /**
           * A function that allows a ISupportTwoWayBinding to observe both the
           * bound property itself as well as potential child properties if being bound to an object.
@@ -12138,7 +10858,7 @@ export declare module controls {
           * If undefined or empty the listener will listen for changes to the bound Array itself.
           * @param {boolean} arrayMutationsOnly? Whether or not to listen only for Array mutation changes.
           */
-        observeArrayChange<T>(listener: (changes: Array<observable.IArrayChanges<T>>, identifier: number) => void, index?: number): IRemoveListener;
+        observeArrayChange<T>(listener: (changes: observable.IArrayChanges<T>[], identifier: number) => void, index?: number): IRemoveListener;
         /**
           * Adds a text event as the event listener.
           * Used for textarea and input[type="text"].
@@ -12188,11 +10908,11 @@ export declare module controls {
         /**
           * Getter for input[type="file"]-multiple.
           */
-        protected _getFiles(): Array<IFile>;
+        protected _getFiles(): IFile[];
         /**
           * Getter for select-multiple.
           */
-        protected _getSelectedValues(): Array<string>;
+        protected _getSelectedValues(): string[];
         /**
           * Setter for textarea, input[type="text"],
           * and input[type="button"], and select.
@@ -12359,7 +11079,7 @@ export declare module controls {
           * The set of functions added by the Template Control that listens
           * for property changes.
           */
-        protected _listeners: Array<(newValue: any, oldValue: any) => void>;
+        protected _listeners: ((newValue: any, oldValue: any) => void)[];
         /**
           * The function to stop listening for property changes.
           */
@@ -12523,7 +11243,7 @@ export declare class App {
       */
     resume(ev: events.LifecycleEvent): void;
     /**
-      * Event fired when an internal error occures.
+      * Event fired when an internal error occurs.
       * @param {events.ErrorEvent<Error>} ev The ErrorEvent object.
       */
     error(ev: events.ErrorEvent<Error>): void;
@@ -12533,7 +11253,7 @@ export declare class App {
       */
     ready(ev: events.LifecycleEvent): void;
     /**
-      * Event fired when the app has been programatically shutdown. This event is cancelable.
+      * Event fired when the app has been programmatically shutdown. This event is cancelable.
       * @param {events.LifecycleEvent} ev The LifecycleEvent object.
       */
     exiting(ev: events.LifecycleEvent): void;
@@ -12551,7 +11271,7 @@ export declare class App {
       * Creates a new DispatchEvent and propagates it to all
       * listeners based on the DIRECT method. Propagation
       * will always start with the sender, so the sender can both produce and consume the same event.
-      * @param {string} name The name of the event to send, cooincides with the name used in the
+      * @param {string} name The name of the event to send, coincides with the name used in the
       * app.on() method.
       * @param {Array<any>} ...args Any number of arguments to send to all the listeners.
       */
@@ -12559,7 +11279,7 @@ export declare class App {
     /**
       * Registers a listener for a DispatchEvent. The listener will be called when
       * a DispatchEvent is propagating over the app. Any number of listeners can exist for a single event name.
-      * @param {string} name The name of the event, cooinciding with the DispatchEvent name.
+      * @param {string} name The name of the event, coinciding with the DispatchEvent name.
       * @param {(ev: events.DispatchEvent, ...args: Array<any>) => void} listener The method called when
       * the DispatchEvent is fired.
       */
@@ -12622,32 +11342,12 @@ export interface IObject<T> {
   * Defines a function that will halt further callbacks to a listener.
   * Equivalent to `() => void`.
   */
-export interface IRemoveListener {
-    /**
-      * The method signature for IRemoveListener.
-      */
-    (): void;
-}
+export declare type IRemoveListener = () => void;
 /**
   * Defines a function that will be called whenever a property has changed.
   */
-export interface IPropertyChangedListener<T> {
-    /**
-      * The method signature for IPropertyChangedListener.
-      * @param {T} newValue The new value of the observed property.
-      * @param {T} oldValue The previous value of the observed property.
-      */
-    (newValue: T, oldValue: T): void;
-}
+export declare type IPropertyChangedListener<T> = (newValue: T, oldValue: T) => void;
 /**
   * Defines a function that will be called whenever a property specified by a given identifier has changed.
   */
-export interface IIdentifierChangedListener<T> {
-    /**
-      * The method signature for IIdentifierChangedListener.
-      * @param {T} newValue The new value of the observed property.
-      * @param {T} oldValue The previous value of the observed property.
-      * @param {any} identifier The string or number identifier that specifies the changed property.
-      */
-    (newValue: T, oldValue: T, identifier: any): void;
-}
+export declare type IIdentifierChangedListener<T> = (newValue: T, oldValue: T, identifier: any) => void;

@@ -1,4 +1,4 @@
-module plat.controls {
+namespace plat.controls {
     'use strict';
 
     /**
@@ -12,57 +12,109 @@ module plat.controls {
      * @description
      * A mapping of all keys to their equivalent keyCode.
      */
-    export var KeyCodes = {
-        'backspace': 8,
-        'tab': 9,
-        'enter': 13,
-        'shift': 16,
-        'ctrl': 17,
-        'alt': 18,
-        'pause': 19, 'break': 19,
+    export let KeyCodes = {
+        backspace: 8,
+        tab: 9,
+        enter: 13,
+        shift: 16,
+        ctrl: 17,
+        alt: 18,
+        pause: 19,
+        break: 19,
         'caps lock': 20,
-        'escape': 27,
-        'space': 32,
+        escape: 27,
+        space: 32,
         'page up': 33,
         'page down': 34,
-        'end': 35,
-        'home': 36,
-        'left': 37, 'left arrow': 37,
-        'up': 38, 'up arrow': 38,
-        'right': 39, 'right arrow': 39,
-        'down': 40, 'down arrow': 40,
-        'insert': 45,
-        'delete': 46,
-        '0': 48, 'zero': 48,
-        ')': 48, 'right parenthesis': 48,
-        '1': 49, 'one': 49,
-        '!': 49, 'exclamation': 49, 'exclamation point': 49,
-        '2': 50, 'two': 50,
-        '@': 50, 'at': 50,
-        '3': 51, 'three': 51,
-        '#': 51, 'number sign': 51,
-        'hash': 51, 'pound': 51,
-        '4': 52, 'four': 52,
-        '$': 52, 'dollar': 52, 'dollar sign': 52,
-        '5': 53, 'five': 53,
-        '%': 53, 'percent': 53, 'percent sign': 53,
-        '6': 54, 'six': 54,
-        '^': 54, 'caret': 54,
-        '7': 55, 'seven': 55,
-        '&': 55, 'ampersand': 55,
-        '8': 56, 'eight': 56,
-        '*': 56, 'asterisk': 56,
-        '9': 57, 'nine': 57,
-        '(': 57, 'left parenthesis': 57,
-        'a': 65, 'b': 66, 'c': 67, 'd': 68, 'e': 69,
-        'f': 70, 'g': 71, 'h': 72, 'i': 73, 'j': 74,
-        'k': 75, 'l': 76, 'm': 77, 'n': 78, 'o': 79,
-        'p': 80, 'q': 81, 'r': 82, 's': 83, 't': 84,
-        'u': 85, 'v': 86, 'w': 87, 'x': 88, 'y': 89,
-        'z': 90,
-        'lwk': 91, 'left window key': 91,
-        'rwk': 92, 'right window key': 92,
-        'select': 93, 'select key': 93,
+        end: 35,
+        home: 36,
+        left: 37,
+        'left arrow': 37,
+        up: 38,
+        'up arrow': 38,
+        right: 39,
+        'right arrow': 39,
+        down: 40,
+        'down arrow': 40,
+        insert: 45,
+        delete: 46,
+        0: 48,
+        zero: 48,
+        ')': 48,
+        'right parenthesis': 48,
+        1: 49,
+        one: 49,
+        '!': 49,
+        exclamation: 49,
+        'exclamation point': 49,
+        2: 50,
+        two: 50,
+        '@': 50,
+        at: 50,
+        3: 51,
+        three: 51,
+        '#': 51,
+        'number sign': 51,
+        hash: 51,
+        pound: 51,
+        4: 52,
+        four: 52,
+        $: 52,
+        dollar: 52,
+        'dollar sign': 52,
+        5: 53,
+        five: 53,
+        '%': 53,
+        percent: 53,
+        'percent sign': 53,
+        6: 54,
+        six: 54,
+        '^': 54,
+        caret: 54,
+        7: 55,
+        seven: 55,
+        '&': 55,
+        ampersand: 55,
+        8: 56,
+        eight: 56,
+        '*': 56,
+        asterisk: 56,
+        9: 57,
+        nine: 57,
+        '(': 57,
+        'left parenthesis': 57,
+        a: 65,
+        b: 66,
+        c: 67,
+        d: 68,
+        e: 69,
+        f: 70,
+        g: 71,
+        h: 72,
+        i: 73,
+        j: 74,
+        k: 75,
+        l: 76,
+        m: 77,
+        n: 78,
+        o: 79,
+        p: 80,
+        q: 81,
+        r: 82,
+        s: 83,
+        t: 84,
+        u: 85,
+        v: 86,
+        w: 87,
+        x: 88,
+        y: 89,
+        z: 90,
+        lwk: 91,
+        'left window key': 91,
+        rwk: 92,
+        'right window key': 92,
+        select: 93,
+        'select key': 93,
         'numpad 0': 96,
         'numpad 1': 97,
         'numpad 2': 98,
@@ -73,40 +125,75 @@ module plat.controls {
         'numpad 7': 103,
         'numpad 8': 104,
         'numpad 9': 105,
-        'multiply': 106,
-        'add': 107,
-        'subtract': 109,
+        multiply: 106,
+        add: 107,
+        subtract: 109,
         'decimal point': 110,
-        'divide': 111,
-        'f1': 112, 'f2': 113, 'f3': 114, 'f4': 115,
-        'f5': 116, 'f6': 117, 'f7': 118, 'f8': 119,
-        'f9': 120, 'f10': 121, 'f11': 122, 'f12': 123,
+        divide: 111,
+        f1: 112,
+        f2: 113,
+        f3: 114,
+        f4: 115,
+        f5: 116,
+        f6: 117,
+        f7: 118,
+        f8: 119,
+        f9: 120,
+        f10: 121,
+        f11: 122,
+        f12: 123,
         'num lock': 144,
         'scroll lock': 145,
-        ';': 186, 'semi-colon': 186,
-        ':': 186, 'colon': 186,
-        '=': 187, 'equal': 187, 'equal sign': 187,
-        '+': 187, 'plus': 187,
-        ',': 188, 'comma': 188,
-        '<': 188, 'lt': 188, 'less than': 188,
+        ';': 186,
+        'semi-colon': 186,
+        ':': 186,
+        colon: 186,
+        '=': 187,
+        equal: 187,
+        'equal sign': 187,
+        '+': 187,
+        plus: 187,
+        ',': 188,
+        comma: 188,
+        '<': 188,
+        lt: 188,
+        'less than': 188,
         'left angle bracket': 188,
-        '-': 189, 'dash': 189,
-        '_': 189, 'underscore': 189,
-        '.': 190, 'period': 190,
-        '>': 190, 'gt': 190, 'greater than': 190,
+        '-': 189,
+        dash: 189,
+        _: 189,
+        underscore: 189,
+        '.': 190,
+        period: 190,
+        '>': 190,
+        gt: 190,
+        'greater than': 190,
         'right angle bracket': 190,
-        '/': 191, 'forward slash': 191,
-        '?': 191, 'question mark': 191,
-        '`': 192, 'grave accent': 192,
-        '~': 192, 'tilde': 192,
-        '[': 219, 'open bracket': 219,
-        '{': 219, 'open brace': 219,
-        '\\': 220, 'back slash': 220,
-        '|': 220, 'pipe': 220,
-        ']': 221, 'close bracket': 221,
-        '}': 221, 'close brace': 221,
-        '\'': 222, 'single quote': 222,
-        '"': 222, 'double quote': 222
+        '/': 191,
+        'forward slash': 191,
+        '?': 191,
+        'question mark': 191,
+        '`': 192,
+        'grave accent': 192,
+        '~': 192,
+        tilde: 192,
+        '[': 219,
+        'open bracket': 219,
+        '{': 219,
+        'open brace': 219,
+        '\\': 220,
+        'back slash': 220,
+        '|': 220,
+        pipe: 220,
+        ']': 221,
+        'close bracket': 221,
+        '}': 221,
+        'close brace': 221,
+        // tslint:disable-next-line
+        "'": 222,
+        'single quote': 222,
+        '"': 222,
+        'double quote': 222,
     };
 
     /**
@@ -120,7 +207,8 @@ module plat.controls {
      * @description
      * Base class used for filtering keys on KeyboardEvents.
      */
-    export class KeyCodeEventControl extends SimpleEventControl implements IKeyCodeEventControl {
+    export class KeyCodeEventControl extends SimpleEventControl
+        implements IKeyCodeEventControl {
         /**
          * @name keyCodes
          * @memberof plat.controls.KeyCodeEventControl
@@ -132,7 +220,7 @@ module plat.controls {
          * @description
          * Holds the key mappings to filter for in a KeyboardEvent.
          */
-        keyCodes: IObject<boolean> = {};
+        public keyCodes: IObject<boolean> = {};
 
         /**
          * @name _setListener
@@ -147,18 +235,31 @@ module plat.controls {
          * @returns {void}
          */
         protected _setListener(): void {
-            let attr = this.attribute;
+            const attr = this.attribute;
             if (isEmpty(this.event) || isEmpty(attr)) {
                 return;
             }
 
-            let expression = this.attributes[attr].trim();
+            const expression = this.attributes[attr].trim();
             if (expression[0] === '{') {
-                let eventObject: IKeyboardEventInput = this.evaluateExpression(expression) || { method: '' },
-                    keys = this._filterArgs(eventObject);
+                let eventObject: IKeyboardEventInput = this.evaluateExpression(
+                    expression
+                );
+
+                if (!isObject(eventObject)) {
+                    eventObject = { method: '' };
+                }
+
+                const keys = this._filterArgs(eventObject);
 
                 this._setKeyCodes(keys);
-                this.addEventListener(this.element, this.event, this._onEvent, false);
+                this.addEventListener(
+                    this.element,
+                    this.event,
+                    this._onEvent,
+                    false
+                );
+
                 return;
             }
 
@@ -177,9 +278,9 @@ module plat.controls {
          * @returns {Array<number|string>} An array of either characters or key codes
          * used for filtering.
          */
-        protected _filterArgs(input: IKeyboardEventInput): Array<any> {
-            let key = input.key,
-                keys = input.keys;
+        protected _filterArgs(input: IKeyboardEventInput): any[] {
+            const key = input.key;
+            const keys = input.keys;
 
             this._parseArgs(input.method);
 
@@ -193,8 +294,11 @@ module plat.controls {
                 return [key];
             } else {
                 if (!(isNull(input.char) && isNull(input.chars))) {
-                    this._log.warn(this.type +
-                        ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
+                    this._log.warn(
+                        `${
+                            this.type
+                        } should be using the property key or keys to denote key codes or keys and not char codes or characters.`
+                    );
                 }
             }
         }
@@ -233,8 +337,12 @@ module plat.controls {
          * @returns {boolean} Whether or not there is a match.
          */
         protected _compareKeys(ev: KeyboardEvent): boolean {
-            let keyCodes = this.keyCodes,
-                keyCode = ev.keyCode || ev.which;
+            const keyCodes = this.keyCodes;
+            let keyCode = ev.keyCode;
+
+            if (isNull(keyCode) || keyCode === 0) {
+                keyCode = ev.which;
+            }
 
             return isEmpty(keyCodes) || keyCodes[keyCode] === true;
         }
@@ -254,19 +362,21 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setKeyCodes(keys?: Array<string>): void {
+        protected _setKeyCodes(keys?: string[]): void {
             if (!isArray(keys)) {
                 keys = [];
             }
 
-            let length = keys.length,
-                key: string,
-                keyCodes = this.keyCodes,
-                index: string;
+            const length = keys.length;
+            const keyCodes = this.keyCodes;
+            let key: string;
+            let index: string;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 key = keys[i];
-                index = isNumber(key) ? key : (<any>KeyCodes)[key.toLowerCase()];
+                index = isNumber(key)
+                    ? key
+                    : (<any>KeyCodes)[key.toLowerCase()];
                 keyCodes[index] = true;
             }
         }
@@ -346,7 +456,7 @@ module plat.controls {
          * An optional array of keys or key codes if more than one key can satisfy the condition. Used for keydown,
          * keypress, and keyup events where capitalization is disregarded.
          */
-        keys?: Array<any>;
+        keys?: any[];
 
         /**
          * @name char
@@ -374,7 +484,7 @@ module plat.controls {
          * An optional array of characters or char codes if more than one char can satisfy the condition.
          * Used for the charpress event where capitalization is regarded.
          */
-        chars?: Array<any>;
+        chars?: any[];
     }
 
     /**
@@ -399,7 +509,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'keydown';
+        public event: string = 'keydown';
     }
 
     /**
@@ -425,7 +535,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'keydown';
+        public event: string = 'keydown';
 
         /**
          * @name _onEvent
@@ -440,15 +550,28 @@ module plat.controls {
          *
          * @returns {void}
          */
-        _onEvent(ev: KeyboardEvent): void {
-            let keyCode = ev.keyCode || ev.which;
+        public _onEvent(ev: KeyboardEvent): void {
+            let keyCode = ev.keyCode;
 
-            if (super._compareKeys(ev) && ((keyCode >= 48 && keyCode <= 90) ||
-                (keyCode >= 186) || (keyCode >= 96 && keyCode <= 111))) {
-                let remove = this.addEventListener(this.element, 'keypress',(e: KeyboardEvent): void => {
-                    remove();
-                    super._onEvent(e);
-                }, false);
+            if (isNull(keyCode) || keyCode === 0) {
+                keyCode = ev.which;
+            }
+
+            if (
+                super._compareKeys(ev) &&
+                ((keyCode >= 48 && keyCode <= 90) ||
+                    keyCode >= 186 ||
+                    (keyCode >= 96 && keyCode <= 111))
+            ) {
+                const remove = this.addEventListener(
+                    this.element,
+                    'keypress',
+                    (e: KeyboardEvent): void => {
+                        remove();
+                        super._onEvent(e);
+                    },
+                    false
+                );
             }
         }
 
@@ -492,7 +615,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'keyup';
+        public event: string = 'keyup';
     }
 
     /**
@@ -517,7 +640,7 @@ module plat.controls {
          * @description
          * The event name.
          */
-        event: string = 'keypress';
+        public event: string = 'keypress';
 
         /**
          * @name _filterArgs
@@ -531,9 +654,9 @@ module plat.controls {
          * @returns {Array<number|string>} An array of either characters or char codes
          * used for filtering.
          */
-        protected _filterArgs(input: IKeyboardEventInput): Array<any> {
-            let char = input.char,
-                chars = input.chars;
+        protected _filterArgs(input: IKeyboardEventInput): any[] {
+            const char = input.char;
+            const chars = input.chars;
 
             this._parseArgs(input.method);
 
@@ -547,8 +670,11 @@ module plat.controls {
                 return [char];
             } else {
                 if (!(isNull(input.key) && isNull(input.keys))) {
-                    this._log.warn(this.type +
-                        ' should be using the property key or keys to denote key codes or keys and not char codes or characters.');
+                    this._log.warn(
+                        `${
+                            this.type
+                        } should be using the property key or keys to denote key codes or keys and not char codes or characters.`
+                    );
                 }
             }
         }
@@ -568,13 +694,19 @@ module plat.controls {
          * @returns {void}
          */
         protected _onEvent(ev: KeyboardEvent): void {
-            let keyCodes = this.keyCodes,
-                keyCode = ev.charCode || ev.which,
-                key: string;
+            const keyCodes = this.keyCodes;
+            let keyCode = ev.charCode;
 
-            if (!keyCode) {
+            if (isNull(keyCode) || keyCode === 0) {
+                keyCode = ev.which;
+            }
+
+            let key: string;
+
+            if (isNull(keyCode) || keyCode === 0) {
                 key = ev.key;
-                if (!key) {
+
+                if (!isString(key)) {
                     return;
                 }
             } else {
@@ -618,17 +750,17 @@ module plat.controls {
          *
          * @returns {void}
          */
-        protected _setKeyCodes(keys?: Array<string>): void {
+        protected _setKeyCodes(keys?: string[]): void {
             if (!isArray(keys)) {
                 keys = [];
             }
 
-            let length = keys.length,
-                key: any,
-                keyCodes = this.keyCodes,
-                index: string;
+            const length = keys.length;
+            const keyCodes = this.keyCodes;
+            let key: any;
+            let index: string;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 key = keys[i];
                 index = isNumber(key) ? String.fromCharCode(key) : key;
                 keyCodes[index] = true;

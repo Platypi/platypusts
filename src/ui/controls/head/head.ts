@@ -1,4 +1,4 @@
-﻿module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -13,10 +13,10 @@
      * control will not exist unless you register it as a control with the name 'head'. It is static, so you can inject
      * it into other components and get access to its properties.
      */
-    export class Head extends ui.TemplateControl {
+    export class Head extends TemplateControl {
         protected static _inject: any = {
             _document: __Document,
-            _browser: __Browser
+            _browser: __Browser,
         };
 
         /**
@@ -30,7 +30,7 @@
          * @description
          * This control is specifically for use with the <head /> HTML element.
          */
-        element: HTMLHeadElement;
+        public element: HTMLHeadElement;
 
         /**
          * @name replaceWith
@@ -43,7 +43,7 @@
          * @description
          * Rather than be replaced by a 'div', this control wants to be a 'head' element.
          */
-        replaceWith: string = __Head;
+        public replaceWith: string = __Head;
 
         /**
          * @name _document
@@ -82,7 +82,7 @@
          * @description
          * A reference to all the structured data elements added to the DOM for this page.
          */
-        protected _structuredDataElements: Array<HTMLElement> = [];
+        protected _structuredDataElements: HTMLElement[] = [];
 
         /**
          * @name _titleElement
@@ -265,7 +265,7 @@
          *
          * @returns {void}
          */
-        initialize(): void {
+        public initialize(): void {
             this.on(__navigating, (): void => {
                 this._removeAllElements();
             });
@@ -282,40 +282,78 @@
          *
          * @returns {void}
          */
-        setTemplate(): void {
-            let meta = __Meta,
-                title = __Title,
-                link = __MetaLink,
-                author = __Author,
-                type = __MetaType,
-                creator = __Creator,
-                image = __MetaImage,
-                video = __MetaVideo,
-                description = __Description,
-                url = __Url,
-                og = __OpenGraph,
-                article = __Article,
-                twitter = __Twitter;
+        public setTemplate(): void {
+            const meta = __Meta;
+            const title = __Title;
+            const link = __MetaLink;
+            const author = __Author;
+            const type = __MetaType;
+            const creator = __Creator;
+            const image = __MetaImage;
+            const video = __MetaVideo;
+            const description = __Description;
+            const url = __Url;
+            const og = __OpenGraph;
+            const article = __Article;
+            const twitter = __Twitter;
 
-            this.element.setAttribute('prefix', 'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#');
+            this.element.setAttribute(
+                'prefix',
+                'og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#'
+            );
 
             this._titleElement = this._createElement<HTMLTitleElement>(title);
-            this._ogTitleElement = this._createElement<HTMLMetaElement>(meta, og + title);
-            this._twitterTitleElement = this._createElement<HTMLMetaElement>(meta, twitter + title);
+            this._ogTitleElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + title
+            );
+            this._twitterTitleElement = this._createElement<HTMLMetaElement>(
+                meta,
+                twitter + title
+            );
 
-            this._descriptionElement = this._createElement<HTMLMetaElement>(meta, description);
-            this._ogDescriptionElement = this._createElement<HTMLMetaElement>(meta, og + description);
-            this._twitterDescriptionElement = this._createElement<HTMLMetaElement>(meta, twitter + description);
+            this._descriptionElement = this._createElement<HTMLMetaElement>(
+                meta,
+                description
+            );
+            this._ogDescriptionElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + description
+            );
+            this._twitterDescriptionElement = this._createElement<
+                HTMLMetaElement
+            >(meta, twitter + description);
 
-            this._ogUrlElement = this._createElement<HTMLMetaElement>(meta, og + url);
-            this._twitterUrlElement = this._createElement<HTMLMetaElement>(meta, twitter + url);
+            this._ogUrlElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + url
+            );
+            this._twitterUrlElement = this._createElement<HTMLMetaElement>(
+                meta,
+                twitter + url
+            );
 
-            this._authorElement = this._createElement<HTMLMetaElement>(meta, author);
-            this._googleAuthorElement = this._createElement<HTMLLinkElement>(link, author);
-            this._fbAuthorElement = this._createElement<HTMLMetaElement>(meta, article + author);
-            this._twitterCreatorElement = this._createElement<HTMLMetaElement>(meta, twitter + creator);
+            this._authorElement = this._createElement<HTMLMetaElement>(
+                meta,
+                author
+            );
+            this._googleAuthorElement = this._createElement<HTMLLinkElement>(
+                link,
+                author
+            );
+            this._fbAuthorElement = this._createElement<HTMLMetaElement>(
+                meta,
+                article + author
+            );
+            this._twitterCreatorElement = this._createElement<HTMLMetaElement>(
+                meta,
+                twitter + creator
+            );
 
-            this._ogTypeElement = this._createElement<HTMLMetaElement>(meta, og + type);
+            this._ogTypeElement = this._createElement<HTMLMetaElement>(
+                meta,
+                og + type
+            );
         }
 
         /**
@@ -331,16 +369,16 @@
          *
          * @returns {string} The title
          */
-        title(title?: string): string {
+        public title(title?: string): string {
             if (!isString(title)) {
                 return this._getContent(this._titleElement);
             }
 
             this._titleElement.innerText = title;
-            this._setContent([
-                this._ogTitleElement,
-                this._twitterTitleElement
-            ], title);
+            this._setContent(
+                [this._ogTitleElement, this._twitterTitleElement],
+                title
+            );
 
             return title;
         }
@@ -358,16 +396,19 @@
          *
          * @returns {string} The description
          */
-        description(description?: string): string {
+        public description(description?: string): string {
             if (!isString(description)) {
                 return this._getContent(this._descriptionElement);
             }
 
-            this._setContent([
-                this._descriptionElement,
-                this._ogDescriptionElement,
-                this._twitterDescriptionElement
-            ], description);
+            this._setContent(
+                [
+                    this._descriptionElement,
+                    this._ogDescriptionElement,
+                    this._twitterDescriptionElement,
+                ],
+                description
+            );
 
             return description;
         }
@@ -385,15 +426,15 @@
          *
          * @returns {string} The url
          */
-        url(url?: string): string {
+        public url(url?: string): string {
             if (!isString(url)) {
                 return this._getContent(this._ogUrlElement);
             }
 
-            this._setContent([
-                this._ogUrlElement,
-                this._twitterUrlElement
-            ], url);
+            this._setContent(
+                [this._ogUrlElement, this._twitterUrlElement],
+                url
+            );
 
             return url;
         }
@@ -412,14 +453,12 @@
          *
          * @returns {string} The author
          */
-        author(author?: string): string {
+        public author(author?: string): string {
             if (!isString(author)) {
                 return this._getContent(this._authorElement);
             }
 
-            this._setContent([
-                this._authorElement,
-            ], author);
+            this._setContent([this._authorElement], author);
 
             return author;
         }
@@ -438,14 +477,12 @@
          *
          * @returns {string} The author
          */
-        googleAuthor(author?: string): string {
+        public googleAuthor(author?: string): string {
             if (!isString(author)) {
                 return this._getContent(this._googleAuthorElement);
             }
 
-            this._setContent([
-                this._googleAuthorElement,
-            ], author);
+            this._setContent([this._googleAuthorElement], author);
 
             return author;
         }
@@ -464,14 +501,12 @@
          *
          * @returns {string} The author
          */
-        fbAuthor(author?: string): string {
+        public fbAuthor(author?: string): string {
             if (!isString(author)) {
                 return this._getContent(this._fbAuthorElement);
             }
 
-            this._setContent([
-                this._fbAuthorElement
-            ], author);
+            this._setContent([this._fbAuthorElement], author);
 
             return author;
         }
@@ -490,14 +525,12 @@
          *
          * @returns {string} The creator
          */
-        twitterCreator(creator?: string): string {
+        public twitterCreator(creator?: string): string {
             if (!isString(creator)) {
                 return this._getContent(this._twitterCreatorElement);
             }
 
-            this._setContent([
-                this._twitterCreatorElement
-            ], creator);
+            this._setContent([this._twitterCreatorElement], creator);
 
             return creator;
         }
@@ -515,14 +548,12 @@
          *
          * @returns {string} The image
          */
-        fbType(type?: string): string {
+        public fbType(type?: string): string {
             if (!isString(type)) {
                 return this._getContent(this._ogTypeElement);
             }
 
-            this._setContent([
-                this._ogTypeElement
-            ], type);
+            this._setContent([this._ogTypeElement], type);
 
             return type;
         }
@@ -540,34 +571,41 @@
          *
          * @returns {void}
          */
-        images(images: Array<string>): void {
+        public images(images: string[]): void {
             if (!isArray(images)) {
                 return;
             }
 
-            let meta = __Meta,
-                og = __OpenGraph,
-                twitter = __Twitter,
-                ogElement: HTMLMetaElement,
-                twitterElement: HTMLMetaElement,
-                head = this.element;
+            const meta = __Meta;
+            const og = __OpenGraph;
+            const twitter = __Twitter;
+            let ogElement: HTMLMetaElement;
+            let twitterElement: HTMLMetaElement;
+            const head = this.element;
 
             forEach((image: string): void => {
                 image = this._browser.urlUtils(image).href;
 
-                let elements = head.querySelectorAll(`${meta}[content="${image}"]`);
+                const elements = head.querySelectorAll(
+                    `${meta}[content="${image}"]`
+                );
 
                 if (elements.length === 2) {
                     return;
                 }
 
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + __MetaImage, true);
-                twitterElement = this._createElement<HTMLMetaElement>(meta, twitter + __MetaImage, true);
+                ogElement = this._createElement<HTMLMetaElement>(
+                    meta,
+                    og + __MetaImage,
+                    true
+                );
+                twitterElement = this._createElement<HTMLMetaElement>(
+                    meta,
+                    twitter + __MetaImage,
+                    true
+                );
 
-                this._setContent([
-                    ogElement,
-                    twitterElement
-                ], image);
+                this._setContent([ogElement, twitterElement], image);
             }, images);
         }
 
@@ -584,32 +622,36 @@
          *
          * @returns {void}
          */
-        videos(videos: Array<string>): void {
+        public videos(videos: string[]): void {
             if (!isArray(videos)) {
                 return;
             }
 
-            let meta = __Meta,
-                og = __OpenGraph,
-                metaVideo = __MetaVideo,
-                _browser = this._browser,
-                ogElement: HTMLMetaElement,
-                head = this.element;
+            const meta = __Meta;
+            const og = __OpenGraph;
+            const metaVideo = __MetaVideo;
+            const _browser = this._browser;
+            let ogElement: HTMLMetaElement;
+            const head = this.element;
 
             forEach((video: string): void => {
                 video = _browser.urlUtils(video).href;
 
-                let elements = head.querySelectorAll(`${meta}[content="${video}"]`);
+                const elements = head.querySelectorAll(
+                    `${meta}[content="${video}"]`
+                );
 
                 if (elements.length === 1) {
                     return;
                 }
 
-                ogElement = this._createElement<HTMLMetaElement>(meta, og + metaVideo, true);
+                ogElement = this._createElement<HTMLMetaElement>(
+                    meta,
+                    og + metaVideo,
+                    true
+                );
 
-                this._setContent([
-                    ogElement
-                ], video);
+                this._setContent([ogElement], video);
             }, videos);
         }
 
@@ -626,13 +668,13 @@
          *
          * @returns {void}
          */
-        structuredData(obj: any): void {
+        public structuredData(obj: any): void {
             if (isEmpty(obj)) {
                 return;
             }
 
-            let el = this._document.createElement('script'),
-                sibling = this._titleElement.nextSibling;
+            const el = this._document.createElement('script');
+            const sibling = this._titleElement.nextSibling;
 
             el.setAttribute('type', 'application/ld+json');
             el.textContent = JSON.stringify(obj);
@@ -654,8 +696,10 @@
          *
          * @returns {void}
          */
-        blogPostings(...postings: Array<IBlogPosting>): void {
-            for (let i = 0, length = postings.length; i < length; ++i) {
+        public blogPostings(...postings: IBlogPosting[]): void {
+            const length = postings.length;
+
+            for (let i = 0; i < length; i += 1) {
                 this.structuredData(postings[i]);
             }
         }
@@ -671,7 +715,7 @@
          *
          * @returns {void}
          */
-        loaded(): void {
+        public loaded(): void {
             this.url(this._browser.url());
         }
 
@@ -686,7 +730,7 @@
          *
          * @returns {void}
          */
-        navigated(url: string): void {
+        public navigated(url: string): void {
             this.url(url);
         }
 
@@ -704,7 +748,7 @@
          * @returns {void}
          */
         protected _getContent(element: HTMLElement): string {
-            let nodeName = element.nodeName.toLowerCase();
+            const nodeName = element.nodeName.toLowerCase();
 
             if (nodeName === __Title) {
                 return element.innerText;
@@ -729,18 +773,20 @@
          *
          * @returns {void}
          */
-        protected _setContent(elements: Array<HTMLElement>, value: string): void {
-            let el: HTMLHeadElement = this.element,
-                nodes: Array<HTMLElement> = Array.prototype.slice.call(el.children),
-                length = elements.length,
-                content = __Content,
-                href = __MetaHref,
-                sibling = this._titleElement.nextSibling,
-                dom = this.dom,
-                nodeName: string,
-                element: HTMLElement;
+        protected _setContent(elements: HTMLElement[], value: string): void {
+            const el: HTMLHeadElement = this.element;
+            const nodes: HTMLElement[] = Array.prototype.slice.call(
+                el.children
+            );
+            const length = elements.length;
+            const content = __Content;
+            const href = __MetaHref;
+            const sibling = this._titleElement.nextSibling;
+            const dom = this.dom;
+            let nodeName: string;
+            let element: HTMLElement;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 element = elements[i];
                 nodeName = element.nodeName.toLowerCase();
 
@@ -776,20 +822,30 @@
          *
          * @returns {T} The created element.
          */
-        protected _createElement<T extends HTMLElement>(tag: string, name?: string, multiple?: boolean): T {
-            let el: T,
-                hasName = isString(name),
-                attr: string = (hasName && (name.indexOf(__OpenGraph) === 0 || name.indexOf(__Article) === 0)) ? __MetaProperty : __MetaName,
-                element: HTMLHeadElement = this.element;
+        protected _createElement<T extends HTMLElement>(
+            tag: string,
+            name?: string,
+            multiple?: boolean
+        ): T {
+            const hasName = isString(name);
+            const element: HTMLHeadElement = this.element;
+
+            let el: T;
+            let attr: string =
+                hasName &&
+                (name.indexOf(__OpenGraph) === 0 ||
+                    name.indexOf(__Article) === 0)
+                    ? __MetaProperty
+                    : __MetaName;
 
             if (tag === __MetaLink) {
                 attr = __Rel;
             }
 
             if (!multiple && hasName) {
-                el = <T>element.querySelector(tag + '[' + attr + '="' + name + '"]');
+                el = element.querySelector(`${tag}[${attr}="${name}"]`);
             } else if (!multiple) {
-                el = <T>element.querySelector(tag);
+                el = element.querySelector(tag);
             }
 
             if (!isNode(el)) {
@@ -816,15 +872,26 @@
          * @returns {void}
          */
         protected _removeAllElements(): void {
-            let slice = Array.prototype.slice,
-                og = this._document.head.querySelectorAll('meta[' + __MetaProperty + '^="' + __OpenGraph + '"]'),
-                twitter = this._document.head.querySelectorAll('meta[' + __MetaName + '^="' + __Twitter + '"]');
+            const slice = Array.prototype.slice;
+            const og = this._document.head.querySelectorAll(
+                `meta[${__MetaProperty}^="${__OpenGraph}"]`
+            );
+            const twitter = this._document.head.querySelectorAll(
+                `meta[${__MetaName}^="${__Twitter}"]`
+            );
 
-            this._removeElements.apply(this, [
-                this._descriptionElement,
-                this._authorElement,
-                this._googleAuthorElement
-            ].concat(slice.call(og), slice.call(twitter), slice.call(this._structuredDataElements)));
+            this._removeElements.apply(
+                this,
+                [
+                    this._descriptionElement,
+                    this._authorElement,
+                    this._googleAuthorElement,
+                ].concat(
+                    slice.call(og),
+                    slice.call(twitter),
+                    slice.call(this._structuredDataElements)
+                )
+            );
 
             this._structuredDataElements = [];
         }
@@ -840,13 +907,15 @@
          *
          * @returns {void}
          */
-        protected _removeElements(...elements: Array<HTMLElement>): void {
-            let el = this.element,
-                nodes: Array<HTMLElement> = Array.prototype.slice.call(el.children),
-                length = elements.length,
-                element: HTMLElement;
+        protected _removeElements(...elements: HTMLElement[]): void {
+            const el = this.element;
+            const nodes: HTMLElement[] = Array.prototype.slice.call(
+                el.children
+            );
+            const length = elements.length;
+            let element: HTMLElement;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 element = elements[i];
                 if (nodes.indexOf(element) !== -1) {
                     el.removeChild(element);
@@ -1033,8 +1102,8 @@
      * @description
      * An interface for the http://schema.org/BlogPosting type.
      */
-    export interface IBlogPosting extends IArticle { }
-
+    // tslint:disable-next-line
+    export interface IBlogPosting extends IArticle {}
 
     /**
      * @name IBlogPosting

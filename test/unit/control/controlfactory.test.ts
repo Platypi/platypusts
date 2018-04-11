@@ -1,8 +1,8 @@
-﻿/// <reference path="../../references.d.ts" />
+/// <reference path="../../references.d.ts" />
 
 module tests.controlFactory {
-    var ControlFactory = plat.acquire(plat.IControlFactory),
-        control: plat.Control;
+    const ControlFactory = plat.acquire(plat.IControlFactory);
+    let control: plat.Control;
 
     describe('ControlFactory Tests', () => {
         beforeEach(() => {
@@ -10,8 +10,8 @@ module tests.controlFactory {
         });
 
         it('should test getRootControl', () => {
-            var isNull = ControlFactory.getRootControl(null),
-                root = ControlFactory.getRootControl(control);
+            const isNull = ControlFactory.getRootControl(null);
+            let root = ControlFactory.getRootControl(control);
 
             expect(isNull).toBeNull();
             expect(root).toBe(<any>control);
@@ -26,7 +26,7 @@ module tests.controlFactory {
         });
 
         it('should test loaded', (done: Function) => {
-            var spy = spyOn(control, 'loaded');
+            const spy = spyOn(control, 'loaded');
 
             ControlFactory.load(null).then((arg) => {
                 expect(arg).toBeUndefined();
@@ -40,7 +40,7 @@ module tests.controlFactory {
         it('should test dispose', () => {
             ControlFactory.dispose(null);
 
-            var spy = spyOn(control, 'dispose');
+            const spy = spyOn(control, 'dispose');
 
             control.parent = <any>{};
 
@@ -60,9 +60,9 @@ module tests.controlFactory {
             ControlFactory.removeParent(control);
             expect(control.parent).toBeNull();
 
-            var parent = control.parent = <any>{
-                controls: [control]
-            };
+            const parent = (control.parent = <any>{
+                controls: [control],
+            });
 
             ControlFactory.removeParent(control);
 
@@ -70,19 +70,23 @@ module tests.controlFactory {
         });
 
         it('should test removeEventListeners', () => {
-            var called = false;
+            let called = false;
             ControlFactory.removeEventListeners(control);
 
-            var listeners = (<any>ControlFactory).__eventListeners;
+            const listeners = (<any>ControlFactory).__eventListeners;
 
-            listeners[control.uid] = [() => {
-                called = true;
-            }];
+            listeners[control.uid] = [
+                () => {
+                    called = true;
+                },
+            ];
 
             ControlFactory.removeEventListeners(control);
 
             expect(called).toBe(true);
-            expect((<any>ControlFactory).__eventListeners[control.uid]).toBeUndefined();
+            expect(
+                (<any>ControlFactory).__eventListeners[control.uid]
+            ).toBeUndefined();
         });
 
         it('should test getInstance', () => {

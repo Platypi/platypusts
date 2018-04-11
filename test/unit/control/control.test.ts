@@ -1,7 +1,9 @@
-﻿module tests.control {
-    var ControlFactory = plat.acquire(plat.IControlFactory),
-        TemplateControlFactory = plat.acquire(plat.ui.ITemplateControlFactory),
-        control: plat.Control;
+module tests.control {
+    const ControlFactory = plat.acquire(plat.IControlFactory);
+    const TemplateControlFactory = plat.acquire(
+        plat.ui.ITemplateControlFactory
+    );
+    let control: plat.Control;
 
     describe('Control Tests', () => {
         beforeEach(() => {
@@ -9,7 +11,7 @@
         });
 
         it('should test uid', () => {
-            expect(control.uid.indexOf('plat') !== -1).toBe(true);
+            expect(control.uid.indexOf('plat')).toBeGreaterThanOrEqual(0);
         });
 
         it('should test getControlsByName', () => {
@@ -23,12 +25,12 @@
         });
 
         it('should test addEventListener', () => {
-            var called = false,
-                remove = control.addEventListener(window, 'tap', () => {
-                    called = true;
-                });
+            let called = false;
+            const remove = control.addEventListener(window, 'tap', () => {
+                called = true;
+            });
 
-            var ev = document.createEvent('CustomEvent');
+            const ev = document.createEvent('CustomEvent');
             ev.initEvent('tap', true, false);
             document.dispatchEvent(ev);
             expect(called).toBe(true);
@@ -41,74 +43,78 @@
         });
 
         it('should test observe', () => {
-            var remove = control.observe(() => { }, 'foo');
+            const remove = control.observe(() => {}, 'foo');
 
             expect(typeof remove).toEqual('function');
         });
 
-        it('should test observeArray',() => {
-            (<any>control).context = { foo: [] }; 
-            var remove = control.observeArray(() => { }, 'foo');
+        it('should test observeArray', () => {
+            (<any>control).context = { foo: [] };
+            const remove = control.observeArray(() => {}, 'foo');
 
             expect(typeof remove).toEqual('function');
         });
 
         it('should test observeExpression', () => {
-            var remove = control.observeExpression(() => { }, null);
+            let remove = control.observeExpression(() => {}, null);
 
             expect(typeof remove).toEqual('function');
 
             remove();
             remove = null;
             control.parent = <any>{};
-            
-            remove = control.observeExpression(() => { }, 'foo.bar');
+
+            remove = control.observeExpression(() => {}, 'foo.bar');
             expect(typeof remove).toEqual('function');
 
             remove();
             remove = null;
             control.parent = <any>{
-                absoluteContextPath: 'context'
+                absoluteContextPath: 'context',
             };
 
-            remove = control.observeExpression(() => { }, 'foo.bar');
+            remove = control.observeExpression(() => {}, 'foo.bar');
             expect(typeof remove).toEqual('function');
             remove();
         });
 
         it('should test evaluateExpression', () => {
-            var two = control.evaluateExpression('1 + 1');
+            const two = control.evaluateExpression('1 + 1');
 
             expect(two).toBe(2);
 
-            var four = control.evaluateExpression('2 + @two', { two: two });
+            const four = control.evaluateExpression('2 + @two', { two: two });
 
             expect(four).toBe(4);
 
             control.parent = <any>{
                 uid: 'foo',
                 context: {
-                    two: 2
-                }
+                    two: 2,
+                },
             };
 
-            var six = control.evaluateExpression('2 + @two + two', { two: two });
+            const six = control.evaluateExpression('2 + @two + two', {
+                two: two,
+            });
 
             expect(six).toBe(6);
 
             control.parent.resources = <any>{
                 four: {
-                    value: 4
-                }
+                    value: 4,
+                },
             };
 
-            var eight = control.evaluateExpression('@two + two + @four', { two: two });
+            const eight = control.evaluateExpression('@two + two + @four', {
+                two: two,
+            });
 
             expect(eight).toBe(8);
         });
 
         it('should test on and dispatchEvent', () => {
-            var val: number;
+            let val: number;
 
             control.on('foo', (ev, value) => {
                 val = value;

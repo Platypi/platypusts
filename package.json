@@ -19,10 +19,11 @@
     "karma-jasmine": "latest",
     "lodash": "latest",
     "rimraf": "latest",
-    "ts-bundle": "latest",
-    "tsconfig-lint": "latest",
+    "ts-bundle": "^0.3.0",
+    "tslint": "latest",
+    "tslint-microsoft-contrib": "latest",
     "typescript": "latest",
-    "uglify-js": "latest"
+    "uglify-js": "^3.3.13"
   },
   "scripts": {
     "prepublishOnly": "npm run deploy",
@@ -40,7 +41,7 @@
     "deploy:min": "uglifyjs --compress --mangle --screw-ie8 -o dist/platypus.min.js -- dist/platypus.js",
     "examples": "npm start",
     "karma": "karma start karma.conf.js",
-    "lint": "tsconfig-lint -u",
+    "lint": "tslint --fix --force -p tsconfig.json -c tslint.json",
     "start": "concurrently -r \"npm run watch:examples\" \"npm run server:examples\"",
     "server:examples": "http-server -p 3000",
     "test": "npm run build:test && npm run karma",

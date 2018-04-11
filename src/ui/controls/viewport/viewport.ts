@@ -1,4 +1,4 @@
-module plat.ui.controls {
+namespace plat.ui.controls {
     'use strict';
 
     /**
@@ -15,7 +15,8 @@ module plat.ui.controls {
      * It registers with a router and receives route change events. It then instantiates the proper viewcontrol and appends it
      * to the DOM.
      */
-    export class Viewport extends TemplateControl implements routing.ISupportRouteNavigation {
+    export class Viewport extends TemplateControl
+        implements routing.ISupportRouteNavigation {
         protected static _inject: any = {
             _Router: __RouterStatic,
             _Promise: __Promise,
@@ -24,7 +25,7 @@ module plat.ui.controls {
             _document: __Document,
             _managerCache: __ManagerCache,
             _animator: __Animator,
-            _navigator: __NavigatorInstance
+            _navigator: __NavigatorInstance,
         };
 
         /**
@@ -38,7 +39,7 @@ module plat.ui.controls {
          * @description
          * Viewports contain ViewControls.
          */
-        controls: Array<ViewControl>;
+        public controls: ViewControl[];
 
         /**
          * @name options
@@ -51,7 +52,7 @@ module plat.ui.controls {
          * @description
          * The {@link plat.ui.controls.IViewportOptions|options} for the {@link plat.ui.controls.Viewport|Viewport} control.
          */
-        options: observable.IObservableProperty<IViewportOptions>;
+        public options: observable.IObservableProperty<IViewportOptions>;
 
         /**
          * @name _Router
@@ -234,10 +235,10 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        initialize(): void {
-            let router = this._router = this._Router.currentRouter(),
-                parentViewport = this._getParentViewport(),
-                parentRouter: routing.Router;
+        public initialize(): void {
+            const router = (this._router = this._Router.currentRouter());
+            const parentViewport = this._getParentViewport();
+            let parentRouter: routing.Router;
 
             if (!(isNull(parentViewport) || isNull(parentViewport._router))) {
                 parentRouter = this._parentRouter = parentViewport._router;
@@ -259,15 +260,18 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        loaded(): void {
-            let animate = this._animate = isObject(this.options) && this.options.value.animate === true;
+        public loaded(): void {
+            const animate = (this._animate =
+                isObject(this.options) && this.options.value.animate === true);
             if (animate) {
-                this.dom.addClass(this.element, __Viewport + '-animate');
+                this.dom.addClass(this.element, `${__Viewport}-animate`);
             }
 
-            this._Promise.resolve(this._router.finishNavigating).then((): void => {
-                this._router.register(this);
-            });
+            this._Promise
+                .resolve(this._router.finishNavigating)
+                .then((): void => {
+                    this._router.register(this);
+                });
         }
 
         /**
@@ -284,16 +288,20 @@ module plat.ui.controls {
          * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
          * the view and feed it the route parameters/query.
          *
-         * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
+         * @returns {plat.async.Promise<boolean>} Whether or not it is safe to navigate.
          */
-        canNavigateTo(routeInfo: routing.IRouteInfo): async.IThenable<boolean> {
-            let getRouter = this._Router.currentRouter,
-                currentRouter = getRouter(),
-                response: any = true,
-                injector: dependency.Injector<ViewControl> = this._Injector.getDependency(routeInfo.delegate.view),
-                view = injector.inject(),
-                parameters = routeInfo.parameters,
-                nextRouter = getRouter();
+        public canNavigateTo(
+            routeInfo: routing.IRouteInfo
+        ): async.Promise<boolean> {
+            const getRouter = this._Router.currentRouter;
+            const currentRouter = getRouter();
+            let response: any = true;
+            const injector: dependency.Injector<
+                ViewControl
+            > = this._Injector.getDependency(routeInfo.delegate.view);
+            const view = injector.inject();
+            const parameters = routeInfo.parameters;
+            const nextRouter = getRouter();
 
             if (!isObject(view)) {
                 return this._Promise.resolve(null);
@@ -301,7 +309,9 @@ module plat.ui.controls {
 
             if (currentRouter !== nextRouter) {
                 nextRouter.initialize(this._router);
-                let navigator: routing.Navigator = acquire(__NavigatorInstance);
+                const navigator: routing.Navigator = acquire(
+                    __NavigatorInstance
+                );
                 view.navigator = navigator;
                 navigator.initialize(nextRouter);
             } else {
@@ -312,11 +322,14 @@ module plat.ui.controls {
                 response = view.canNavigateTo(parameters, routeInfo.query);
             }
 
-            return this._Promise.resolve(response).then((canNavigateTo: boolean): boolean => {
-                this._nextInjector = injector;
-                this._nextView = view;
-                return canNavigateTo;
-            });
+            return this._Promise
+                .resolve(response)
+                .then((canNavigateTo: boolean): boolean => {
+                    this._nextInjector = injector;
+                    this._nextView = view;
+
+                    return canNavigateTo;
+                });
         }
 
         /**
@@ -330,11 +343,11 @@ module plat.ui.controls {
          * navigate from the current state. Here the viewport can query the current ViewControl and
          * ask it if it is safe to navigate from its current state.
          *
-         * @returns {plat.async.IThenable<boolean>} Whether or not it is safe to navigate.
+         * @returns {plat.async.Promise<boolean>} Whether or not it is safe to navigate.
          */
-        canNavigateFrom(): async.IThenable<boolean> {
-            let view = this.controls[0],
-                response: any = true;
+        public canNavigateFrom(): async.Promise<boolean> {
+            const view = this.controls[0];
+            let response: any = true;
 
             if (isObject(view) && isFunction(view.canNavigateFrom)) {
                 response = view.canNavigateFrom();
@@ -357,23 +370,30 @@ module plat.ui.controls {
          * @param {plat.routing.IRouteInfo} routeInfo Contains the information necessary to instantiate
          * the view and feed it the route parameters/query.
          *
-         * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the
+         * @returns {plat.async.Promise<void>} A {@link plat.async.IPromise|Promise} that resolves when the
          * new ViewControl has finished instantiating.
          */
-        navigateTo(routeInfo: routing.IRouteInfo): async.IThenable<void> {
-            let injector = this._nextInjector || this._Injector.getDependency(routeInfo.delegate.view),
-                nodeMap = this._createNodeMap(injector),
-                element = this.element,
-                node = nodeMap.element,
-                parameters = routeInfo.parameters,
-                query = routeInfo.query,
-                control = <ViewControl>nodeMap.uiControlNode.control;
+        public navigateTo(routeInfo: routing.IRouteInfo): async.Promise<void> {
+            let injector = this._nextInjector;
+
+            if (!isObject(injector)) {
+                injector = this._Injector.getDependency(
+                    routeInfo.delegate.view
+                );
+            }
+
+            const nodeMap = this._createNodeMap(injector);
+            const element = this.element;
+            const node = nodeMap.element;
+            const parameters = routeInfo.parameters;
+            const query = routeInfo.query;
+            const control = <ViewControl>nodeMap.uiControlNode.control;
 
             this._nextInjector = this._nextView = undefined;
 
             if (this._animate) {
-                let animator = this._animator,
-                    dom = this.dom;
+                const animator = this._animator;
+                const dom = this.dom;
 
                 if (this._navigator.isBackNavigation()) {
                     dom.addClass(node, __NavigatingBack);
@@ -387,8 +407,8 @@ module plat.ui.controls {
                 element.insertBefore(node, null);
             }
 
-            let viewportManager = this._managerCache.read(this.uid),
-                manager = this._ElementManagerFactory.getInstance();
+            const viewportManager = this._managerCache.read(this.uid);
+            const manager = this._ElementManagerFactory.getInstance();
 
             viewportManager.children = [];
             manager.initialize(nodeMap, viewportManager);
@@ -400,7 +420,10 @@ module plat.ui.controls {
             manager.setUiControlTemplate();
 
             if (control.hasOwnContext) {
-                return manager.observeRootContext(control, manager.fulfillAndLoad);
+                return manager.observeRootContext(
+                    control,
+                    manager.fulfillAndLoad
+                );
             }
 
             return manager.fulfillAndLoad();
@@ -416,13 +439,13 @@ module plat.ui.controls {
          * The viewport's router has matched a route and determined that it is safe to navigate to the
          * next view. It is now safe for the viewport to dispose of the current state.
          *
-         * @returns {plat.async.IThenable<void>} A {@link plat.async.IPromise|Promise} that resolves when the viewport
+         * @returns {plat.async.Promise<void>} A {@link plat.async.IPromise|Promise} that resolves when the viewport
          * has finished navigating from the current state.
          */
-        navigateFrom(): async.IThenable<void> {
-            let view = this.controls[0],
-                promise: async.IThenable<void>,
-                viewExists = isObject(view);
+        public navigateFrom(): async.Promise<void> {
+            const view = this.controls[0];
+            let promise: async.Promise<void>;
+            const viewExists = isObject(view);
 
             if (viewExists && isFunction(view.navigatingFrom)) {
                 promise = this._Promise.resolve(view.navigatingFrom());
@@ -430,34 +453,43 @@ module plat.ui.controls {
                 promise = this._Promise.resolve();
             }
 
-            return promise.catch((error: any): void => {
-                if (isObject(error)) {
-                    if (isString(error.message)) {
-                        this._log.debug(this.type + ' error: ' + error.message);
+            return promise
+                .catch((error: any): void => {
+                    if (isObject(error)) {
+                        if (isString(error.message)) {
+                            this._log.debug(
+                                `${this.type} error: ${error.message}`
+                            );
+
+                            return;
+                        }
+
+                        this._log.debug(
+                            `${this.type} error: ${JSON.stringify(error)}`
+                        );
+
                         return;
                     }
 
-                    this._log.debug(this.type + ' error: ' + JSON.stringify(error));
-                    return;
-                }
+                    this._log.debug(error);
+                })
+                .then(() => {
+                    if (!(this._animate && viewExists)) {
+                        Control.dispose(view);
 
-                this._log.debug(error);
-            }).then(() => {
-                if (!(this._animate && viewExists)) {
-                    Control.dispose(view);
-                    return;
-                }
+                        return;
+                    }
 
-                let oldElement = view.element;
+                    const oldElement = view.element;
 
-                if (this._navigator.isBackNavigation()) {
-                    this.dom.addClass(oldElement, __NavigatingBack);
-                }
+                    if (this._navigator.isBackNavigation()) {
+                        this.dom.addClass(oldElement, __NavigatingBack);
+                    }
 
-                this._animator.leave(oldElement, __Leave).then((): void => {
-                    Control.dispose(view);
+                    this._animator.leave(oldElement, __Leave).then((): void => {
+                        Control.dispose(view);
+                    });
                 });
-            });
         }
 
         /**
@@ -472,7 +504,7 @@ module plat.ui.controls {
          *
          * @returns {void}
          */
-        dispose(): void {
+        public dispose(): void {
             this._router.unregister(this);
             this._navigator.dispose();
         }
@@ -490,13 +522,22 @@ module plat.ui.controls {
          *
          * @returns {plat.processing.INodeMap} The INodeMap for the ViewControl
          */
-        protected _createNodeMap(injector: dependency.Injector<ViewControl>): processing.INodeMap {
-            let control = this._nextView || injector.inject(),
-                doc = this._document,
-                type = injector.name,
-                replaceWith = control.replaceWith,
-                node: HTMLElement = (isEmpty(replaceWith) || replaceWith === 'any') ?
-                    doc.createElement('div') : doc.createElement(replaceWith);
+        protected _createNodeMap(
+            injector: dependency.Injector<ViewControl>
+        ): processing.INodeMap {
+            let control = this._nextView;
+
+            if (!isObject(control)) {
+                control = injector.inject();
+            }
+
+            const doc = this._document;
+            const type = injector.name;
+            const replaceWith = control.replaceWith;
+            const node: HTMLElement =
+                isEmpty(replaceWith) || replaceWith === 'any'
+                    ? doc.createElement('div')
+                    : doc.createElement(replaceWith);
 
             node.setAttribute(__Control, type);
             node.className = __ViewControl;
@@ -508,9 +549,9 @@ module plat.ui.controls {
                 uiControlNode: {
                     control: <any>control,
                     nodeName: type,
-                    expressions: <Array<expressions.IParsedExpression>>[],
-                    injector: <any>injector
-                }
+                    expressions: <expressions.IParsedExpression[]>[],
+                    injector: <any>injector,
+                },
             };
         }
 
@@ -527,14 +568,14 @@ module plat.ui.controls {
          * @returns {plat.ui.controls.Viewport} The parent Viewport.
          */
         protected _getParentViewport(): Viewport {
-            let viewport = this.parent,
-                type = this.type;
+            let viewport = this.parent;
+            const type = this.type;
 
             while (!isNull(viewport) && viewport.type !== type) {
                 viewport = viewport.parent;
             }
 
-            return <Viewport><any>viewport;
+            return <Viewport>(<any>viewport);
         }
     }
 

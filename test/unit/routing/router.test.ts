@@ -1,9 +1,10 @@
-﻿/// <reference path="../../references.d.ts" />
-module test.routing.router {
+/// <reference path="../../references.d.ts" />
+
+module tests.routing.router {
     'use strict';
 
-    var Promise = plat.acquire(plat.async.IPromise),
-        resolve = Promise.resolve.bind(Promise);
+    const Promise = plat.acquire(plat.async.IPromise);
+    const resolve = Promise.resolve.bind(Promise);
 
     class PostsViewControl extends plat.ui.ViewControl { }
     class CreatePostViewControl extends plat.ui.ViewControl { }
@@ -16,8 +17,8 @@ module test.routing.router {
     plat.register.viewControl('customers', CustomersViewControl);
 
     describe('Router Tests', () => {
-        var router: plat.routing.Router,
-            viewport: IViewport;
+        let router: plat.routing.Router;
+        let viewport: IViewport;
 
         beforeEach(() => {
             router = plat.acquire(plat.routing.Router);
@@ -30,9 +31,10 @@ module test.routing.router {
             router.navigate('/posts')
                 .then(() => {
                     expectAllNot(viewport);
+
                     return router.configure({
                         pattern: '/posts',
-                        view: 'posts'
+                        view: 'posts',
                     });
                 })
                 .then(() => {
@@ -44,7 +46,7 @@ module test.routing.router {
             beforeEach(() => {
                 router.configure({
                     pattern: '/posts',
-                    view: 'posts'
+                    view: 'posts',
                 });
                 resetAll(viewport);
             });
@@ -60,6 +62,7 @@ module test.routing.router {
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
+
                         return router.navigate('/posts');
                     })
                     .then(() => {
@@ -100,6 +103,7 @@ module test.routing.router {
                 router.navigate('/posts')
                     .then(() => {
                         expectAllNot(viewport);
+
                         return router.register(<any>viewport);
                     }).then(() => {
                         expect(viewport.navigateFrom).toHaveBeenCalled();
@@ -107,7 +111,7 @@ module test.routing.router {
                     }).then(<any>done, <any>done);
             });
 
-            it('should test unknown route handler',(done: Function) => {
+            it('should test unknown route handler', (done: Function) => {
                 router.unknown((info: plat.routing.IUnknownRouteInfo) => {
                     expect(info.segment).toBe('/404');
                     info.view = EditPostViewControl;
@@ -121,14 +125,14 @@ module test.routing.router {
             });
 
             describe('with child routers', () => {
-                var child: plat.routing.Router,
-                    childViewport: IViewport;
+                let child: plat.routing.Router;
+                let childViewport: IViewport;
 
                 beforeEach(() => {
                     child = plat.acquire(plat.routing.Router);
                     child.configure([
                         { pattern: '/new', view: 'createpost' },
-                        { pattern: '/edit', view: 'editpost' }
+                        { pattern: '/edit', view: 'editpost' },
                     ]);
 
                     childViewport = createViewport('child');
@@ -160,15 +164,19 @@ module test.routing.router {
                 });
 
                 it('should not navigate if pre-navigation steps resolve false', (done: Function) => {
-                    (<any>child)._canNavigateFrom = () => { return resolve(false); };
+                    (<any>child)._canNavigateFrom = () => {
+                        return resolve(false);
+                    };
 
-                    router.navigate('/posts/new').then(() => {
-                        expect(viewport.canNavigateFrom).toHaveBeenCalled();
-                        expect(viewport.canNavigateTo).toHaveBeenCalled();
+                    router.navigate('/posts/new').then(<any>done, (e) => {
+                        expect(viewport.canNavigateFrom).not.toHaveBeenCalled();
+                        expect(viewport.canNavigateTo).not.toHaveBeenCalled();
                         expect(viewport.navigateFrom).not.toHaveBeenCalled();
                         expect(viewport.navigateTo).not.toHaveBeenCalled();
                         expectAllNot(childViewport);
-                    }).then(<any>done, <any>done);
+                        expect(e.toString()).toBe('Error: Not cleared to navigate');
+                        done();
+                    });
                 });
 
                 it('should generate urls', (done: Function) => {
@@ -186,25 +194,27 @@ module test.routing.router {
             beforeEach(() => {
                 router.configure([{
                     pattern: '/posts/:id',
-                    view: 'posts'
+                    view: 'posts',
                 }, {
                     pattern: '/posts/:id/create/:name',
-                    view: 'createpost'
+                    view: 'createpost',
                 }]);
             });
 
-            it('should test navigating with different parameters',(done) => {
+            it('should test navigating with different parameters', (done) => {
                 router.navigate('/posts/1')
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
                         expectAllNot(viewport);
+
                         return router.navigate('/posts/2');
                     })
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
                         expectAllNot(viewport);
+
                         return router.navigate('/posts/3');
                     })
                     .then(() => {
@@ -213,24 +223,27 @@ module test.routing.router {
                     });
             });
 
-            it('should test navigating with different parameters and a complex route',(done) => {
+            it('should test navigating with different parameters and a complex route', (done) => {
                 router.navigate('/posts/1/create/foo')
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
                         expectAllNot(viewport);
+
                         return router.navigate('/posts/1/create/bar');
                     })
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
                         expectAllNot(viewport);
+
                         return router.navigate('/posts/2/create/bar');
-                        })
+                    })
                     .then(() => {
                         expectAllTo(viewport);
                         resetAll(viewport);
                         expectAllNot(viewport);
+
                         return router.navigate('/posts/2/create/bar');
                     })
                     .then(() => {
@@ -240,18 +253,18 @@ module test.routing.router {
             });
 
             it('should test parameter bindings', (done) => {
-                var post = { title: 'My Post' };
-                var spy1 = jasmine.createSpy('strToNum', (value: string, parameters: { id: any; post?: typeof post; }) => {
+                const post = { title: 'My Post' };
+                const spy1 = jasmine.createSpy('strToNum', (value: string, parameters: { id: any; post?: typeof post }) => {
                     expect(value).toBe('2');
                     parameters.id = Number(value);
-                }).and.callThrough(),
-                    spy2 = jasmine.createSpy('numToPost', (value: number, parameters: { id: number; post?: typeof post; }) => {
-                        expect(value).toBe(2);
-                        parameters.post = post;
-                    }).and.callThrough(),
-                    spy3 = jasmine.createSpy('checkPost', (value: number, parameters: { id: number; post?: typeof post; }) => {
-                        expect(parameters.post).toBe(post);
-                    }).and.callThrough();
+                }).and.callThrough();
+                const spy2 = jasmine.createSpy('numToPost', (value: number, parameters: { id: number; post?: typeof post }) => {
+                    expect(value).toBe(2);
+                    parameters.post = post;
+                }).and.callThrough();
+                const spy3 = jasmine.createSpy('checkPost', (value: number, parameters: { id: number; post?: typeof post }) => {
+                    expect(parameters.post).toBe(post);
+                }).and.callThrough();
 
                 router
                     .param(<any>spy1, 'id', 'posts')
@@ -267,20 +280,20 @@ module test.routing.router {
             });
 
             it('should test query bindings', (done) => {
-                var post = { title: 'My Post' };
-                var spy1 = jasmine.createSpy('changePost', (value: string, query: typeof post) => {
+                const post = { title: 'My Post' };
+                const spy1 = jasmine.createSpy('changePost', (value: string, query: typeof post) => {
                     expect(value).toBe(query.title);
                     query.title = post.title;
                     post.title = value;
-                }).and.callThrough(),
-                    spy2 = jasmine.createSpy('checkPost', (value: string, query: typeof post) => {
-                        expect(query.title).toBe(value);
-                        expect(post.title).not.toBe(query.title);
-                        expect(post.title).toBe('My different post');
-                    }).and.callThrough(),
-                    spy3 = jasmine.createSpy('checkPost2', (value: string, query: typeof post) => {
-                        expect((<any>query).title2).toBeUndefined();
-                    }).and.callThrough();
+                }).and.callThrough();
+                const spy2 = jasmine.createSpy('checkPost', (value: string, query: typeof post) => {
+                    expect(query.title).toBe(value);
+                    expect(post.title).not.toBe(query.title);
+                    expect(post.title).toBe('My different post');
+                }).and.callThrough();
+                const spy3 = jasmine.createSpy('checkPost2', (value: string, query: typeof post) => {
+                    expect((<any>query).title2).toBeUndefined();
+                }).and.callThrough();
 
                 router
                     .queryParam(<any>spy1, 'title', 'posts')
@@ -296,22 +309,22 @@ module test.routing.router {
             });
 
             it('should test parameter and query bindings', (done) => {
-                var post = { title: 'My Post' };
-                var spy1 = jasmine.createSpy('changePost', (value: string, query: typeof post) => {
+                const post = { title: 'My Post' };
+                const spy1 = jasmine.createSpy('changePost', (value: string, query: typeof post) => {
                     expect(value).toBe(query.title);
                     query.title += ' changed';
-                }).and.callThrough(),
-                    spy2 = jasmine.createSpy('getPost', (value: string, parameters: { id: any; post?: typeof post; }, query: typeof post) => {
-                        expect(value).toBe('2');
-                        expect(post.title).not.toBe(query.title);
-                        parameters.id = Number(value);
-                        parameters.post = post;
-                        post.title = query.title;
-                    }).and.callThrough(),
-                    spy3 = jasmine.createSpy('checkPost', (value: number, parameters: { id: number; post?: typeof post; }, query: typeof post) => {
-                        expect(parameters.post).toBe(post);
-                        expect(post.title).toBe('My different post changed');
-                    }).and.callThrough();
+                }).and.callThrough();
+                const spy2 = jasmine.createSpy('getPost', (value: string, parameters: { id: any; post?: typeof post }, query: typeof post) => {
+                    expect(value).toBe('2');
+                    expect(post.title).not.toBe(query.title);
+                    parameters.id = Number(value);
+                    parameters.post = post;
+                    post.title = query.title;
+                }).and.callThrough();
+                const spy3 = jasmine.createSpy('checkPost', (value: number, parameters: { id: number; post?: typeof post }, query: typeof post) => {
+                    expect(parameters.post).toBe(post);
+                    expect(post.title).toBe('My different post changed');
+                }).and.callThrough();
 
                 router
                     .param(<any>spy2, 'id', 'posts')
@@ -343,10 +356,10 @@ module test.routing.router {
             it('should test * query/param/interceptors', (done) => {
                 router.configure({
                     pattern: '/customers/:id',
-                    view: CustomersViewControl
+                    view: CustomersViewControl,
                 });
 
-                var arr: Array<number> = [];
+                let arr: number[] = [];
 
                 router
                     .param((value: string) => {
@@ -373,10 +386,11 @@ module test.routing.router {
                     .then(() => {
                         expect(arr).toEqual([1, 2, 3, 4, 5, 6]);
                         arr = [];
+
                         return router.navigate('/customers/1');
                     })
                     .then(() => {
-                        expect(arr).toEqual([1,3,5]);
+                        expect(arr).toEqual([1, 3, 5]);
                         done();
                     });
             });
@@ -405,11 +419,12 @@ module test.routing.router {
     }
 
     function createViewport(name: string): IViewport {
+
         return <any>{
-            canNavigateFrom: jasmine.createSpy(name + ' canNavigateFrom').and.returnValue(resolve(true)),
-            canNavigateTo: jasmine.createSpy(name + ' canNavigateTo').and.returnValue(resolve(true)),
-            navigateFrom: jasmine.createSpy(name + ' navigateFrom').and.returnValue(resolve()),
-            navigateTo: jasmine.createSpy(name + ' navigateTo').and.returnValue(resolve())
+            canNavigateFrom: jasmine.createSpy(`${name} canNavigateFrom`).and.returnValue(resolve(true)),
+            canNavigateTo: jasmine.createSpy(`${name} canNavigateTo`).and.returnValue(resolve(true)),
+            navigateFrom: jasmine.createSpy(`${name} navigateFrom`).and.returnValue(resolve()),
+            navigateTo: jasmine.createSpy(`${name} navigateTo`).and.returnValue(resolve()),
         };
     }
 

@@ -7,7 +7,7 @@
  * @description
  * Holds all the classes and interfaces related to UI components for platypus.
  */
-module plat.ui {
+namespace plat.ui {
     'use strict';
 
     /**
@@ -37,7 +37,9 @@ module plat.ui {
          * The set of functions added externally that listens
          * for attribute changes.
          */
-        private __listeners: IObject<Array<(newValue: any, oldValue: any) => void>> = {};
+        private __listeners: IObject<
+            ((newValue: any, oldValue: any) => void)[]
+        > = {};
         /**
          * @name __control
          * @memberof plat.ui.Attributes
@@ -51,7 +53,7 @@ module plat.ui {
          */
         private __control: Control;
 
-        static getInstance(): Attributes {
+        public static getInstance(): Attributes {
             return new Attributes();
         }
 
@@ -70,15 +72,15 @@ module plat.ui {
          *
          * @returns {void}
          */
-        initialize(control: Control, attributes: IObject<string>): void {
+        public initialize(control: Control, attributes: IObject<string>): void {
             this.__control = control;
 
-            let keys = Object.keys(attributes),
-                attributeListeners = this.__listeners,
-                key: string,
-                length = keys.length;
+            const keys = Object.keys(attributes);
+            const attributeListeners = this.__listeners;
+            let key: string;
+            const length = keys.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 key = keys[i];
                 (<any>this)[key] = attributes[key];
                 attributeListeners[key] = [];
@@ -99,8 +101,11 @@ module plat.ui {
          *
          * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
          */
-        observe(listener: (newValue: any, oldValue: any) => void, key: string): IRemoveListener {
-            let listeners = this.__listeners[camelCase(key)];
+        public observe(
+            listener: (newValue: any, oldValue: any) => void,
+            key: string
+        ): IRemoveListener {
+            const listeners = this.__listeners[camelCase(key)];
 
             if (isNull(listeners)) {
                 return noop;
@@ -110,7 +115,7 @@ module plat.ui {
             listeners.push(listener);
 
             return (): void => {
-                let index = listeners.indexOf(listener);
+                const index = listeners.indexOf(listener);
                 if (index === -1) {
                     return;
                 }
@@ -134,11 +139,15 @@ module plat.ui {
          *
          * @returns {void}
          */
-        protected _attributeChanged(key: string, newValue: any, oldValue: any): void {
-            let listeners = this.__listeners[camelCase(key)],
-                length = listeners.length;
+        protected _attributeChanged(
+            key: string,
+            newValue: any,
+            oldValue: any
+        ): void {
+            const listeners = this.__listeners[camelCase(key)];
+            const length = listeners.length;
 
-            for (let i = 0; i < length; ++i) {
+            for (let i = 0; i < length; i += 1) {
                 listeners[i](newValue, oldValue);
             }
         }
@@ -149,5 +158,10 @@ module plat.ui {
     }
 
     register.injectable(__AttributesInstance, Attributes, null, __INSTANCE);
-    register.injectable(__AttributesFactory, IAttributesFactory, null, __FACTORY);
+    register.injectable(
+        __AttributesFactory,
+        IAttributesFactory,
+        null,
+        __FACTORY
+    );
 }

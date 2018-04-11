@@ -1,4 +1,4 @@
-module plat.processing {
+namespace plat.processing {
     'use strict';
 
     /**
@@ -24,7 +24,7 @@ module plat.processing {
          * Specifies the type for this {@link plat.processing.NodeManager|NodeManager}.
          * It's value is "text".
          */
-        type: string = 'text';
+        public type: string = 'text';
 
         /**
          * @name create
@@ -45,18 +45,20 @@ module plat.processing {
          * @returns {plat.processing.TextManager} The newly created {@link plat.processing.TextManager|TextManager}
          * responsible for the passed in Text Node.
          */
-        static create(node: Node, parent: ElementManager): TextManager {
-            let value = node.nodeValue,
-                manager = new TextManager();
+        public static create(node: Node, parent: ElementManager): TextManager {
+            const value = node.nodeValue;
+            const manager = new TextManager();
 
             if (NodeManager.hasMarkup(value)) {
-                let expressions = NodeManager.findMarkup(value),
-                    map = {
-                        nodes: [{
+                const expressions = NodeManager.findMarkup(value);
+                const map = {
+                    nodes: [
+                        {
                             node: node,
-                            expressions: expressions
-                        }]
-                    };
+                            expressions: expressions,
+                        },
+                    ],
+                };
 
                 manager.initialize(map, parent);
 
@@ -84,16 +86,21 @@ module plat.processing {
          *
          * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
          */
-        protected static _cloneNodeMap(sourceMap: INodeMap, newNode: Node): INodeMap {
-            let node = sourceMap.nodes[0],
-                nodeMap: INodeMap = {
-                    nodes: [{
+        protected static _cloneNodeMap(
+            sourceMap: INodeMap,
+            newNode: Node
+        ): INodeMap {
+            const node = sourceMap.nodes[0];
+
+            return {
+                nodes: [
+                    {
                         expressions: node.expressions,
                         nodeName: node.nodeName,
-                        node: newNode
-                    }]
-                };
-            return nodeMap;
+                        node: newNode,
+                    },
+                ],
+            };
         }
 
         /**
@@ -113,12 +120,19 @@ module plat.processing {
          *
          * @returns {plat.processing.TextManager} The cloned {@link plat.processing.TextManager|TextManager}.
          */
-        protected static _clone(sourceManager: NodeManager, node: Node, parent: ElementManager): TextManager {
-            let map = sourceManager.nodeMap,
-                manager = new TextManager();
+        protected static _clone(
+            sourceManager: NodeManager,
+            node: Node,
+            parent: ElementManager
+        ): TextManager {
+            const map = sourceManager.nodeMap;
+            const manager = new TextManager();
 
             if (!isNull(map)) {
-                manager.initialize(TextManager._cloneNodeMap(map, node), parent);
+                manager.initialize(
+                    TextManager._cloneNodeMap(map, node),
+                    parent
+                );
             } else {
                 manager.initialize(null, parent);
                 manager.bind = noop;
@@ -142,8 +156,9 @@ module plat.processing {
          *
          * @returns {number} The number of nodes to advance while node traversal is in progress (returns 1).
          */
-        clone(newNode: Node, parentManager: ElementManager): number {
+        public clone(newNode: Node, parentManager: ElementManager): number {
             TextManager._clone(this, newNode, parentManager);
+
             return 1;
         }
 
@@ -158,14 +173,17 @@ module plat.processing {
          *
          * @returns {void}
          */
-        bind(): void {
-            let parent = this.getParentControl(),
-                node = this.nodeMap.nodes[0],
-                textNode = node.node,
-                expressions = node.expressions;
+        public bind(): void {
+            const parent = this.getParentControl();
+            const node = this.nodeMap.nodes[0];
+            const textNode = node.node;
+            const expressions = node.expressions;
 
-            NodeManager.observeExpressions(node.expressions, parent,
-                this._setText.bind(this, textNode, parent, expressions));
+            NodeManager.observeExpressions(
+                node.expressions,
+                parent,
+                this._setText.bind(this, textNode, parent, expressions)
+            );
 
             this._setText(textNode, parent, expressions);
         }
@@ -187,8 +205,16 @@ module plat.processing {
          *
          * @returns {void}
          */
-        protected _setText(node: Node, control: ui.TemplateControl, expressions: Array<expressions.IParsedExpression>): void {
-            node.nodeValue = NodeManager.build(expressions,(control || <ui.TemplateControl>{}));
+        protected _setText(
+            node: Node,
+            control: ui.TemplateControl,
+            expressions: expressions.IParsedExpression[]
+        ): void {
+            if (!isObject(control)) {
+                control = <any>{};
+            }
+
+            node.nodeValue = NodeManager.build(expressions, control);
         }
     }
 
@@ -199,7 +225,12 @@ module plat.processing {
         return TextManager;
     }
 
-    register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
+    register.injectable(
+        __TextManagerFactory,
+        ITextManagerFactory,
+        null,
+        __FACTORY
+    );
     register.injectable(__TextManagerInstance, TextManager, null, __INSTANCE);
 
     /**
