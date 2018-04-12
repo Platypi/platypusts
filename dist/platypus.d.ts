@@ -1,5 +1,5 @@
 /**
-  * PlatypusTS v0.26.0 (https://platypi.io)
+  * PlatypusTS v0.26.1 (https://platypi.io)
   * Copyright 2015 Platypi, LLC. All rights reserved.
   *
   * PlatypusTS is licensed under the MIT license found at
@@ -1895,7 +1895,7 @@ declare namespace plat {
               * Takes in 2 generic types corresponding to the fulfilled success and error types.
               * The error type (U) should extend Error in order to get proper stack tracing.
               * @param {(resolve : (value?: T | PromiseLike<T>) => void, reject: (error?: any) => void) => void} resolveFunction
-              * A function for fulfilling/rejecting the P.
+              * A function for fulfilling/rejecting the Promise.
               */
             constructor(resolveFunction: (resolve: (value?: T | PromiseLike<T>) => void, reject: (error?: any) => void) => void);
             /**
@@ -1906,7 +1906,7 @@ declare namespace plat {
               * onRejected method in the promise chain will be called.
               */ then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
             /**
-              * A wrapper method for P.then(undefined, onRejected);
+              * A wrapper method for Promise.then(undefined, onRejected);
               * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
               * onRejected method in the promise chain will be called.
               */
