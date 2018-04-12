@@ -1477,7 +1477,7 @@ namespace plat.ui.animations {
      * @memberof plat.ui.animations
      * @kind interface
      *
-     * @extends {plat.async.Promise<R>}
+     * @extends {plat.async.Promise<T>}
      *
      * @description
      * Describes a chaining function that fulfills when the previous link is complete and is
@@ -1485,8 +1485,8 @@ namespace plat.ui.animations {
      *
      * @typeparam {any} R The return type of the thenable.
      */
-    export interface IAnimationThenable<R>
-        extends async.Promise<R>,
+    export interface IAnimationThenable<T>
+        extends async.Promise<T>,
             IAnimationEssentials {
         /**
          * @name initialize
@@ -1595,17 +1595,14 @@ namespace plat.ui.animations {
          *
          * @typeparam {any} U The return type of the returned promise.
          *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills.
+         * @param {(success: T) => U} onFulfilled A method called when/if the promise fulfills.
          * If undefined the next onFulfilled method in the promise chain will be called.
          * @param {(error: any) => U} onRejected? A method called when/if the promise rejects.
          * If undefined the next onRejected method in the promise chain will be called.
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(
-            onFulfilled?: (value: R) => U | async.Promise<U>,
-            onRejected?: (error: any) => U | async.Promise<U> | void
-        ): IAnimationThenable<U>;
+         */ //tslint:disable-next-line
+        then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): IAnimationThenable<TResult1 | TResult2>;
 
         /**
          * @name catch
@@ -1623,9 +1620,7 @@ namespace plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        catch<U>(
-            onRejected: (error: any) => async.Promise<U> | U
-        ): IAnimationThenable<U>;
+        catch<TResult = never>(onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): IAnimationThenable<TResult>;
     }
 
     /**

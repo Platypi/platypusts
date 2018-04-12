@@ -204,7 +204,7 @@ namespace plat.async {
          *
          * @returns {plat.async.AjaxPromise} A promise that fulfills when the XMLHttpRequest is done.
          */
-        public execute<R>(): AjaxPromise<R> {
+        public execute<R>(): AjaxPromise<IAjaxResponse<R>> {
             const options = this.__options;
             const url = options.url;
 
@@ -254,7 +254,7 @@ namespace plat.async {
          *
          * @returns {plat.async.AjaxPromise} A promise that fulfills when the JSONP request is done.
          */
-        public executeJsonp<R>(): AjaxPromise<R> {
+        public executeJsonp<R>(): AjaxPromise<IAjaxResponse<R>> {
             const options = this.__options;
             const url = options.url;
 
@@ -271,7 +271,7 @@ namespace plat.async {
                 }
             }
 
-            const promise = new AjaxPromise<R>((resolve, reject): void => {
+            const promise = new AjaxPromise<IAjaxResponse<R>>((resolve, reject): void => {
                 const _window = <any>this._window;
                 const _document = this._document;
                 const scriptTag = _document.createElement('script');
@@ -392,12 +392,12 @@ namespace plat.async {
          * formatted {@link plat.async.IAjaxResponse|IAjaxResponse} and rejects if there is a problem with an
          * {@link plat.async.AjaxError|IAjaxError}.
          */
-        protected _sendXhrRequest(): AjaxPromise<any> {
+        protected _sendXhrRequest(): AjaxPromise<IAjaxResponse<any>> {
             const xhr = this.xhr;
             let options = this.__options;
             let method = options.method;
             const url = options.url;
-            const promise = new AjaxPromise((resolve, reject): void => {
+            const promise = new AjaxPromise<IAjaxResponse<any>>((resolve, reject): void => {
                 xhr.onreadystatechange = (): void => {
                     const success = this._xhrOnReadyStateChange();
 
@@ -613,8 +613,8 @@ namespace plat.async {
          * @returns {plat.async.AjaxPromise} A promise that immediately rejects
          * with an {@link plat.async.AjaxError|IAjaxError}
          */
-        protected _invalidOptions(): AjaxPromise<any> {
-            return new AjaxPromise((resolve, reject): void => {
+        protected _invalidOptions(): AjaxPromise<IAjaxResponse<any>> {
+            return new AjaxPromise<IAjaxResponse<any>>((resolve, reject): void => {
                 this._log.warn('Attempting a request without specifying a url');
                 reject(
                     new AjaxError({
@@ -794,7 +794,7 @@ namespace plat.async {
                         let fileName = val.name;
 
                         if (!isString(fileName)) {
-                            fileName = val.fileName;
+                            fileName = (<any>val).fileName;
                         }
 
                         if (!isString(fileName)) {
@@ -1307,21 +1307,6 @@ namespace plat.async {
     }
 
     /**
-     * @name IAjaxResolveFunction
-     * @memberof plat.async
-     * @kind interface
-     *
-     * @description
-     * Describes the AjaxPromise's resolve function
-     *
-     * @typeparam {any} R The type of the {@link plat.async.IAjaxResponse|IAjaxResponse} object.
-     */
-    export type IAjaxResolveFunction<R> = (
-        resolve: (value?: IAjaxResponse<R>) => any,
-        reject: (reason?: AjaxError) => any
-    ) => void;
-
-    /**
      * @name AjaxError
      * @memberof plat.async
      * @kind class
@@ -1473,7 +1458,7 @@ namespace plat.async {
      *
      * @typeparam {any} R The type of the response object in the {@link plat.async.IAjaxResponse|IAjaxResponse}.
      */
-    export class AjaxPromise<R> extends Promise<IAjaxResponse<R>> {
+    export class AjaxPromise<T> extends Promise<T> {
         /**
          * @name _window
          * @memberof plat.async.AjaxPromise
@@ -1516,8 +1501,11 @@ namespace plat.async {
          *
          * @returns {plat.async.AjaxPromise}
          */
-        constructor(resolveFunction: IAjaxResolveFunction<R>, promise?: any) {
-            super(resolveFunction);
+        constructor(resolveFunction: (
+            resolve: (value?: T | PromiseLike<T>) => void,
+            reject: (error?: any) => void
+        ) => void, promise?: any) {
+            super(<any>resolveFunction);
 
             if (!isNull(promise)) {
                 this.__http = promise.__http;
@@ -1587,18 +1575,15 @@ namespace plat.async {
          * @typeparam {any} U The type of the object returned from the fulfill/reject callbacks, which will be carried to the
          * next then method in the promise chain.
          *
-         * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills.
+         * @param {(success: plat.async.IAjaxResponse<T>) => T} onFulfilled A method called when/if the promise fulfills.
          * If undefined the next onFulfilled method in the promise chain will be called.
-         * @param {(error: plat.async.AjaxError) => U} onRejected A method called when/if the promise rejects.
+         * @param {(error: plat.async.AjaxError) => T} onRejected A method called when/if the promise rejects.
          * If undefined the next onRejected method in the promise chain will be called.
          *
-         * @returns {plat.async.AjaxPromise<U>}
-         */
-        public then<U>(
-            onFulfilled: (success: IAjaxResponse<R>) => U | Promise<U>,
-            onRejected?: (error: AjaxError) => U | Promise<U> | void
-        ): Promise<U> {
-            return <Promise<U>>(<any>super.then<U>(onFulfilled, onRejected));
+         * @returns {plat.async.AjaxPromise<T>}
+         */ //tslint:disable-next-line
+        public then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): AjaxPromise<TResult1 | TResult2> {
+            return <AjaxPromise<TResult1 | TResult2>>(<any>super.then<T>(<any>onFulfilled, <any>onRejected));
         }
 
         /**
@@ -1612,15 +1597,13 @@ namespace plat.async {
          *
          * @typeparam {any} U The return type of the returned promise.
          *
-         * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+         * @param {(error: any) => TResult} onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          *
-         * @returns {plat.async.AjaxPromise<U>} A promise that resolves with the input type parameter U.
+         * @returns {plat.async.AjaxPromise<TResult>} A promise that resolves with the input type parameter U.
          */
-        public catch<U>(
-            onRejected: (error: any) => U | IThenable<U> | void
-        ): Promise<U> {
-            return <Promise<U>>(<any>super.catch<U>(<any>onRejected));
+        public catch<TResult = never>(onRejected?: ((reason: AjaxError) => TResult | PromiseLike<TResult>) | undefined | null): AjaxPromise<T | TResult> {
+            return <AjaxPromise<T | TResult>>(<any>super.catch<TResult>(<any>onRejected));
         }
     }
 
@@ -1923,7 +1906,7 @@ namespace plat.async {
          * @returns {plat.async.AjaxPromise} A promise, when fulfilled
          * or rejected, will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
-        public ajax<R>(options: IHttpConfig): AjaxPromise<R> {
+        public ajax<R>(options: IHttpConfig): AjaxPromise<IAjaxResponse<R>> {
             const request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
 
@@ -1946,7 +1929,7 @@ namespace plat.async {
          * @returns {plat.async.AjaxPromise} A promise, when fulfilled or rejected, will return an
          * {@link plat.async.IAjaxResponse|IAjaxResponse} object.
          */
-        public jsonp<R>(options: IJsonpConfig): AjaxPromise<R> {
+        public jsonp<R>(options: IJsonpConfig): AjaxPromise<IAjaxResponse<R>> {
             const request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(options);
 
@@ -1971,7 +1954,7 @@ namespace plat.async {
          * will return an {@link plat.async.IAjaxResponse|IAjaxResponse} object, with the response
          * being a parsed JSON object (assuming valid JSON).
          */
-        public json<R>(options: IHttpConfig): AjaxPromise<R> {
+        public json<R>(options: IHttpConfig): AjaxPromise<IAjaxResponse<R>> {
             const request: HttpRequest = acquire(__HttpRequestInstance);
             request.initialize(
                 _extend(false, false, {}, options, { responseType: 'json' })

@@ -31,14 +31,14 @@ namespace plat.async {
      * @memberof plat.async
      * @kind class
      *
-     * @implements {plat.async.IThenable}
+     * @implements {plat.async.PromiseLike}
      *
      * @description
      * Takes in a generic type corresponding to the fulfilled success type.
      *
      * @typeparam {any} R The return type of the promise.
      */
-    export class Promise<R> implements IThenable<R> {
+    export class Promise<T> implements PromiseLike<T> {
         /**
          * @name config
          * @memberof plat.async.Promise
@@ -53,8 +53,8 @@ namespace plat.async {
          */
         public static config: {
             async(
-                callback: (arg?: IThenable<any>) => void,
-                arg?: IThenable<any>
+                callback: (arg?: PromiseLike<any>) => void,
+                arg?: PromiseLike<any>
             ): void;
         } = {
             /**
@@ -63,8 +63,8 @@ namespace plat.async {
              * callbacks added to the queue will be flushed accordingly.
              */
             async: (
-                callback: (arg?: IThenable<any>) => void,
-                arg?: IThenable<any>
+                callback: (arg?: PromiseLike<any>) => void,
+                arg?: PromiseLike<any>
             ): void => {
                 const length = __promiseQueue.push([callback, arg]);
                 if (length === 1) {
@@ -72,45 +72,6 @@ namespace plat.async {
                 }
             },
         };
-
-        /**
-         * @name __subscribers
-         * @memberof plat.async.Promise
-         * @kind property
-         * @access private
-         *
-         * @type {Array<any>}
-         *
-         * @description
-         * Holds all the subscriber promises
-         */
-        private __subscribers: any[];
-
-        /**
-         * @name __state
-         * @memberof plat.async.Promise
-         * @kind property
-         * @access private
-         *
-         * @type {plat.async.State}
-         *
-         * @description
-         * The state of the promise (fulfilled/rejected)
-         */
-        private __state: State;
-
-        /**
-         * @name __detail
-         * @memberof plat.async.Promise
-         * @kind property
-         * @access private
-         *
-         * @type {any}
-         *
-         * @description
-         * The return detail of a promise.
-         */
-        private __detail: any;
 
         /**
          * @name all
@@ -130,95 +91,97 @@ namespace plat.async {
          *
          * @param {Array<R>} promises An array of objects, if an object is not a promise, it will be cast.
          *
-         * @returns {plat.async.IThenable<Array<R>>} A promise that resolves after all the input promises resolve.
+         * @returns {plat.async.PromiseLike<Array<R>>} A promise that resolves after all the input promises resolve.
          */
         public static all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>,
-                T8 | IThenable<T8>,
-                T9 | IThenable<T9>,
-                T10 | IThenable<T10>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>,
+                T10 | PromiseLike<T10>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
         public static all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>,
-                T8 | IThenable<T8>,
-                T9 | IThenable<T9>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
         public static all<T1, T2, T3, T4, T5, T6, T7, T8>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>,
-                T8 | IThenable<T8>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
         public static all<T1, T2, T3, T4, T5, T6, T7>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
         public static all<T1, T2, T3, T4, T5, T6>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6]>;
         public static all<T1, T2, T3, T4, T5>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>
             ]
         ): Promise<[T1, T2, T3, T4, T5]>;
         public static all<T1, T2, T3, T4>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>
             ]
         ): Promise<[T1, T2, T3, T4]>;
         public static all<T1, T2, T3>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>
+            ]
         ): Promise<[T1, T2, T3]>;
         public static all<T1, T2>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>]
+            values: [T1 | PromiseLike<T1>, T2 | PromiseLike<T2>]
         ): Promise<[T1, T2]>;
-        public static all<T1>(values: (T1 | IThenable<T1>)[]): Promise<[T1]>;
-        public static all<TAll>(
-            values: (TAll | IThenable<TAll>)[]
-        ): Promise<TAll[]> {
+        public static all<T>(values: (T | PromiseLike<T>)[]): Promise<T[]>;
+        public static all<T>(values: (T | PromiseLike<T>)[]): Promise<T[]> {
             if (!isArray(values)) {
                 return Promise.all([<any>values]);
             }
@@ -251,7 +214,7 @@ namespace plat.async {
 
                     for (
                         let i = 0;
-                        i < (<IThenable<any>[]>values).length;
+                        i < (<PromiseLike<any>[]>values).length;
                         i += 1
                     ) {
                         promise = (<Promise<any>[]>values)[i];
@@ -279,15 +242,103 @@ namespace plat.async {
          *
          * @typeparam {any} R The type of the input objects.
          *
-         * @param {Array<R>} promises An Array of anything to 'race'. Objects that aren't promises will
+         * @param {Array<TResult>} promises An Array of anything to 'race'. Objects that aren't promises will
          * be cast.
          *
-         * @returns {plat.async.IThenable<R>} A promise that fulfills when one of the input
+         * @returns {plat.async.PromiseLike<TResult>} A promise that fulfills when one of the input
          * promises fulfilled.
          */
-        public static race<R>(promises: (R | IThenable<R>)[]): Promise<R> {
-            if (!isArray(promises)) {
-                return Promise.race([<any>promises]);
+        public static race<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>,
+                T10 | PromiseLike<T10>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | T10>;
+        public static race<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9>;
+        public static race<T1, T2, T3, T4, T5, T6, T7, T8>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8>;
+        public static race<T1, T2, T3, T4, T5, T6, T7>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7>;
+        public static race<T1, T2, T3, T4, T5, T6>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6>;
+        public static race<T1, T2, T3, T4, T5>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5>;
+        public static race<T1, T2, T3, T4>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>
+            ]
+        ): Promise<T1 | T2 | T3 | T4>;
+        public static race<T1, T2, T3>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>
+            ]
+        ): Promise<T1 | T2 | T3>;
+        public static race<T1, T2>(
+            values: [T1 | PromiseLike<T1>, T2 | PromiseLike<T2>]
+        ): Promise<T1 | T2>;
+        public static race<T>(values: (T | PromiseLike<T>)[]): Promise<T>;
+        public static race<T>(values: (T | PromiseLike<T>)[]): Promise<T> {
+            if (!isArray(values)) {
+                return Promise.race([<any>values]);
             }
 
             return new Promise<any>(
@@ -299,10 +350,10 @@ namespace plat.async {
 
                     for (
                         let i = 0;
-                        i < (<IThenable<R>[]>promises).length;
+                        i < (<PromiseLike<T>[]>values).length;
                         i += 1
                     ) {
-                        promise = (<Promise<R>[]>promises)[i];
+                        promise = (<Promise<T>[]>values)[i];
 
                         if (
                             isObject(promise) &&
@@ -329,17 +380,23 @@ namespace plat.async {
          *
          * @typeparam {any} R The value with which to resolve the promise.
          *
-         * @param {R} value The value to resolve.
+         * @param {T} value The value to resolve.
          *
-         * @returns {plat.async.IThenable<R>} A promise that will resolve with the associated value.
+         * @returns {plat.async.PromiseLike<T>} A promise that will resolve with the associated value.
          */
-        public static resolve<R>(value?: R | IThenable<R>): Promise<R> {
-            return new Promise<R>(
+        public static resolve(): Promise<void>;
+        public static resolve<T>(
+            value?: T | PromiseLike<T>
+        ): Promise<T>;
+        public static resolve<T>(
+            value?: T | PromiseLike<T>
+        ): Promise<T> {
+            return new Promise<T>(
                 (
-                    resolve: (value: R) => any,
+                    resolve: (value: T) => any,
                     reject: (reason: any) => any
                 ): void => {
-                    resolve(<R>value);
+                    resolve(<T>value);
                 }
             );
         }
@@ -356,10 +413,12 @@ namespace plat.async {
          *
          * @param {any} error The value to reject.
          *
-         * @returns {plat.async.IThenable<any>} A promise that will reject with the error.
+         * @returns {plat.async.PromiseLike<any>} A promise that will reject with the error.
          */
-        public static reject<R>(error?: any): Promise<R> {
-            return new Promise<R>(
+        public static reject(error?: any): Promise<never>;
+        public static reject<T>(error?: any): Promise<T>;
+        public static reject<T>(error?: any): Promise<T> {
+            return new Promise<T>(
                 (
                     resolve: (value: any) => any,
                     reject: (error: any) => any
@@ -381,20 +440,21 @@ namespace plat.async {
          *
          * @typeparam {any} R The return type of the input {@link plat.async.Promise|Promise}.
          *
-         * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
-         * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
+         * @param
+         * {(resolve : (value?: TResult | PromiseLike<TResult>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
+         * @param {plat.async.Promise<TResult>} promise The promise on which to invoke the resolve function.
          *
          * @returns {void}
          */
-        private static __invokeResolveFunction<R>(
+        private static __invokeResolveFunction<TResult>(
             resolveFunction: (
-                resolve: (value?: R | IThenable<R>) => void,
+                resolve: (value?: TResult | PromiseLike<TResult>) => void,
                 reject: (error?: any) => void
             ) => void,
-            promise: Promise<R>
+            promise: Promise<TResult>
         ): void {
             function resolvePromise(value?: any): void {
-                Promise.__resolve<R>(promise, value);
+                Promise.__resolve<TResult>(promise, value);
             }
 
             function rejectPromise(reason?: any): void {
@@ -479,8 +539,8 @@ namespace plat.async {
          * @returns {void}
          */
         private static __publish(promise: Promise<any>, settled: State): void {
-            const subscribers = promise.__subscribers;
-            const detail = promise.__detail;
+            const subscribers = (<any>promise).__subscribers;
+            const detail = (<any>promise).__detail;
             let child: any;
             let callback: () => void;
 
@@ -491,7 +551,7 @@ namespace plat.async {
                 Promise.__invokeCallback(settled, child, callback, detail);
             }
 
-            promise.__subscribers = null;
+            (<any>promise).__subscribers = null;
         }
 
         /**
@@ -509,7 +569,10 @@ namespace plat.async {
          * @returns {void}
          */
         private static __publishFulfillment(promise: any): void {
-            Promise.__publish(promise, (promise.__state = State.FULFILLED));
+            Promise.__publish(
+                promise,
+                ((<any>promise).__state = State.FULFILLED)
+            );
         }
 
         /**
@@ -527,7 +590,10 @@ namespace plat.async {
          * @returns {void}
          */
         private static __publishRejection(promise: any): void {
-            Promise.__publish(promise, (promise.__state = State.REJECTED));
+            Promise.__publish(
+                promise,
+                ((<any>promise).__state = State.REJECTED)
+            );
         }
 
         /**
@@ -546,11 +612,11 @@ namespace plat.async {
          * @returns {void}
          */
         private static __reject(promise: any, reason: any): void {
-            if (promise.__state !== State.PENDING) {
+            if ((<any>promise).__state !== State.PENDING) {
                 return;
             }
-            promise.__state = State.SEALED;
-            promise.__detail = reason;
+            (<any>promise).__state = State.SEALED;
+            (<any>promise).__detail = reason;
 
             Promise.config.async(Promise.__publishRejection, promise);
         }
@@ -567,17 +633,20 @@ namespace plat.async {
          *
          * @typeparam {any} R The return type of the promise.
          *
-         * @param {plat.async.Promise<R>} promise The promise object.
+         * @param {plat.async.Promise<TResult>} promise The promise object.
          * @param {any} value The detail of the fulfilled promise.
          *
          * @returns {void}
          */
-        private static __fulfill<R>(promise: Promise<R>, value: any): void {
-            if (promise.__state !== State.PENDING) {
+        private static __fulfill<TResult>(
+            promise: Promise<TResult>,
+            value: any
+        ): void {
+            if ((<any>promise).__state !== State.PENDING) {
                 return;
             }
-            promise.__state = State.SEALED;
-            promise.__detail = value;
+            (<any>promise).__state = State.SEALED;
+            (<any>promise).__detail = value;
 
             Promise.config.async(Promise.__publishFulfillment, promise);
         }
@@ -594,15 +663,18 @@ namespace plat.async {
          *
          * @typeparam {any} R The return type of the promise.
          *
-         * @param {plat.async.Promise<R>} promise The promise object.
+         * @param {plat.async.Promise<TResult>} promise The promise object.
          * @param {any} value The detail of the fulfilled promise.
          *
          * @returns {void}
          */
-        private static __resolve<R>(promise: Promise<R>, value: any): void {
+        private static __resolve<TResult>(
+            promise: Promise<TResult>,
+            value: any
+        ): void {
             if (promise === value) {
                 Promise.__fulfill(promise, value);
-            } else if (!Promise.__handleThenable<R>(promise, value)) {
+            } else if (!Promise.__handleThenable<TResult>(promise, value)) {
                 Promise.__fulfill(promise, value);
             }
         }
@@ -619,14 +691,14 @@ namespace plat.async {
          *
          * @typeparam {any} R The return type of the promise.
          *
-         * @param {plat.async.Promise<R>} promise The promise object.
-         * @param {plat.async.Promise<R>} value The next promise to await.
+         * @param {plat.async.Promise<TResult>} promise The promise object.
+         * @param {plat.async.Promise<TResult>} value The next promise to await.
          *
          * @returns {boolean} Whether or not the value passed in is a promise.
          */
-        private static __handleThenable<R>(
-            promise: Promise<R>,
-            value: Promise<R>
+        private static __handleThenable<TResult>(
+            promise: Promise<TResult>,
+            value: Promise<TResult>
         ): boolean {
             let resolved: boolean;
 
@@ -652,9 +724,9 @@ namespace plat.async {
                             resolved = true;
 
                             if (value !== val) {
-                                Promise.__resolve<R>(promise, val);
+                                Promise.__resolve<TResult>(promise, val);
                             } else {
-                                Promise.__fulfill<R>(promise, val);
+                                Promise.__fulfill<TResult>(promise, val);
                             }
                         },
                         (val: any): boolean => {
@@ -702,11 +774,11 @@ namespace plat.async {
          */
         private static __subscribe(
             parent: Promise<any>,
-            child: IThenable<any>,
+            child: PromiseLike<any>,
             onFulfilled: (success: any) => any,
             onRejected: (error: any) => any
         ): void {
-            const subscribers = parent.__subscribers;
+            const subscribers = (<any>parent).__subscribers;
             const length = subscribers.length;
 
             subscribers[length] = child;
@@ -727,14 +799,14 @@ namespace plat.async {
          *
          * @typeparam {any} R The return type of the promise.
          *
-         * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
-         * A function for fulfilling/rejecting the Promise.
+         * @param {(resolve : (value?: T | PromiseLike<T>) => void, reject: (error?: any) => void) => void} resolveFunction
+         * A function for fulfilling/rejecting the P.
          *
-         * @returns {plat.async.Promise<R>} A promise object.
+         * @returns {plat.async.Promise<T>} A promise object.
          */
         constructor(
             resolveFunction: (
-                resolve: (value?: R | IThenable<R>) => void,
+                resolve: (value?: T | PromiseLike<T>) => void,
                 reject: (error?: any) => void
             ) => void
         ) {
@@ -751,10 +823,10 @@ namespace plat.async {
                 );
             }
 
-            this.__subscribers = [];
+            (<any>this).__subscribers = [];
 
-            Promise.__invokeResolveFunction<R>(resolveFunction, this);
-        }
+            Promise.__invokeResolveFunction<T>(resolveFunction, this);
+        } // tslint:disable-next-line
 
         /**
          * @name then
@@ -767,33 +839,37 @@ namespace plat.async {
          *
          * @typeparam {any} U The return type of the returned promise.
          *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
+         * @param {(success: T) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
          * onFulfilled method in the promise chain will be called.
          * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        public then<U>(
-            onFulfilled?: (value: R) => U | IThenable<U>,
-            onRejected?: (error: any) => U | IThenable<U> | void
-        ): Promise<U> {
+         * @returns {PromiseLike<U>} A promise that resolves with the input type parameter U.
+         */ public then<TResult1 = T, TResult2 = never>(
+            onFulfilled?:
+                | ((value: T) => TResult1 | PromiseLike<TResult1>)
+                | undefined
+                | null,
+            onRejected?:
+                | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+                | undefined
+                | null
+        ): Promise<TResult1 | TResult2> {
             // tslint:disable-next-line
             const promise = this;
 
-            const thenPromise = <Promise<U>>new (<any>this).constructor(
-                noop,
-                this
-            );
+            const thenPromise = <Promise<
+                TResult1 | TResult2
+            >>new (<any>this).constructor(noop, this);
 
-            if (!isNull(this.__state)) {
+            if (!isNull((<any>this).__state)) {
                 const callbacks = arguments;
                 Promise.config.async((): void => {
                     Promise.__invokeCallback(
-                        promise.__state,
+                        (<any>promise).__state,
                         thenPromise,
-                        callbacks[promise.__state - 1],
-                        promise.__detail
+                        callbacks[(<any>promise).__state - 1],
+                        (<any>promise).__detail
                     );
                 });
             } else {
@@ -810,18 +886,21 @@ namespace plat.async {
          * @access public
          *
          * @description
-         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+         * A wrapper method for {@link plat.async.Promise|P.then(undefined, onRejected);}
          *
          * @typeparam {any} U The return type of the returned promise.
          *
          * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
          * onRejected method in the promise chain will be called.
          *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
+         * @returns {PromiseLike<U>} A promise that resolves with the input type parameter U.
          */
-        public catch<U>(
-            onRejected?: (error: any) => U | IThenable<U>
-        ): Promise<U> {
+        public catch<TResult = never>(
+            onRejected?:
+                | ((reason: any) => TResult | PromiseLike<TResult>)
+                | undefined
+                | null
+        ): Promise<T | TResult> {
             return this.then(null, onRejected);
         }
 
@@ -839,42 +918,6 @@ namespace plat.async {
         public toString(): string {
             return '[object Promise]';
         }
-    }
-
-    /**
-     * @name IThenable
-     * @memberof plat.async
-     * @kind interface
-     *
-     * @description
-     * Describes a chaining function that fulfills when the previous link is complete and is
-     * able to be caught in the case of an error.
-     *
-     * @typeparam {any} R The return type of the thenable.
-     */
-    export interface IThenable<R> {
-        /**
-         * @name then
-         * @memberof plat.async.IThenable
-         * @kind function
-         * @access public
-         *
-         * @description
-         * Takes in two methods, called when/if the promise fulfills/rejects.
-         *
-         * @typeparam {any} U The return type of the returned promise.
-         *
-         * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
-         * onFulfilled method in the promise chain will be called.
-         * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
-         * onRejected method in the promise chain will be called.
-         *
-         * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
-         */
-        then<U>(
-            onFulfilled?: (value: R) => U | IThenable<U>,
-            onRejected?: (error: any) => U | IThenable<U> | void
-        ): IThenable<U>;
     }
 
     enum State {
@@ -938,10 +981,10 @@ namespace plat.async {
     export function IPromise(_window?: any): IPromise {
         if (
             !isNull(_window.Promise) &&
-            isFunction(_window.Promise.all) &&
-            isFunction(_window.Promise.race) &&
-            isFunction(_window.Promise.resolve) &&
-            isFunction(_window.Promise.reject)
+            isFunction(_window.P.all) &&
+            isFunction(_window.P.race) &&
+            isFunction(_window.P.resolve) &&
+            isFunction(_window.P.reject)
         ) {
             return _window.Promise;
         }
@@ -957,101 +1000,196 @@ namespace plat.async {
     export interface IPromise {
         new <R>(
             resolveFunction: (
-                resolve: (value?: R | IThenable<R>) => void,
+                resolve: (value?: R | PromiseLike<R>) => void,
                 reject: (error?: any) => void
             ) => void
         ): Promise<R>;
 
         all<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>,
-                T8 | IThenable<T8>,
-                T9 | IThenable<T9>,
-                T10 | IThenable<T10>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>,
+                T10 | PromiseLike<T10>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]>;
         all<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>,
-                T8 | IThenable<T8>,
-                T9 | IThenable<T9>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8, T9]>;
         all<T1, T2, T3, T4, T5, T6, T7, T8>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>,
-                T8 | IThenable<T8>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7, T8]>;
         all<T1, T2, T3, T4, T5, T6, T7>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>,
-                T7 | IThenable<T7>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6, T7]>;
         all<T1, T2, T3, T4, T5, T6>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>,
-                T6 | IThenable<T6>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>
             ]
         ): Promise<[T1, T2, T3, T4, T5, T6]>;
         all<T1, T2, T3, T4, T5>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>,
-                T5 | IThenable<T5>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>
             ]
         ): Promise<[T1, T2, T3, T4, T5]>;
         all<T1, T2, T3, T4>(
             values: [
-                T1 | IThenable<T1>,
-                T2 | IThenable<T2>,
-                T3 | IThenable<T3>,
-                T4 | IThenable<T4>
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>
             ]
         ): Promise<[T1, T2, T3, T4]>;
         all<T1, T2, T3>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>, T3 | IThenable<T3>]
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>
+            ]
         ): Promise<[T1, T2, T3]>;
         all<T1, T2>(
-            values: [T1 | IThenable<T1>, T2 | IThenable<T2>]
+            values: [T1 | PromiseLike<T1>, T2 | PromiseLike<T2>]
         ): Promise<[T1, T2]>;
-        all<T1>(values: (T1 | IThenable<T1>)[]): Promise<[T1]>;
+        all<T>(values: (T | PromiseLike<T>)[]): Promise<T[]>;
 
-        race<R>(promises: (R | IThenable<R>)[]): Promise<R>;
+        race<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>,
+                T10 | PromiseLike<T10>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | T10>;
+        race<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>,
+                T9 | PromiseLike<T9>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9>;
+        race<T1, T2, T3, T4, T5, T6, T7, T8>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>,
+                T8 | PromiseLike<T8>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8>;
+        race<T1, T2, T3, T4, T5, T6, T7>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>,
+                T7 | PromiseLike<T7>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6 | T7>;
+        race<T1, T2, T3, T4, T5, T6>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>,
+                T6 | PromiseLike<T6>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5 | T6>;
+        race<T1, T2, T3, T4, T5>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>,
+                T5 | PromiseLike<T5>
+            ]
+        ): Promise<T1 | T2 | T3 | T4 | T5>;
+        race<T1, T2, T3, T4>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>,
+                T4 | PromiseLike<T4>
+            ]
+        ): Promise<T1 | T2 | T3 | T4>;
+        race<T1, T2, T3>(
+            values: [
+                T1 | PromiseLike<T1>,
+                T2 | PromiseLike<T2>,
+                T3 | PromiseLike<T3>
+            ]
+        ): Promise<T1 | T2 | T3>;
+        race<T1, T2>(
+            values: [T1 | PromiseLike<T1>, T2 | PromiseLike<T2>]
+        ): Promise<T1 | T2>;
+        race<T>(values: (T | PromiseLike<T>)[]): Promise<T>;
 
-        resolve<R>(value?: R | IThenable<R>): Promise<R>;
+        resolve(): Promise<void>;
+        resolve<T>(
+            value?: T | PromiseLike<T>
+        ): Promise<T>;
 
-        reject<R>(error?: any): Promise<R>;
+        reject(error?: any): Promise<never>;
+        reject<T>(error?: any): Promise<T>;
     }
 }
 //tslint:enable:promise-must-complete

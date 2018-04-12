@@ -1361,7 +1361,7 @@ namespace plat.observable {
 
                 if (
                     isObject(newParent) &&
-                    (!isArray(newParent) || newParent.length > key)
+                    (!isArray(newParent) || newParent.length > Number(key))
                 ) {
                     this._define(binding, newParent, key);
                 }

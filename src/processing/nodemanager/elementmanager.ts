@@ -1407,9 +1407,9 @@ namespace plat.processing {
          * @returns {plat.async.Promise<void>} A promise that resolves when this manager's template and all
          * child manager's templates have been fulfilled.
          */
-        public fulfillTemplate(): async.Promise<void> {
+        public fulfillTemplate(): async.Promise<void | void[]> {
             if (!isNull(this.templatePromise)) {
-                return this.templatePromise.then((): async.Promise<void> => {
+                return this.templatePromise.then((): async.Promise<void | void[]> => {
                     return this._fulfillChildTemplates();
                 });
             }
@@ -1958,7 +1958,7 @@ namespace plat.processing {
          * @returns {plat.async.Promise<void>} A promise that fulfills when all
          * child managers have fulfilled their templates.
          */
-        protected _fulfillChildTemplates(): async.Promise<void> {
+        protected _fulfillChildTemplates(): async.Promise<void | void[]> {
             const children = this.children;
             const length = children.length;
             const promises: async.Promise<void>[] = [];
@@ -1967,7 +1967,7 @@ namespace plat.processing {
             for (let i = 0; i < length; i += 1) {
                 child = <ElementManager>children[i];
                 if (!isUndefined(child.children)) {
-                    promises.push(child.fulfillTemplate());
+                    promises.push(<any>child.fulfillTemplate());
                 }
             }
 

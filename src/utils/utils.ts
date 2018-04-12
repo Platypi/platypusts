@@ -108,7 +108,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is an object, false otherwise.
          */
-        public isObject(obj: any): boolean {
+        public isObject(obj: any): obj is Object {
             return isObject(obj);
         }
 
@@ -125,7 +125,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is the window, false otherwise.
          */
-        public isWindow(obj: any): boolean {
+        public isWindow(obj: any): obj is Window {
             return isWindow(obj);
         }
 
@@ -142,7 +142,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is the document, false otherwise.
          */
-        public isDocument(obj: any): boolean {
+        public isDocument(obj: any): obj is Document {
             return isDocument(obj);
         }
 
@@ -159,7 +159,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a Node, false otherwise.
          */
-        public isNode(obj: any): boolean {
+        public isNode(obj: any): obj is Node {
             return isNode(obj);
         }
 
@@ -176,7 +176,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a DocumentFragment, false otherwise.
          */
-        public isDocumentFragment(obj: any): boolean {
+        public isDocumentFragment(obj: any): obj is DocumentFragment {
             return isDocumentFragment(obj);
         }
 
@@ -193,7 +193,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a string, false otherwise.
          */
-        public isString(obj: any): boolean {
+        public isString(obj: any): obj is string {
             return isString(obj);
         }
 
@@ -210,7 +210,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a RegExp object, false otherwise.
          */
-        public isRegExp(obj: any): boolean {
+        public isRegExp(obj: any): obj is RegExp {
             return isRegExp(obj);
         }
 
@@ -263,7 +263,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a boolean, false otherwise.
          */
-        public isBoolean(obj: any): boolean {
+        public isBoolean(obj: any): obj is boolean {
             return isBoolean(obj);
         }
 
@@ -280,7 +280,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a number, false otherwise.
          */
-        public isNumber(obj: any): boolean {
+        public isNumber(obj: any): obj is number {
             return isNumber(obj);
         }
 
@@ -297,7 +297,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a File, false otherwise.
          */
-        public isFile(obj: any): boolean {
+        public isFile(obj: any): obj is File {
             return isFile(obj);
         }
 
@@ -314,7 +314,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a function, false otherwise.
          */
-        public isFunction(obj: any): boolean {
+        public isFunction(obj: any): obj is Function {
             return isFunction(obj);
         }
 
@@ -331,7 +331,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is null or undefined, false otherwise.
          */
-        public isNull(obj: any): boolean {
+        public isNull(obj: any): obj is null | undefined {
             return isNull(obj);
         }
 
@@ -348,7 +348,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is undefined, false otherwise.
          */
-        public isUndefined(obj: any): boolean {
+        public isUndefined(obj: any): obj is undefined {
             return isUndefined(obj);
         }
 
@@ -365,7 +365,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is an Array, false otherwise.
          */
-        public isArray(obj: any): boolean {
+        public isArray(obj: any): obj is any[] {
             return isArray(obj);
         }
 
@@ -383,7 +383,7 @@ namespace plat {
          * @returns {boolean} True if obj has array-like qualities (i.e. it is an
          * Array, string, arguments, or NodeList), false otherwise.
          */
-        public isArrayLike(obj: any): boolean {
+        public isArrayLike(obj: any): obj is ArrayLike<any> {
             return isArrayLike(obj);
         }
 
@@ -400,7 +400,7 @@ namespace plat {
          *
          * @returns {boolean} True if obj is a Date object, false otherwise.
          */
-        public isDate(obj: any): boolean {
+        public isDate(obj: any): obj is Date {
             return isDate(obj);
         }
 

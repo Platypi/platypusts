@@ -189,7 +189,7 @@ function insertBefore(parent: Node, nodes: any, endNode?: Node): Node[] {
         endNode = null;
     }
 
-    let fragment: DocumentFragment;
+    let fragment: DocumentFragment | Node;
 
     if (isNode(nodes)) {
         fragment = nodes;
@@ -547,7 +547,7 @@ function getTemplate(templateUrl: string): plat.async.Promise<DocumentFragment> 
     }
 
     return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
-        .catch((error: any): plat.async.AjaxPromise<string> => {
+        .catch((error: any): plat.async.AjaxPromise<plat.async.IAjaxResponse<string>> => {
             if (isNull(error)) {
                 return ___http.ajax<string>({ url: templateUrl });
             }

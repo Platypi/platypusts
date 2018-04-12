@@ -892,7 +892,7 @@ namespace plat.ui {
 
             this.cache[key] = manager;
 
-            promises.push(manager.fulfillTemplate());
+            promises.push(<any>manager.fulfillTemplate());
 
             this.templates[key] = this._Promise
                 .all(promises)

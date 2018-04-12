@@ -4650,8 +4650,8 @@ var plat;
              * An ES6 implementation of the Promise API. Useful for asynchronous programming.
              * Takes in 2 generic types corresponding to the fulfilled success and error types.
              * The error type (U) should extend Error in order to get proper stack tracing.
-             * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction
-             * A function for fulfilling/rejecting the Promise.
+             * @param {(resolve : (value?: T | PromiseLike<T>) => void, reject: (error?: any) => void) => void} resolveFunction
+             * A function for fulfilling/rejecting the P.
              */
             function Promise(resolveFunction) {
                 if (!isFunction(resolveFunction)) {
@@ -4663,7 +4663,7 @@ var plat;
                 }
                 this.__subscribers = [];
                 Promise.__invokeResolveFunction(resolveFunction, this);
-            }
+            } // tslint:disable-next-line 
             Promise.all = function (values) {
                 if (!isArray(values)) {
                     return Promise.all([values]);
@@ -4696,20 +4696,14 @@ var plat;
                     }
                 });
             };
-            /**
-             * Returns a promise that fulfills as soon as any of the promises fulfill,
-             * or rejects as soon as any of the promises reject (whichever happens first).
-             * @param {Array<R>} promises An Array of anything to 'race'. Objects that aren't promises will
-             * be cast.
-             */
-            Promise.race = function (promises) {
-                if (!isArray(promises)) {
-                    return Promise.race([promises]);
+            Promise.race = function (values) {
+                if (!isArray(values)) {
+                    return Promise.race([values]);
                 }
                 return new Promise(function (resolve, reject) {
                     var promise;
-                    for (var i = 0; i < promises.length; i += 1) {
-                        promise = promises[i];
+                    for (var i = 0; i < values.length; i += 1) {
+                        promise = values[i];
                         if (isObject(promise) &&
                             typeof promise.then === 'function') {
                             promise.then(resolve, reject);
@@ -4720,19 +4714,11 @@ var plat;
                     }
                 });
             };
-            /**
-             * Returns a promise that resolves with the input value.
-             * @param {R} value The value to resolve.
-             */
             Promise.resolve = function (value) {
                 return new Promise(function (resolve, reject) {
                     resolve(value);
                 });
             };
-            /**
-             * Returns a promise that rejects with the input value.
-             * @param {any} error The value to reject.
-             */
             Promise.reject = function (error) {
                 return new Promise(function (resolve, reject) {
                     reject(error);
@@ -4740,8 +4726,9 @@ var plat;
             };
             /**
              * Invokes the resolve function for a promise. Handles error catching.
-             * @param {(resolve : (value?: R | IThenable<R>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
-             * @param {plat.async.Promise<R>} promise The promise on which to invoke the resolve function.
+             * @param
+             * {(resolve : (value?: TResult | PromiseLike<TResult>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
+             * @param {plat.async.Promise<TResult>} promise The promise on which to invoke the resolve function.
              */
             Promise.__invokeResolveFunction = function (resolveFunction, promise) {
                 function resolvePromise(value) {
@@ -4846,7 +4833,7 @@ var plat;
             };
             /**
              * Asynchronously fulfills a promise
-             * @param {plat.async.Promise<R>} promise The promise object.
+             * @param {plat.async.Promise<TResult>} promise The promise object.
              * @param {any} value The detail of the fulfilled promise.
              */
             Promise.__fulfill = function (promise, value) {
@@ -4859,7 +4846,7 @@ var plat;
             };
             /**
              * Asynchronously fulfills a promise, allowing for promise chaining.
-             * @param {plat.async.Promise<R>} promise The promise object.
+             * @param {plat.async.Promise<TResult>} promise The promise object.
              * @param {any} value The detail of the fulfilled promise.
              */
             Promise.__resolve = function (promise, value) {
@@ -4872,8 +4859,8 @@ var plat;
             };
             /**
              * Handles chaining promises together, when a promise is returned from within a then handler.
-             * @param {plat.async.Promise<R>} promise The promise object.
-             * @param {plat.async.Promise<R>} value The next promise to await.
+             * @param {plat.async.Promise<TResult>} promise The promise object.
+             * @param {plat.async.Promise<TResult>} value The next promise to await.
              */
             Promise.__handleThenable = function (promise, value) {
                 var resolved;
@@ -4929,12 +4916,11 @@ var plat;
             };
             /**
              * Takes in two methods, called when/if the promise fulfills/rejects.
-             * @param {(success: R) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
+             * @param {(success: T) => U} onFulfilled A method called when/if the promise fulfills. If undefined the next
              * onFulfilled method in the promise chain will be called.
              * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
-             */
-            Promise.prototype.then = function (onFulfilled, onRejected) {
+             */ Promise.prototype.then = function (onFulfilled, onRejected) {
                 // tslint:disable-next-line 
                 var promise = this;
                 var thenPromise = new this.constructor(noop, this);
@@ -4950,7 +4936,7 @@ var plat;
                 return thenPromise;
             };
             /**
-             * A wrapper method for Promise.then(undefined, onRejected);
+             * A wrapper method for P.then(undefined, onRejected);
              * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
              */
@@ -5026,10 +5012,10 @@ var plat;
          */
         function IPromise(_window) {
             if (!isNull(_window.Promise) &&
-                isFunction(_window.Promise.all) &&
-                isFunction(_window.Promise.race) &&
-                isFunction(_window.Promise.resolve) &&
-                isFunction(_window.Promise.reject)) {
+                isFunction(_window.P.all) &&
+                isFunction(_window.P.race) &&
+                isFunction(_window.P.resolve) &&
+                isFunction(_window.P.reject)) {
                 return _window.Promise;
             }
             return Promise;
@@ -5709,17 +5695,17 @@ var plat;
             };
             /**
              * Takes in two methods, called when/if the promise fulfills/rejects.
-             * @param {(success: plat.async.IAjaxResponse<R>) => U} onFulfilled A method called when/if the promise fulfills.
+             * @param {(success: plat.async.IAjaxResponse<T>) => T} onFulfilled A method called when/if the promise fulfills.
              * If undefined the next onFulfilled method in the promise chain will be called.
-             * @param {(error: plat.async.AjaxError) => U} onRejected A method called when/if the promise rejects.
+             * @param {(error: plat.async.AjaxError) => T} onRejected A method called when/if the promise rejects.
              * If undefined the next onRejected method in the promise chain will be called.
-             */
+             */ //tslint:disable-next-line 
             AjaxPromise.prototype.then = function (onFulfilled, onRejected) {
                 return _super.prototype.then.call(this, onFulfilled, onRejected);
             };
             /**
              * A wrapper method for Promise.then(undefined, onRejected);
-             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * @param {(error: any) => TResult} onRejected A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
              */
             AjaxPromise.prototype.catch = function (onRejected) {
@@ -7042,7 +7028,7 @@ var plat;
                         oldValue: oldChild,
                     };
                     if (isObject(newParent) &&
-                        (!isArray(newParent) || newParent.length > key)) {
+                        (!isArray(newParent) || newParent.length > Number(key))) {
                         this_1._define(binding, newParent, key);
                     }
                     this_1._execute(binding, newChild, oldChild);

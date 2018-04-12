@@ -132,7 +132,7 @@ function _clone(obj: any, deep?: boolean): any {
     } else if (isFile(obj)) {
         return obj;
     } else if (isError(obj)) {
-        return new obj.constructor((<Error>obj).message);
+        return new (<any>obj).constructor((<Error>obj).message);
     }
 
     let destination = {};
@@ -148,43 +148,43 @@ function _clone(obj: any, deep?: boolean): any {
     return _extend(false, false, destination, obj);
 }
 
-function isError(obj: any): boolean {
+function isError(obj: any): obj is Error {
     return __objToString.call(obj) === __errorClass;
 }
 
-function isObject(obj: any): boolean {
+function isObject(obj: any): obj is Object {
     return obj != null && typeof obj === 'object';
 }
 
-function isWindow(obj: any): boolean {
+function isWindow(obj: any): obj is Window {
     return !!(obj && obj.document && obj.setInterval);
 }
 
-function isDocument(obj: any): boolean {
+function isDocument(obj: any): obj is Document {
     return !!(obj && obj.nodeType === Node.DOCUMENT_NODE);
 }
 
-function isNode(obj: any): boolean {
+function isNode(obj: any): obj is Node {
     return !!(obj && typeof obj.nodeType === 'number');
 }
 
-function isDocumentFragment(obj: any): boolean {
+function isDocumentFragment(obj: any): obj is DocumentFragment {
     return !!(obj && (<Node>obj).nodeType === Node.DOCUMENT_FRAGMENT_NODE);
 }
 
-function isFile(obj: any): boolean {
+function isFile(obj: any): obj is File {
     return isObject(obj) && __objToString.call(obj) === __fileClass;
 }
 
-function isString(obj: any): boolean {
+function isString(obj: any): obj is string {
     return typeof obj === 'string' || isObject(obj) && __objToString.call(obj) === __stringClass;
 }
 
-function isRegExp(obj: any): boolean {
+function isRegExp(obj: any): obj is RegExp {
     return isObject(obj) && __objToString.call(obj) === __regexpClass;
 }
 
-function isPromise(obj: any): boolean {
+function isPromise(obj: any): obj is Promise<any> {
     return isObject(obj) && (__objToString.call(obj) === __promiseClass || isFunction(obj.then));
 }
 
@@ -204,27 +204,27 @@ function isEmpty(obj: any): boolean {
     return Object.keys(obj).length === 0;
 }
 
-function isBoolean(obj: any): boolean {
+function isBoolean(obj: any): obj is boolean {
     return obj === true || obj === false || isObject(obj) && __objToString.call(obj) === __boolClass;
 }
 
-function isNumber(obj: any): boolean {
+function isNumber(obj: any): obj is number {
     return (typeof obj === 'number' || isObject(obj) && __objToString.call(obj) === __numberClass) && !isNaN(obj);
 }
 
-function isFunction(obj: any): boolean {
+function isFunction(obj: any): obj is Function {
     return typeof obj === 'function';
 }
 
-function isNull(obj: any): boolean {
+function isNull(obj: any): obj is null | undefined {
     return obj === null || obj === undefined;
 }
 
-function isUndefined(obj: any): boolean {
+function isUndefined(obj: any): obj is undefined {
     return obj === undefined;
 }
 
-function isArray(obj: any): boolean {
+function isArray(obj: any): obj is any[] {
     if (__nativeIsArray) {
         return Array.isArray(obj);
     }
@@ -232,7 +232,7 @@ function isArray(obj: any): boolean {
     return __objToString.call(obj) === __arrayClass;
 }
 
-function isArrayLike(obj: any): boolean {
+function isArrayLike(obj: any): obj is ArrayLike<any> {
     if (isNull(obj) || isWindow(obj) || isFunction(obj)) {
         return false;
     }
@@ -240,7 +240,7 @@ function isArrayLike(obj: any): boolean {
     return isString(obj) || obj.length >= 0;
 }
 
-function isDate(obj: any): boolean {
+function isDate(obj: any): obj is Date {
     return typeof obj === 'object' && __objToString.call(obj) === __dateClass;
 }
 

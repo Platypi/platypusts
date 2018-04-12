@@ -517,7 +517,7 @@ namespace plat.ui.controls {
          * @returns {void}
          */
         protected _setSelectedIndex(
-            newValue: string,
+            newValue: string | number | boolean | any,
             oldValue: string,
             identifier: string,
             firstTime?: boolean
