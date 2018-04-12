@@ -192,7 +192,7 @@ namespace plat.async {
                     reject: (reason?: any) => void
                 ): void => {
                     const results: any[] = [];
-                    let remaining = (<any[]>values).length;
+                    let remaining = values.length;
                     let promise: Promise<any>;
 
                     if (remaining === 0) {
@@ -800,7 +800,7 @@ namespace plat.async {
          * @typeparam {any} R The return type of the promise.
          *
          * @param {(resolve : (value?: T | PromiseLike<T>) => void, reject: (error?: any) => void) => void} resolveFunction
-         * A function for fulfilling/rejecting the P.
+         * A function for fulfilling/rejecting the Promise.
          *
          * @returns {plat.async.Promise<T>} A promise object.
          */
@@ -886,7 +886,7 @@ namespace plat.async {
          * @access public
          *
          * @description
-         * A wrapper method for {@link plat.async.Promise|P.then(undefined, onRejected);}
+         * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
          *
          * @typeparam {any} U The return type of the returned promise.
          *
@@ -981,10 +981,10 @@ namespace plat.async {
     export function IPromise(_window?: any): IPromise {
         if (
             !isNull(_window.Promise) &&
-            isFunction(_window.P.all) &&
-            isFunction(_window.P.race) &&
-            isFunction(_window.P.resolve) &&
-            isFunction(_window.P.reject)
+            isFunction(_window.Promise.all) &&
+            isFunction(_window.Promise.race) &&
+            isFunction(_window.Promise.resolve) &&
+            isFunction(_window.Promise.reject)
         ) {
             return _window.Promise;
         }

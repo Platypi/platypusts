@@ -1505,7 +1505,7 @@ namespace plat.async {
             resolve: (value?: T | PromiseLike<T>) => void,
             reject: (error?: any) => void
         ) => void, promise?: any) {
-            super(<any>resolveFunction);
+            super(resolveFunction);
 
             if (!isNull(promise)) {
                 this.__http = promise.__http;
