@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.25.0 (https://platypi.io)
+ * PlatypusTS v0.26.0 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
