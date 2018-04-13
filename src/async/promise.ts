@@ -778,7 +778,7 @@ namespace plat.async {
             onFulfilled: (success: any) => any,
             onRejected: (error: any) => any
         ): void {
-            const subscribers = (<any>parent).__subscribers;
+            const subscribers: any[] = (<any>parent).__subscribers;
             const length = subscribers.length;
 
             subscribers[length] = child;

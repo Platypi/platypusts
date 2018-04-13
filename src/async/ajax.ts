@@ -1583,7 +1583,7 @@ namespace plat.async {
          * @returns {plat.async.AjaxPromise<T>}
          */ //tslint:disable-next-line
         public then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): AjaxPromise<TResult1 | TResult2> {
-            return <AjaxPromise<TResult1 | TResult2>>(<any>super.then<T>(<any>onFulfilled, <any>onRejected));
+            return <AjaxPromise<TResult1 | TResult2>>(<any>super.then(<any>onFulfilled, <any>onRejected));
         }
 
         /**

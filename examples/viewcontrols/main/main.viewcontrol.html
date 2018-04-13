@@ -1,13 +1,3 @@
-﻿<plat-foreach plat-context="arr">
-    <plat-foreach plat-context="arr">
-        <div>{{name}}</div>
-    </plat-foreach>
-    <button plat-tap="push2(@index)">Push2</button>
-    <button plat-tap="splice1(@index)">Splice1</button>
-</plat-foreach>
-
-<button plat-tap="push1">Push1</button>
-
-<plat-select plat-context="options" plat-bind="selected">
-    <option value="{{value}}">{{text}}</option>
-</plat-select>
+﻿<div class="{{isAdmin ? '' : 'pt-md-4'}}">
+    a div
+</div>

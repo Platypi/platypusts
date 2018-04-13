@@ -228,6 +228,7 @@ namespace plat.processing {
                         end += 1;
                     }
 
+                    end = end + 1;
                     nodeValue = `${nodeValue
                         .slice(0, start)
                         .trim()} ${nodeValue.slice(end).trim()}`;

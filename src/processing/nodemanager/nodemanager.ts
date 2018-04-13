@@ -267,7 +267,6 @@ namespace plat.processing {
 
             for (let i = 0; i < length; i += 1) {
                 expression = expressions[i];
-
                 value = evaluateExpression(expression, control, resources);
 
                 if (isObject(value)) {
