@@ -11609,7 +11609,7 @@ var plat;
                     lastMoveEvent = {};
                 }
                 var lastDirection = lastMoveEvent.direction;
-                if (isObject(lastDirection)) {
+                if (!isObject(lastDirection)) {
                     lastDirection = {
                         x: 'none',
                         y: 'none',

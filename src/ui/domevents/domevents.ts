@@ -2557,7 +2557,7 @@ namespace plat.ui {
 
             let lastDirection = lastMoveEvent.direction;
 
-            if (isObject(lastDirection)) {
+            if (!isObject(lastDirection)) {
                 lastDirection = <any>{
                     x: 'none',
                     y: 'none',
