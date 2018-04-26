@@ -7,6 +7,7 @@
     "@types/jasmine": "latest",
     "concurrently": "latest",
     "fs-extra": "latest",
+    "hoek": "^5.0.3",
     "http-server": "latest",
     "jasmine-core": "latest",
     "karma": "latest",
@@ -23,7 +24,7 @@
     "tslint": "latest",
     "tslint-microsoft-contrib": "latest",
     "typescript": "latest",
-    "uglify-js": "^3.3.13"
+    "uglify-js": "^3.3.22"
   },
   "scripts": {
     "prepublishOnly": "npm run deploy",
