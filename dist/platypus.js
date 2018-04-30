@@ -411,6 +411,15 @@ var plat;
                             destination[key] = {};
                         }
                         _extend(deep, define, destination[key], property);
+                        if (!isObject(___compat)) {
+                            ___compat = plat.acquire(__Compat);
+                        }
+                        if (___compat.setProto) {
+                            Object.setPrototypeOf(destination[key], Object.getPrototypeOf(property));
+                        }
+                        else if (property.toString !== Object.prototype.toString) {
+                            property.toString = property.toString;
+                        }
                         return;
                     }
                 }
