@@ -118,7 +118,7 @@ function _extend(deep: boolean, redefine: any, destination: any, ...sources: any
                     if (___compat.setProto) {
                         (<any>Object).setPrototypeOf(destination[key], Object.getPrototypeOf(property));
                     } else if (property.toString !== Object.prototype.toString) {
-                        property.toString = property.toString;
+                        destination[key].toString = property.toString;
                     }
 
                     return;
