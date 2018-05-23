@@ -405,6 +405,29 @@ namespace plat {
         }
 
         /**
+         * @name debounce
+         * @memberof plat.Utils
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Limits the rate at which a function can fire.
+         *
+         * @param {Function} fn The function to debounce
+         * @param {number} wait The amount of time to wait before calling fn (default=500ms)
+         * @param {boolean} immediate Used to immediately call fn
+         *
+         * @returns {Function} The debounced function
+         */
+        public debounce(
+            fn: Function,
+            wait?: number,
+            immediate?: boolean
+        ): Function {
+            return debounce(fn, wait, immediate);
+        }
+
+        /**
          * @name filter
          * @memberof plat.Utils
          * @kind function

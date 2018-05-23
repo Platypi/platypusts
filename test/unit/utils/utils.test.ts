@@ -1,6 +1,6 @@
 /// <reference path="../../references.d.ts" />
 
-module tests.utils {
+namespace tests.utils {
     interface IUtilTest {
         name: string;
         fn: string;
@@ -498,6 +498,50 @@ module tests.utils {
             expect(spy).toHaveBeenCalled();
         });
 
+        it('should test debounce', (done) => {
+            const spy = spyOn(utils, 'debounce').and.callThrough();
+
+            const debounced = {
+                fn: (a: number) => {
+                    expect(a).toBe(2);
+
+                    expect(spy).toHaveBeenCalled();
+                    done();
+                },
+            };
+
+            const debSpy = spyOn(debounced, 'fn').and.callThrough();
+
+            const fn = utils.debounce(debounced.fn, 200);
+
+            fn(2);
+
+            expect(spy).toHaveBeenCalled();
+            expect(debSpy).not.toHaveBeenCalled();
+        });
+
+        it('should test debounce immediate', (done) => {
+            const spy = spyOn(utils, 'debounce').and.callThrough();
+
+            const debounced = {
+                fn: (a: number) => {
+                    expect(a).toBe(2);
+
+                    expect(spy).toHaveBeenCalled();
+                    done();
+                },
+            };
+
+            const debSpy = spyOn(debounced, 'fn').and.callThrough();
+
+            const fn = utils.debounce(debounced.fn, 200, true);
+
+            fn(2);
+
+            expect(spy).toHaveBeenCalled();
+            expect(debSpy).toHaveBeenCalled();
+        });
+
         it('should test extend with 3 args', () => {
             const foo = { foo: 'foo' };
             const bar = { foo: 'bar', bar: { name: 'bar' } };
@@ -620,7 +664,7 @@ module tests.utils {
         });
 
         it('should test clone with a Function', () => {
-            const foo = () => { };
+            const foo = () => {};
             const baz = utils.clone(foo);
 
             expect(baz).toBe(foo);
@@ -780,7 +824,7 @@ module tests.utils {
 
             utils
                 .mapAsync(
-                    function (value, key, o) {
+                    function(value, key, o) {
                         temp = value;
                         // tslint:disable-next-line
                         expect(this).toEqual(2);
@@ -807,7 +851,7 @@ module tests.utils {
 
             utils
                 .mapAsyncInOrder(
-                    function (value, key, obj) {
+                    function(value, key, obj) {
                         temp = value;
                         // tslint:disable-next-line
                         expect(this).toEqual(2);
@@ -834,7 +878,7 @@ module tests.utils {
 
             utils
                 .mapAsyncInDescendingOrder(
-                    function (value, key, obj) {
+                    function(value, key, obj) {
                         temp = value;
                         // tslint:disable-next-line
                         expect(this).toEqual(2);
