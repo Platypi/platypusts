@@ -478,13 +478,15 @@ var plat;
         return isObject(obj) && __objToString.call(obj) === __fileClass;
     }
     function isString(obj) {
-        return typeof obj === 'string' || isObject(obj) && __objToString.call(obj) === __stringClass;
+        return (typeof obj === 'string' ||
+            (isObject(obj) && __objToString.call(obj) === __stringClass));
     }
     function isRegExp(obj) {
         return isObject(obj) && __objToString.call(obj) === __regexpClass;
     }
     function isPromise(obj) {
-        return isObject(obj) && (__objToString.call(obj) === __promiseClass || isFunction(obj.then));
+        return (isObject(obj) &&
+            (__objToString.call(obj) === __promiseClass || isFunction(obj.then)));
     }
     function isEmpty(obj) {
         if (isNull(obj)) {
@@ -499,10 +501,14 @@ var plat;
         return Object.keys(obj).length === 0;
     }
     function isBoolean(obj) {
-        return obj === true || obj === false || isObject(obj) && __objToString.call(obj) === __boolClass;
+        return (obj === true ||
+            obj === false ||
+            (isObject(obj) && __objToString.call(obj) === __boolClass));
     }
     function isNumber(obj) {
-        return (typeof obj === 'number' || isObject(obj) && __objToString.call(obj) === __numberClass) && !isNaN(obj);
+        return ((typeof obj === 'number' ||
+            (isObject(obj) && __objToString.call(obj) === __numberClass)) &&
+            !isNaN(obj));
     }
     function isFunction(obj) {
         return typeof obj === 'function';
@@ -528,6 +534,37 @@ var plat;
     function isDate(obj) {
         return typeof obj === 'object' && __objToString.call(obj) === __dateClass;
     }
+    function debounce(fn, wait, immediate) {
+        if (!isFunction(fn)) {
+            throw new Error('Must pass a function into debounce');
+        }
+        if (isNull(wait)) {
+            wait = 500;
+        }
+        if (!isBoolean(immediate)) {
+            immediate = false;
+        }
+        var timeout;
+        return function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            // tslint:disable-next-line 
+            var context = this;
+            var later = function () {
+                if (!immediate) {
+                    fn.apply(context, args);
+                }
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) {
+                fn.apply(context, args);
+            }
+        };
+    }
     function filter(iterator, obj, context) {
         var arr = [];
         if (isNull(obj)) {
@@ -546,7 +583,7 @@ var plat;
     function where(properties, obj) {
         return filter(function (value) {
             return !some(function (property, key) {
-                return (value)[key] !== property;
+                return value[key] !== property;
             }, properties);
         }, obj);
     }
@@ -743,10 +780,11 @@ var plat;
         }
         str = str.charAt(0).toLowerCase() + str.slice(1);
         if (!isRegExp(__camelCaseRegex)) {
-            __camelCaseRegex = plat.acquire(__Regex).camelCaseRegex;
+            __camelCaseRegex = plat.acquire(__Regex)
+                .camelCaseRegex;
         }
         return str.replace(__camelCaseRegex, function (match, delimiter, char, index) {
-            return (isNumber(index) && index > 0) ? char.toUpperCase() : char;
+            return isNumber(index) && index > 0 ? char.toUpperCase() : char;
         });
     }
     function delimit(str, delimiter) {
@@ -757,10 +795,13 @@ var plat;
             delimiter = '';
         }
         if (!isRegExp(__capitalCaseRegex)) {
-            __capitalCaseRegex = plat.acquire(__Regex).capitalCaseRegex;
+            __capitalCaseRegex = plat.acquire(__Regex)
+                .capitalCaseRegex;
         }
         return str.replace(__capitalCaseRegex, function (match, index) {
-            return (isNumber(index) && index > 0) ? delimiter + match.toLowerCase() : match.toLowerCase();
+            return isNumber(index) && index > 0
+                ? delimiter + match.toLowerCase()
+                : match.toLowerCase();
         });
     }
     function deleteProperty(obj, property) {
@@ -2511,6 +2552,15 @@ var plat;
          */
         Utils.prototype.isDate = function (obj) {
             return isDate(obj);
+        };
+        /**
+         * Limits the rate at which a function can fire.
+         * @param {Function} fn The function to debounce
+         * @param {number} wait The amount of time to wait before calling fn (default=500ms)
+         * @param {boolean} immediate Used to immediately call fn
+         */
+        Utils.prototype.debounce = function (fn, wait, immediate) {
+            return debounce(fn, wait, immediate);
         };
         Utils.prototype.filter = function (iterator, obj, context) {
             return filter(iterator, obj, context);

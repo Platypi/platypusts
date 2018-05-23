@@ -727,6 +727,13 @@ export declare class Utils {
       */
     isDate(obj: any): obj is Date;
     /**
+      * Limits the rate at which a function can fire.
+      * @param {Function} fn The function to debounce
+      * @param {number} wait The amount of time to wait before calling fn (default=500ms)
+      * @param {boolean} immediate Used to immediately call fn
+      */
+    debounce(fn: Function, wait?: number, immediate?: boolean): Function;
+    /**
       * Takes in an array and a function to evaluate the properties in the array.
       * Returns a filtered array of objects resulting from evaluating the function.
       * @param {IListIterator<T, boolean>} iterator The iterator function to call with array's properties.
