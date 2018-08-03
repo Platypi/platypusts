@@ -99,9 +99,9 @@ namespace plat.processing {
             control?: ui.TemplateControl
         ): void {
             const hasControl = !isNull(control);
-            const manager = <ElementManager>(hasControl
-                ? this._managerCache.read(control.uid)
-                : null);
+            const manager = <ElementManager>(
+                (hasControl ? this._managerCache.read(control.uid) : null)
+            );
             const create = this._ElementManagerFactory.create;
             let childNodes = (<Node>node).childNodes;
             let length: number;
@@ -111,7 +111,7 @@ namespace plat.processing {
             if (!isUndefined(childNodes)) {
                 childNodes = Array.prototype.slice.call(childNodes);
             } else if (isFunction((<Node[]>node).push)) {
-                childNodes = <NodeList>node;
+                childNodes = <NodeListOf<Node & ChildNode>>node;
             } else {
                 childNodes = Array.prototype.slice.call(node);
             }

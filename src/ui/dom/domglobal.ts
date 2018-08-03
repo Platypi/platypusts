@@ -8,7 +8,11 @@ const __whiteSpaceRegex = /\s+/g;
 const __option = [1, '<select multiple="multiple">', '</select>'];
 const __table = [1, '<table>', '</table>'];
 const __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
-const __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'];
+const __svg = [
+    1,
+    '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">',
+    '</svg>',
+];
 const __innerTableWrappers: plat.IObject<any[]> = {
     thead: __table,
     tbody: __table,
@@ -20,22 +24,28 @@ const __innerTableWrappers: plat.IObject<any[]> = {
     td: __tableData,
     th: __tableData,
 };
-const __innerHtmlWrappers: plat.IObject<any[]> = _extend(false, false, {}, __innerTableWrappers, {
-    option: __option,
-    optgroup: __option,
-    legend: [1, '<fieldset>', '</fieldset>'],
-    area: [1, '<map>', '</map>'],
-    param: [1, '<object>', '</object>'],
-    text: __svg,
-    circle: __svg,
-    ellipse: __svg,
-    line: __svg,
-    path: __svg,
-    polygon: __svg,
-    polyline: __svg,
-    rect: __svg,
-    _default: [0, '', ''],
-});
+const __innerHtmlWrappers: plat.IObject<any[]> = _extend(
+    false,
+    false,
+    {},
+    __innerTableWrappers,
+    {
+        option: __option,
+        optgroup: __option,
+        legend: [1, '<fieldset>', '</fieldset>'],
+        area: [1, '<map>', '</map>'],
+        param: [1, '<object>', '</object>'],
+        text: __svg,
+        circle: __svg,
+        ellipse: __svg,
+        line: __svg,
+        path: __svg,
+        polygon: __svg,
+        polyline: __svg,
+        rect: __svg,
+        _default: [0, '', ''],
+    }
+);
 
 function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
     if (!isObject(___document)) {
@@ -44,14 +54,17 @@ function appendChildren(nodeList: any, root?: Node, clone?: boolean): Node {
 
     const isFragment = isDocumentFragment(root);
     const nullRoot = !isNode(root);
-    const fragment: DocumentFragment = isFragment ?
-            <DocumentFragment>root : ___document.createDocumentFragment();
+    const fragment: DocumentFragment = isFragment
+        ? <DocumentFragment>root
+        : ___document.createDocumentFragment();
 
     if (nullRoot) {
         root = fragment;
     }
 
-    const list: Node[] = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList);
+    const list: Node[] = isArray(nodeList)
+        ? nodeList
+        : Array.prototype.slice.call(nodeList);
     const length = list.length;
     let i: number;
 
@@ -242,7 +255,10 @@ function replaceWith<T extends Node>(node: any, newNode: T): T {
 
         for (let i = 0; i < length; i += 1) {
             attribute = attributes[i];
-            (<HTMLElement><any>newNode).setAttribute(attribute.name, attribute.value);
+            (<HTMLElement>(<any>newNode)).setAttribute(
+                attribute.name,
+                attribute.value
+            );
         }
     }
 
@@ -281,7 +297,10 @@ function removeBetween(startNode: Node, endNode?: Node): void {
         endNode = null;
     }
 
-    if (isNull(parentNode) || (!isNull(endNode) && endNode.parentNode !== parentNode)) {
+    if (
+        isNull(parentNode) ||
+        (!isNull(endNode) && endNode.parentNode !== parentNode)
+    ) {
         return;
     }
 
@@ -303,6 +322,8 @@ function removeAll(startNode: Node, endNode?: Node): void {
     removeNode(endNode);
 }
 
+declare let MSApp: any;
+
 /**
  * Safely sets innerHTML of an element. Uses MSApp.execUnsafeLocalFunction if
  * available.
@@ -314,10 +335,12 @@ function innerHtml(element: HTMLElement, html: string): HTMLElement {
 
     if (___compat.msApp) {
         // tslint:disable-next-line
-        (<any>MSApp).execUnsafeLocalFunction((): void => {
-            // tslint:disable-next-line
-            element.innerHTML = html;
-        });
+        (<any>MSApp).execUnsafeLocalFunction(
+            (): void => {
+                // tslint:disable-next-line
+                element.innerHTML = html;
+            }
+        );
     } else {
         // tslint:disable-next-line
         element.innerHTML = html;
@@ -363,7 +386,10 @@ function addClass(element: HTMLElement, className: string): void {
         while (split.length > 0) {
             name = split.shift();
             if (name !== '') {
-                classNameRegex = new RegExp(`^${name}\\s+|\\s+${name}$|\\s+${name}\\s+`, 'g');
+                classNameRegex = new RegExp(
+                    `^${name}\\s+|\\s+${name}$|\\s+${name}\\s+`,
+                    'g'
+                );
                 if (!classNameRegex.test(cName)) {
                     element.className += ` ${name}`;
                 }
@@ -405,8 +431,13 @@ function removeClass(element: HTMLElement, className: string): void {
         while (split.length > 0) {
             name = split.shift();
             if (name !== '') {
-                element.className = cName = cName
-                    .replace(new RegExp(`^${name}\\s+|\\s+${name}$|\\s+${name}\\s+`, 'g'), '');
+                element.className = cName = cName.replace(
+                    new RegExp(
+                        `^${name}\\s+|\\s+${name}$|\\s+${name}\\s+`,
+                        'g'
+                    ),
+                    ''
+                );
             }
         }
 
@@ -448,9 +479,15 @@ function toggleClass(element: HTMLElement, className: string): void {
         while (split.length > 0) {
             name = split.shift();
             if (name !== '') {
-                classNameRegex = new RegExp(`^${name}\\s+|\\s+${name}$|\\s+${name}\\s+`, 'g');
+                classNameRegex = new RegExp(
+                    `^${name}\\s+|\\s+${name}$|\\s+${name}\\s+`,
+                    'g'
+                );
                 if (classNameRegex.test(cName)) {
-                    element.className = cName = cName.replace(classNameRegex, '');
+                    element.className = cName = cName.replace(
+                        classNameRegex,
+                        ''
+                    );
                     continue;
                 }
 
@@ -469,7 +506,11 @@ function toggleClass(element: HTMLElement, className: string): void {
     }
 }
 
-function replaceClass(element: HTMLElement, oldClass: string, newClass: string): void {
+function replaceClass(
+    element: HTMLElement,
+    oldClass: string,
+    newClass: string
+): void {
     if (!isObject(element)) {
         element = <any>{};
     }
@@ -484,11 +525,12 @@ function replaceClass(element: HTMLElement, oldClass: string, newClass: string):
         const startRegex = new RegExp(`^${oldClass}\\s+`, 'g');
         const midRegex = new RegExp(`\\s+${oldClass}\\s+`, 'g');
         const endRegex = new RegExp(`\\s+${oldClass}$`, 'g');
-        element.className = cName.replace(startRegex, `${newClass} `)
+        element.className = cName
+            .replace(startRegex, `${newClass} `)
             .replace(midRegex, ` ${newClass} `)
             .replace(endRegex, ` ${newClass}`);
 
-            return;
+        return;
     }
 
     element.classList.add(newClass);
@@ -518,7 +560,15 @@ function hasClass(element: HTMLElement, className: string): boolean {
 
         while (split.length > 0) {
             name = split.shift();
-            if (!(name === '' || new RegExp(`^${name}\\s|\\s${name}$|\\s${name}\\s`, 'g').test(cName))) {
+            if (
+                !(
+                    name === '' ||
+                    new RegExp(
+                        `^${name}\\s|\\s${name}$|\\s${name}\\s`,
+                        'g'
+                    ).test(cName)
+                )
+            ) {
                 return false;
             }
         }
@@ -537,7 +587,9 @@ function hasClass(element: HTMLElement, className: string): boolean {
     return true;
 }
 
-function getTemplate(templateUrl: string): plat.async.Promise<DocumentFragment> {
+function getTemplate(
+    templateUrl: string
+): plat.async.Promise<DocumentFragment> {
     if (!isObject(___templateCache)) {
         ___templateCache = plat.acquire(__TemplateCache);
     }
@@ -546,42 +598,65 @@ function getTemplate(templateUrl: string): plat.async.Promise<DocumentFragment> 
         ___http = plat.acquire(__Http);
     }
 
-    return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
-        .catch((error: any): plat.async.AjaxPromise<plat.async.IAjaxResponse<string>> => {
-            if (isNull(error)) {
-                return ___http.ajax<string>({ url: templateUrl });
-            }
-        }).then<DocumentFragment>((success): plat.async.Promise<DocumentFragment> => {
-            if (isDocumentFragment(success)) {
-                return ___templateCache.put(templateUrl, <any>success);
-            } else if (!isObject(success) || !isString(success.response)) {
-                if (!isObject(___log)) {
-                    ___log = plat.acquire(__Log);
+    return ___templateCache.put(
+        templateUrl,
+        ___templateCache
+            .read(templateUrl)
+            .catch(
+                (
+                    error: any
+                ): plat.async.AjaxPromise<plat.async.IAjaxResponse<string>> => {
+                    if (isNull(error)) {
+                        return ___http.ajax<string>({ url: templateUrl });
+                    }
                 }
+            )
+            .then<DocumentFragment>(
+                (success): plat.async.Promise<DocumentFragment> => {
+                    if (isDocumentFragment(success)) {
+                        return ___templateCache.put(templateUrl, <any>success);
+                    } else if (
+                        !isObject(success) ||
+                        !isString(success.response)
+                    ) {
+                        if (!isObject(___log)) {
+                            ___log = plat.acquire(__Log);
+                        }
 
-                ___log.warn(`No template found at ${templateUrl}`);
+                        ___log.warn(`No template found at ${templateUrl}`);
 
-                return ___templateCache.put(templateUrl);
-            }
+                        return ___templateCache.put(templateUrl);
+                    }
 
-            const templateString = success.response;
+                    const templateString = success.response;
 
-            if (isEmpty(templateString.trim())) {
-                return ___templateCache.put(templateUrl);
-            }
+                    if (isEmpty(templateString.trim())) {
+                        return ___templateCache.put(templateUrl);
+                    }
 
-            return ___templateCache.put(templateUrl, templateString);
-        }).catch((error: any): any => {
-            postpone((): void => {
-                if (!isObject(___log)) {
-                    ___log = plat.acquire(__Log);
+                    return ___templateCache.put(templateUrl, templateString);
                 }
+            )
+            .catch(
+                (error: any): any => {
+                    postpone(
+                        (): void => {
+                            if (!isObject(___log)) {
+                                ___log = plat.acquire(__Log);
+                            }
 
-                ___log.error(new Error(`Failure to get template from ${templateUrl}.`));
-            });
+                            ___log.error(
+                                new Error(
+                                    `Failure to get template from ${templateUrl}.`
+                                )
+                            );
+                        }
+                    );
 
-            return error;
-        }));
+                    return error;
+                }
+            )
+    );
 }
 
 function whenPresent(cb: () => void, element: Element): plat.IRemoveListener {
@@ -590,7 +665,11 @@ function whenPresent(cb: () => void, element: Element): plat.IRemoveListener {
             ___log = plat.acquire(__Log);
         }
 
-        ___log.error(new Error('Attempting to check DOM presence of something that isn\'t a Node.'));
+        ___log.error(
+            new Error(
+                'Attempting to check DOM presence of something that isn\'t a Node.'
+            )
+        );
 
         return noop;
     }
@@ -624,7 +703,11 @@ function whenVisible(cb: () => void, element: Element): plat.IRemoveListener {
             ___log = plat.acquire(__Log);
         }
 
-        ___log.error(new Error('Attempting to check visibility of something that isn\'t a Node.'));
+        ___log.error(
+            new Error(
+                'Attempting to check visibility of something that isn\'t a Node.'
+            )
+        );
 
         return noop;
     }
@@ -636,7 +719,11 @@ function whenVisible(cb: () => void, element: Element): plat.IRemoveListener {
             ___log = plat.acquire(__Log);
         }
 
-        ___log.error(new Error('Attempting to check visibility of something that isn\'t an Element.'));
+        ___log.error(
+            new Error(
+                'Attempting to check visibility of something that isn\'t an Element.'
+            )
+        );
 
         return noop;
     }
