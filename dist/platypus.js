@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -11,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 /* tslint:disable */
 /**
- * PlatypusTS v0.26.5 (https://platypi.io)
+ * PlatypusTS v0.27.1 (https://platypi.io)
  * Copyright 2015 Platypi, LLC. All rights reserved.
  *
  * PlatypusTS is licensed under the MIT license found at
@@ -858,7 +861,11 @@ var plat;
     var __option = [1, '<select multiple="multiple">', '</select>'];
     var __table = [1, '<table>', '</table>'];
     var __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
-    var __svg = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">', '</svg>'];
+    var __svg = [
+        1,
+        '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">',
+        '</svg>',
+    ];
     var __innerTableWrappers = {
         thead: __table,
         tbody: __table,
@@ -892,12 +899,15 @@ var plat;
         }
         var isFragment = isDocumentFragment(root);
         var nullRoot = !isNode(root);
-        var fragment = isFragment ?
-            root : ___document.createDocumentFragment();
+        var fragment = isFragment
+            ? root
+            : ___document.createDocumentFragment();
         if (nullRoot) {
             root = fragment;
         }
-        var list = isArray(nodeList) ? nodeList : Array.prototype.slice.call(nodeList);
+        var list = isArray(nodeList)
+            ? nodeList
+            : Array.prototype.slice.call(nodeList);
         var length = list.length;
         var i;
         if (clone === true) {
@@ -1070,7 +1080,8 @@ var plat;
         if (isNull(endNode)) {
             endNode = null;
         }
-        if (isNull(parentNode) || (!isNull(endNode) && endNode.parentNode !== parentNode)) {
+        if (isNull(parentNode) ||
+            (!isNull(endNode) && endNode.parentNode !== parentNode)) {
             return;
         }
         while (currentNode !== endNode) {
@@ -1167,8 +1178,7 @@ var plat;
             while (split.length > 0) {
                 name = split.shift();
                 if (name !== '') {
-                    element.className = cName = cName
-                        .replace(new RegExp("^" + name + "\\s+|\\s+" + name + "$|\\s+" + name + "\\s+", 'g'), '');
+                    element.className = cName = cName.replace(new RegExp("^" + name + "\\s+|\\s+" + name + "$|\\s+" + name + "\\s+", 'g'), '');
                 }
             }
             return;
@@ -1231,7 +1241,8 @@ var plat;
             var startRegex = new RegExp("^" + oldClass + "\\s+", 'g');
             var midRegex = new RegExp("\\s+" + oldClass + "\\s+", 'g');
             var endRegex = new RegExp("\\s+" + oldClass + "$", 'g');
-            element.className = cName.replace(startRegex, newClass + " ")
+            element.className = cName
+                .replace(startRegex, newClass + " ")
                 .replace(midRegex, " " + newClass + " ")
                 .replace(endRegex, " " + newClass);
             return;
@@ -1258,7 +1269,8 @@ var plat;
             }
             while (split.length > 0) {
                 name = split.shift();
-                if (!(name === '' || new RegExp("^" + name + "\\s|\\s" + name + "$|\\s" + name + "\\s", 'g').test(cName))) {
+                if (!(name === '' ||
+                    new RegExp("^" + name + "\\s|\\s" + name + "$|\\s" + name + "\\s", 'g').test(cName))) {
                     return false;
                 }
             }
@@ -1279,16 +1291,19 @@ var plat;
         if (!isObject(___http)) {
             ___http = plat.acquire(__Http);
         }
-        return ___templateCache.put(templateUrl, ___templateCache.read(templateUrl)
+        return ___templateCache.put(templateUrl, ___templateCache
+            .read(templateUrl)
             .catch(function (error) {
             if (isNull(error)) {
                 return ___http.ajax({ url: templateUrl });
             }
-        }).then(function (success) {
+        })
+            .then(function (success) {
             if (isDocumentFragment(success)) {
                 return ___templateCache.put(templateUrl, success);
             }
-            else if (!isObject(success) || !isString(success.response)) {
+            else if (!isObject(success) ||
+                !isString(success.response)) {
                 if (!isObject(___log)) {
                     ___log = plat.acquire(__Log);
                 }
@@ -1300,7 +1315,8 @@ var plat;
                 return ___templateCache.put(templateUrl);
             }
             return ___templateCache.put(templateUrl, templateString);
-        }).catch(function (error) {
+        })
+            .catch(function (error) {
             postpone(function () {
                 if (!isObject(___log)) {
                     ___log = plat.acquire(__Log);
@@ -4426,7 +4442,7 @@ var plat;
              * @param url The URL to verify whether or not it's cross domain.
              */
             Browser.prototype._urlChanged = function () {
-                var _this = this;
+                var _this_1 = this;
                 if (this.__initializing) {
                     return;
                 }
@@ -4439,7 +4455,7 @@ var plat;
                 this.__lastUrl = url;
                 var _EventManager = this._EventManager;
                 postpone(function () {
-                    _EventManager.dispatch(__urlChanged, _this, _EventManager.DIRECT, [utils]);
+                    _EventManager.dispatch(__urlChanged, _this_1, _EventManager.DIRECT, [utils]);
                 });
             };
             /**
@@ -5137,7 +5153,7 @@ var plat;
              * Executes an JSONP request and resolves an IAjaxPromise upon completion.
              */
             HttpRequest.prototype.executeJsonp = function () {
-                var _this = this;
+                var _this_1 = this;
                 var options = this.__options;
                 var url = options.url;
                 if (!isString(url) || isEmpty(url.trim())) {
@@ -5151,10 +5167,10 @@ var plat;
                     }
                 }
                 var promise = new AjaxPromise(function (resolve, reject) {
-                    var _window = _this._window;
-                    var _document = _this._document;
+                    var _window = _this_1._window;
+                    var _document = _this_1._document;
                     var scriptTag = _document.createElement('script');
-                    var jsonpCallback = _this.jsonpCallback;
+                    var jsonpCallback = _this_1.jsonpCallback;
                     var jsonpIdentifier = options.jsonpIdentifier;
                     if (!isString(jsonpIdentifier)) {
                         jsonpIdentifier = 'callback';
@@ -5163,8 +5179,8 @@ var plat;
                     var oldValue = _window[jsonpCallback];
                     _window[jsonpCallback] = function (response) {
                         // clean up 
-                        if (isFunction(_this.clearTimeout)) {
-                            _this.clearTimeout();
+                        if (isFunction(_this_1.clearTimeout)) {
+                            _this_1.clearTimeout();
                         }
                         _document.head.removeChild(scriptTag);
                         if (isUndefined(oldValue)) {
@@ -5185,8 +5201,8 @@ var plat;
                     if (isNumber(timeout) && timeout > 0) {
                         // we first postpone to avoid always timing out when debugging, though this is not 
                         // a foolproof method. 
-                        _this.clearTimeout = postpone(function () {
-                            _this.clearTimeout = defer(function () {
+                        _this_1.clearTimeout = postpone(function () {
+                            _this_1.clearTimeout = defer(function () {
                                 reject(new AjaxError({
                                     response: "Request timed out in " + timeout + "ms for " + url,
                                     // request timeout 
@@ -5236,35 +5252,35 @@ var plat;
              * The function that initializes and sends the XMLHttpRequest.
              */
             HttpRequest.prototype._sendXhrRequest = function () {
-                var _this = this;
+                var _this_1 = this;
                 var xhr = this.xhr;
                 var options = this.__options;
                 var method = options.method;
                 var url = options.url;
                 var promise = new AjaxPromise(function (resolve, reject) {
                     xhr.onreadystatechange = function () {
-                        var success = _this._xhrOnReadyStateChange();
+                        var success = _this_1._xhrOnReadyStateChange();
                         if (isNull(success)) {
                             return;
                         }
-                        var response = _this._formatResponse(options.responseType, success);
+                        var response = _this_1._formatResponse(options.responseType, success);
                         if (success) {
                             resolve(response);
                         }
                         else {
                             reject(new AjaxError(response));
                         }
-                        _this.xhr = options = null;
+                        _this_1.xhr = options = null;
                     };
                     if (!isString(method)) {
-                        _this._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
+                        _this_1._log.info('AjaxOptions method was not of type string. Defaulting to "GET".');
                         method = 'GET';
                     }
                     xhr.open(method.toUpperCase(), url, 
                     // synchronous XHR not supported 
                     true, options.user, options.password);
                     var responseType = options.responseType;
-                    if (!(_this.__fileSupported ||
+                    if (!(_this_1.__fileSupported ||
                         responseType === '' ||
                         responseType === 'text')) {
                         responseType = '';
@@ -5287,7 +5303,7 @@ var plat;
                     }
                     if (isNull(data) || data === '') {
                         // no data exists so set headers and send request 
-                        _this.__setHeaders();
+                        _this_1.__setHeaders();
                         xhr.send();
                     }
                     else {
@@ -5309,7 +5325,7 @@ var plat;
                             if (contentTypeExists) {
                                 xhr.setRequestHeader('Content-Type', contentType);
                             }
-                            _this.__setHeaders();
+                            _this_1.__setHeaders();
                             xhr.send(data);
                         }
                         else if (isObject(data)) {
@@ -5318,30 +5334,30 @@ var plat;
                                 var contentTypeLower = contentType.toLowerCase();
                                 if (contentTypeLower.indexOf('x-www-form-urlencoded') !== -1) {
                                     // perform an encoded form transformation 
-                                    data = _this.__serializeFormData();
+                                    data = _this_1.__serializeFormData();
                                     // set Content-Type header because we're assuming they didn't set it 
                                     // in their headers object 
                                     xhr.setRequestHeader('Content-Type', contentType);
-                                    _this.__setHeaders();
+                                    _this_1.__setHeaders();
                                     xhr.send(data);
                                 }
                                 else if (contentTypeLower.indexOf('multipart/form-data') !== -1) {
                                     // need to check if File is a supported object 
-                                    if (_this.__fileSupported) {
+                                    if (_this_1.__fileSupported) {
                                         // use FormData 
-                                        data = _this.__appendFormData();
+                                        data = _this_1.__appendFormData();
                                         // do not set the Content-Type header due to modern browsers 
                                         // setting special headers for multipart/form-data 
-                                        _this.__setHeaders();
+                                        _this_1.__setHeaders();
                                         xhr.send(data);
                                     }
                                     else {
                                         // use iframe trick for older browsers (do not send a request) 
                                         // this case is the reason for this giant, terrible, nested if-else statement 
-                                        _this.__submitFramedFormData().then(function (response) {
+                                        _this_1.__submitFramedFormData().then(function (response) {
                                             resolve(response);
                                         }, function () {
-                                            _this.xhr = null;
+                                            _this_1.xhr = null;
                                         });
                                     }
                                 }
@@ -5351,13 +5367,13 @@ var plat;
                                     // set Content-Type header because we're assuming they didn't set it 
                                     // in their headers object 
                                     xhr.setRequestHeader('Content-Type', contentType);
-                                    _this.__setHeaders();
+                                    _this_1.__setHeaders();
                                     xhr.send(data);
                                 }
                             }
                             else {
                                 // contentType does not exist so simply set defined headers and send raw data 
-                                _this.__setHeaders();
+                                _this_1.__setHeaders();
                                 xhr.send(data);
                             }
                         }
@@ -5367,7 +5383,7 @@ var plat;
                             if (contentTypeExists) {
                                 xhr.setRequestHeader('Content-Type', contentType);
                             }
-                            _this.__setHeaders();
+                            _this_1.__setHeaders();
                             xhr.send(data);
                         }
                     }
@@ -5375,8 +5391,8 @@ var plat;
                     if (isNumber(timeout) && timeout > 0) {
                         // we first postpone to avoid always timing out when debugging, though this is not 
                         // a foolproof method. 
-                        _this.clearTimeout = postpone(function () {
-                            _this.clearTimeout = defer(function () {
+                        _this_1.clearTimeout = postpone(function () {
+                            _this_1.clearTimeout = defer(function () {
                                 reject(new AjaxError({
                                     response: "Request timed out in " + timeout + "ms for " + options.url,
                                     status: 408,
@@ -5387,7 +5403,7 @@ var plat;
                                 }));
                                 xhr.onreadystatechange = null;
                                 xhr.abort();
-                                _this.xhr = null;
+                                _this_1.xhr = null;
                             }, timeout - 1);
                         });
                     }
@@ -5399,9 +5415,9 @@ var plat;
              * Returns a promise that is immediately rejected due to an error.
              */
             HttpRequest.prototype._invalidOptions = function () {
-                var _this = this;
+                var _this_1 = this;
                 return new AjaxPromise(function (resolve, reject) {
-                    _this._log.warn('Attempting a request without specifying a url');
+                    _this_1._log.warn('Attempting a request without specifying a url');
                     reject(new AjaxError({
                         response: 'Attempting a request without specifying a url',
                         status: null,
@@ -5548,7 +5564,7 @@ var plat;
              * Handles submitting multipart form data using an iframe.
              */
             HttpRequest.prototype.__submitFramedFormData = function () {
-                var _this = this;
+                var _this_1 = this;
                 var options = this.__options;
                 var data = options.data;
                 var url = options.url;
@@ -5571,7 +5587,7 @@ var plat;
                     form.insertBefore(this.__createInput(key, data[key]), null);
                 }
                 return new Promise(function (resolve, reject) {
-                    _this.xhr.abort = function () {
+                    _this_1.xhr.abort = function () {
                         iframe.onload = null;
                         $body.removeChild(form);
                         $body.removeChild(iframe);
@@ -5586,7 +5602,7 @@ var plat;
                             status: 200,
                             getAllResponseHeaders: function () { return ''; },
                         });
-                        _this.xhr = iframe.onload = null;
+                        _this_1.xhr = iframe.onload = null;
                     };
                     $body.insertBefore(form, null);
                     $body.insertBefore(iframe, null);
@@ -5712,15 +5728,15 @@ var plat;
              * @param {any} promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
              */
             function AjaxPromise(resolveFunction, promise) {
-                var _this = _super.call(this, resolveFunction) || this;
+                var _this_1 = _super.call(this, resolveFunction) || this;
                 /**
                  * The Window object.
                  */
-                _this._window = acquire(__Window);
+                _this_1._window = acquire(__Window);
                 if (!isNull(promise)) {
-                    _this.__http = promise.__http;
+                    _this_1.__http = promise.__http;
                 }
-                return _this;
+                return _this_1;
             }
             /**
              * A method to initialize this AjaxPromise, passing it the
@@ -6050,15 +6066,15 @@ var plat;
              * @param {string} key The key to search for in this cache.
              */
             TemplateCache.prototype.read = function (key) {
-                var _this = this;
+                var _this_1 = this;
                 var promise = _super.prototype.read.call(this, key);
                 if (isNull(promise)) {
                     return this._Promise.reject(null);
                 }
                 return promise.then(function (node) {
-                    return _this.put(key, node);
+                    return _this_1.put(key, node);
                 }, function (error) {
-                    _this._log.warn("Error retrieving template, " + key + ", from promise.");
+                    _this_1._log.warn("Error retrieving template, " + key + ", from promise.");
                     return null;
                 });
             };
@@ -6078,10 +6094,10 @@ var plat;
              * The constructor for a BaseStorage.
              */
             function BaseStorage(storage) {
-                var _this = this;
+                var _this_1 = this;
                 this._storage = storage;
                 forEach(function (value, key) {
-                    _this[key] = value;
+                    _this_1[key] = value;
                 }, storage);
             }
             Object.defineProperty(BaseStorage.prototype, "length", {
@@ -6668,7 +6684,7 @@ var plat;
              * notified of object changes.
              */
             ContextManager.prototype.observe = function (absoluteIdentifier, observableListener) {
-                var _this = this;
+                var _this_1 = this;
                 if (isEmpty(absoluteIdentifier)) {
                     return noop;
                 }
@@ -6692,7 +6708,7 @@ var plat;
                         if (isLength) {
                             this.__lengthListeners[absoluteIdentifier] = observableListener;
                             ContextManager.pushRemoveListener(absoluteIdentifier, observableListener.uid, function () {
-                                deleteProperty(_this.__lengthListeners, absoluteIdentifier);
+                                deleteProperty(_this_1.__lengthListeners, absoluteIdentifier);
                             });
                         }
                         return this._addObservableListener(absoluteIdentifier, observableListener, isLength);
@@ -6733,7 +6749,7 @@ var plat;
                                 return;
                             }
                             removeListener();
-                            _this._define(absoluteIdentifier, context, key);
+                            _this_1._define(absoluteIdentifier, context, key);
                         },
                     });
                     removeCallback = function () {
@@ -6758,7 +6774,7 @@ var plat;
                                 uid: uid_1,
                                 listener: function (newValue, oldValue) {
                                     removeListener();
-                                    removeListener = _this.observeArrayMutation(uid_1, noop, join, newValue, oldValue);
+                                    removeListener = _this_1.observeArrayMutation(uid_1, noop, join, newValue, oldValue);
                                 },
                             });
                         }
@@ -7009,7 +7025,7 @@ var plat;
              * @param {Array<string>} mappings? An array of mapped child identifier keys to notify.
              */
             ContextManager.prototype._notifyChildProperties = function (identifier, newValue, oldValue, mappings) {
-                var _this = this;
+                var _this_1 = this;
                 if (!isObject(mappings)) {
                     var hash = this.__identifierHash[identifier];
                     if (!isObject(hash)) {
@@ -7065,7 +7081,7 @@ var plat;
                                     uid: uid_2,
                                     listener: function (nValue, oValue) {
                                         removeListener_1();
-                                        removeListener_1 = _this.observeArrayMutation(uid_2, noop, join_1, nValue, oValue);
+                                        removeListener_1 = _this_1.observeArrayMutation(uid_2, noop, join_1, nValue, oValue);
                                     },
                                 });
                                 deleteProperty(this_1.__lengthListeners, binding);
@@ -7106,7 +7122,7 @@ var plat;
              * @param {boolean} isLength? Indicates the property being observed is an Array's length.
              */
             ContextManager.prototype._addObservableListener = function (absoluteIdentifier, observableListener, isLength) {
-                var _this = this;
+                var _this_1 = this;
                 if (isLength === true) {
                     var split = absoluteIdentifier.split('.');
                     // pop length key 
@@ -7127,7 +7143,7 @@ var plat;
                 var uid = observableListener.uid;
                 var remove = function () {
                     ContextManager.spliceRemoveListener(absoluteIdentifier, uid, remove);
-                    _this._removeCallback(absoluteIdentifier, observableListener);
+                    _this_1._removeCallback(absoluteIdentifier, observableListener);
                 };
                 ContextManager.pushRemoveListener(absoluteIdentifier, uid, remove);
                 return remove;
@@ -7310,13 +7326,13 @@ var plat;
              * @param {string} key The property key of the object being defined.
              */
             ContextManager.prototype.__defineObject = function (identifier, immediateContext, key) {
-                var _this = this;
+                var _this_1 = this;
                 var value = immediateContext[key];
                 Object.defineProperty(immediateContext, key, {
                     configurable: true,
                     enumerable: true,
                     get: function () {
-                        _this.__observedIdentifier = identifier;
+                        _this_1.__observedIdentifier = identifier;
                         return value;
                     },
                     set: function (newValue) {
@@ -7325,29 +7341,29 @@ var plat;
                         }
                         var oldValue = value;
                         value = newValue;
-                        if (_this.__isArrayFunction) {
+                        if (_this_1.__isArrayFunction) {
                             return;
                         }
                         ContextManager.unObserve(oldValue);
-                        var props = _this.__identifierHash[identifier];
+                        var props = _this_1.__identifierHash[identifier];
                         var childPropertiesExist = false;
                         var mappings;
                         if (isObject(props)) {
                             mappings = Object.keys(props);
                             childPropertiesExist = mappings.length > 0;
                         }
-                        _this._execute(identifier, value, oldValue);
+                        _this_1._execute(identifier, value, oldValue);
                         if (childPropertiesExist) {
-                            _this._notifyChildProperties(identifier, value, oldValue, mappings);
+                            _this_1._notifyChildProperties(identifier, value, oldValue, mappings);
                             if (!isObject(value)) {
-                                _this.__definePrimitive(identifier, immediateContext, key);
+                                _this_1.__definePrimitive(identifier, immediateContext, key);
                             }
                         }
-                        else if (isEmpty(_this.__identifiers[identifier])) {
+                        else if (isEmpty(_this_1.__identifiers[identifier])) {
                             ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                         }
                         else if (!isObject(value)) {
-                            _this.__definePrimitive(identifier, immediateContext, key);
+                            _this_1.__definePrimitive(identifier, immediateContext, key);
                         }
                     },
                 });
@@ -7359,7 +7375,7 @@ var plat;
              * @param {string} key The property key of the primitive being defined.
              */
             ContextManager.prototype.__definePrimitive = function (identifier, immediateContext, key) {
-                var _this = this;
+                var _this_1 = this;
                 var value = immediateContext[key];
                 var isDefined = !isNull(value);
                 if (isArray(immediateContext) && key === 'length') {
@@ -7369,7 +7385,7 @@ var plat;
                     configurable: true,
                     enumerable: true,
                     get: function () {
-                        _this.__observedIdentifier = identifier;
+                        _this_1.__observedIdentifier = identifier;
                         return value;
                     },
                     set: function (newValue) {
@@ -7378,29 +7394,29 @@ var plat;
                         }
                         var oldValue = value;
                         value = newValue;
-                        if (_this.__isArrayFunction && isArray(immediateContext)) {
+                        if (_this_1.__isArrayFunction && isArray(immediateContext)) {
                             return;
                         }
-                        var props = _this.__identifierHash[identifier];
+                        var props = _this_1.__identifierHash[identifier];
                         var childPropertiesExist = false;
                         var mappings;
                         if (isObject(props)) {
                             mappings = Object.keys(props);
                             childPropertiesExist = mappings.length > 0;
                         }
-                        _this._execute(identifier, newValue, oldValue);
+                        _this_1._execute(identifier, newValue, oldValue);
                         if (!childPropertiesExist &&
-                            isEmpty(_this.__identifiers[identifier])) {
+                            isEmpty(_this_1.__identifiers[identifier])) {
                             ContextManager.defineProperty(immediateContext, key, value, true, true, true);
                         }
                         else if (isObject(value)) {
-                            _this.__defineObject(identifier, immediateContext, key);
+                            _this_1.__defineObject(identifier, immediateContext, key);
                             if (childPropertiesExist) {
-                                _this._notifyChildProperties(identifier, newValue, oldValue, mappings);
+                                _this_1._notifyChildProperties(identifier, newValue, oldValue, mappings);
                             }
                         }
                         else if (!isDefined) {
-                            _this.__definePrimitive(identifier, immediateContext, key);
+                            _this_1.__definePrimitive(identifier, immediateContext, key);
                             isDefined = true;
                         }
                     },
@@ -8264,7 +8280,7 @@ var plat;
          * @param {number} index? The index that denotes the item in the context if the context is an Array.
          */
         Control.prototype.observe = function (listener, identifier) {
-            var _this = this;
+            var _this_1 = this;
             var control = isObject(this.context)
                 ? this
                 : this.parent;
@@ -8319,7 +8335,7 @@ var plat;
             var contextManager = _ContextManager.getManager(root);
             return contextManager.observe(absoluteIdentifier, {
                 listener: function (newValue, oldValue) {
-                    listener.call(_this, newValue, oldValue, identifier);
+                    listener.call(_this_1, newValue, oldValue, identifier);
                 },
                 uid: this.uid,
             });
@@ -8388,7 +8404,7 @@ var plat;
          * @param {plat.expressions.IParsedExpression} expression The expression string to watch for changes.
          */
         Control.prototype.observeExpression = function (listener, expression) {
-            var _this = this;
+            var _this_1 = this;
             if (isEmpty(expression)) {
                 return noop;
             }
@@ -8474,7 +8490,7 @@ var plat;
             var uid = this.uid;
             var observableListener = function () {
                 var value = evaluateExpression(expression, control);
-                listener.call(_this, value, oldValue, expression.expression);
+                listener.call(_this_1, value, oldValue, expression.expression);
                 oldValue = value;
             };
             for (i = 0; i < length; i += 1) {
@@ -8615,14 +8631,14 @@ var plat;
     var AttributeControl = /** @class */ (function (_super) {
         __extends(AttributeControl, _super);
         function AttributeControl() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+            var _this_1 = _super !== null && _super.apply(this, arguments) || this;
             /**
              * Specifies the TemplateControl associated with this
              * control's element. Can be null if no TemplateControl
              * exists.
              */
-            _this.templateControl = null;
-            return _this;
+            _this_1.templateControl = null;
+            return _this_1;
         }
         /**
          * Method for disposing an attribute control. Removes any
@@ -8661,25 +8677,25 @@ var plat;
         var TemplateControl = /** @class */ (function (_super) {
             __extends(TemplateControl, _super);
             function TemplateControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * By default TemplateControls have a priority of 100.
                  */
-                _this.priority = 100;
+                _this_1.priority = 100;
                 /**
                  * The context of an TemplateControl, used for inheritance and data-binding.
                  */
-                _this.context = null;
+                _this_1.context = null;
                 /**
                  * Specifies the absolute path from where the context was created to this Control's context.
                  * Used by the ContextManager for maintaining context parity
                  * (e.g. 'context.childContextProperty.grandChildContextProperty').
                  */
-                _this.absoluteContextPath = null;
+                _this_1.absoluteContextPath = null;
                 /**
                  * Flag indicating whether or not the TemplateControl defines the context property.
                  */
-                _this.hasOwnContext = false;
+                _this_1.hasOwnContext = false;
                 /**
                  * Allows a TemplateControl to either swap its element with another element (e.g. plat-select),
                  * or replace its element altogether. If null or empty string, the element will be removed from the DOM, and the
@@ -8691,8 +8707,8 @@ var plat;
                  * element's nodename (e.g. `<plat-foreach plat-context="..."></plat-foreach>`), but will maintain whatever element type
                  * is used otherwise (e.g. `<tr plat-control="plat-foreach" plat-context="..."></tr>`).
                  */
-                _this.replaceWith = 'any';
-                return _this;
+                _this_1.replaceWith = 'any';
+                return _this_1;
             }
             /**
              * Evaluates an expression string with a given control and optional control's context and aliases.
@@ -9130,18 +9146,18 @@ var plat;
         var BindControl = /** @class */ (function (_super) {
             __extends(BindControl, _super);
             function BindControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Set to 120, higher than `plat-bind` to ensure that BinControls load
                  * prior to the `plat-bind`.
                  */
-                _this.priority = 120;
+                _this_1.priority = 120;
                 /**
                  * The set of functions added externally that listens
                  * for property changes.
                  */
-                _this._listeners = [];
-                return _this;
+                _this_1._listeners = [];
+                return _this_1;
             }
             /**
              * Adds a listener to be called when the bindable property changes.
@@ -9200,12 +9216,12 @@ var plat;
         var ViewControl = /** @class */ (function (_super) {
             __extends(ViewControl, _super);
             function ViewControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Specifies that this control will have its own context, and it should not inherit a context.
                  */
-                _this.hasOwnContext = true;
-                return _this;
+                _this_1.hasOwnContext = true;
+                return _this_1;
             }
             /**
              * Recursively disposes a ViewControl and its children.
@@ -9552,7 +9568,7 @@ var plat;
              * controls created in the template.
              */
             BindableTemplates.prototype.once = function (template, relativeIdentifier, resources) {
-                var _this = this;
+                var _this_1 = this;
                 var fragment;
                 if (isNull(template)) {
                     return this._Promise.resolve(this._document.createDocumentFragment());
@@ -9591,7 +9607,7 @@ var plat;
                 manager.initialize(nodeMap, controlManager);
                 manager.setUiControlTemplate();
                 return manager.fulfillAndLoad().then(function () {
-                    var _document = _this._document;
+                    var _document = _this_1._document;
                     control.startNode = fragment.insertBefore(_document.createComment(control.type + __START_NODE), fragment.firstChild);
                     control.endNode = fragment.insertBefore(_document.createComment(control.type + __END_NODE), null);
                     return fragment;
@@ -9704,7 +9720,7 @@ var plat;
              * replace an existing Control in the child controls Array and its element in the DOM.
              */
             BindableTemplates.prototype._bind = function (key, relativeIdentifier, resources, index) {
-                var _this = this;
+                var _this_1 = this;
                 var templatePromise = this.templates[key];
                 var noIndex = isNull(index);
                 if (isNull(templatePromise)) {
@@ -9719,23 +9735,23 @@ var plat;
                 }
                 templatePromise = templatePromise.then(function (result) {
                     var template = result.cloneNode(true);
-                    var control = _this._createBoundControl(key, template, relativeIdentifier, resources);
-                    var nodeMap = _this._createNodeMap(control, template, relativeIdentifier);
+                    var control = _this_1._createBoundControl(key, template, relativeIdentifier, resources);
+                    var nodeMap = _this_1._createNodeMap(control, template, relativeIdentifier);
                     if (noIndex) {
-                        _this.control.controls.push(control);
+                        _this_1.control.controls.push(control);
                     }
-                    return _this._bindTemplate(key, nodeMap);
+                    return _this_1._bindTemplate(key, nodeMap);
                 });
                 if (!noIndex) {
                     return templatePromise
                         .then(function (fragment) {
                         var childNodes = Array.prototype.slice.call(fragment.childNodes);
-                        var oldControl = _this.control
+                        var oldControl = _this_1.control
                             .controls[index];
                         var endNode = oldControl.endNode;
                         var parentNode = endNode.parentNode;
                         var nextSibling = endNode.nextSibling;
-                        _this._TemplateControlFactory.dispose(oldControl);
+                        _this_1._TemplateControlFactory.dispose(oldControl);
                         parentNode.insertBefore(fragment, nextSibling);
                         return childNodes;
                     })
@@ -9744,9 +9760,9 @@ var plat;
                             if (isString(error)) {
                                 error = new Error(error);
                             }
-                            _this._log.error(error);
+                            _this_1._log.error(error);
                         });
-                        return _this._document.createDocumentFragment();
+                        return _this_1._document.createDocumentFragment();
                     });
                 }
                 return templatePromise.then(null, function (error) {
@@ -9754,9 +9770,9 @@ var plat;
                         if (isString(error)) {
                             error = new Error(error);
                         }
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     });
-                    return _this._document.createDocumentFragment();
+                    return _this_1._document.createDocumentFragment();
                 });
             };
             /**
@@ -9766,7 +9782,7 @@ var plat;
              * @param {plat.processing.INodeMap} nodeMap The node map to bind.
              */
             BindableTemplates.prototype._bindTemplate = function (key, nodeMap) {
-                var _this = this;
+                var _this_1 = this;
                 var control = nodeMap.uiControlNode.control;
                 var disposed = false;
                 var dispose = isFunction(control.dispose)
@@ -9778,7 +9794,7 @@ var plat;
                     control.dispose = dispose;
                 };
                 return this._bindNodeMap(key, nodeMap).then(function () {
-                    var _document = _this._document;
+                    var _document = _this_1._document;
                     var template = nodeMap.element;
                     if (disposed) {
                         return _document.createDocumentFragment();
@@ -9791,7 +9807,7 @@ var plat;
                         if (isString(error)) {
                             error = new Error(error);
                         }
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     });
                     return null;
                 });
@@ -9831,7 +9847,7 @@ var plat;
              * @param {string} key The template key.
              */
             BindableTemplates.prototype._compileNodeMap = function (control, nodeMap, key) {
-                var _this = this;
+                var _this_1 = this;
                 var manager = this._ElementManagerFactory.getInstance();
                 var promises = [];
                 manager.isClone = true;
@@ -9844,7 +9860,7 @@ var plat;
                     .then(function () {
                     var element = nodeMap.element;
                     var clone = element.cloneNode(true);
-                    var _document = _this._document;
+                    var _document = _this_1._document;
                     var startNode = (control.startNode = _document.createComment(control.type + __START_NODE));
                     var endNode = (control.endNode = _document.createComment(control.type + __END_NODE));
                     element.insertBefore(startNode, element.firstChild);
@@ -10484,7 +10500,7 @@ var plat;
              * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
              */
             DomEvents.prototype.addEventListener = function (element, type, listener, useCapture) {
-                var _this = this;
+                var _this_1 = this;
                 var _compat = this._compat;
                 var mappedGestures = _compat.mappedEvents;
                 var mappedType = mappedGestures[type];
@@ -10517,7 +10533,7 @@ var plat;
                             if (mappedCount[type] > 0) {
                                 mappedCount[type] -= 1;
                             }
-                            _this.__unregisterElement(element, type);
+                            _this_1.__unregisterElement(element, type);
                         }
                         listenerRemoved = true;
                         element.removeEventListener(type, listener, useCapture);
@@ -10540,7 +10556,7 @@ var plat;
                         return;
                     }
                     listenerRemoved = true;
-                    _this.__removeEventListener(element, type, listener, useCapture);
+                    _this_1.__removeEventListener(element, type, listener, useCapture);
                 };
             };
             /**
@@ -10599,7 +10615,7 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch start event object.
              */
             DomEvents.prototype._onTouchStart = function (ev) {
-                var _this = this;
+                var _this_1 = this;
                 var eventType = ev.type;
                 if (this.__ignoreEvent[eventType]) {
                     this.__ignoreEvent[eventType] = false;
@@ -10682,7 +10698,7 @@ var plat;
                 if (noHolds) {
                     this.__hasRelease = false;
                     this.__cancelDeferredHold = defer(function () {
-                        _this.__hasRelease = true;
+                        _this_1.__hasRelease = true;
                     }, holdInterval);
                     this.__handleMappedEvents(eventType, ev, ev);
                     this.__registerMove(eventType);
@@ -10694,7 +10710,7 @@ var plat;
                     if (domEventFound) {
                         subscribeFn = function () {
                             domEvent.trigger(ev);
-                            _this.__cancelDeferredHold = noop;
+                            _this_1.__cancelDeferredHold = noop;
                         };
                     }
                 }
@@ -10706,8 +10722,8 @@ var plat;
                     if (domEventFound) {
                         subscribeFn = function () {
                             domEvent.trigger(ev);
-                            _this.__hasRelease = true;
-                            _this.__cancelDeferredHold = noop;
+                            _this_1.__hasRelease = true;
+                            _this_1.__cancelDeferredHold = noop;
                         };
                     }
                 }
@@ -10785,7 +10801,7 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch end event object.
              */
             DomEvents.prototype._onTouchEnd = function (ev) {
-                var _this = this;
+                var _this_1 = this;
                 var eventType = ev.type;
                 if (this.__ignoreEvent[eventType]) {
                     this.__ignoreEvent[eventType] = false;
@@ -10795,13 +10811,13 @@ var plat;
                             ev.preventDefault();
                         }
                         postpone(function () {
-                            var ltu = _this.__lastTouchUp;
+                            var ltu = _this_1.__lastTouchUp;
                             if (!isObject(ltu)) {
                                 ltu = {};
                             }
                             var target = ltu.target;
-                            if (_this._document.body.contains(target)) {
-                                _this.__handleInput(target);
+                            if (_this_1._document.body.contains(target)) {
+                                _this_1.__handleInput(target);
                             }
                         });
                         return false;
@@ -10996,7 +11012,7 @@ var plat;
              * @param {plat.ui.IPointerEvent} ev The touch end event object.
              */
             DomEvents.prototype.__handleTap = function (ev) {
-                var _this = this;
+                var _this_1 = this;
                 var target = ev.target;
                 var touchDown = this.__lastTouchDown;
                 if (!isObject(touchDown)) {
@@ -11032,8 +11048,8 @@ var plat;
                 this.__cancelDeferredTap = defer(function () {
                     ev._buttons = touchDown._buttons;
                     domEvent.trigger(ev);
-                    _this.__tapCount = 0;
-                    _this.__cancelDeferredTap = noop;
+                    _this_1.__tapCount = 0;
+                    _this_1.__cancelDeferredTap = noop;
                 }, DomEvents.config.intervals.dblTapZoomDelay);
             };
             /**
@@ -11851,12 +11867,12 @@ var plat;
              * @param {HTMLInputElement} target The target to listen for the blur event on.
              */
             DomEvents.prototype.__waitForBlur = function (target) {
-                var _this = this;
+                var _this_1 = this;
                 this.__blurRemover = this.addEventListener(target, 'blur', function () {
-                    _this.__blurRemover();
-                    _this.__blurRemover = noop;
-                    if (target === _this.__focusedElement) {
-                        _this.__focusedElement = null;
+                    _this_1.__blurRemover();
+                    _this_1.__blurRemover = noop;
+                    if (target === _this_1.__focusedElement) {
+                        _this_1.__focusedElement = null;
                     }
                 }, false);
             };
@@ -11865,7 +11881,7 @@ var plat;
              * @param {HTMLInputElement} target The target to handle click functionality for.
              */
             DomEvents.prototype.__clickTarget = function (target) {
-                var _this = this;
+                var _this_1 = this;
                 var clicked = false;
                 var handler = function () {
                     clicked = true;
@@ -11877,7 +11893,7 @@ var plat;
                         return;
                     }
                     target.removeEventListener('click', handler, false);
-                    if (_this._document.body.contains(target) &&
+                    if (_this_1._document.body.contains(target) &&
                         isFunction(target.click)) {
                         target.click();
                     }
@@ -12185,15 +12201,15 @@ var plat;
              * @param {string} event The associated event.
              */
             function CustomDomEvent(element, event) {
-                var _this = _super.call(this) || this;
+                var _this_1 = _super.call(this) || this;
                 /**
                  * The number of listeners added for this event on this element.
                  */
-                _this.count = 0;
-                _this.element = element;
-                _this.event = event;
-                _this.count += 1;
-                return _this;
+                _this_1.count = 0;
+                _this_1.element = element;
+                _this_1.event = event;
+                _this_1.count += 1;
+                return _this_1;
             }
             /**
              * Triggers its event on its element.
@@ -12384,11 +12400,11 @@ var plat;
                     });
                 };
                 Animator.prototype.all = function (promises) {
-                    var _this = this;
+                    var _this_1 = this;
                     var length = promises.length;
                     var args = [];
                     var animationPromise = new AnimationPromise(function (resolve) {
-                        _this._Promise.all(promises).then(function () {
+                        _this_1._Promise.all(promises).then(function () {
                             resolve();
                         });
                     });
@@ -12405,7 +12421,7 @@ var plat;
                     // tslint:disable-next-line 
                     var animationPromise = new AnimationPromise(function (resolve) {
                         resolve(function () {
-                            return animationPromise;
+                            return (animationPromise);
                         });
                     });
                     return animationPromise;
@@ -12440,7 +12456,7 @@ var plat;
                  * special animation functionality.
                  */
                 Animator.prototype._create = function (elements, key, options, functionality) {
-                    var _this = this;
+                    var _this_1 = this;
                     var animationInjector = animationInjectors[key];
                     var animationInstances = [];
                     var elementNodes = [];
@@ -12477,7 +12493,7 @@ var plat;
                     var previousAnimations = this.__setAnimationId(id, elementNodes);
                     var previousPromise;
                     var animationPromise = new AnimationPromise(function (resolve) {
-                        var _Promise = _this._Promise;
+                        var _Promise = _this_1._Promise;
                         previousPromise = _Promise
                             .all(previousAnimations)
                             .then(function () {
@@ -12485,14 +12501,14 @@ var plat;
                             for (var i = 0; i < length; i += 1) {
                                 animationPromises.push(animationInstances[i].instantiate(elementNodes[i], options));
                             }
-                            _this._handlePostInitFunctionality(elements, elementNodes, functionality);
-                            var animationsFinished = _Promise.all(animationPromises);
-                            var animatingParentId = _this.__isParentAnimating(elementNodes);
-                            var animatedElement = _this.__generateAnimatedElement(id, elementNodes, animationPromise);
+                            _this_1._handlePostInitFunctionality(elements, elementNodes, functionality);
+                            var animationsFinished = _Promise.all((animationPromises));
+                            var animatingParentId = _this_1.__isParentAnimating(elementNodes);
+                            var animatedElement = _this_1.__generateAnimatedElement(id, elementNodes, animationPromise);
                             if (!isNull(animatingParentId)) {
-                                _this._handleEndFunctionality(elements, elementNodes, functionality);
+                                _this_1._handleEndFunctionality(elements, elementNodes, functionality);
                                 animatedElement.animationEnd(true);
-                                var parent_1 = _this._animatedElements[animatingParentId];
+                                var parent_1 = _this_1._animatedElements[animatingParentId];
                                 var resolvedPromise_1 = isPromise(parent_1.promise)
                                     ? function () {
                                         return parent_1.promise;
@@ -12504,10 +12520,10 @@ var plat;
                                     resolve(resolvedPromise_1);
                                 });
                             }
-                            _this.__stopChildAnimations(elementNodes);
+                            _this_1.__stopChildAnimations(elementNodes);
                             animatedElement.promise = animationPromise;
                             animationsFinished.then(function () {
-                                _this._handleEndFunctionality(elements, elementNodes, functionality);
+                                _this_1._handleEndFunctionality(elements, elementNodes, functionality);
                                 animatedElement.animationEnd();
                                 resolve(function () {
                                     return animationPromise;
@@ -12797,25 +12813,25 @@ var plat;
                  * @param {any} promise? The promise object to allow for cancelling the {@link plat.ui.animations.AnimationPromise}.
                  */
                 function AnimationPromise(resolveFunction, promise) {
-                    var _this = _super.call(this, resolveFunction) || this;
+                    var _this_1 = _super.call(this, resolveFunction) || this;
                     /**
                      * Reference to the IPromise injectable.
                      */
-                    _this._Promise = acquire(__Promise);
+                    _this_1._Promise = acquire(__Promise);
                     /**
                      * The state of the animation. 0 prior to start, 1 if started, and
                      * 2 if canceled.
                      */
-                    _this.__animationState = 0;
+                    _this_1.__animationState = 0;
                     /**
                      * An Array of animation instances linked to this promise.
                      */
-                    _this.__animationInstances = [];
+                    _this_1.__animationInstances = [];
                     if (!isNull(promise)) {
-                        _this.__animationInstances = promise.__animationInstances;
-                        _this.__animationState = promise.__animationState;
+                        _this_1.__animationInstances = promise.__animationInstances;
+                        _this_1.__animationState = promise.__animationState;
                     }
-                    return _this;
+                    return _this_1;
                 }
                 /**
                  * Initializes the promise, providing it with the {@link plat.ui.animations.BaseAnimation} instance.
@@ -12825,7 +12841,7 @@ var plat;
                 AnimationPromise.prototype.initialize = function (instances) {
                     if (isEmpty(this.__animationInstances)) {
                         if (isArray(instances)) {
-                            this.__animationInstances = instances;
+                            this.__animationInstances = (instances);
                         }
                         else if (isObject(instances)) {
                             this.__animationInstances = [
@@ -12926,12 +12942,12 @@ var plat;
                 };
                 /**
                  * Takes in two methods, called when/if the promise fulfills.
-                 * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.Promise<U>} onFulfilled
+                 * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.Promise<TResult1>} onFulfilled
                  * A method called when/if the promise fulfills.
                  * If undefined the next onFulfilled method in the promise chain will be called.
                  */
                 AnimationPromise.prototype.then = function (onFulfilled, onRejected) {
-                    return _super.prototype.then.call(this, onFulfilled);
+                    return (_super.prototype.then.call(this, onFulfilled, onRejected));
                 };
                 /**
                  * A wrapper method for Promise.then(undefined, onRejected);
@@ -12939,7 +12955,7 @@ var plat;
                  * onRejected method in the promise chain will be called.
                  */
                 AnimationPromise.prototype.catch = function (onRejected) {
-                    return _super.prototype.catch.call(this, onRejected);
+                    return (_super.prototype.catch.call(this, onRejected));
                 };
                 return AnimationPromise;
             }(async.Promise));
@@ -13029,12 +13045,12 @@ var plat;
                  * @param {any} options Specified options for the animation.
                  */
                 BaseAnimation.prototype.instantiate = function (element, options) {
-                    var _this = this;
+                    var _this_1 = this;
                     this.element = element;
                     this.options = options;
                     var promise = new AnimationPromise(function (resolve) {
-                        _this._resolve = resolve;
-                        _this.initialize();
+                        _this_1._resolve = resolve;
+                        _this_1.initialize();
                     });
                     promise.initialize(this);
                     return promise;
@@ -13056,13 +13072,13 @@ var plat;
             var CssAnimation = /** @class */ (function (_super) {
                 __extends(CssAnimation, _super);
                 function CssAnimation() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * A set of browser compatible CSS animation events capable of being listened to.
                      */
-                    _this._animationEvents = _this._compat
+                    _this_1._animationEvents = _this_1._compat
                         .animationEvents;
-                    return _this;
+                    return _this_1;
                 }
                 /**
                  * A function to listen to the start of an animation event.
@@ -13109,16 +13125,16 @@ var plat;
             var SimpleCssAnimation = /** @class */ (function (_super) {
                 __extends(SimpleCssAnimation, _super);
                 function SimpleCssAnimation() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the animated element.
                      */
-                    _this.className = __SimpleAnimation;
+                    _this_1.className = __SimpleAnimation;
                     /**
                      * A function for stopping a potential callback in the animation chain.
                      */
-                    _this._cancelAnimation = noop;
-                    return _this;
+                    _this_1._cancelAnimation = noop;
+                    return _this_1;
                 }
                 /**
                  * Adds the class to initialize the animation.
@@ -13130,37 +13146,37 @@ var plat;
                  * A function denoting the start of the animation.
                  */
                 SimpleCssAnimation.prototype.start = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     this._cancelAnimation = requestAnimationFrameGlobal(function () {
-                        var element = _this.element;
-                        var className = _this.className;
+                        var element = _this_1.element;
+                        var className = _this_1.className;
                         if (element.offsetParent === null) {
-                            _this._dispose();
-                            _this.end();
+                            _this_1._dispose();
+                            _this_1.end();
                             return;
                         }
                         addClass(element, className);
-                        var animationId = _this._animationEvents.$animation;
-                        var options = _this.options;
+                        var animationId = _this_1._animationEvents.$animation;
+                        var options = _this_1.options;
                         if (!isObject(options)) {
                             options = {};
                         }
-                        var computedStyle = _this._window.getComputedStyle(element, options.pseudo);
+                        var computedStyle = _this_1._window.getComputedStyle(element, options.pseudo);
                         var animationName = computedStyle[animationId + "Name"];
                         if (animationName === '' ||
                             animationName === 'none' ||
                             computedStyle[animationId + "PlayState"] === 'paused') {
-                            _this._dispose();
-                            _this.end();
+                            _this_1._dispose();
+                            _this_1.end();
                             return;
                         }
                         if (!options.preserveInit) {
                             removeClass(element, className + __INIT_SUFFIX);
                         }
-                        _this._cancelAnimation = _this.animationEnd(function () {
-                            _this._cancelAnimation = requestAnimationFrameGlobal(function () {
-                                _this._dispose();
-                                _this.end();
+                        _this_1._cancelAnimation = _this_1.animationEnd(function () {
+                            _this_1._cancelAnimation = requestAnimationFrameGlobal(function () {
+                                _this_1._dispose();
+                                _this_1.end();
                             });
                         });
                     });
@@ -13169,15 +13185,15 @@ var plat;
                  * A function to be called to pause the animation.
                  */
                 SimpleCssAnimation.prototype.pause = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     if (this._cancelAnimation === noop) {
                         return this._Promise.resolve();
                     }
                     var animationEvents = this._compat.animationEvents;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
-                            if (_this._cancelAnimation !== noop) {
-                                _this.element.style[animationEvents.$animation + "PlayState"] =
+                            if (_this_1._cancelAnimation !== noop) {
+                                _this_1.element.style[animationEvents.$animation + "PlayState"] =
                                     'paused';
                             }
                             resolve();
@@ -13188,15 +13204,15 @@ var plat;
                  * A function to be called to resume a paused animation.
                  */
                 SimpleCssAnimation.prototype.resume = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     if (this._cancelAnimation === noop) {
                         return this._Promise.resolve();
                     }
                     var animationEvents = this._compat.animationEvents;
                     return new this._Promise(function (resolve) {
                         requestAnimationFrameGlobal(function () {
-                            if (_this._cancelAnimation !== noop) {
-                                _this.element.style[animationEvents.$animation + "PlayState"] =
+                            if (_this_1._cancelAnimation !== noop) {
+                                _this_1.element.style[animationEvents.$animation + "PlayState"] =
                                     'running';
                             }
                             resolve();
@@ -13230,12 +13246,12 @@ var plat;
             var FadeIn = /** @class */ (function (_super) {
                 __extends(FadeIn, _super);
                 function FadeIn() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the element fading in.
                      */
-                    _this.className = __FadeIn;
-                    return _this;
+                    _this_1.className = __FadeIn;
+                    return _this_1;
                 }
                 return FadeIn;
             }(SimpleCssAnimation));
@@ -13247,12 +13263,12 @@ var plat;
             var FadeOut = /** @class */ (function (_super) {
                 __extends(FadeOut, _super);
                 function FadeOut() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the element fading out.
                      */
-                    _this.className = __FadeOut;
-                    return _this;
+                    _this_1.className = __FadeOut;
+                    return _this_1;
                 }
                 return FadeOut;
             }(SimpleCssAnimation));
@@ -13264,12 +13280,12 @@ var plat;
             var Enter = /** @class */ (function (_super) {
                 __extends(Enter, _super);
                 function Enter() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the entering element.
                      */
-                    _this.className = __Enter;
-                    return _this;
+                    _this_1.className = __Enter;
+                    return _this_1;
                 }
                 return Enter;
             }(SimpleCssAnimation));
@@ -13281,12 +13297,12 @@ var plat;
             var Leave = /** @class */ (function (_super) {
                 __extends(Leave, _super);
                 function Leave() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the leaving element.
                      */
-                    _this.className = __Leave;
-                    return _this;
+                    _this_1.className = __Leave;
+                    return _this_1;
                 }
                 return Leave;
             }(SimpleCssAnimation));
@@ -13298,12 +13314,12 @@ var plat;
             var Move = /** @class */ (function (_super) {
                 __extends(Move, _super);
                 function Move() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the leaving element.
                      */
-                    _this.className = __Move;
-                    return _this;
+                    _this_1.className = __Move;
+                    return _this_1;
                 }
                 return Move;
             }(SimpleCssAnimation));
@@ -13316,45 +13332,45 @@ var plat;
             var SimpleCssTransition = /** @class */ (function (_super) {
                 __extends(SimpleCssTransition, _super);
                 function SimpleCssTransition() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * The class name added to the animated element.
                      */
-                    _this.className = __SimpleTransition;
+                    _this_1.className = __SimpleTransition;
                     /**
                      * A function for stopping a potential callback in the animation chain.
                      */
-                    _this._animationCanceled = noop;
+                    _this_1._animationCanceled = noop;
                     /**
                      * A regular expression to normalize modified property keys.
                      */
-                    _this._normalizeRegex = /-/g;
+                    _this_1._normalizeRegex = /-/g;
                     /**
                      * A regular expression grab everything that is not a number.
                      */
-                    _this._nonNumRegex = /[^\-0-9\.]/g;
+                    _this_1._nonNumRegex = /[^\-0-9\.]/g;
                     /**
                      * An Object whose keys are the normalized keys of modified properties.
                      */
-                    _this._normalizedKeys = {};
+                    _this_1._normalizedKeys = {};
                     /**
                      * The "transitionend" event handler call count.
                      */
-                    _this._transitionCount = 0;
+                    _this_1._transitionCount = 0;
                     /**
                      * The user defined "transitionend" event handler call count.
                      */
-                    _this._count = 0;
+                    _this_1._count = 0;
                     /**
                      * Denotes whether or not the transition was ever started.
                      */
-                    _this._started = false;
+                    _this_1._started = false;
                     /**
                      * Denotes whether or not the transition changes are being performed
                      * with CSS or with JS through this.options.
                      */
-                    _this._usingCss = false;
-                    return _this;
+                    _this_1._usingCss = false;
+                    return _this_1;
                 }
                 /**
                  * Adds the class to enable the transition.
@@ -13366,25 +13382,25 @@ var plat;
                  * A function denoting the start of the animation.
                  */
                 SimpleCssTransition.prototype.start = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     this._animationCanceled = requestAnimationFrameGlobal(function () {
-                        var element = _this.element;
-                        var className = _this.className;
+                        var element = _this_1.element;
+                        var className = _this_1.className;
                         if (element.offsetParent === null) {
-                            _this._animate();
-                            _this._dispose();
-                            _this.end();
+                            _this_1._animate();
+                            _this_1._dispose();
+                            _this_1.end();
                         }
                         addClass(element, className);
-                        _this._started = true;
-                        var utils = _this.utils;
-                        var transitionId = _this._animationEvents.$transition;
-                        var options = _this.options;
+                        _this_1._started = true;
+                        var utils = _this_1.utils;
+                        var transitionId = _this_1._animationEvents.$transition;
+                        var options = _this_1.options;
                         if (!isObject(options)) {
                             options = {};
                         }
-                        var computedStyle = _this._window.getComputedStyle(element, options.pseudo);
-                        var properties = (_this._properties = computedStyle[transitionId + "Property"].split(','));
+                        var computedStyle = _this_1._window.getComputedStyle(element, options.pseudo);
+                        var properties = (_this_1._properties = computedStyle[transitionId + "Property"].split(','));
                         var durations = computedStyle[transitionId + "Duration"].split(',');
                         var length = properties.length;
                         var propLength = length;
@@ -13399,7 +13415,7 @@ var plat;
                             else if (propLength > 1 && prop === 'all') {
                                 // most likely developer error (extra comma at end of shorthand multi transition declaration) 
                                 // so we will splice 
-                                _this._log.debug("Improper transition declaration on class \"" + element.className + "\"");
+                                _this_1._log.debug("Improper transition declaration on class \"" + element.className + "\"");
                                 properties.splice(length, 1);
                             }
                         }
@@ -13420,27 +13436,27 @@ var plat;
                             }
                         }
                         if (noTransition) {
-                            _this._animate();
-                            _this._dispose();
-                            _this.end();
+                            _this_1._animate();
+                            _this_1._dispose();
+                            _this_1.end();
                             return;
                         }
                         if (utils.isNumber(options.count) && options.count > 0) {
-                            _this._count = options.count;
+                            _this_1._count = options.count;
                         }
                         if (options.preserveInit === false) {
                             removeClass(element, className + __INIT_SUFFIX);
                         }
-                        _this._animationCanceled = _this.transitionEnd(_this._done);
-                        if (_this._animate()) {
+                        _this_1._animationCanceled = _this_1.transitionEnd(_this_1._done);
+                        if (_this_1._animate()) {
                             return;
                         }
                         else if (utils.isEmpty(options.properties)) {
-                            _this.__cssTransition(computedStyle, durations);
+                            _this_1.__cssTransition(computedStyle, durations);
                             return;
                         }
-                        _this._dispose();
-                        _this.end();
+                        _this_1._dispose();
+                        _this_1.end();
                     });
                 };
                 /**
@@ -13555,7 +13571,7 @@ var plat;
                  * @param {Array<string>} durations The array of declared transition duration values.
                  */
                 SimpleCssTransition.prototype.__cssTransition = function (computedStyle, durations) {
-                    var _this = this;
+                    var _this_1 = this;
                     var transitionId = this._animationEvents.$transition;
                     var delays = computedStyle[transitionId + "Delay"].split(',');
                     var properties = this._properties;
@@ -13570,7 +13586,7 @@ var plat;
                     var duration;
                     var delay;
                     var defer = this.utils.defer.bind(this, function (prop, computedProp) {
-                        if (_this._animationCanceled === noop) {
+                        if (_this_1._animationCanceled === noop) {
                             // disposal has already occurred 
                             return;
                         }
@@ -13585,8 +13601,8 @@ var plat;
                         if (count < length || changed) {
                             return;
                         }
-                        _this._dispose();
-                        _this.end();
+                        _this_1._dispose();
+                        _this_1.end();
                     });
                     this._usingCss = true;
                     if (!isFinite(this._count) || this._count === 0) {
@@ -13650,7 +13666,7 @@ var plat;
                  * router that it is ready to receive navigation events.
                  */
                 Viewport.prototype.loaded = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var animate = (this._animate =
                         isObject(this.options) && this.options.value.animate === true);
                     if (animate) {
@@ -13659,7 +13675,7 @@ var plat;
                     this._Promise
                         .resolve(this._router.finishNavigating)
                         .then(function () {
-                        _this._router.register(_this);
+                        _this_1._router.register(_this_1);
                     });
                 };
                 /**
@@ -13670,7 +13686,7 @@ var plat;
                  * the view and feed it the route parameters/query.
                  */
                 Viewport.prototype.canNavigateTo = function (routeInfo) {
-                    var _this = this;
+                    var _this_1 = this;
                     var getRouter = this._Router.currentRouter;
                     var currentRouter = getRouter();
                     var response = true;
@@ -13696,8 +13712,8 @@ var plat;
                     return this._Promise
                         .resolve(response)
                         .then(function (canNavigateTo) {
-                        _this._nextInjector = injector;
-                        _this._nextView = view;
+                        _this_1._nextInjector = injector;
+                        _this_1._nextView = view;
                         return canNavigateTo;
                     });
                 };
@@ -13767,7 +13783,7 @@ var plat;
                  * next view. It is now safe for the viewport to dispose of the current state.
                  */
                 Viewport.prototype.navigateFrom = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var view = this.controls[0];
                     var promise;
                     var viewExists = isObject(view);
@@ -13781,24 +13797,24 @@ var plat;
                         .catch(function (error) {
                         if (isObject(error)) {
                             if (isString(error.message)) {
-                                _this._log.debug(_this.type + " error: " + error.message);
+                                _this_1._log.debug(_this_1.type + " error: " + error.message);
                                 return;
                             }
-                            _this._log.debug(_this.type + " error: " + JSON.stringify(error));
+                            _this_1._log.debug(_this_1.type + " error: " + JSON.stringify(error));
                             return;
                         }
-                        _this._log.debug(error);
+                        _this_1._log.debug(error);
                     })
                         .then(function () {
-                        if (!(_this._animate && viewExists)) {
+                        if (!(_this_1._animate && viewExists)) {
                             Control.dispose(view);
                             return;
                         }
                         var oldElement = view.element;
-                        if (_this._navigator.isBackNavigation()) {
-                            _this.dom.addClass(oldElement, __NavigatingBack);
+                        if (_this_1._navigator.isBackNavigation()) {
+                            _this_1.dom.addClass(oldElement, __NavigatingBack);
                         }
-                        _this._animator.leave(oldElement, __Leave).then(function () {
+                        _this_1._animator.leave(oldElement, __Leave).then(function () {
                             Control.dispose(view);
                         });
                     });
@@ -13876,19 +13892,19 @@ var plat;
                  * The constructor for a Template. Creates the control cache.
                  */
                 function Template() {
-                    var _this = _super.call(this) || this;
+                    var _this_1 = _super.call(this) || this;
                     /**
                      * Removes the `<plat-template>` node from the DOM
                      */
-                    _this.replaceWith = null;
+                    _this_1.replaceWith = null;
                     /**
                      * Whether or not this is the first instance of the control,
                      * specifying that it defines the template to copy.
                      */
-                    _this.__isFirst = false;
+                    _this_1.__isFirst = false;
                     var _CacheFactory = acquire(__CacheFactory);
-                    _this.__templateControlCache = _CacheFactory.create(__TemplateControlCache);
-                    return _this;
+                    _this_1.__templateControlCache = _CacheFactory.create(__TemplateControlCache);
+                    return _this_1;
                 }
                 /**
                  * Initializes the creation of the template.
@@ -13943,7 +13959,7 @@ var plat;
                  * in a template cache for later use.
                  */
                 Template.prototype._initializeTemplate = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var id = this._id;
                     if (isNull(id)) {
                         return;
@@ -13965,12 +13981,12 @@ var plat;
                         controlPromise = template
                             .catch(function (error) {
                             if (isNull(error)) {
-                                return TemplateControl.determineTemplate(_this, url);
+                                return TemplateControl.determineTemplate(_this_1, url);
                             }
                         })
                             .then(function (fragment) {
-                            _this.bindableTemplates.add(id, fragment.cloneNode(true));
-                            return _this;
+                            _this_1.bindableTemplates.add(id, fragment.cloneNode(true));
+                            return _this_1;
                         });
                     }
                     else {
@@ -13987,26 +14003,26 @@ var plat;
                  * associated with the first instance of the control with this ID.
                  */
                 Template.prototype._waitForTemplateControl = function (templatePromise) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (!isPromise(templatePromise)) {
                         return;
                     }
                     templatePromise
                         .then(function (templateControl) {
-                        if (!(isNull(_this._url) ||
-                            _this._url === templateControl._url)) {
-                            _this._log.warn("The specified url: " + _this._url + " should match " + _this.type + " with id: \"" + _this._id + "\". Loading original url.");
+                        if (!(isNull(_this_1._url) ||
+                            _this_1._url === templateControl._url)) {
+                            _this_1._log.warn("The specified url: " + _this_1._url + " should match " + _this_1.type + " with id: \"" + _this_1._id + "\". Loading original url.");
                         }
-                        _this.__mapBindableTemplates(templateControl);
-                        return _this.bindableTemplates.bind(_this._id);
+                        _this_1.__mapBindableTemplates(templateControl);
+                        return _this_1.bindableTemplates.bind(_this_1._id);
                     })
                         .then(function (clone) {
-                        var endNode = _this.endNode;
+                        var endNode = _this_1.endNode;
                         insertBefore(endNode.parentNode, clone, endNode);
                     })
                         .catch(function (error) {
                         postpone(function () {
-                            _this._log.warn("Problem resolving " + _this.type + " url: " + error.response);
+                            _this_1._log.warn("Problem resolving " + _this_1.type + " url: " + error.response);
                         });
                     });
                 };
@@ -14065,17 +14081,17 @@ var plat;
                  * The constructor for a ForEach. Creates the itemsLoaded promise.
                  */
                 function ForEach() {
-                    var _this = _super.call(this) || this;
+                    var _this_1 = _super.call(this) || this;
                     /**
                      * The load priority of the control (needs to load before a Bind control).
                      */
-                    _this.priority = 120;
+                    _this_1.priority = 120;
                     /**
                      * Used to hold the alias tokens for the built-in foreach aliases. You
                      * can overwrite these with the options for
                      * the ForEach control.
                      */
-                    _this._aliases = {
+                    _this_1._aliases = {
                         index: __forEachAliasOptions.index,
                         even: __forEachAliasOptions.even,
                         odd: __forEachAliasOptions.odd,
@@ -14087,25 +14103,25 @@ var plat;
                      * For the ForEach it should be a
                      * single constant number.
                      */
-                    _this._blockLength = 0;
+                    _this_1._blockLength = 0;
                     /**
                      * A queue representing all current add operations.
                      */
-                    _this._addQueue = [];
+                    _this_1._addQueue = [];
                     /**
                      * The number of items currently in the list or in the process of being added
                      * or removed from the list.
                      */
-                    _this._itemLength = 0;
+                    _this_1._itemLength = 0;
                     /**
                      * Whether or not the Array listener has been set.
                      */
-                    _this.__listenerSet = false;
-                    _this.itemsLoaded = new _this._Promise(function (resolve, reject) {
-                        _this.__resolveFn = resolve;
-                        _this.__rejectFn = reject;
+                    _this_1.__listenerSet = false;
+                    _this_1.itemsLoaded = new _this_1._Promise(function (resolve, reject) {
+                        _this_1.__resolveFn = resolve;
+                        _this_1.__rejectFn = reject;
                     }).catch(noop);
-                    return _this;
+                    return _this_1;
                 }
                 /**
                  * Creates a bindable template with the control element's childNodes (innerHTML).
@@ -14201,7 +14217,7 @@ var plat;
                  * @param {number} animateItems The number of items to animate.
                  */
                 ForEach.prototype._addItems = function (index, numberOfItems, animateItems) {
-                    var _this = this;
+                    var _this_1 = this;
                     var max = +(index + numberOfItems);
                     var promises = [];
                     var initialIndex = index;
@@ -14214,13 +14230,13 @@ var plat;
                         this.itemsLoaded = this._Promise
                             .all(promises)
                             .then(function (templates) {
-                            _this._setBlockLength(templates);
+                            _this_1._setBlockLength(templates);
                             if (animateItems > 0) {
                                 var length_10 = templates.length;
-                                var container = _this._container;
+                                var container = _this_1._container;
                                 for (var i = 0; i < length_10; i += 1) {
                                     if (i < animateItems) {
-                                        _this._appendAnimatedItem(templates[i]);
+                                        _this_1._appendAnimatedItem(templates[i]);
                                     }
                                     else {
                                         container.insertBefore(templates[i], null);
@@ -14228,12 +14244,12 @@ var plat;
                                 }
                             }
                             else {
-                                _this._appendItems(templates);
+                                _this_1._appendItems(templates);
                             }
-                            _this._updateResource(initialIndex - 1);
-                            if (isFunction(_this.__resolveFn)) {
-                                _this.__resolveFn();
-                                _this.__resolveFn = _this.__rejectFn = null;
+                            _this_1._updateResource(initialIndex - 1);
+                            if (isFunction(_this_1.__resolveFn)) {
+                                _this_1.__resolveFn();
+                                _this_1.__resolveFn = _this_1.__rejectFn = null;
                             }
                         })
                             .catch(function (error) {
@@ -14241,7 +14257,7 @@ var plat;
                                 if (isString(error)) {
                                     error = new Error(error);
                                 }
-                                _this._log.error(error);
+                                _this_1._log.error(error);
                             });
                         });
                     }
@@ -14393,7 +14409,7 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 ForEach.prototype._pop = function (changes) {
-                    var _this = this;
+                    var _this_1 = this;
                     var change = changes[0];
                     var start = change.object.length;
                     if (change.removed.length === 0) {
@@ -14404,13 +14420,13 @@ var plat;
                         this._itemLength -= 1;
                     }
                     this._Promise.all(this._addQueue).then(function () {
-                        if (_this._animate) {
-                            _this._animateItems(start, 1, __Leave, 'leave', false).then(function () {
-                                _this._removeItems(removeIndex, 1);
+                        if (_this_1._animate) {
+                            _this_1._animateItems(start, 1, __Leave, 'leave', false).then(function () {
+                                _this_1._removeItems(removeIndex, 1);
                             });
                             return;
                         }
-                        _this._removeItems(removeIndex, 1);
+                        _this_1._removeItems(removeIndex, 1);
                     });
                 };
                 /**
@@ -14440,7 +14456,7 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 ForEach.prototype._shift = function (changes) {
-                    var _this = this;
+                    var _this_1 = this;
                     var addQueue = this._addQueue;
                     var change = changes[0];
                     if (change.removed.length === 0) {
@@ -14458,7 +14474,7 @@ var plat;
                         this._itemLength -= 1;
                     }
                     this._Promise.all(addQueue).then(function () {
-                        _this._removeItems(removeIndex, 1);
+                        _this_1._removeItems(removeIndex, 1);
                     });
                 };
                 /**
@@ -14466,7 +14482,7 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 ForEach.prototype._splice = function (changes) {
-                    var _this = this;
+                    var _this_1 = this;
                     var change = changes[0];
                     var addCount = change.addedCount;
                     var currentLength = this._itemLength;
@@ -14497,7 +14513,7 @@ var plat;
                                 this._itemLength = 0;
                             }
                             this._Promise.all(addQueue).then(function () {
-                                _this._removeItems(currentLength - itemCount_1, itemCount_1);
+                                _this_1._removeItems(currentLength - itemCount_1, itemCount_1);
                             });
                         }
                         return;
@@ -14546,10 +14562,10 @@ var plat;
                         this._Promise.all(addQueue).then(function () {
                             if (animating && adding_1) {
                                 var animLength = animationQueue.length;
-                                _this._animateItems(change.index, addCount, __Enter, null, animLength > 0 &&
+                                _this_1._animateItems(change.index, addCount, __Enter, null, animLength > 0 &&
                                     animationQueue[animLength - 1].op === 'clone');
                             }
-                            _this._removeItems(currentLength - deleteCount_1, deleteCount_1);
+                            _this_1._removeItems(currentLength - deleteCount_1, deleteCount_1);
                         });
                     }
                 };
@@ -14731,25 +14747,25 @@ var plat;
             var Head = /** @class */ (function (_super) {
                 __extends(Head, _super);
                 function Head() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * Rather than be replaced by a 'div', this control wants to be a 'head' element.
                      */
-                    _this.replaceWith = __Head;
+                    _this_1.replaceWith = __Head;
                     /**
                      * A reference to all the structured data elements added to the DOM for this page.
                      */
-                    _this._structuredDataElements = [];
-                    return _this;
+                    _this_1._structuredDataElements = [];
+                    return _this_1;
                 }
                 /**
                  * Registers for the navigating event to know when to remove all the elements so they
                  * don't bleed onto the next page.
                  */
                 Head.prototype.initialize = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     this.on(__navigating, function () {
-                        _this._removeAllElements();
+                        _this_1._removeAllElements();
                     });
                 };
                 /**
@@ -14886,7 +14902,7 @@ var plat;
                  * @param {Array<string>} images For each image, a tag will be created
                  */
                 Head.prototype.images = function (images) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (!isArray(images)) {
                         return;
                     }
@@ -14897,14 +14913,14 @@ var plat;
                     var twitterElement;
                     var head = this.element;
                     forEach(function (image) {
-                        image = _this._browser.urlUtils(image).href;
+                        image = _this_1._browser.urlUtils(image).href;
                         var elements = head.querySelectorAll(meta + "[content=\"" + image + "\"]");
                         if (elements.length === 2) {
                             return;
                         }
-                        ogElement = _this._createElement(meta, og + __MetaImage, true);
-                        twitterElement = _this._createElement(meta, twitter + __MetaImage, true);
-                        _this._setContent([ogElement, twitterElement], image);
+                        ogElement = _this_1._createElement(meta, og + __MetaImage, true);
+                        twitterElement = _this_1._createElement(meta, twitter + __MetaImage, true);
+                        _this_1._setContent([ogElement, twitterElement], image);
                     }, images);
                 };
                 /**
@@ -14912,7 +14928,7 @@ var plat;
                  * @param {Array<string>} videos For each video, a tag will be created
                  */
                 Head.prototype.videos = function (videos) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (!isArray(videos)) {
                         return;
                     }
@@ -14928,8 +14944,8 @@ var plat;
                         if (elements.length === 1) {
                             return;
                         }
-                        ogElement = _this._createElement(meta, og + metaVideo, true);
-                        _this._setContent([ogElement], video);
+                        ogElement = _this_1._createElement(meta, og + metaVideo, true);
+                        _this_1._setContent([ogElement], video);
                     }, videos);
                 };
                 /**
@@ -15126,7 +15142,7 @@ var plat;
                  * @param {IInnerHtmlOptions} oldValue? The old value of the options property.
                  */
                 InnerHtml.prototype._onOptionsChanged = function (newValue, oldValue) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (newValue === oldValue) {
                         return;
                     }
@@ -15157,12 +15173,12 @@ var plat;
                         var hasControl_1 = this.controls.length > 0;
                         this.bindableTemplates.once(html).then(function (template) {
                             if (hasControl_1) {
-                                _this._TemplateControlFactory.dispose(_this.controls[0]);
+                                _this_1._TemplateControlFactory.dispose(_this_1.controls[0]);
                             }
                             else {
-                                _this.dom.clearNode(_this.element);
+                                _this_1.dom.clearNode(_this_1.element);
                             }
-                            _this.element.insertBefore(template, null);
+                            _this_1.element.insertBefore(template, null);
                         });
                         return;
                     }
@@ -15185,26 +15201,26 @@ var plat;
                  * The constructor for a Select. Creates the itemsLoaded promise.
                  */
                 function Select() {
-                    var _this = _super.call(this) || this;
+                    var _this_1 = _super.call(this) || this;
                     /**
                      * Replaces the `<plat-select>` node with
                      * a <select> node.
                      */
-                    _this.replaceWith = 'select';
+                    _this_1.replaceWith = 'select';
                     /**
                      * The load priority of the control (needs to load before a Bind control).
                      */
-                    _this.priority = 120;
+                    _this_1.priority = 120;
                     /**
                      * An object that keeps track of unique
                      * optgroups.
                      */
-                    _this.groups = {};
-                    _this.itemsLoaded = new _this._Promise(function (resolve, reject) {
-                        _this.__resolveFn = resolve;
-                        _this.__rejectFn = reject;
+                    _this_1.groups = {};
+                    _this_1.itemsLoaded = new _this_1._Promise(function (resolve, reject) {
+                        _this_1.__resolveFn = resolve;
+                        _this_1.__rejectFn = reject;
                     }).catch(noop);
-                    return _this;
+                    return _this_1;
                 }
                 /**
                  * Creates the bindable option template and grouping
@@ -15251,12 +15267,12 @@ var plat;
                  * @param {Array<any>} oldValue The old array context.
                  */
                 Select.prototype.contextChanged = function (newValue, oldValue) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (isEmpty(newValue) || !isArray(newValue)) {
                         if (!isEmpty(oldValue)) {
                             this.itemsLoaded
                                 .then(function () {
-                                _this._removeItems(_this.controls.length);
+                                _this_1._removeItems(_this_1.controls.length);
                             })
                                 .then(this._observeChange.bind(this));
                         }
@@ -15317,7 +15333,7 @@ var plat;
                  * data-binding.
                  */
                 Select.prototype.observeProperties = function (binder) {
-                    var _this = this;
+                    var _this_1 = this;
                     var element = this.element;
                     this._binder = binder;
                     if (element.multiple) {
@@ -15328,7 +15344,7 @@ var plat;
                         }
                         binder.observeProperty(this._setSelectedIndices);
                         binder.observeArrayChange(function () {
-                            _this._setSelectedIndices(binder.evaluate(), null, null);
+                            _this_1._setSelectedIndices(binder.evaluate(), null, null);
                         });
                     }
                     else {
@@ -15344,17 +15360,17 @@ var plat;
                  * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
                  */
                 Select.prototype._setSelectedIndex = function (newValue, oldValue, identifier, firstTime) {
-                    var _this = this;
+                    var _this_1 = this;
                     var element = this.element;
                     var value = element.value;
                     if (isNull(newValue)) {
                         if (firstTime === true ||
                             !this._document.body.contains(element)) {
                             this.itemsLoaded.then(function () {
-                                if (isNull(_this._binder.evaluate())) {
+                                if (isNull(_this_1._binder.evaluate())) {
                                     var newLast = element.value;
-                                    _this.inputChanged(newLast, _this.__lastValue);
-                                    _this.__lastValue = newLast;
+                                    _this_1.inputChanged(newLast, _this_1.__lastValue);
+                                    _this_1.__lastValue = newLast;
                                 }
                             });
                             return;
@@ -15385,18 +15401,18 @@ var plat;
                         return;
                     }
                     this.itemsLoaded.then(function () {
-                        if (!_this._document.body.contains(element)) {
+                        if (!_this_1._document.body.contains(element)) {
                             element.value = newValue;
                             if (element.value !== newValue) {
                                 element.value = value;
-                                var newLastValue = _this._castValue(element.value);
-                                _this.inputChanged(newLastValue, _this.__lastValue);
-                                _this.__lastValue = newLastValue;
+                                var newLastValue = _this_1._castValue(element.value);
+                                _this_1.inputChanged(newLastValue, _this_1.__lastValue);
+                                _this_1.__lastValue = newLastValue;
                             }
-                            _this.__lastValue = newValue;
+                            _this_1.__lastValue = newValue;
                             return;
                         }
-                        element.value = _this.__lastValue = newValue;
+                        element.value = _this_1.__lastValue = newValue;
                         // check to make sure the user changed to a valid value 
                         // second boolean argument is an ie fix for inconsistency 
                         if (element.value !== newValue ||
@@ -15413,18 +15429,18 @@ var plat;
                  * @param {boolean} firstTime? Whether or not this is the first time being called as a setter.
                  */
                 Select.prototype._setSelectedIndices = function (newValue, oldValue, identifier, firstTime) {
-                    var _this = this;
+                    var _this_1 = this;
                     this.itemsLoaded.then(function () {
-                        var element = _this.element;
+                        var element = _this_1.element;
                         var options = element.options;
                         var nullValue = isNull(newValue);
                         var length = isNull(options) ? 0 : options.length;
                         var option;
                         if (nullValue || !isArray(newValue)) {
-                            if (firstTime === true && isNull(_this._binder.evaluate())) {
-                                var newLast = _this._getSelectedValues();
-                                _this.inputChanged(newLast, _this.__lastValue);
-                                _this.__lastValue = newLast;
+                            if (firstTime === true && isNull(_this_1._binder.evaluate())) {
+                                var newLast = _this_1._getSelectedValues();
+                                _this_1.inputChanged(newLast, _this_1.__lastValue);
+                                _this_1.__lastValue = newLast;
                             }
                             // unselects the options unless a match is found 
                             while (length > 0) {
@@ -15436,7 +15452,7 @@ var plat;
                                 }
                                 option.selected = false;
                             }
-                            _this.__lastValue = newValue;
+                            _this_1.__lastValue = newValue;
                             return;
                         }
                         var value;
@@ -15458,7 +15474,7 @@ var plat;
                             if (isNumber(numberValue) && numberValueIndex !== -1) {
                                 index = numberValueIndex;
                                 if (index < highestIndex) {
-                                    _this._propertyType = 'number';
+                                    _this_1._propertyType = 'number';
                                     highestIndex = index;
                                 }
                                 option.selected = true;
@@ -15468,7 +15484,7 @@ var plat;
                                 (value === 'false' && falseIndex !== -1)) {
                                 index = trueIndex > falseIndex ? trueIndex : falseIndex;
                                 if (index < highestIndex) {
-                                    _this._propertyType = 'boolean';
+                                    _this_1._propertyType = 'boolean';
                                     highestIndex = index;
                                 }
                                 option.selected = true;
@@ -15476,7 +15492,7 @@ var plat;
                             }
                             option.selected = false;
                         }
-                        _this.__lastValue = newValue;
+                        _this_1.__lastValue = newValue;
                     });
                 };
                 /**
@@ -15569,7 +15585,7 @@ var plat;
                  * set of items to add.
                  */
                 Select.prototype._addItems = function (numberOfItems, index) {
-                    var _this = this;
+                    var _this_1 = this;
                     var bindableTemplates = this.bindableTemplates;
                     var promises = [];
                     var insertOption = this._insertOption;
@@ -15584,9 +15600,9 @@ var plat;
                         this.itemsLoaded = this._Promise
                             .all(promises)
                             .then(function () {
-                            if (isFunction(_this.__resolveFn)) {
-                                _this.__resolveFn();
-                                _this.__resolveFn = _this.__rejectFn = null;
+                            if (isFunction(_this_1.__resolveFn)) {
+                                _this_1.__resolveFn();
+                                _this_1.__resolveFn = _this_1.__rejectFn = null;
                             }
                             return;
                         })
@@ -15595,7 +15611,7 @@ var plat;
                                 if (isString(error)) {
                                     error = new Error(error);
                                 }
-                                _this._log.error(error);
+                                _this_1._log.error(error);
                             });
                         });
                     }
@@ -15691,12 +15707,12 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 Select.prototype._pop = function (changes) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (changes[0].removed.length === 0) {
                         return;
                     }
                     this.itemsLoaded.then(function () {
-                        _this._removeItem();
+                        _this_1._removeItem();
                     });
                 };
                 /**
@@ -15719,12 +15735,12 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 Select.prototype._shift = function (changes) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (changes[0].removed.length === 0) {
                         return;
                     }
                     this.itemsLoaded.then(function () {
-                        _this._removeItem();
+                        _this_1._removeItem();
                     });
                 };
                 /**
@@ -15733,7 +15749,7 @@ var plat;
                  * @param {Array<plat.observable.IArrayChanges<any>>} changes The Array mutation event information.
                  */
                 Select.prototype._splice = function (changes) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (this._isGrouped) {
                         this._resetSelect();
                         return;
@@ -15746,7 +15762,7 @@ var plat;
                     }
                     else if (removeCount > addCount) {
                         this.itemsLoaded.then(function () {
-                            _this._removeItems(removeCount - addCount);
+                            _this_1._removeItems(removeCount - addCount);
                         });
                     }
                 };
@@ -15789,29 +15805,29 @@ var plat;
                  * used by this control.
                  */
                 function If() {
-                    var _this = _super.call(this) || this;
+                    var _this_1 = _super.call(this) || this;
                     /**
                      * Whether or not to animate adding and removing of element.
                      */
-                    _this._animate = false;
+                    _this_1._animate = false;
                     /**
                      * The current evaluated condition (whether or not the
                      * control is visible) of the control.
                      */
-                    _this.__condition = true;
+                    _this_1.__condition = true;
                     /**
                      * A boolean value stating whether or not the condition has already
                      * been evaluated.
                      */
-                    _this.__firstTime = true;
+                    _this_1.__firstTime = true;
                     /**
                      * A boolean value stating whether or not the template has been bound
                      */
-                    _this.__isBound = false;
-                    var _document = _this._document;
-                    _this.commentNode = _document.createComment("" + __If + __BOUND_PREFIX + "placeholder");
-                    _this.fragmentStore = _document.createDocumentFragment();
-                    return _this;
+                    _this_1.__isBound = false;
+                    var _document = _this_1._document;
+                    _this_1.commentNode = _document.createComment("" + __If + __BOUND_PREFIX + "placeholder");
+                    _this_1.fragmentStore = _document.createDocumentFragment();
+                    return _this_1;
                 }
                 /**
                  * Checks the options and initializes the
@@ -15874,7 +15890,7 @@ var plat;
                  * the node from the DOM.
                  */
                 If.prototype._setter = function (options) {
-                    var _this = this;
+                    var _this_1 = this;
                     var value = !!options.condition;
                     var actionPromise;
                     var next;
@@ -15885,15 +15901,15 @@ var plat;
                     else if (value) {
                         actionPromise = this.__leavePromise;
                         next = function () {
-                            _this.__leavePromise = null;
-                            return _this._addItem();
+                            _this_1.__leavePromise = null;
+                            return _this_1._addItem();
                         };
                     }
                     else {
                         actionPromise = this.__enterPromise;
                         next = function () {
-                            _this.__enterPromise = null;
-                            return _this._removeItem();
+                            _this_1.__enterPromise = null;
+                            return _this_1._removeItem();
                         };
                     }
                     if (isNull(actionPromise)) {
@@ -15916,7 +15932,7 @@ var plat;
                  * Adds the conditional nodes to the DOM.
                  */
                 If.prototype._addItem = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var isBound = this.__isBound;
                     if (isBound && !isNode(this.commentNode.parentNode)) {
                         return this._Promise.resolve(null);
@@ -15926,35 +15942,35 @@ var plat;
                         return (this.__initialBind = this.bindableTemplates
                             .bind('template')
                             .then(function (template) {
-                            _this.__initialBind = null;
-                            var element = _this.element;
-                            if (element.parentNode === _this.fragmentStore ||
+                            _this_1.__initialBind = null;
+                            var element = _this_1.element;
+                            if (element.parentNode === _this_1.fragmentStore ||
                                 isNull(element.parentNode)) {
                                 element.insertBefore(template, null);
-                                if (_this._animate) {
-                                    return _this._animateEntrance();
+                                if (_this_1._animate) {
+                                    return _this_1._animateEntrance();
                                 }
-                                return _this._elementEntrance();
+                                return _this_1._elementEntrance();
                             }
-                            else if (_this._animate) {
-                                _this.__enterPromise = _this._animator
+                            else if (_this_1._animate) {
+                                _this_1.__enterPromise = _this_1._animator
                                     .animate(element, __Enter)
                                     .then(function () {
-                                    _this.__enterPromise = null;
+                                    _this_1.__enterPromise = null;
                                 });
                                 element.insertBefore(template, null);
-                                return _this.__enterPromise;
+                                return _this_1.__enterPromise;
                             }
                             element.insertBefore(template, null);
                         }));
                     }
                     else if (!isNull(this.__initialBind)) {
                         this.__initialBind = this.__initialBind.then(function () {
-                            _this.__initialBind = null;
-                            if (_this._animate) {
-                                return _this._animateEntrance();
+                            _this_1.__initialBind = null;
+                            if (_this_1._animate) {
+                                return _this_1._animateEntrance();
                             }
-                            return _this._elementEntrance();
+                            return _this_1._elementEntrance();
                         });
                         return this.__initialBind;
                     }
@@ -15967,19 +15983,19 @@ var plat;
                  * Adds the template to the DOM.
                  */
                 If.prototype._elementEntrance = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var commentNode = this.commentNode;
                     var parentNode = commentNode.parentNode;
                     if (!isNode(parentNode)) {
                         return this._Promise.resolve();
                     }
                     this.__enterPromise = new this._Promise(function (resolve) {
-                        _this.__cancelFrame = requestAnimationFrameGlobal(function () {
-                            parentNode.insertBefore(_this.element, commentNode);
+                        _this_1.__cancelFrame = requestAnimationFrameGlobal(function () {
+                            parentNode.insertBefore(_this_1.element, commentNode);
                             resolve();
                         });
                     }).then(function () {
-                        _this.__enterPromise = null;
+                        _this_1.__enterPromise = null;
                     });
                     return this.__enterPromise;
                 };
@@ -15987,7 +16003,7 @@ var plat;
                  * Animates the template as it enters the DOM.
                  */
                 If.prototype._animateEntrance = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var commentNode = this.commentNode;
                     var parentNode = commentNode.parentNode;
                     if (!isNode(parentNode)) {
@@ -15996,7 +16012,7 @@ var plat;
                     this.__enterPromise = this._animator
                         .enter(this.element, __Enter, parentNode, commentNode)
                         .then(function () {
-                        _this.__enterPromise = null;
+                        _this_1.__enterPromise = null;
                     });
                     return this.__enterPromise;
                 };
@@ -16004,14 +16020,14 @@ var plat;
                  * Removes the conditional nodes from the DOM.
                  */
                 If.prototype._removeItem = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     if (!isNull(this.__initialBind)) {
                         this.__initialBind = this.__initialBind.then(function () {
-                            _this.__initialBind = null;
-                            if (_this._animate) {
-                                return _this._animateLeave();
+                            _this_1.__initialBind = null;
+                            if (_this_1._animate) {
+                                return _this_1._animateLeave();
                             }
-                            return _this._elementLeave();
+                            return _this_1._elementLeave();
                         });
                         return this.__initialBind;
                     }
@@ -16024,24 +16040,24 @@ var plat;
                  * Removes the template from the DOM.
                  */
                 If.prototype._elementLeave = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     this.__leavePromise = new this._Promise(function (resolve) {
-                        _this.__cancelFrame = requestAnimationFrameGlobal(function () {
-                            var element = _this.element;
+                        _this_1.__cancelFrame = requestAnimationFrameGlobal(function () {
+                            var element = _this_1.element;
                             var parent = element.parentNode;
                             var nextSibling = element.nextSibling;
                             if (!isNode(parent)) {
                                 resolve();
                                 return;
                             }
-                            else if (!isNode(_this.commentNode.parentNode)) {
-                                parent.insertBefore(_this.commentNode, nextSibling);
+                            else if (!isNode(_this_1.commentNode.parentNode)) {
+                                parent.insertBefore(_this_1.commentNode, nextSibling);
                             }
-                            _this.fragmentStore.insertBefore(element, null);
+                            _this_1.fragmentStore.insertBefore(element, null);
                             resolve();
                         });
                     }).then(function () {
-                        _this.__leavePromise = null;
+                        _this_1.__leavePromise = null;
                     });
                     return this.__leavePromise;
                 };
@@ -16049,18 +16065,18 @@ var plat;
                  * Animates the template as it leaves the DOM.
                  */
                 If.prototype._animateLeave = function () {
-                    var _this = this;
+                    var _this_1 = this;
                     var element = this.element;
                     this.__leavePromise = this._animator
                         .leave(element, __Leave)
                         .then(function () {
                         var parent = element.parentNode;
                         var nextSibling = element.nextSibling;
-                        _this.__leavePromise = null;
-                        if (!isNode(_this.commentNode.parentNode)) {
-                            parent.insertBefore(_this.commentNode, nextSibling);
+                        _this_1.__leavePromise = null;
+                        if (!isNode(_this_1.commentNode.parentNode)) {
+                            parent.insertBefore(_this_1.commentNode, nextSibling);
                         }
-                        _this.fragmentStore.insertBefore(element, null);
+                        _this_1.fragmentStore.insertBefore(element, null);
                     });
                     return this.__leavePromise;
                 };
@@ -16080,20 +16096,20 @@ var plat;
             var Link = /** @class */ (function (_super) {
                 __extends(Link, _super);
                 function Link() {
-                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * Replaces the Link's element with a native anchor tag.
                      */
-                    _this.replaceWith = 'a';
+                    _this_1.replaceWith = 'a';
                     /**
                      * The router associated with this link.
                      */
-                    _this._router = _this._Router.currentRouter();
+                    _this_1._router = _this_1._Router.currentRouter();
                     /**
                      * A property that when set allows for the next click event to process.
                      */
-                    _this._allowClick = false;
-                    return _this;
+                    _this_1._allowClick = false;
+                    return _this_1;
                 }
                 /**
                  * Initializes click event.
@@ -16203,7 +16219,7 @@ var plat;
                  * Determines the proper link upon $tap.
                  */
                 Link.prototype._handleTap = function (ev) {
-                    var _this = this;
+                    var _this_1 = this;
                     if (ev.buttons !== 1) {
                         return;
                     }
@@ -16215,7 +16231,7 @@ var plat;
                     if (isEmpty(target) || target === __SELF) {
                         ev.preventDefault();
                         requestAnimationFrameGlobal(function () {
-                            _this._browser.url(href);
+                            _this_1._browser.url(href);
                         });
                         return;
                     }
@@ -16255,9 +16271,7 @@ var plat;
              */
             Compiler.prototype.compile = function (node, control) {
                 var hasControl = !isNull(control);
-                var manager = (hasControl
-                    ? this._managerCache.read(control.uid)
-                    : null);
+                var manager = ((hasControl ? this._managerCache.read(control.uid) : null));
                 var create = this._ElementManagerFactory.create;
                 var childNodes = node.childNodes;
                 var length;
@@ -16697,27 +16711,27 @@ var plat;
         var ElementManager = /** @class */ (function (_super) {
             __extends(ElementManager, _super);
             function ElementManager() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The child managers for this manager.
                  */
-                _this.children = [];
+                _this_1.children = [];
                 /**
                  * Specifies the type for this NodeManager.
                  * It's value is "element".
                  */
-                _this.type = 'element';
+                _this_1.type = 'element';
                 /**
                  * Specifies whether or not this manager has a TemplateControl which has a
                  * replaceWith property set to null or empty string.
                  */
-                _this.replace = false;
+                _this_1.replace = false;
                 /**
                  * Indicates whether the TemplateControl for this manager has its own context
                  * or inherits it from a parent.
                  */
-                _this.hasOwnContext = false;
-                return _this;
+                _this_1.hasOwnContext = false;
+                return _this_1;
             }
             /**
              * Determines if the associated Element has controls that need to be instantiated or Attr nodes
@@ -17257,7 +17271,7 @@ var plat;
              * Links the data context to the DOM (data-binding).
              */
             ElementManager.prototype.bind = function () {
-                var _this = this;
+                var _this_1 = this;
                 var nodeMap = this.nodeMap;
                 var parent = this.getParentControl();
                 var controlNode = nodeMap.uiControlNode;
@@ -17333,7 +17347,7 @@ var plat;
                                     }
                                     removeListener();
                                     uiControl_1.context = newValue;
-                                    _this._beforeLoad(uiControl_1, absoluteContextPath_1);
+                                    _this_1._beforeLoad(uiControl_1, absoluteContextPath_1);
                                     resolve();
                                 },
                             });
@@ -17354,30 +17368,30 @@ var plat;
              * HTML template.
              */
             ElementManager.prototype.setUiControlTemplate = function (templateUrl) {
-                var _this = this;
+                var _this_1 = this;
                 var controlNode = this.nodeMap.uiControlNode;
                 if (!isNull(controlNode)) {
                     var control_1 = controlNode.control;
                     this.templatePromise = this._TemplateControlFactory
                         .determineTemplate(control_1, templateUrl)
                         .then(function (template) {
-                        _this.templatePromise = null;
-                        _this._initializeControl(control_1, template.cloneNode(true));
+                        _this_1.templatePromise = null;
+                        _this_1._initializeControl(control_1, template.cloneNode(true));
                     }, function (error) {
-                        _this.templatePromise = null;
+                        _this_1.templatePromise = null;
                         if (isNull(error)) {
                             var template = error;
-                            if (_this._BindableTemplatesFactory.isBoundControl(control_1)) {
+                            if (_this_1._BindableTemplatesFactory.isBoundControl(control_1)) {
                                 template = appendChildren(control_1.element.childNodes);
                             }
-                            _this._initializeControl(control_1, template);
+                            _this_1._initializeControl(control_1, template);
                         }
                         else {
                             postpone(function () {
                                 if (isString(error)) {
                                     error = new Error(error);
                                 }
-                                _this._log.error(error);
+                                _this_1._log.error(error);
                             });
                         }
                     });
@@ -17404,10 +17418,10 @@ var plat;
              * with this ElementManager.
              */
             ElementManager.prototype.fulfillTemplate = function () {
-                var _this = this;
+                var _this_1 = this;
                 if (!isNull(this.templatePromise)) {
                     return this.templatePromise.then(function () {
-                        return _this._fulfillChildTemplates();
+                        return _this_1._fulfillChildTemplates();
                     });
                 }
                 return this._fulfillChildTemplates();
@@ -17416,17 +17430,17 @@ var plat;
              * Fulfills the template promise prior to binding and loading the control.
              */
             ElementManager.prototype.fulfillAndLoad = function () {
-                var _this = this;
+                var _this_1 = this;
                 return this.fulfillTemplate()
                     .then(function () {
-                    return _this.bindAndLoad();
+                    return _this_1.bindAndLoad();
                 })
                     .catch(function (error) {
                     postpone(function () {
                         if (isString(error)) {
                             error = new Error(error);
                         }
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     });
                 });
             };
@@ -17434,12 +17448,12 @@ var plat;
              * Binds context to the DOM and loads controls.
              */
             ElementManager.prototype.bindAndLoad = function () {
-                var _this = this;
+                var _this_1 = this;
                 var controls = this.bind();
                 var promise;
                 if (isPromise(this.contextPromise)) {
                     promise = this.contextPromise.then(function () {
-                        return _this._bindChildren();
+                        return _this_1._bindChildren();
                     });
                 }
                 else {
@@ -17447,14 +17461,14 @@ var plat;
                 }
                 return promise
                     .then(function () {
-                    return _this._loadControls(controls, _this.getUiControl());
+                    return _this_1._loadControls(controls, _this_1.getUiControl());
                 })
                     .catch(function (error) {
                     postpone(function () {
                         if (isString(error)) {
                             error = new Error(error);
                         }
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     });
                 });
             };
@@ -17466,13 +17480,13 @@ var plat;
              * children.
              */
             ElementManager.prototype.observeRootContext = function (root, loadMethod) {
-                var _this = this;
+                var _this_1 = this;
                 loadMethod = loadMethod.bind(this);
                 if (!isNull(root.context)) {
                     return loadMethod();
                 }
                 return new this._Promise(function (resolve) {
-                    var removeListener = _this._ContextManager
+                    var removeListener = _this_1._ContextManager
                         .getManager(root)
                         .observe(__CONTEXT, {
                         listener: function () {
@@ -17486,7 +17500,7 @@ var plat;
                         if (isString(error)) {
                             error = new Error(error);
                         }
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     });
                 });
             };
@@ -17736,7 +17750,7 @@ var plat;
              * Runs through all the children of this manager and calls fulfillTemplate.
              */
             ElementManager.prototype._fulfillChildTemplates = function () {
-                var _this = this;
+                var _this_1 = this;
                 var children = this.children;
                 var length = children.length;
                 var promises = [];
@@ -17752,7 +17766,7 @@ var plat;
                         if (isString(error)) {
                             error = new Error(error);
                         }
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     });
                 });
             };
@@ -17796,13 +17810,13 @@ var plat;
         var TextManager = /** @class */ (function (_super) {
             __extends(TextManager, _super);
             function TextManager() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Specifies the type for this NodeManager.
                  * It's value is "text".
                  */
-                _this.type = 'text';
-                return _this;
+                _this_1.type = 'text';
+                return _this_1;
             }
             /**
              * Determines if a text node has markup, and creates a TextManager if it does.
@@ -17921,13 +17935,13 @@ var plat;
         var CommentManager = /** @class */ (function (_super) {
             __extends(CommentManager, _super);
             function CommentManager() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Specifies the type for this NodeManager.
                  * It's value is "comment".
                  */
-                _this.type = 'comment';
-                return _this;
+                _this_1.type = 'comment';
+                return _this_1;
             }
             /**
              * Creates a new CommentManager for the given Comment node.
@@ -18152,7 +18166,7 @@ var plat;
              * @param {plat.routing.INavigateOptions} options used to generate the url and perform navigation.
              */
             Navigator.prototype.navigate = function (view, options) {
-                var _this = this;
+                var _this_1 = this;
                 options = isObject(options) ? options : {};
                 var url;
                 return this.finishNavigating().then(function () {
@@ -18160,13 +18174,13 @@ var plat;
                         url = view;
                     }
                     else {
-                        url = _this._generate(view, options.parameters, options.query);
+                        url = _this_1._generate(view, options.parameters, options.query);
                     }
                     if (!isString(url)) {
                         var error = new Error('Cannot serialize url from input parameters, check your view reference.');
-                        _this._log.error(error);
+                        _this_1._log.error(error);
                     }
-                    return _this._navigate(url, options.replace);
+                    return _this_1._navigate(url, options.replace);
                 });
             };
             /**
@@ -18183,7 +18197,7 @@ var plat;
              * Tells the router to go back with the given options.
              */
             Navigator.prototype.goBack = function (options) {
-                var _this = this;
+                var _this_1 = this;
                 options = isObject(options) ? options : {};
                 var length = Number(options.length);
                 if (!isNumber(length)) {
@@ -18193,8 +18207,8 @@ var plat;
                     return Navigator._root.goBack(options);
                 }
                 return this.finishNavigating().then(function () {
-                    _this._backNavigate = true;
-                    return _this._goBack(length);
+                    _this_1._backNavigate = true;
+                    return _this_1._goBack(length);
                 });
             };
             /**
@@ -18217,17 +18231,17 @@ var plat;
              * Internal method for navigating to the specified url.
              */
             Navigator.prototype._navigate = function (url, replace) {
-                var _this = this;
+                var _this_1 = this;
                 if (!this.isRoot) {
                     return Navigator._root._navigate(url, replace);
                 }
                 return new this._Promise(function (resolve, reject) {
-                    _this._resolveNavigate = resolve;
-                    _this._rejectNavigate = reject;
-                    var current = _this._browser.url();
-                    var next = _this._browser.url(url, replace);
+                    _this_1._resolveNavigate = resolve;
+                    _this_1._rejectNavigate = reject;
+                    var current = _this_1._browser.url();
+                    var next = _this_1._browser.url(url, replace);
                     if (current === next) {
-                        _this._resolveNavigate();
+                        _this_1._resolveNavigate();
                     }
                 });
             };
@@ -18235,11 +18249,11 @@ var plat;
              * Internal method for going back a certain length in history
              */
             Navigator.prototype._goBack = function (length) {
-                var _this = this;
+                var _this_1 = this;
                 return new this._Promise(function (resolve, reject) {
-                    _this._resolveNavigate = resolve;
-                    _this._rejectNavigate = reject;
-                    _this._browser.back(length);
+                    _this_1._resolveNavigate = resolve;
+                    _this_1._rejectNavigate = reject;
+                    _this_1._browser.back(length);
                 });
             };
             /**
@@ -18247,7 +18261,7 @@ var plat;
              * router to navigate, and determining what to do in the event that navigation is prevented.
              */
             Navigator.prototype._observeUrl = function () {
-                var _this = this;
+                var _this_1 = this;
                 if (!isObject(this._router)) {
                     return;
                 }
@@ -18256,10 +18270,10 @@ var plat;
                 var headControl = acquire(__Head);
                 var headExists = isObject(headControl) && isFunction(headControl.navigated);
                 var onFailedNavigation = function (e) {
-                    _this._previousUrl = previousUrl;
-                    var _history = _this._history;
+                    _this_1._previousUrl = previousUrl;
+                    var _history = _this_1._history;
                     var state = _history.state;
-                    _this._ignoreOnce = true;
+                    _this_1._ignoreOnce = true;
                     if (isNull(state.previousLocation) ||
                         state.previousLocation === previousUrl) {
                         _history.go(-1);
@@ -18267,54 +18281,54 @@ var plat;
                     else {
                         _history.go(1);
                     }
-                    _this._backNavigate = false;
-                    if (isFunction(_this._rejectNavigate)) {
-                        _this._rejectNavigate(e);
+                    _this_1._backNavigate = false;
+                    if (isFunction(_this_1._rejectNavigate)) {
+                        _this_1._rejectNavigate(e);
                     }
                     if (!isEmpty(e)) {
-                        _this._log.warn(e);
+                        _this_1._log.warn(e);
                     }
                 };
                 this._previousUrl = this._browser.url();
                 // Protect against accidentally calling this method twice. 
                 EventManager.dispose(this.uid);
                 EventManager.on(this.uid, __backButton, function () {
-                    var ev = EventManager.dispatch(__backButtonPressed, _this, EventManager.DIRECT);
+                    var ev = EventManager.dispatch(__backButtonPressed, _this_1, EventManager.DIRECT);
                     if (ev.defaultPrevented) {
                         return;
                     }
-                    _this.goBack();
+                    _this_1.goBack();
                 });
                 EventManager.on(this.uid, __urlChanged, function (ev, utils) {
-                    if (_this._ignoreOnce) {
-                        _this._ignoreOnce = false;
-                        if (isFunction(_this._resolveNavigate)) {
-                            _this._backNavigate = false;
-                            _this._resolveNavigate();
+                    if (_this_1._ignoreOnce) {
+                        _this_1._ignoreOnce = false;
+                        if (isFunction(_this_1._resolveNavigate)) {
+                            _this_1._backNavigate = false;
+                            _this_1._resolveNavigate();
                         }
                         return;
                     }
-                    previousUrl = _this._previousUrl;
-                    ev = EventManager.dispatch(__beforeNavigate, _this, EventManager.DIRECT, [utils]);
+                    previousUrl = _this_1._previousUrl;
+                    ev = EventManager.dispatch(__beforeNavigate, _this_1, EventManager.DIRECT, [utils]);
                     if (ev.defaultPrevented) {
                         onFailedNavigation(new Error("Navigation prevented during " + __beforeNavigate + " event"));
                         return;
                     }
-                    _this.finishNavigating()
+                    _this_1.finishNavigating()
                         .then(function () {
-                        EventManager.dispatch(__navigating, _this, EventManager.DIRECT, [utils]);
-                        return _this._router.navigate(utils.pathname, utils.query);
+                        EventManager.dispatch(__navigating, _this_1, EventManager.DIRECT, [utils]);
+                        return _this_1._router.navigate(utils.pathname, utils.query);
                     })
                         .then(function () {
-                        _this._previousUrl = utils.pathname;
-                        if (isFunction(_this._resolveNavigate)) {
-                            _this._backNavigate = false;
-                            _this._resolveNavigate();
+                        _this_1._previousUrl = utils.pathname;
+                        if (isFunction(_this_1._resolveNavigate)) {
+                            _this_1._backNavigate = false;
+                            _this_1._resolveNavigate();
                         }
                         if (headExists) {
                             headControl.navigated(utils.href);
                         }
-                        EventManager.dispatch(__navigated, _this, EventManager.DIRECT, [utils]);
+                        EventManager.dispatch(__navigated, _this_1, EventManager.DIRECT, [utils]);
                     }, onFailedNavigation);
                 });
             };
@@ -18502,12 +18516,12 @@ var plat;
         var StaticSegment = /** @class */ (function (_super) {
             __extends(StaticSegment, _super);
             function StaticSegment() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a static segment.
                  */
-                _this.type = __STATIC_SEGMENT_TYPE;
-                return _this;
+                _this_1.type = __STATIC_SEGMENT_TYPE;
+                return _this_1;
             }
             /**
              * Initializes the segment.
@@ -18543,12 +18557,12 @@ var plat;
         var VariableSegment = /** @class */ (function (_super) {
             __extends(VariableSegment, _super);
             function VariableSegment() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a variable segment.
                  */
-                _this.type = __VARIABLE_SEGMENT_TYPE;
-                return _this;
+                _this_1.type = __VARIABLE_SEGMENT_TYPE;
+                return _this_1;
             }
             /**
              * Generates a new segment, using the input parameters.
@@ -18570,23 +18584,23 @@ var plat;
         var SplatSegment = /** @class */ (function (_super) {
             __extends(SplatSegment, _super);
             function SplatSegment() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a splat segment.
                  */
-                _this.type = __SPLAT_SEGMENT_TYPE;
+                _this_1.type = __SPLAT_SEGMENT_TYPE;
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                _this.regex = '(.+)';
+                _this_1.regex = '(.+)';
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                _this._specification = {
+                _this_1._specification = {
                     invalidCharacters: '',
                     repeat: true,
                 };
-                return _this;
+                return _this_1;
             }
             return SplatSegment;
         }(VariableSegment));
@@ -18599,23 +18613,23 @@ var plat;
         var DynamicSegment = /** @class */ (function (_super) {
             __extends(DynamicSegment, _super);
             function DynamicSegment() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Denotes that this is a dynamic segment.
                  */
-                _this.type = __DYNAMIC_SEGMENT_TYPE;
+                _this_1.type = __DYNAMIC_SEGMENT_TYPE;
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                _this.regex = '([^/]+)';
+                _this_1.regex = '([^/]+)';
                 /**
                  * A regular expression string which can be used to match the segment.
                  */
-                _this._specification = {
+                _this_1._specification = {
                     invalidCharacters: '/',
                     repeat: true,
                 };
-                return _this;
+                return _this_1;
             }
             return DynamicSegment;
         }(VariableSegment));
@@ -19211,7 +19225,7 @@ var plat;
              * @param {plat.routing.ISupportRouteNavigation} port An object that supports all the navigation events.
              */
             Router.prototype.register = function (port) {
-                var _this = this;
+                var _this_1 = this;
                 var ports = this._ports;
                 if (isNull(port) || ports.indexOf(port) > -1) {
                     return this._resolve();
@@ -19224,20 +19238,20 @@ var plat;
                 return this._resolve(this.finishNavigating)
                     .catch(noop)
                     .then(function () {
-                    var routeInfo = _clone(_this.currentRouteInfo, true);
-                    return (_this.finishNavigating = _this._canNavigateTo(routeInfo)
+                    var routeInfo = _clone(_this_1.currentRouteInfo, true);
+                    return (_this_1.finishNavigating = _this_1._canNavigateTo(routeInfo)
                         .then(function (canNavigateTo) {
                         if (!canNavigateTo) {
                             return;
                         }
-                        _this.currentRouteInfo = undefined;
-                        return _this._performNavigation(routeInfo);
+                        _this_1.currentRouteInfo = undefined;
+                        return _this_1._performNavigation(routeInfo);
                     })
                         .then(function () {
-                        _this.navigating = false;
-                        _this.currentRouteInfo = routeInfo;
+                        _this_1.navigating = false;
+                        _this_1.currentRouteInfo = routeInfo;
                     }, function () {
-                        _this.navigating = false;
+                        _this_1.navigating = false;
                     }));
                 });
             };
@@ -19264,10 +19278,10 @@ var plat;
              * @param {boolean} force whether or not we should force navigate.
              */
             Router.prototype.configure = function (routes, force) {
-                var _this = this;
+                var _this_1 = this;
                 if (isArray(routes)) {
                     forEach(function (route) {
-                        _this._configureRoute(route);
+                        _this_1._configureRoute(route);
                     }, routes);
                 }
                 else {
@@ -19346,7 +19360,7 @@ var plat;
              * @param {boolean} force Whether or not to force navigation, even if the same url has already been matched.
              */
             Router.prototype.navigate = function (url, query, force, poll) {
-                var _this = this;
+                var _this_1 = this;
                 if (poll === false) {
                     poll = !isObject(this.currentRouteInfo);
                 }
@@ -19366,7 +19380,7 @@ var plat;
                         queryString === this._previousQuery)) {
                     if (this.navigating) {
                         return this.finishNavigating.then(function () {
-                            return _this.navigate(url, query, force);
+                            return _this_1.navigate(url, query, force);
                         });
                     }
                     return resolve();
@@ -19424,7 +19438,7 @@ var plat;
                                     if (isUndefined(view)) {
                                         return;
                                     }
-                                    return _this.configure({
+                                    return _this_1.configure({
                                         pattern: url,
                                         view: view,
                                     });
@@ -19443,11 +19457,11 @@ var plat;
                             // only navigate child routers. 
                             this.navigating = true;
                             return (this.finishNavigating = this._navigateChildren(routeInfo).then(function () {
-                                _this._previousUrl = url;
-                                _this._previousQuery = queryString;
-                                _this.navigating = false;
+                                _this_1._previousUrl = url;
+                                _this_1._previousQuery = queryString;
+                                _this_1.navigating = false;
                             }, function (e) {
-                                _this.navigating = false;
+                                _this_1.navigating = false;
                                 throw e;
                             }));
                         }
@@ -19468,21 +19482,21 @@ var plat;
                 return (this.finishNavigating = this._canNavigate(routeInfo, poll)
                     .then(function (canNavigate) {
                     if (!canNavigate) {
-                        _this.navigating = false;
+                        _this_1.navigating = false;
                         throw new Error('Not cleared to navigate');
                     }
-                    _this._previousUrl = url;
-                    _this._previousQuery = queryString;
-                    return _this._performNavigation(routeInfo);
+                    _this_1._previousUrl = url;
+                    _this_1._previousQuery = queryString;
+                    return _this_1._performNavigation(routeInfo);
                 })
                     .then(function () {
-                    _this._previousPattern = pattern;
-                    _this._previousSegment = segment;
-                    _this.currentRouteInfo = routeInfoCopy;
-                    _this.navigating = false;
+                    _this_1._previousPattern = pattern;
+                    _this_1._previousSegment = segment;
+                    _this_1.currentRouteInfo = routeInfoCopy;
+                    _this_1.navigating = false;
                 }, function (e) {
-                    _this._previousSegment = previousSegment;
-                    _this.navigating = false;
+                    _this_1._previousSegment = previousSegment;
+                    _this_1.navigating = false;
                     throw e;
                 }));
             };
@@ -19589,12 +19603,12 @@ var plat;
              * Forces a navigation if possible.
              */
             Router.prototype._forceNavigate = function () {
-                var _this = this;
+                var _this_1 = this;
                 var resolve = this._resolve;
                 var query;
                 if (this.navigating) {
                     return this.finishNavigating.then(function () {
-                        return _this._forceNavigate();
+                        return _this_1._forceNavigate();
                     });
                 }
                 if (this.isRoot && isEmpty(this._previousUrl)) {
@@ -19640,7 +19654,7 @@ var plat;
              * @param {plat.routing.IRouteInfo} info The route information.
              */
             Router.prototype._performNavigation = function (info) {
-                var _this = this;
+                var _this_1 = this;
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
                 return this._performNavigateFrom(sameRoute)
                     .then(function () {
@@ -19649,10 +19663,10 @@ var plat;
                     }
                     return mapAsync(function (port) {
                         return port.navigateTo(info);
-                    }, _this._ports);
+                    }, _this_1._ports);
                 })
                     .then(function () {
-                    return _this._navigateChildren(info, false);
+                    return _this_1._navigateChildren(info, false);
                 });
             };
             /**
@@ -19660,7 +19674,7 @@ var plat;
              * @param {boolean} ignorePorts? Ignores the ports if necessary.
              */
             Router.prototype._performNavigateFrom = function (ignorePorts) {
-                var _this = this;
+                var _this_1 = this;
                 return mapAsync(function (child) {
                     return child._performNavigateFrom();
                 }, this.children)
@@ -19670,7 +19684,7 @@ var plat;
                     }
                     return mapAsync(function (port) {
                         return port.navigateFrom();
-                    }, _this._ports);
+                    }, _this_1._ports);
                 })
                     .then(noop);
             };
@@ -19679,13 +19693,13 @@ var plat;
              * @param {plat.routing.IRouteInfo} info The route information.
              */
             Router.prototype._canNavigate = function (info, poll) {
-                var _this = this;
+                var _this_1 = this;
                 if (poll === void 0) { poll = true; }
                 var sameRoute = this._isSameRoute(this._nextRouteInfo);
                 if (!poll) {
                     return this._callAllHandlers(info.delegate.alias, info.parameters, info.query)
                         .then(function () {
-                        return _this._callInterceptors(info);
+                        return _this_1._callInterceptors(info);
                     })
                         .then(function () {
                         return true;
@@ -19697,7 +19711,7 @@ var plat;
                     if (!canNavigateFrom) {
                         return canNavigateFrom;
                     }
-                    return _this._canNavigateTo(info, sameRoute);
+                    return _this_1._canNavigateTo(info, sameRoute);
                 });
             };
             /**
@@ -19705,7 +19719,7 @@ var plat;
              * @param {boolean} ignorePorts Ignores the ports if necessary.
              */
             Router.prototype._canNavigateFrom = function (ignorePorts) {
-                var _this = this;
+                var _this_1 = this;
                 return this._Promise
                     .all(this.children.reduce(function (promises, child) {
                     return promises.concat(child._canNavigateFrom());
@@ -19717,7 +19731,7 @@ var plat;
                     }
                     return mapAsync(function (port) {
                         return port.canNavigateFrom();
-                    }, _this._ports);
+                    }, _this_1._ports);
                 })
                     .then(booleanReduce);
             };
@@ -19727,13 +19741,13 @@ var plat;
              * @param {boolean} ignorePorts Ignores the ports if necessary.
              */
             Router.prototype._canNavigateTo = function (info, ignorePorts) {
-                var _this = this;
+                var _this_1 = this;
                 if (isEmpty(this._ports)) {
                     return this._resolve(true);
                 }
                 return this._callAllHandlers(info.delegate.alias, info.parameters, info.query)
                     .then(function () {
-                    return _this._callInterceptors(info);
+                    return _this_1._callInterceptors(info);
                 })
                     .then(function (canNavigateTo) {
                     if (canNavigateTo === false || ignorePorts) {
@@ -19741,7 +19755,7 @@ var plat;
                     }
                     return mapAsync(function (port) {
                         return port.canNavigateTo(info);
-                    }, _this._ports);
+                    }, _this_1._ports);
                 })
                     .then(booleanReduce);
             };
@@ -19752,16 +19766,16 @@ var plat;
              * @param {any} query? The query parameters.
              */
             Router.prototype._callAllHandlers = function (view, parameters, query) {
-                var _this = this;
+                var _this_1 = this;
                 return this._callHandlers(this._queryTransforms['*'], query, undefined, true)
                     .then(function () {
-                    return _this._callHandlers(_this._queryTransforms[view], query, undefined, true);
+                    return _this_1._callHandlers(_this_1._queryTransforms[view], query, undefined, true);
                 })
                     .then(function () {
-                    return _this._callHandlers(_this._paramTransforms['*'], parameters, query);
+                    return _this_1._callHandlers(_this_1._paramTransforms['*'], parameters, query);
                 })
                     .then(function () {
-                    return _this._callHandlers(_this._paramTransforms[view], parameters, query);
+                    return _this_1._callHandlers(_this_1._paramTransforms[view], parameters, query);
                 })
                     .then(noop);
             };
@@ -19791,7 +19805,7 @@ var plat;
              * @param {plat.routing.IRouteInfo} info The route information.
              */
             Router.prototype._callInterceptors = function (info) {
-                var _this = this;
+                var _this_1 = this;
                 var resolve = this._resolve;
                 return mapAsyncInOrder(function (handler) {
                     return resolve(handler(info));
@@ -19803,7 +19817,7 @@ var plat;
                     }
                     return mapAsync(function (handler) {
                         return resolve(handler(info));
-                    }, _this._interceptors[info.delegate.alias]);
+                    }, _this_1._interceptors[info.delegate.alias]);
                 })
                     .then(booleanReduce);
             };
@@ -19970,12 +19984,12 @@ var plat;
         var SimpleEventControl = /** @class */ (function (_super) {
             __extends(SimpleEventControl, _super);
             function SimpleEventControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * An array of the aliases used in the expression.
                  */
-                _this._aliases = [];
-                return _this;
+                _this_1._aliases = [];
+                return _this_1;
             }
             /**
              * Kicks off finding and setting the listener.
@@ -20166,12 +20180,12 @@ var plat;
         var Tap = /** @class */ (function (_super) {
             __extends(Tap, _super);
             function Tap() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __tap;
-                return _this;
+                _this_1.event = __tap;
+                return _this_1;
             }
             return Tap;
         }(SimpleEventControl));
@@ -20182,12 +20196,12 @@ var plat;
         var Blur = /** @class */ (function (_super) {
             __extends(Blur, _super);
             function Blur() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'blur';
-                return _this;
+                _this_1.event = 'blur';
+                return _this_1;
             }
             return Blur;
         }(SimpleEventControl));
@@ -20198,12 +20212,12 @@ var plat;
         var Change = /** @class */ (function (_super) {
             __extends(Change, _super);
             function Change() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'change';
-                return _this;
+                _this_1.event = 'change';
+                return _this_1;
             }
             return Change;
         }(SimpleEventControl));
@@ -20214,12 +20228,12 @@ var plat;
         var Copy = /** @class */ (function (_super) {
             __extends(Copy, _super);
             function Copy() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'copy';
-                return _this;
+                _this_1.event = 'copy';
+                return _this_1;
             }
             return Copy;
         }(SimpleEventControl));
@@ -20230,12 +20244,12 @@ var plat;
         var Cut = /** @class */ (function (_super) {
             __extends(Cut, _super);
             function Cut() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'cut';
-                return _this;
+                _this_1.event = 'cut';
+                return _this_1;
             }
             return Cut;
         }(SimpleEventControl));
@@ -20246,12 +20260,12 @@ var plat;
         var Paste = /** @class */ (function (_super) {
             __extends(Paste, _super);
             function Paste() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'paste';
-                return _this;
+                _this_1.event = 'paste';
+                return _this_1;
             }
             return Paste;
         }(SimpleEventControl));
@@ -20262,12 +20276,12 @@ var plat;
         var DblTap = /** @class */ (function (_super) {
             __extends(DblTap, _super);
             function DblTap() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __dbltap;
-                return _this;
+                _this_1.event = __dbltap;
+                return _this_1;
             }
             return DblTap;
         }(SimpleEventControl));
@@ -20278,12 +20292,12 @@ var plat;
         var Focus = /** @class */ (function (_super) {
             __extends(Focus, _super);
             function Focus() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'focus';
-                return _this;
+                _this_1.event = 'focus';
+                return _this_1;
             }
             return Focus;
         }(SimpleEventControl));
@@ -20294,12 +20308,12 @@ var plat;
         var TouchStart = /** @class */ (function (_super) {
             __extends(TouchStart, _super);
             function TouchStart() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __touchstart;
-                return _this;
+                _this_1.event = __touchstart;
+                return _this_1;
             }
             return TouchStart;
         }(SimpleEventControl));
@@ -20310,12 +20324,12 @@ var plat;
         var TouchEnd = /** @class */ (function (_super) {
             __extends(TouchEnd, _super);
             function TouchEnd() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __touchend;
-                return _this;
+                _this_1.event = __touchend;
+                return _this_1;
             }
             return TouchEnd;
         }(SimpleEventControl));
@@ -20326,12 +20340,12 @@ var plat;
         var TouchMove = /** @class */ (function (_super) {
             __extends(TouchMove, _super);
             function TouchMove() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __touchmove;
-                return _this;
+                _this_1.event = __touchmove;
+                return _this_1;
             }
             return TouchMove;
         }(SimpleEventControl));
@@ -20342,12 +20356,12 @@ var plat;
         var TouchCancel = /** @class */ (function (_super) {
             __extends(TouchCancel, _super);
             function TouchCancel() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __touchcancel;
-                return _this;
+                _this_1.event = __touchcancel;
+                return _this_1;
             }
             return TouchCancel;
         }(SimpleEventControl));
@@ -20358,12 +20372,12 @@ var plat;
         var Hold = /** @class */ (function (_super) {
             __extends(Hold, _super);
             function Hold() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __hold;
-                return _this;
+                _this_1.event = __hold;
+                return _this_1;
             }
             return Hold;
         }(SimpleEventControl));
@@ -20374,12 +20388,12 @@ var plat;
         var Release = /** @class */ (function (_super) {
             __extends(Release, _super);
             function Release() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __release;
-                return _this;
+                _this_1.event = __release;
+                return _this_1;
             }
             return Release;
         }(SimpleEventControl));
@@ -20390,12 +20404,12 @@ var plat;
         var Swipe = /** @class */ (function (_super) {
             __extends(Swipe, _super);
             function Swipe() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __swipe;
-                return _this;
+                _this_1.event = __swipe;
+                return _this_1;
             }
             return Swipe;
         }(SimpleEventControl));
@@ -20406,12 +20420,12 @@ var plat;
         var SwipeLeft = /** @class */ (function (_super) {
             __extends(SwipeLeft, _super);
             function SwipeLeft() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __swipeleft;
-                return _this;
+                _this_1.event = __swipeleft;
+                return _this_1;
             }
             return SwipeLeft;
         }(SimpleEventControl));
@@ -20422,12 +20436,12 @@ var plat;
         var SwipeRight = /** @class */ (function (_super) {
             __extends(SwipeRight, _super);
             function SwipeRight() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __swiperight;
-                return _this;
+                _this_1.event = __swiperight;
+                return _this_1;
             }
             return SwipeRight;
         }(SimpleEventControl));
@@ -20438,12 +20452,12 @@ var plat;
         var SwipeUp = /** @class */ (function (_super) {
             __extends(SwipeUp, _super);
             function SwipeUp() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __swipeup;
-                return _this;
+                _this_1.event = __swipeup;
+                return _this_1;
             }
             return SwipeUp;
         }(SimpleEventControl));
@@ -20454,12 +20468,12 @@ var plat;
         var SwipeDown = /** @class */ (function (_super) {
             __extends(SwipeDown, _super);
             function SwipeDown() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __swipedown;
-                return _this;
+                _this_1.event = __swipedown;
+                return _this_1;
             }
             return SwipeDown;
         }(SimpleEventControl));
@@ -20470,12 +20484,12 @@ var plat;
         var Track = /** @class */ (function (_super) {
             __extends(Track, _super);
             function Track() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __track;
-                return _this;
+                _this_1.event = __track;
+                return _this_1;
             }
             return Track;
         }(SimpleEventControl));
@@ -20486,12 +20500,12 @@ var plat;
         var TrackLeft = /** @class */ (function (_super) {
             __extends(TrackLeft, _super);
             function TrackLeft() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __trackleft;
-                return _this;
+                _this_1.event = __trackleft;
+                return _this_1;
             }
             return TrackLeft;
         }(SimpleEventControl));
@@ -20502,12 +20516,12 @@ var plat;
         var TrackRight = /** @class */ (function (_super) {
             __extends(TrackRight, _super);
             function TrackRight() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __trackright;
-                return _this;
+                _this_1.event = __trackright;
+                return _this_1;
             }
             return TrackRight;
         }(SimpleEventControl));
@@ -20518,12 +20532,12 @@ var plat;
         var TrackUp = /** @class */ (function (_super) {
             __extends(TrackUp, _super);
             function TrackUp() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __trackup;
-                return _this;
+                _this_1.event = __trackup;
+                return _this_1;
             }
             return TrackUp;
         }(SimpleEventControl));
@@ -20534,12 +20548,12 @@ var plat;
         var TrackDown = /** @class */ (function (_super) {
             __extends(TrackDown, _super);
             function TrackDown() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __trackdown;
-                return _this;
+                _this_1.event = __trackdown;
+                return _this_1;
             }
             return TrackDown;
         }(SimpleEventControl));
@@ -20550,12 +20564,12 @@ var plat;
         var TrackEnd = /** @class */ (function (_super) {
             __extends(TrackEnd, _super);
             function TrackEnd() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = __trackend;
-                return _this;
+                _this_1.event = __trackend;
+                return _this_1;
             }
             return TrackEnd;
         }(SimpleEventControl));
@@ -20566,12 +20580,12 @@ var plat;
         var Submit = /** @class */ (function (_super) {
             __extends(Submit, _super);
             function Submit() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'submit';
-                return _this;
+                _this_1.event = 'submit';
+                return _this_1;
             }
             /**
              * Prevents the default submit action unless
@@ -20595,18 +20609,18 @@ var plat;
         var React = /** @class */ (function (_super) {
             __extends(React, _super);
             function React() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'input';
-                return _this;
+                _this_1.event = 'input';
+                return _this_1;
             }
             /**
              * Adds any and all necessary event listeners.
              */
             React.prototype._addEventListeners = function () {
-                var _this = this;
+                var _this_1 = this;
                 var element = this.element;
                 var _compat = this._compat;
                 var input = 'input';
@@ -20617,7 +20631,7 @@ var plat;
                     if (composing) {
                         return;
                     }
-                    _this._onEvent(ev);
+                    _this_1._onEvent(ev);
                 };
                 var postponedEventListener = function (ev) {
                     if (isFunction(timeout)) {
@@ -20890,12 +20904,12 @@ var plat;
         var KeyCodeEventControl = /** @class */ (function (_super) {
             __extends(KeyCodeEventControl, _super);
             function KeyCodeEventControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Holds the key mappings to filter for in a KeyboardEvent.
                  */
-                _this.keyCodes = {};
-                return _this;
+                _this_1.keyCodes = {};
+                return _this_1;
             }
             /**
              * Checks if the IKeyboardEventInput is an expression object
@@ -20997,12 +21011,12 @@ var plat;
         var KeyDown = /** @class */ (function (_super) {
             __extends(KeyDown, _super);
             function KeyDown() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'keydown';
-                return _this;
+                _this_1.event = 'keydown';
+                return _this_1;
             }
             return KeyDown;
         }(KeyCodeEventControl));
@@ -21014,19 +21028,19 @@ var plat;
         var KeyPress = /** @class */ (function (_super) {
             __extends(KeyPress, _super);
             function KeyPress() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'keydown';
-                return _this;
+                _this_1.event = 'keydown';
+                return _this_1;
             }
             /**
              * Filters only 'printing keys' (a-z, A-Z, 0-9, and special characters).
              * @param {KeyboardEvent} ev The KeyboardEvent object.
              */
             KeyPress.prototype._onEvent = function (ev) {
-                var _this = this;
+                var _this_1 = this;
                 var keyCode = ev.keyCode;
                 if (isNull(keyCode) || keyCode === 0) {
                     keyCode = ev.which;
@@ -21037,7 +21051,7 @@ var plat;
                         (keyCode >= 96 && keyCode <= 111))) {
                     var remove_1 = this.addEventListener(this.element, 'keypress', function (e) {
                         remove_1();
-                        _super.prototype._onEvent.call(_this, e);
+                        _super.prototype._onEvent.call(_this_1, e);
                     }, false);
                 }
             };
@@ -21057,12 +21071,12 @@ var plat;
         var KeyUp = /** @class */ (function (_super) {
             __extends(KeyUp, _super);
             function KeyUp() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'keyup';
-                return _this;
+                _this_1.event = 'keyup';
+                return _this_1;
             }
             return KeyUp;
         }(KeyCodeEventControl));
@@ -21073,12 +21087,12 @@ var plat;
         var CharPress = /** @class */ (function (_super) {
             __extends(CharPress, _super);
             function CharPress() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The event name.
                  */
-                _this.event = 'keypress';
-                return _this;
+                _this_1.event = 'keypress';
+                return _this_1;
             }
             /**
              * Parses the proper method args and finds any char code filters.
@@ -21170,16 +21184,16 @@ var plat;
         var SetAttributeControl = /** @class */ (function (_super) {
             __extends(SetAttributeControl, _super);
             function SetAttributeControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated element.
                  */
-                _this.property = '';
+                _this_1.property = '';
                 /**
                  * The function to stop listening for the delayed attribute set.
                  */
-                _this._stopSetter = noop;
-                return _this;
+                _this_1._stopSetter = noop;
+                return _this_1;
             }
             /**
              * Sets the corresponding attribute {property} value and
@@ -21218,15 +21232,15 @@ var plat;
              * attribute property value.
              */
             SetAttributeControl.prototype.setter = function () {
-                var _this = this;
+                var _this_1 = this;
                 this._stopSetter();
                 this._stopSetter = requestAnimationFrameGlobal(function () {
-                    var element = _this.element;
-                    var property = _this.property;
+                    var element = _this_1.element;
+                    var property = _this_1.property;
                     if (!isNode(element)) {
                         return;
                     }
-                    switch (_this.attributes[_this.attribute]) {
+                    switch (_this_1.attributes[_this_1.attribute]) {
                         case 'false':
                         case '0':
                         case 'null':
@@ -21250,12 +21264,12 @@ var plat;
         var Checked = /** @class */ (function (_super) {
             __extends(Checked, _super);
             function Checked() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = 'checked';
-                return _this;
+                _this_1.property = 'checked';
+                return _this_1;
             }
             return Checked;
         }(SetAttributeControl));
@@ -21266,12 +21280,12 @@ var plat;
         var Disabled = /** @class */ (function (_super) {
             __extends(Disabled, _super);
             function Disabled() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = 'disabled';
-                return _this;
+                _this_1.property = 'disabled';
+                return _this_1;
             }
             return Disabled;
         }(SetAttributeControl));
@@ -21282,12 +21296,12 @@ var plat;
         var Selected = /** @class */ (function (_super) {
             __extends(Selected, _super);
             function Selected() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = 'selected';
-                return _this;
+                _this_1.property = 'selected';
+                return _this_1;
             }
             return Selected;
         }(SetAttributeControl));
@@ -21298,12 +21312,12 @@ var plat;
         var ReadOnly = /** @class */ (function (_super) {
             __extends(ReadOnly, _super);
             function ReadOnly() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = 'readonly';
-                return _this;
+                _this_1.property = 'readonly';
+                return _this_1;
             }
             return ReadOnly;
         }(SetAttributeControl));
@@ -21314,24 +21328,24 @@ var plat;
         var Visible = /** @class */ (function (_super) {
             __extends(Visible, _super);
             function Visible() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated element.
                  */
-                _this.property = 'display';
+                _this_1.property = 'display';
                 /**
                  * The value to associate with the property.
                  */
-                _this.value = 'none';
+                _this_1.value = 'none';
                 /**
                  * The importance to set on the property.
                  */
-                _this.importance = 'important';
+                _this_1.importance = 'important';
                 /**
                  * The initial value of the property to be set.
                  */
-                _this._initialValue = '';
-                return _this;
+                _this_1._initialValue = '';
+                return _this_1;
             }
             /**
              * Hides the element.
@@ -21352,21 +21366,21 @@ var plat;
              * Hides or shows the element depending upon the attribute value
              */
             Visible.prototype.setter = function () {
-                var _this = this;
+                var _this_1 = this;
                 this._stopSetter();
                 this._stopSetter = requestAnimationFrameGlobal(function () {
-                    if (!isNode(_this.element)) {
+                    if (!isNode(_this_1.element)) {
                         return;
                     }
-                    switch (_this.attributes[_this.attribute]) {
+                    switch (_this_1.attributes[_this_1.attribute]) {
                         case 'false':
                         case '0':
                         case 'null':
                         case '':
-                            _this._setValue(_this.value, _this.importance);
+                            _this_1._setValue(_this_1.value, _this_1.importance);
                             break;
                         default:
-                            _this._setValue(_this._initialValue);
+                            _this_1._setValue(_this_1._initialValue);
                     }
                 });
             };
@@ -21407,39 +21421,39 @@ var plat;
         var Style = /** @class */ (function (_super) {
             __extends(Style, _super);
             function Style() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = 'style';
+                _this_1.property = 'style';
                 /**
                  * A regular expression for separating style properties from style values in
                  * individual style declarations.
                  */
-                _this._styleRegex = /(.*?):(.*)/;
+                _this_1._styleRegex = /(.*?):(.*)/;
                 /**
                  * A regular expression for temporarily finding and removing url declarations in the style attribute.
                  */
-                _this._urlRegex = /url\([^\)]*\)/gi;
+                _this_1._urlRegex = /url\([^\)]*\)/gi;
                 /**
                  * The temporary replace value of urls found in the style attribute.
                  */
-                _this._urlReplace = '[PLAT-STYLE-URL]';
+                _this_1._urlReplace = '[PLAT-STYLE-URL]';
                 /**
                  * An object storing all the added styles.
                  */
-                _this.__addedStyles = [];
+                _this_1.__addedStyles = [];
                 /**
                  * An object storing all the old style values.
                  */
-                _this.__oldStyles = {};
-                return _this;
+                _this_1.__oldStyles = {};
+                return _this_1;
             }
             /**
              * Sets the evaluated styles on the element.
              */
             Style.prototype.setter = function () {
-                var _this = this;
+                var _this_1 = this;
                 this._stopSetter();
                 var element = this.element;
                 var expression = this.attributes[this.attribute];
@@ -21448,18 +21462,18 @@ var plat;
                 }
                 this._stopSetter = requestAnimationFrameGlobal(function () {
                     var urls = [];
-                    var urlReplace = _this._urlReplace;
-                    expression = expression.replace(_this._urlRegex, function (match) {
+                    var urlReplace = _this_1._urlReplace;
+                    expression = expression.replace(_this_1._urlRegex, function (match) {
                         urls.push(match);
                         return urlReplace;
                     });
                     var style = element.style;
-                    var addedStyles = _this.__addedStyles;
-                    var oldStyles = _this.__oldStyles;
+                    var addedStyles = _this_1.__addedStyles;
+                    var oldStyles = _this_1.__oldStyles;
                     var newStyles = [];
                     var props = expression.split(';');
                     var styleChanges = {};
-                    var styleRegex = _this._styleRegex;
+                    var styleRegex = _this_1._styleRegex;
                     var length = props.length;
                     var prop;
                     var val;
@@ -21500,7 +21514,7 @@ var plat;
                         prop = keys[length];
                         style[prop] = styleChanges[prop];
                     }
-                    _this.__addedStyles = addedStyles.concat(newStyles);
+                    _this_1.__addedStyles = addedStyles.concat(newStyles);
                 });
             };
             return Style;
@@ -21544,12 +21558,12 @@ var plat;
         var Href = /** @class */ (function (_super) {
             __extends(Href, _super);
             function Href() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Used to set the element's href property.
                  */
-                _this.property = 'href';
-                return _this;
+                _this_1.property = 'href';
+                return _this_1;
             }
             return Href;
         }(ElementPropertyControl));
@@ -21560,12 +21574,12 @@ var plat;
         var Src = /** @class */ (function (_super) {
             __extends(Src, _super);
             function Src() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * Used to set the element's src property.
                  */
-                _this.property = 'src';
-                return _this;
+                _this_1.property = 'src';
+                return _this_1;
             }
             /**
              * The function for setting the corresponding
@@ -21596,43 +21610,43 @@ var plat;
         var Bind = /** @class */ (function (_super) {
             __extends(Bind, _super);
             function Bind() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The priority of Bind is set high to precede
                  * other controls that may be listening to the same
                  * event.
                  */
-                _this.priority = 100;
+                _this_1.priority = 100;
                 /**
                  * Whether or not Bind is being used in conjunction
                  * with a TemplateControl that implements the
                  * interface ISupportTwoWayBinding.
                  */
-                _this._supportsTwoWayBinding = false;
+                _this_1._supportsTwoWayBinding = false;
                 /**
                  * A regular expression used to determine if the value is in HTML5 date format YYYY-MM-DD.
                  */
-                _this._dateRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])/;
+                _this_1._dateRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])/;
                 /**
                  * A regular expression used to determine if the value is in HTML5 datetime-local format YYYY-MM-DDTHH:MM(:ss.SSS).
                  */
                 // tslint:disable-next-line 
-                _this._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
+                _this_1._dateTimeLocalRegex = /([0-9]{4})-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9])(?:\.([0-9]+))?)?/;
                 /**
                  * Whether or not the File API is supported.
                  */
-                _this.__fileSupported = acquire(__Compat)
+                _this_1.__fileSupported = acquire(__Compat)
                     .fileSupported;
                 /**
                  * Used to grab a filename from input[type="file"].
                  */
-                _this.__fileNameRegex = acquire(__Regex)
+                _this_1.__fileNameRegex = acquire(__Regex)
                     .fileNameRegex;
                 /**
                  * Used to denote that a property change happened from within this control.
                  */
-                _this.__isSelf = false;
-                return _this;
+                _this_1.__isSelf = false;
+                return _this_1;
             }
             /**
              * Determines the type of Element being bound to
@@ -21753,7 +21767,7 @@ var plat;
              * Used for textarea and input[type="text"].
              */
             Bind.prototype._addTextEventListener = function () {
-                var _this = this;
+                var _this_1 = this;
                 var element = this.element;
                 var _compat = this._compat;
                 var input = 'input';
@@ -21763,7 +21777,7 @@ var plat;
                     if (composing) {
                         return;
                     }
-                    _this._propertyChanged();
+                    _this_1._propertyChanged();
                 };
                 var postponedEventListener = function () {
                     if (isFunction(timeout)) {
@@ -22364,7 +22378,7 @@ var plat;
              * Observes the expression to bind to.
              */
             Bind.prototype._watchExpression = function () {
-                var _this = this;
+                var _this_1 = this;
                 var contextExpression = this._contextExpression;
                 var context = this.evaluateExpression(contextExpression);
                 if (!isObject(context)) {
@@ -22387,12 +22401,12 @@ var plat;
                         context[property] = [];
                     }
                     this.observeArray(function (arrayInfo) {
-                        _this._setter(arrayInfo[0].object, null, true);
+                        _this_1._setter(arrayInfo[0].object, null, true);
                     }, contextExpression + "." + property);
                 }
                 var expression = this._expression;
                 this.observeExpression(function (newValue, oldValue) {
-                    _this._setter(newValue, oldValue);
+                    _this_1._setter(newValue, oldValue);
                 }, expression);
                 this._setter(this.evaluateExpression(expression), undefined, true);
             };
@@ -22563,14 +22577,14 @@ var plat;
              * ISupportTwoWayBinding and initializes all listeners accordingly.
              */
             Bind.prototype._observingBindableProperty = function () {
-                var _this = this;
+                var _this_1 = this;
                 var templateControl = this.templateControl;
                 if (isObject(templateControl) &&
                     isFunction(templateControl.onInput) &&
                     isFunction(templateControl.observeProperties)) {
                     templateControl.onInput(function (newValue) {
-                        _this._getter = function () { return newValue; };
-                        _this._propertyChanged();
+                        _this_1._getter = function () { return newValue; };
+                        _this_1._propertyChanged();
                     });
                     return (this._supportsTwoWayBinding = true);
                 }
@@ -22587,7 +22601,7 @@ var plat;
              * @param {boolean} arrayMutations? Whether or not this is for Array mutation changes.
              */
             Bind.prototype._observeProperty = function (listener, identifier, autocast, arrayMutations) {
-                var _this = this;
+                var _this_1 = this;
                 var parsedIdentifier;
                 if (isEmpty(identifier)) {
                     parsedIdentifier = this._expression.expression;
@@ -22629,11 +22643,11 @@ var plat;
                 }
                 else {
                     removeListener = this.observe(function (newValue, oldValue) {
-                        if (_this.__isSelf || newValue === oldValue) {
+                        if (_this_1.__isSelf || newValue === oldValue) {
                             return;
                         }
                         else if (autocast) {
-                            _this._propertyType = _this._getPropertyType(newValue);
+                            _this_1._propertyType = _this_1._getPropertyType(newValue);
                         }
                         listener(newValue, oldValue, identifier);
                     }, parsedIdentifier);
@@ -22679,25 +22693,25 @@ var plat;
         var ObservableAttributeControl = /** @class */ (function (_super) {
             __extends(ObservableAttributeControl, _super);
             function ObservableAttributeControl() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = '';
+                _this_1.property = '';
                 /**
                  * This control needs to load before its templateControl
                  */
-                _this.priority = 200;
+                _this_1.priority = 200;
                 /**
                  * The set of functions added by the Template Control that listens
                  * for property changes.
                  */
-                _this._listeners = [];
+                _this_1._listeners = [];
                 /**
                  * The _addListener function bound to this control.
                  */
-                _this._boundAddListener = _this._addListener.bind(_this);
-                return _this;
+                _this_1._boundAddListener = _this_1._addListener.bind(_this_1);
+                return _this_1;
             }
             /**
              * Sets the initial value of the property on
@@ -22800,12 +22814,12 @@ var plat;
         var Options = /** @class */ (function (_super) {
             __extends(Options, _super);
             function Options() {
-                var _this = _super !== null && _super.apply(this, arguments) || this;
+                var _this_1 = _super !== null && _super.apply(this, arguments) || this;
                 /**
                  * The property to set on the associated template control.
                  */
-                _this.property = 'options';
-                return _this;
+                _this_1.property = 'options';
+                return _this_1;
             }
             return Options;
         }(ObservableAttributeControl));

@@ -151,44 +151,44 @@ export declare namespace dependency {
           * Gets the string name related to an injector.
           * @param {any} dependency The object to search for.
           */
-        private static __getInjectorName(dependency);
+        private static __getInjectorName;
         /**
           * Calls the injector's constructor with the associated dependencies.
           * @param {any} Constructor The Constructor to call.
           * @param {Array<any>} args The arguments to pass to the constructor.
           */
-        private static __construct(Constructor, args, type?);
+        private static __construct;
         /**
           * Walks up an object's prototype, injecting dependencies if they are
           * registered on static '_inject' objects.
           * @param {any} obj The object to walk.
           * @param {any} proto the prototype of the object.
           */
-        private static __walk(obj, proto, extendWith);
+        private static __walk;
         /**
           * Finds an injector object with the associated constructor.
           * @param {any} Constructor The Constructor to locate.
           */
-        private static __locateInjector(Constructor);
+        private static __locateInjector;
         /**
           * Finds an injector object with the associated constructor in the given InjectorObject.
           * @param {Function} Constructor The Function
           */
-        private static __findInjector(Constructor, injectorsArr);
+        private static __findInjector;
         /**
           * Once an injector is injected, it is wrapped to prevent further injection.
           * @param {any} value The injected value.
           */
-        private static __wrap(value);
+        private static __wrap;
         /**
           * Returns an empty injector object.
           */
-        private static __noop();
+        private static __noop;
         /**
           * Determines if there is a circular dependency in a dependency tree.
           * @param {dependency.Injector<any>} injector The starting point for the dependency tree search.
           */
-        private static __findCircularReferences(injector);
+        private static __findCircularReferences;
         /**
           * The constructor for an injector. Converts any non-string dependencies to strings to support mocking Injectors during runtime.
           * @param {string} name The name of the injected type.
@@ -484,20 +484,20 @@ export declare class Compat {
     /**
       * Define booleans.
       */
-    private __defineBooleans();
+    private __defineBooleans;
     /**
       * Define mapped events
       */
-    private __defineMappedEvents();
+    private __defineMappedEvents;
     /**
       * Define animation events and other vendor prefix
       * dependencies.
       */
-    private __defineVendorDependencies();
+    private __defineVendorDependencies;
     /**
       * Determines whether or not platypus css styles exist.
       */
-    private __determineCss();
+    private __determineCss;
 }
 /**
   * Describes an object containing the correctly mapped touch events for the browser.
@@ -1158,95 +1158,95 @@ export declare namespace expressions {
           * @param {number} index The current index in the string being tokenized.
           * @param {string} char The current char.
           */
-        private __handleAlphaNumeric(index, char);
+        private __handleAlphaNumeric;
         /**
           * Handles tokenizing a "." character.
           * @param {number} index The current index in the string being tokenized.
           * @param {string} char The current char.
           */
-        private __handlePeriod(index, char);
+        private __handlePeriod;
         /**
           * Handles tokenizing a "{" character.
           * @param {string} char The current char.
           */
-        private __handleLeftBrace(char);
+        private __handleLeftBrace;
         /**
           * Handles tokenizing a "}" character.
           * @param {string} char The current char.
           */
-        private __handleRightBrace(char);
+        private __handleRightBrace;
         /**
           * Handles tokenizing a "[" character.
           * @param {string} char The current char.
           */
-        private __handleLeftBracket(char);
+        private __handleLeftBracket;
         /**
           * Handles tokenizing a "]" character.
           * @param {string} char The current char.
           */
-        private __handleRightBracket(char);
+        private __handleRightBracket;
         /**
           * Handles tokenizing a "(" character.
           * @param {string} char The current char.
           */
-        private __handleLeftParenthesis(char);
+        private __handleLeftParenthesis;
         /**
           * Handles tokenizing a ")" character.
           * @param {string} char The current char.
           */
-        private __handleRightParenthesis(char);
+        private __handleRightParenthesis;
         /**
           * Handles tokenizing a "," character.
           * @param {string} char The current char.
           */
-        private __handleComma(char);
+        private __handleComma;
         /**
           * Handles tokenizing a string literal.
           * @param {number} index The current index in the string being tokenized.
           * @param {string} char The current char.
           */
-        private __handleStringLiteral(index, char);
+        private __handleStringLiteral;
         /**
           * Handles tokenizing a "?" character.
           * @param {string} char The current char.
           */
-        private __handleQuestion(char);
+        private __handleQuestion;
         /**
           * Handles tokenizing a ":" character.
           * @param {string} char The current char.
           * @param {number} ternary The current ternary counter. Increments when a ternary is found,
           * decrements when a ternary is completed. It can be very useful when there is nested ternaries.
           */
-        private __handleColon(char, ternary);
+        private __handleColon;
         /**
           * Handles tokenizing all other operators.
           * @param {number} index The current index in the string being tokenized.
           * @param {string} char The current char.
           */
-        private __handleOtherOperator(index, char);
+        private __handleOtherOperator;
         /**
           * Pops operators left on the operator stack onto the output queue
           * checking for mismatches.
           */
-        private __popRemainingOperators();
+        private __popRemainingOperators;
         /**
           * Grabs essential token details for a given operator.
           * @param {string} operator The operator whose details are being requested.
           */
-        private __determineOperator(operator);
+        private __determineOperator;
         /**
           * Determines the precedence of a given operator in relation to other operators
           * in the operator stack and places it in the operator stack.
           * @param {string} operator The operator whose precedence is being determined.
           */
-        private __determinePrecedence(operator);
+        private __determinePrecedence;
         /**
           * Removes a reference to a function that is present in the operator stack and places
           * it in the output queue.
           * @param {number} argCount The current local argument count used with functions,
           * arrays, and object literals.
           */
-        private __removeFnFromStack(argCount);
+        private __removeFnFromStack;
     }
     /**
       * Describes a single token in a string expression.
@@ -1391,65 +1391,65 @@ export declare namespace expressions {
           * @param {string} token The current IToken value.
           * @param {number} args The current IToken args.
           */
-        private __convertPrimitive(index, token, args);
+        private __convertPrimitive;
         /**
           * Handles a potential function or object that needs to be indexed into.
           * @param {number} index The current index in the IToken array.
           * @param {string} token The current IToken value.
           * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
           */
-        private __convertFunction(index, token, useLocalContext);
+        private __convertFunction;
         /**
           * Handles an object literal.
           * @param {number} args The current IToken args.
           */
-        private __convertObject(args);
+        private __convertObject;
         /**
           * Handles an Array literal.
           * @param {number} args The current IToken args.
           */
-        private __convertArrayLiteral(args);
+        private __convertArrayLiteral;
         /**
           * Handles an accessor type function token "()".
           * @param {number} index The current index in the IToken array.
           * @param {number} args The current IToken args.
           * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
           */
-        private __handleFunction(index, args, useLocalContext);
+        private __handleFunction;
         /**
           * Handles an accessor type token that is for indexing (i.e. "." or "[]").
           * @param {number} index The current index in the IToken array.
           * @param {string} token The current IToken value.
           * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
           */
-        private __indexIntoObject(index, token, useLocalContext);
+        private __indexIntoObject;
         /**
           * Handles the "?" operator.
           */
-        private __handleQuestion();
+        private __handleQuestion;
         /**
           * Handles the ":" operator.
           */
-        private __handleColon();
+        private __handleColon;
         /**
           * Handles all other operators.
           * @param {string} token The current IToken value.
           * @param {number} args The current IToken args.
           */
-        private __handleOperator(token, args);
+        private __handleOperator;
         /**
           * Safely finds an initial context.
           * @param {any} context The context object.
           * @param {any} aliases Any aliases that may exist.
           * @param {string} token The property used to find the initial context.
           */
-        private __findInitialContext(context, aliases, token);
+        private __findInitialContext;
         /**
           * Safely drills down into a specified context with a given token.
           * @param {any} context The context object.
           * @param {string} token The property used to drill into the context.
           */
-        private __indexIntoContext(context, token);
+        private __indexIntoContext;
     }
     /**
       * Describes an object that is the result of parsing a JavaScript expression string. It contains detailed
@@ -1739,12 +1739,12 @@ export declare namespace web {
           * Creates a query object out of the URL's query search string.
           * @param {string} search The URL's query search string.
           */
-        private static __getQuery(search);
+        private static __getQuery;
         /**
           * Obtains the base URL for the app/site for doing STATE type routing.
           * @param {string} url The initial URL passed into the Browser.
           */
-        private static __getBaseUrl(url);
+        private static __getBaseUrl;
         /**
           * The constructor for a UrlUtils instance.
           * Handles parsing the initial URL and obtain the base URL if necessary.
@@ -1828,7 +1828,7 @@ export declare namespace async {
           * {(resolve : (value?: TResult | PromiseLike<TResult>) => void, reject: (error?: any) => void) => void} resolveFunction The resolve function to invoke.
           * @param {async.Promise<TResult>} promise The promise on which to invoke the resolve function.
           */
-        private static __invokeResolveFunction<TResult>(resolveFunction, promise);
+        private static __invokeResolveFunction;
         /**
           * Invokes a callback for a promise with the specified detail.
           * @param {async.State} settled The state of the promise.
@@ -1836,47 +1836,47 @@ export declare namespace async {
           * @param {(response: any) => void} callback The callback to invoke.
           * @param {any} detail The details to pass to the callback.
           */
-        private static __invokeCallback(settled, promise, callback, detail);
+        private static __invokeCallback;
         /**
           * Publishes the promise details to all the subscribers for a promise.
           * @param {any} promise The promise object.
           * @param {async.State} settled The state of the promise.
           */
-        private static __publish(promise, settled);
+        private static __publish;
         /**
           * Publishes a promises that has been fulfilled.
           * @param {any} promise The promise object.
           */
-        private static __publishFulfillment(promise);
+        private static __publishFulfillment;
         /**
           * Publishes a promises that has been rejected.
           * @param {any} promise The promise object.
           */
-        private static __publishRejection(promise);
+        private static __publishRejection;
         /**
           * Asynchronously rejects a promise
           * @param {any} promise The promise object.
           * @param {any} reason The detail of the rejected promise.
           */
-        private static __reject(promise, reason);
+        private static __reject;
         /**
           * Asynchronously fulfills a promise
           * @param {async.Promise<TResult>} promise The promise object.
           * @param {any} value The detail of the fulfilled promise.
           */
-        private static __fulfill<TResult>(promise, value);
+        private static __fulfill;
         /**
           * Asynchronously fulfills a promise, allowing for promise chaining.
           * @param {async.Promise<TResult>} promise The promise object.
           * @param {any} value The detail of the fulfilled promise.
           */
-        private static __resolve<TResult>(promise, value);
+        private static __resolve;
         /**
           * Handles chaining promises together, when a promise is returned from within a then handler.
           * @param {async.Promise<TResult>} promise The promise object.
           * @param {async.Promise<TResult>} value The next promise to await.
           */
-        private static __handleThenable<TResult>(promise, value);
+        private static __handleThenable;
         /**
           * Adds a child promise to the parent's subscribers.
           * @param {async.Promise<any>} parent The parent promise.
@@ -1884,7 +1884,7 @@ export declare namespace async {
           * @param {(success: any) => any} onfulfilled The fulfilled method for the child.
           * @param {(error: any) => any} onRejected The rejected method for the child.
           */
-        private static __subscribe(parent, child, onFulfilled, onRejected);
+        private static __subscribe;
         /**
           * An ES6 implementation of the Promise API. Useful for asynchronous programming.
           * Takes in 2 generic types corresponding to the fulfilled success and error types.
@@ -2028,23 +2028,23 @@ export declare namespace async {
         /**
           * Sets the headers for an XMLHttpRequest
           */
-        private __setHeaders();
+        private __setHeaders;
         /**
           * Serializes multipart form data in an XMLHttpRequest as a string.
           */
-        private __serializeFormData();
+        private __serializeFormData;
         /**
           * Creates FormData to add to the XMLHttpRequest.
           */
-        private __appendFormData();
+        private __appendFormData;
         /**
           * Handles submitting multipart form data using an iframe.
           */
-        private __submitFramedFormData();
+        private __submitFramedFormData;
         /**
           * Creates input for form data submissions.
           */
-        private __createInput(key, val);
+        private __createInput;
     }
     /**
       * Describes an object which contains Ajax configuration properties.
@@ -2871,26 +2871,26 @@ export declare namespace observable {
           * @param {any} immediateContext The parent object of the object being defined.
           * @param {string} key The property key of the object being defined.
           */
-        private __defineObject(identifier, immediateContext, key);
+        private __defineObject;
         /**
           * Defines a getter and setter for a primitive using Object.defineProperty.
           * @param {string} identifier The identifier of the primitive being defined.
           * @param {any} immediateContext The parent object of the primitive being defined.
           * @param {string} key The property key of the primitive being defined.
           */
-        private __definePrimitive(identifier, immediateContext, key);
+        private __definePrimitive;
         /**
           * Adds and associates a listener with a given identifier.
           * @param {string} identifier The identifier to attach the listener.
           * @param {observable.IListener} observableListener The listener being added.
           */
-        private __add(identifier, observableListener);
+        private __add;
         /**
           * Adds a mapping for an identifier which allows quick access to it
           * if a parent context is changed.
           * @param {string} identifier The identifier to map.
           */
-        private __addHashValues(identifier);
+        private __addHashValues;
     }
     /**
       */
@@ -3317,7 +3317,7 @@ export declare namespace events {
           * @param {events.DispatchEvent} The event.
           * @param {Array<any>} args The arguments to send to the listeners.
           */
-        private static __executeEvent(uid, ev, args);
+        private static __executeEvent;
         /**
           * Calls event listeners with the given context, event, and arguments.
           * @param {any} context The context with which to call the listeners.
@@ -3325,7 +3325,7 @@ export declare namespace events {
           * @param {Array<(ev: DispatchEvent, ...args: any[]) => void>} The event listeners.
           * @param {Array<any>} args The arguments to send to the listeners.
           */
-        private static __callListeners(context, ev, listeners, args);
+        private static __callListeners;
     }
     /**
       */
@@ -3559,20 +3559,20 @@ export declare class Control {
       * @param {string} uid The uid of the control associated with the remove function.
       * @param {IRemoveListener} listener The remove function to add.
       */
-    private static __addRemoveListener(uid, listener);
+    private static __addRemoveListener;
     /**
       * Removes a IRemoveListener from a control's listeners.
       * @param {string} uid The uid of the control associated with the remove function.
       * @param {IRemoveListener} listener The remove function to add.
       */
-    private static __spliceRemoveListener(uid, listener);
+    private static __spliceRemoveListener;
     /**
       * Gets controls that have a specific key/value string pair.
       * @param {Control} control The at which to start searching for key/value pairs.
       * @param {string} key The key to search for on all the controls in the tree.
       * @param {string} value The expected value used to find similar controls.
       */
-    private static __getControls<T>(control, key, value);
+    private static __getControls;
     /**
       * The constructor for a control. Any injectables specified during control registration will be
       * passed into the constructor as arguments as long as the control is instantiated with its associated
@@ -4840,7 +4840,7 @@ export declare namespace ui {
           * and root context. Root controls are generally the root ViewControl.
           * @param {ui.TemplateControl} control The root control.
           */
-        private static __addRoot(control);
+        private static __addRoot;
         /**
           * Initializes this Resources instance.
           * @param {ui.TemplateControl} control The control containing this Resources instance.
@@ -5162,123 +5162,123 @@ export declare namespace ui {
         /**
           * Clears all temporary states like move and hold events.
           */
-        private __clearTempStates();
+        private __clearTempStates;
         /**
           * A function for resetting all values potentially modified during the touch event sequence.
           */
-        private __resetTouchEnd();
+        private __resetTouchEnd;
         /**
           * A function for handling when gestures are canceled via the Browser.
           * @param {ui.IPointerEvent} ev The touch cancel event object.
           */
-        private __handleCanceled(ev);
+        private __handleCanceled;
         /**
           * A function for handling and firing mapped events.
           * @param {string} type The event type.
           * @param {ui.IPointerEvent} ev The touch end event object.
           * @param {ui.IPointerEvent} payload The trigger payload.
           */
-        private __handleMappedEvents(type, ev, payload);
+        private __handleMappedEvents;
         /**
           * A function for handling and firing tap events.
           * @param {ui.IPointerEvent} ev The touch end event object.
           */
-        private __handleTap(ev);
+        private __handleTap;
         /**
           * A function for handling and firing double tap events.
           * @param {ui.IPointerEvent} ev The touch end event object.
           */
-        private __handleDbltap(ev);
+        private __handleDbltap;
         /**
           * A function for handling and firing release events.
           * @param {ui.IPointerEvent} ev The touch end event object.
           */
-        private __handleRelease(ev);
+        private __handleRelease;
         /**
           * A function for handling and firing swipe events.
           */
-        private __handleSwipe();
+        private __handleSwipe;
         /**
           * A function for handling and firing track events.
           * @param {ui.IPointerEvent} ev The touch move event object.
           * @param {ui.IPointerEvent} originalEv The original touch move event object
           * used for preventing default in the case of an ANDROID device.
           */
-        private __handleTrack(ev, originalEv);
+        private __handleTrack;
         /**
           * A function for handling and firing track end events.
           * @param {ui.IPointerEvent} ev The touch end event object.
           */
-        private __handleTrackEnd(ev);
+        private __handleTrackEnd;
         /**
           * A function for determining the proper touch events.
           */
-        private __getTypes();
+        private __getTypes;
         /**
           * Registers for and starts listening to start and end touch events on the document.
           */
-        private __registerTypes();
+        private __registerTypes;
         /**
           * Un-registers for and stops listening to all touch events on the document.
           */
-        private __unregisterTypes();
+        private __unregisterTypes;
         /**
           * Registers for and begins listening to a particular touch event type.
           * @param {string} events The events to begin listening for.
           */
-        private __registerType(events);
+        private __registerType;
         /**
           * Un-registers for and stops listening to a particular touch event type.
           * @param {string} events The events to stop listening for.
           */
-        private __unregisterType(events);
+        private __unregisterType;
         /**
           * Registers for and begins listening to touch move event types if any moving events are registered.
           * @param {string} eventType The current event's type.
           */
-        private __registerMove(eventType);
+        private __registerMove;
         /**
           * Registers and associates an element with an event.
           * @param {ui.ICustomElement} element The element being tied to a custom event.
           * @param {string} type The type of event.
           */
-        private __registerElement(element, type);
+        private __registerElement;
         /**
           * Un-registers and disassociates an element with an event.
           * @param {ui.ICustomElement} element The element being disassociated with the given custom event.
           * @param {string} type The type of event.
           */
-        private __unregisterElement(element, type);
+        private __unregisterElement;
         /**
           * Sets the current touch point and helps standardize the given event object.
           * @param {ui.IPointerEvent} ev The current point being touched.
           */
-        private __setTouchPoint(ev);
+        private __setTouchPoint;
         /**
           * Sets the captured target.
           * @param {EventTarget} target The target to capture.
           */
-        private __setCapture(target);
+        private __setCapture;
         /**
           * Sets the captured target.
           * @param {ui.IPointerEvent} ev The current touch point.
           * @param {boolean} remove Whether to remove the touch point or add it.
           */
-        private __updatePointers(ev, remove);
+        private __updatePointers;
         /**
           * Searches from the EventTarget up the DOM tree looking for an element with the
           * registered event type.
           * @param {ui.ICustomElement} eventTarget The current target of the touch event.
           * @param {string} type The type of event being searched for.
           */
-        private __findFirstSubscriber(eventTarget, type);
+        private __findFirstSubscriber;
         /**
           * Searches from the EventTarget up the DOM tree looking for all elements with the
           * registered event types.
           * @param {ui.ICustomElement} eventTarget The current target of the touch event.
           * @param {Array<string>} types An array of the types of events being searched for.
           */
-        private __findFirstSubscribers(eventTarget, types);
+        private __findFirstSubscribers;
         /**
           * Removes an event listener for a given event type.
           * @param {ui.ICustomElement} element The element to remove the listener from.
@@ -5286,34 +5286,34 @@ export declare namespace ui {
           * @param {ui.IGestureListener} listener The listener being removed.
           * @param {boolean} useCapture? Whether the listener is fired on the capture or bubble phase.
           */
-        private __removeEventListener(element, type, listener, useCapture?);
+        private __removeEventListener;
         /**
           * Removes an element from the subscriber object.
           * @param {ui.ICustomElement} element The element being removed.
           */
-        private __removeElement(element);
+        private __removeElement;
         /**
           * Standardizes certain properties on the event object for custom events.
           * @param {ui.IExtendedEvent} ev The event object to be standardized.
           */
-        private __standardizeEventObject(ev);
+        private __standardizeEventObject;
         /**
           * Normalizes the 'buttons' property on an IExtendedEvent.
           * @param {ui.IExtendedEvent} ev The event.
           */
-        private __normalizeButtons(ev);
+        private __normalizeButtons;
         /**
           * Searches through the input array looking for the primary
           * touch down index.
           * @param {Array<ui.IExtendedEvent>} ev The array of touch event objects
           * to search through.
           */
-        private __getTouchIndex(touches);
+        private __getTouchIndex;
         /**
           * Grabs the x and y offsets of an event object's target.
           * @param {ui.IExtendedEvent} ev The current event object.
           */
-        private __getOffset(ev);
+        private __getOffset;
         /**
           * Calculates the distance between two (x, y) coordinate points.
           * @param {number} x1 The x-coordinate of the first point.
@@ -5321,7 +5321,7 @@ export declare namespace ui {
           * @param {number} y1 The y-coordinate of the first point.
           * @param {number} y2 The y-coordinate of the second point.
           */
-        private __getDistance(x1, x2, y1, y2);
+        private __getDistance;
         /**
           * Calculates the velocity between two (x, y) coordinate points over a given time.
           * @param {number} dx The change in x position.
@@ -5329,19 +5329,19 @@ export declare namespace ui {
           * @param {number} dtx The change in time in x direction.
           * @param {number} dty The change in time in y direction.
           */
-        private __getVelocity(dx, dy, dtx, dty);
+        private __getVelocity;
         /**
           * Calculates the direction of movement.
           * @param {number} dx The change in x position.
           * @param {number} dy The change in y position.
           */
-        private __getDirection(dx, dy);
+        private __getDirection;
         /**
           * Checks to see if a swipe direction has changed to recalculate
           * an origin point.
           * @param {ui.IDirection} direction The current vertical and horizontal directions of movement.
           */
-        private __handleOriginChange(direction);
+        private __handleOriginChange;
         /**
           * Checks to see if a swipe event has been registered.
           * @param {ui.IDirection} direction The current horizontal and vertical directions of movement.
@@ -5349,66 +5349,66 @@ export declare namespace ui {
           * @param {number} dx The distance in the x direction.
           * @param {number} dy The distance in the y direction.
           */
-        private __getRegisteredSwipes(direction, velocity, dx, dy);
+        private __getRegisteredSwipes;
         /**
           * Checks to see if a swipe event has been registered.
           * @param {string} direction The current direction of movement.
           */
-        private __isHorizontal(direction);
+        private __isHorizontal;
         /**
           * Appends CSS to the head for gestures if needed.
           */
-        private __appendGestureStyle();
+        private __appendGestureStyle;
         /**
           * Creates a style text to append to the document head.
           * @param {ui.IDefaultStyle} styleClass The object containing the custom styles for
           * gestures.
           */
-        private __createStyle(styleClass);
+        private __createStyle;
         /**
           * Blurs the currently focused element.
           */
-        private __blurFocusedElement();
+        private __blurFocusedElement;
         /**
           * Listens for blur and then sets the focused element back to null for the next case.
           * @param {HTMLInputElement} target The target to listen for the blur event on.
           */
-        private __waitForBlur(target);
+        private __waitForBlur;
         /**
           * Handles a click target case.
           * @param {HTMLInputElement} target The target to handle click functionality for.
           */
-        private __clickTarget(target);
+        private __clickTarget;
         /**
           * Handles HTMLInputElements in WebKit based touch applications.
           * @param {HTMLInputElement} target The target to handle functionality for.
           */
-        private __handleInput(target);
+        private __handleInput;
         /**
           * Handles the phantom click in WebKit based touch applications.
           */
-        private __preventClickFromTouch();
+        private __preventClickFromTouch;
         /**
           * Prevents default and stops propagation for delayed or phantom clicks.
           * @param {Event} ev The event object.
           */
-        private __preventDefaultClick(ev);
+        private __preventDefaultClick;
         /**
           * Removes selection capability from the element.
           * @param {Node} element The element to remove selections on.
           */
-        private __removeSelections(element);
+        private __removeSelections;
         /**
           * Returns selection capability from the element.
           * @param {Node} element The element to return selections on.
           */
-        private __returnSelections(element);
+        private __returnSelections;
         /**
           * Prevents default and stops propagation in all elements other than
           * inputs and textareas.
           * @param {Event} ev The event object.
           */
-        private __preventDefault(ev);
+        private __preventDefault;
     }
     /**
       */
@@ -6066,7 +6066,7 @@ export declare namespace ui {
               * @param {string} id The animation ID.
               * @param {Array<Element>} elements The Array of Elements being animated.
               */
-            private __setAnimationId(id, elements);
+            private __setAnimationId;
             /**
               * Generates a new animated element for the Animator to easily reference and be able
               * to end later on.
@@ -6074,17 +6074,17 @@ export declare namespace ui {
               * @param {Array<Element>} elements The Array of Elements being animated.
               * @param {ui.animations.AnimationPromise} animationPromise The animation's associated promise.
               */
-            private __generateAnimatedElement(id, elements, animationPromise);
+            private __generateAnimatedElement;
             /**
               * Checks whether or not any parent elements are animating.
               * @param {Array<Element>} elements The Elements whose parents we need to check.
               */
-            private __isParentAnimating(elements);
+            private __isParentAnimating;
             /**
               * Forces child nodes of an animating element to stop animating.
               * @param {Element} element The element being animated.
               */
-            private __stopChildAnimations(elements);
+            private __stopChildAnimations;
             /**
               * Sifts through an Array of Nodes and finds all animatable Elements and creates
               * BaseAnimations for them.
@@ -6094,7 +6094,7 @@ export declare namespace ui {
               * @param {Array<Element>} elementNodes The Array of only animatable elements.
               * @param {Array<ui.animations.BaseAnimation>>} animationInstances An empty Array of animation instances to add to.
               */
-            private __constructAnimatableElements(elements, animationInjector, elementNodes, animationInstances);
+            private __constructAnimatableElements;
         }
         /**
           * Describes an object representing a special animation functionality.
@@ -6191,17 +6191,17 @@ export declare namespace ui {
             isCanceled(): boolean;
             /**
               * Takes in two methods, called when/if the promise fulfills.
-              * @param {(success: ui.animations.IGetAnimatingThenable) => async.Promise<U>} onFulfilled
+              * @param {(success: ui.animations.IGetAnimatingThenable) => async.Promise<TResult1>} onFulfilled
               * A method called when/if the promise fulfills.
               * If undefined the next onFulfilled method in the promise chain will be called.
               */
-            then<U>(onFulfilled?: (value: any) => U | IAnimatingThenable, onRejected?: (error: any) => U | IAnimatingThenable | void): AnimationPromise;
+            then<TResult1, TResult2 = never>(onFulfilled?: (value: any) => TResult1 | IAnimatingThenable | undefined | null, onRejected?: (error: any) => TResult2 | IAnimatingThenable | undefined | null): AnimationPromise;
             /**
               * A wrapper method for Promise.then(undefined, onRejected);
               * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
               * onRejected method in the promise chain will be called.
               */
-            catch<U>(onRejected?: (error: any) => U | IAnimatingThenable): AnimationPromise;
+            catch<TResult = never>(onRejected?: (error: any) => TResult | IAnimatingThenable | undefined | null): AnimationPromise;
         }
         /**
           * Describes a chaining function that fulfills when the previous link is complete and is
@@ -6613,7 +6613,7 @@ export declare namespace ui {
               * element.
               * @param {Array<string>} durations The array of declared transition duration values.
               */
-            private __cssTransition(computedStyle, durations);
+            private __cssTransition;
         }
         /**
           * An interface describing the options for SimpleCssTransition.
@@ -6859,7 +6859,7 @@ export declare namespace ui {
               * @param {ui.controls.Template} control The first of the controls
               * with this corresponding ID that defined the HTML template to reuse.
               */
-            private __mapBindableTemplates(control);
+            private __mapBindableTemplates;
         }
         /**
           * The available options for the Template control.
@@ -8104,7 +8104,7 @@ export declare namespace processing {
           * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
           * @param {Array<expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
           */
-        private static __findUniqueIdentifiers(expressions);
+        private static __findUniqueIdentifiers;
         /**
           * Takes in an identifier and returns an object containing both its converted absolute path and the
           * ContextManager needed to observe it.
@@ -8112,7 +8112,7 @@ export declare namespace processing {
           * @param {ui.TemplateControl} control The TemplateControl associated
           * to the identifiers.
           */
-        private static __getObservationDetails(identifier, control);
+        private static __getObservationDetails;
         /**
           * Initializes the manager's properties.
           * @param {processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an
@@ -8982,7 +8982,7 @@ export declare namespace routing {
           * @param {string} token The token used to acquire a new segment if necessary.
           * @param {IObject<routing.BaseSegment>} cache The cache in which to look for/store the segment.
           */
-        private static __findSegment(name, token, cache);
+        private static __findSegment;
         /**
           * Initializes the segment.
           * @param {string} name? The name for the new segment.
@@ -11210,20 +11210,20 @@ export declare class App {
       * document.body.
       * @param {events.LifecycleEvent} ev The LifecycleEvent for the app ready.
       */
-    private static __ready(ev);
+    private static __ready;
     /**
       * A static method called when the application wants to programmatically shutdown.
       */
-    private static __shutdown();
+    private static __shutdown;
     /**
       * A static method called to register all the LifecycleEvents for an app instance.
       */
-    private static __registerAppEvents(ev);
+    private static __registerAppEvents;
     /**
       * We need to add [plat-hide] as a css property if platypus.css doesn't exist so we can use it to temporarily
       * hide elements.
       */
-    private static __addPlatCss();
+    private static __addPlatCss;
     /**
       * Class for every app. This class contains hooks for Application Lifecycle Management (ALM)
       * as well as error handling and navigation events.
