@@ -380,11 +380,15 @@ namespace plat.ui.animations {
         ): Promise<TAll[]> {
             const length = promises.length;
             let args = <IAnimationEssentials[]>[];
-            const animationPromise = new AnimationPromise((resolve): void => {
-                this._Promise.all(<any>promises).then((): void => {
-                    resolve();
-                });
-            });
+            const animationPromise = new AnimationPromise(
+                (resolve): void => {
+                    this._Promise.all(<any>promises).then(
+                        (): void => {
+                            resolve();
+                        }
+                    );
+                }
+            );
 
             for (let i = 0; i < length; i += 1) {
                 args = args.concat(
@@ -411,11 +415,17 @@ namespace plat.ui.animations {
          */
         public resolve(): IAnimatingThenable {
             // tslint:disable-next-line
-            const animationPromise = new AnimationPromise((resolve): void => {
-                resolve((): IAnimationThenable<void> => {
-                    return <IAnimationThenable<void>>(<any>animationPromise);
-                });
-            });
+            const animationPromise = new AnimationPromise(
+                (resolve): void => {
+                    resolve(
+                        (): IAnimationThenable<void> => {
+                            return <IAnimationThenable<void>>(
+                                (<any>animationPromise)
+                            );
+                        }
+                    );
+                }
+            );
 
             return <any>animationPromise;
         }
@@ -452,11 +462,15 @@ namespace plat.ui.animations {
             );
             const current = animation.current;
 
-            animation.previous.then((): void => {
-                requestAnimationFrameGlobal((): void => {
-                    current.start();
-                });
-            });
+            animation.previous.then(
+                (): void => {
+                    requestAnimationFrameGlobal(
+                        (): void => {
+                            current.start();
+                        }
+                    );
+                }
+            );
 
             return current;
         }
@@ -576,80 +590,88 @@ namespace plat.ui.animations {
 
                     previousPromise = _Promise
                         .all(<any>previousAnimations)
-                        .then((): void => {
-                            const animationPromises: IAnimationThenable<
-                                any
-                            >[] = [];
+                        .then(
+                            (): void => {
+                                const animationPromises: IAnimationThenable<
+                                    any
+                                >[] = [];
 
-                            for (let i = 0; i < length; i += 1) {
-                                animationPromises.push(
-                                    animationInstances[i].instantiate(
-                                        elementNodes[i],
-                                        options
+                                for (let i = 0; i < length; i += 1) {
+                                    animationPromises.push(
+                                        animationInstances[i].instantiate(
+                                            elementNodes[i],
+                                            options
+                                        )
+                                    );
+                                }
+
+                                this._handlePostInitFunctionality(
+                                    elements,
+                                    elementNodes,
+                                    functionality
+                                );
+
+                                const animationsFinished = _Promise.all(<any>(
+                                    animationPromises
+                                ));
+                                const animatingParentId = this.__isParentAnimating(
+                                    elementNodes
+                                );
+                                const animatedElement = this.__generateAnimatedElement(
+                                    id,
+                                    elementNodes,
+                                    animationPromise
+                                );
+
+                                if (!isNull(animatingParentId)) {
+                                    this._handleEndFunctionality(
+                                        elements,
+                                        elementNodes,
+                                        functionality
+                                    );
+                                    animatedElement.animationEnd(true);
+
+                                    const parent = this._animatedElements[
+                                        animatingParentId
+                                    ];
+                                    const resolvedPromise = isPromise(
+                                        parent.promise
                                     )
+                                        ? (): IAnimationThenable<any> => {
+                                              return parent.promise;
+                                          }
+                                        : (): IAnimationThenable<any> => {
+                                              return <any>animationPromise;
+                                          };
+
+                                    animationsFinished.then(
+                                        (): void => {
+                                            resolve(resolvedPromise);
+                                        }
+                                    );
+                                }
+
+                                this.__stopChildAnimations(elementNodes);
+
+                                animatedElement.promise = <any>animationPromise;
+                                animationsFinished.then(
+                                    (): void => {
+                                        this._handleEndFunctionality(
+                                            elements,
+                                            elementNodes,
+                                            functionality
+                                        );
+                                        animatedElement.animationEnd();
+
+                                        resolve(
+                                            (): IAnimationThenable<any> => {
+                                                return <any>animationPromise;
+                                            }
+                                        );
+                                    }
                                 );
                             }
-
-                            this._handlePostInitFunctionality(
-                                elements,
-                                elementNodes,
-                                functionality
-                            );
-
-                            const animationsFinished = _Promise.all(
-                                <any>animationPromises
-                            );
-                            const animatingParentId = this.__isParentAnimating(
-                                elementNodes
-                            );
-                            const animatedElement = this.__generateAnimatedElement(
-                                id,
-                                elementNodes,
-                                animationPromise
-                            );
-
-                            if (!isNull(animatingParentId)) {
-                                this._handleEndFunctionality(
-                                    elements,
-                                    elementNodes,
-                                    functionality
-                                );
-                                animatedElement.animationEnd(true);
-
-                                const parent = this._animatedElements[
-                                    animatingParentId
-                                ];
-                                const resolvedPromise = isPromise(
-                                    parent.promise
-                                )
-                                    ? (): IAnimationThenable<any> => {
-                                          return parent.promise;
-                                      }
-                                    : (): IAnimationThenable<any> => {
-                                          return <any>animationPromise;
-                                      };
-
-                                animationsFinished.then((): void => {
-                                    resolve(resolvedPromise);
-                                });
-                            }
-
-                            this.__stopChildAnimations(elementNodes);
-
-                            animatedElement.promise = <any>animationPromise;
-                            animationsFinished.then((): void => {
-                                this._handleEndFunctionality(
-                                    elements,
-                                    elementNodes,
-                                    functionality
-                                );
-                                animatedElement.animationEnd();
-
-                                resolve((): IAnimationThenable<any> => {
-                                    return <any>animationPromise;
-                                });
-                            });
-                        });
+                        );
                 }
             );
 
@@ -1255,7 +1277,9 @@ namespace plat.ui.animations {
         ): void {
             if (isEmpty(this.__animationInstances)) {
                 if (isArray(instances)) {
-                    this.__animationInstances = <IAnimationEssentials[]>instances;
+                    this.__animationInstances = <IAnimationEssentials[]>(
+                        instances
+                    );
                 } else if (isObject(instances)) {
                     this.__animationInstances = [
                         <IAnimationEssentials>instances,
@@ -1436,17 +1460,23 @@ namespace plat.ui.animations {
          * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the
          * next then method in the promise chain.
          *
-         * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.Promise<U>} onFulfilled
+         * @param {(success: plat.ui.animations.IGetAnimatingThenable) => plat.async.Promise<TResult1>} onFulfilled
          * A method called when/if the promise fulfills.
          * If undefined the next onFulfilled method in the promise chain will be called.
          *
-         * @returns {plat.ui.animations.IAnimationThenable<U>}
+         * @returns {plat.ui.animations.IAnimationThenable<TResult1>}
          */
-        public then<U>(
-            onFulfilled?: (value: any) => U | IAnimatingThenable,
-            onRejected?: (error: any) => U | IAnimatingThenable | void
+        public then<TResult1, TResult2 = never>(
+            onFulfilled?: (
+                value: any
+            ) => TResult1 | IAnimatingThenable | undefined | null,
+            onRejected?: (
+                error: any
+            ) => TResult2 | IAnimatingThenable | undefined | null
         ): AnimationPromise {
-            return <AnimationPromise>(<any>super.then<U>(<any>onFulfilled));
+            return <AnimationPromise>(
+                (<any>super.then<TResult1>(<any>onFulfilled, <any>onRejected))
+            );
         }
 
         /**
@@ -1465,10 +1495,14 @@ namespace plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        public catch<U>(
-            onRejected?: (error: any) => U | IAnimatingThenable
+        public catch<TResult = never>(
+            onRejected?: (
+                error: any
+            ) => TResult | IAnimatingThenable | undefined | null
         ): AnimationPromise {
-            return <AnimationPromise>(<any>super.catch<U>(<any>onRejected));
+            return <AnimationPromise>(
+                (<any>super.catch<TResult>(<any>onRejected))
+            );
         }
     }
 
@@ -1582,7 +1616,7 @@ namespace plat.ui.animations {
          *
          * @returns {boolean} Whether or not this promise has been canceled.
          */
-        isCanceled(): boolean;
+        isCanceled(): boolean; //tslint:disable-next-line
 
         /**
          * @name then
@@ -1601,8 +1635,16 @@ namespace plat.ui.animations {
          * If undefined the next onRejected method in the promise chain will be called.
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
-         */ //tslint:disable-next-line
-        then<TResult1 = T, TResult2 = never>(onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): IAnimationThenable<TResult1 | TResult2>;
+         */ then<TResult1 = T, TResult2 = never>(
+            onFulfilled?:
+                | ((value: T) => TResult1 | PromiseLike<TResult1>)
+                | undefined
+                | null,
+            onRejected?:
+                | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+                | undefined
+                | null
+        ): IAnimationThenable<TResult1 | TResult2>;
 
         /**
          * @name catch
@@ -1620,7 +1662,12 @@ namespace plat.ui.animations {
          *
          * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
          */
-        catch<TResult = never>(onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): IAnimationThenable<TResult>;
+        catch<TResult = never>(
+            onRejected?:
+                | ((reason: any) => TResult | PromiseLike<TResult>)
+                | undefined
+                | null
+        ): IAnimationThenable<TResult>;
     }
 
     /**
