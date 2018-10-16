@@ -3479,6 +3479,10 @@ export declare class Control {
       */
     private static __eventListeners;
     /**
+      * An object containing all controls' objects that are marked to be called on disposal.
+      */
+    private static __disposables;
+    /**
       * A unique id, created during instantiation and found on every Control.
       */
     uid: string;
@@ -3550,6 +3554,11 @@ export declare class Control {
       */
     static removeEventListeners(control: Control): void;
     /**
+      * calls all disposable functions for a control with the given uid.
+      * @param {Control} control The control having its disposables called.
+      */
+    static callDisposables(control: Control): void;
+    /**
       * Returns a new instance of Control.
       */
     static getInstance(): Control;
@@ -3566,6 +3575,19 @@ export declare class Control {
       * @param {IRemoveListener} listener The remove function to add.
       */
     private static __spliceRemoveListener;
+    /**
+      * Adds a function to remove an event listener for the control specified
+      * by its uid.
+      * @param {string} uid The uid of the control associated with the remove function.
+      * @param {any} value The value to add.
+      */
+    private static __addDisposable;
+    /**
+      * Removes a IRemoveListener from a control's listeners.
+      * @param {string} uid The uid of the control associated with the remove function.
+      * @param {any} value The value to add.
+      */
+    private static __spliceDisposable;
     /**
       * Gets controls that have a specific key/value string pair.
       * @param {Control} control The at which to start searching for key/value pairs.
@@ -3613,6 +3635,18 @@ export declare class Control {
       * of event propagation.
       */
     addEventListener(element: EventTarget, type: string, listener: ui.IGestureListener | EventListener, useCapture?: boolean): IRemoveListener;
+    /**
+      * Adds an event listener of the specified type to the specified element. Removal of the
+      * event is handled automatically upon disposal.
+      * @param {EventTarget} element The element to add the event listener to.
+      * @param {string}  type The type of event to listen to.
+      * @param {EventListener} listener The listener to fire when the event occurs.
+      * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
+      * of event propagation.
+      */
+    addDisposable(value: IRemoveListener | {
+        cancel(): any;
+    } | number): IRemoveListener;
     /**
       * Allows a Control to observe any property on its context and receive updates when
       * the property is changed.

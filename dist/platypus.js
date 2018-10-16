@@ -8101,6 +8101,7 @@ var plat;
                 control.dispose();
             }
             Control.removeEventListeners(control);
+            Control.callDisposables(control);
             Control._ContextManager.dispose(control);
             control.element = null;
             Control.removeParent(control);
@@ -8153,6 +8154,26 @@ var plat;
             }
         };
         /**
+         * calls all disposable functions for a control with the given uid.
+         * @param {plat.Control} control The control having its disposables called.
+         */
+        Control.callDisposables = function (control) {
+            if (isNull(control)) {
+                return;
+            }
+            var disposables = Control.__disposables;
+            var uid = control.uid;
+            var controlDisposables = disposables[uid];
+            if (isArray(controlDisposables)) {
+                var index = controlDisposables.length;
+                while (index > 0) {
+                    index -= 1;
+                    controlDisposables[index]();
+                }
+                deleteProperty(disposables, uid);
+            }
+        };
+        /**
          * Returns a new instance of Control.
          */
         Control.getInstance = function () {
@@ -8186,6 +8207,36 @@ var plat;
                     return;
                 }
                 controlListeners.splice(index, 1);
+            }
+        };
+        /**
+         * Adds a function to remove an event listener for the control specified
+         * by its uid.
+         * @param {string} uid The uid of the control associated with the remove function.
+         * @param {any} value The value to add.
+         */
+        Control.__addDisposable = function (uid, value) {
+            var disposables = Control.__disposables;
+            if (isArray(disposables[uid])) {
+                disposables[uid].push(value);
+                return;
+            }
+            disposables[uid] = [value];
+        };
+        /**
+         * Removes a IRemoveListener from a control's listeners.
+         * @param {string} uid The uid of the control associated with the remove function.
+         * @param {any} value The value to add.
+         */
+        Control.__spliceDisposable = function (uid, value) {
+            var disposables = Control.__disposables;
+            var controlDisposables = disposables[uid];
+            if (isArray(controlDisposables)) {
+                var index = controlDisposables.indexOf(value);
+                if (index === -1) {
+                    return;
+                }
+                controlDisposables.splice(index, 1);
             }
         };
         /**
@@ -8273,6 +8324,64 @@ var plat;
             };
         };
         /**
+         * Adds an event listener of the specified type to the specified element. Removal of the
+         * event is handled automatically upon disposal.
+         * @param {EventTarget} element The element to add the event listener to.
+         * @param {string}  type The type of event to listen to.
+         * @param {EventListener} listener The listener to fire when the event occurs.
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
+         * of event propagation.
+         */
+        Control.prototype.addDisposable = function (value) {
+            var _this_1 = this;
+            var disposable;
+            if (isFunction(value)) {
+                disposable = function () {
+                    try {
+                        value.call(_this_1);
+                    }
+                    catch (e) {
+                        _this_1._log.warn('Error cancelling disposable');
+                        _this_1._log.warn(e);
+                    }
+                };
+            }
+            else if (isNumber(value)) {
+                disposable = function () {
+                    try {
+                        clearInterval(value);
+                        clearTimeout(value);
+                        cancelAnimationFrame(value);
+                    }
+                    catch (e) {
+                        _this_1._log.warn('Error cancelling disposable');
+                        _this_1._log.warn(e);
+                    }
+                };
+            }
+            else if (isObject(value) && isFunction(value.cancel)) {
+                disposable = function () {
+                    try {
+                        value.cancel();
+                    }
+                    catch (e) {
+                        _this_1._log.warn('Error cancelling disposable');
+                        _this_1._log.warn(e);
+                    }
+                };
+            }
+            else {
+                this._log.warn('"Control.addDisposable" requires either a function, number, or an object with a cancel function on it.');
+                return noop;
+            }
+            var uid = this.uid;
+            Control.__addDisposable(uid, disposable);
+            return function () {
+                disposable();
+                Control.__spliceDisposable(uid, disposable);
+            };
+        };
+        /**
          * Allows a Control to observe any property on its context and receive updates when
          * the property is changed.
          * @param {plat.IIdentifierChangedListener<T>} listener The method called when the property is changed. This method
@@ -8333,12 +8442,12 @@ var plat;
                 _ContextManager = acquire(__ContextManagerStatic);
             }
             var contextManager = _ContextManager.getManager(root);
-            return contextManager.observe(absoluteIdentifier, {
+            return this.addDisposable(contextManager.observe(absoluteIdentifier, {
                 listener: function (newValue, oldValue) {
                     listener.call(_this_1, newValue, oldValue, identifier);
                 },
                 uid: this.uid,
-            });
+            }));
         };
         Control.prototype.observeArray = function (listener, identifier) {
             var control = isObject(this.context)
@@ -8392,10 +8501,10 @@ var plat;
                 },
                 uid: uid,
             });
-            return function () {
+            return this.addDisposable(function () {
                 removeListener();
                 removeCallback();
-            };
+            });
         };
         /**
          * Using a IParsedExpression observes any associated identifiers. When an identifier
@@ -8500,12 +8609,12 @@ var plat;
                     listener: observableListener,
                 }));
             }
-            return function () {
+            return this.addDisposable(function () {
                 var len = listeners.length;
                 for (var j = 0; j < len; j += 1) {
                     listeners[j]();
                 }
-            };
+            });
         };
         /**
          * Evaluates an IParsedExpression using the control.parent.context.
@@ -8590,7 +8699,7 @@ var plat;
             if (!isObject(_EventManager)) {
                 _EventManager = acquire(__EventManagerStatic);
             }
-            return _EventManager.on(this.uid, name, listener, this);
+            return this.addDisposable(_EventManager.on(this.uid, name, listener, this));
         };
         /**
          * The dispose event is called when a control is being removed from memory. A control should release
@@ -8601,6 +8710,10 @@ var plat;
          * An object containing all controls' registered event listeners.
          */
         Control.__eventListeners = {};
+        /**
+         * An object containing all controls' objects that are marked to be called on disposal.
+         */
+        Control.__disposables = {};
         return Control;
     }());
     plat.Control = Control;
@@ -8881,6 +8994,7 @@ var plat;
                     control.dispose();
                 }
                 Control.removeEventListeners(control);
+                Control.callDisposables(control);
                 TemplateControl.removeElement(control);
                 TemplateControl._ResourcesFactory.dispose(control);
                 TemplateControl._BindableTemplatesFactory.dispose(control);
@@ -9020,9 +9134,7 @@ var plat;
                 }
                 else if (!isNull(control.templateString)) {
                     var controlType_1 = control.type;
-                    return templateCache
-                        .read(controlType_1)
-                        .catch(function (template) {
+                    return templateCache.read(controlType_1).catch(function (template) {
                         if (isNull(template)) {
                             template = control.templateString;
                         }
@@ -9049,6 +9161,7 @@ var plat;
                     Control.dispose(controls[i]);
                 }
                 Control.removeEventListeners(control);
+                Control.callDisposables(control);
                 TemplateControl.removeElement(control);
                 TemplateControl._ResourcesFactory.dispose(control, true);
                 deleteProperty(TemplateControl.__resourceCache, control.uid);
@@ -9118,7 +9231,7 @@ var plat;
          */
         function ITemplateControlFactory(_ResourcesFactory, _BindableTemplatesFactory, _managerCache, _templateCache, _parser, _http, _Promise, _log) {
             TemplateControl._ResourcesFactory = _ResourcesFactory;
-            TemplateControl._BindableTemplatesFactory = _BindableTemplatesFactory;
+            (TemplateControl)._BindableTemplatesFactory = _BindableTemplatesFactory;
             TemplateControl._managerCache = _managerCache;
             TemplateControl._templateCache = _templateCache;
             TemplateControl._parser = _parser;

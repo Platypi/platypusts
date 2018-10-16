@@ -110,6 +110,20 @@ namespace plat {
         private static __eventListeners: IObject<IRemoveListener[]> = {};
 
         /**
+         * @name __disposables
+         * @memberof plat.Control
+         * @kind property
+         * @access private
+         * @static
+         *
+         * @type {plat.IObject<Array<plat.IRemoveListener>>}
+         *
+         * @description
+         * An object containing all controls' objects that are marked to be called on disposal.
+         */
+        private static __disposables: IObject<IRemoveListener[]> = {};
+
+        /**
          * @name uid
          * @memberof plat.Control
          * @kind property
@@ -386,6 +400,7 @@ namespace plat {
             }
 
             Control.removeEventListeners(control);
+            Control.callDisposables(control);
             Control._ContextManager.dispose(control);
             control.element = null;
             Control.removeParent(control);
@@ -477,6 +492,40 @@ namespace plat {
         }
 
         /**
+         * @name callDisposables
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
+         * calls all disposable functions for a control with the given uid.
+         *
+         * @param {plat.Control} control The control having its disposables called.
+         *
+         * @returns {void}
+         */
+        public static callDisposables(control: Control): void {
+            if (isNull(control)) {
+                return;
+            }
+
+            const disposables = Control.__disposables;
+            const uid = control.uid;
+            const controlDisposables = disposables[uid];
+
+            if (isArray(controlDisposables)) {
+                let index = controlDisposables.length;
+                while (index > 0) {
+                    index -= 1;
+                    controlDisposables[index]();
+                }
+
+                deleteProperty(disposables, uid);
+            }
+        }
+
+        /**
          * @name getInstance
          * @memberof plat.Control
          * @kind function
@@ -552,6 +601,69 @@ namespace plat {
                 }
 
                 controlListeners.splice(index, 1);
+            }
+        }
+
+        /**
+         * @name __addDisposable
+         * @memberof plat.Control
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Adds a function to remove an event listener for the control specified
+         * by its uid.
+         *
+         * @param {string} uid The uid of the control associated with the remove function.
+         * @param {any} value The value to add.
+         *
+         * @returns {void}
+         */
+        private static __addDisposable(
+            uid: string,
+            value: IRemoveListener
+        ): void {
+            const disposables = Control.__disposables;
+
+            if (isArray(disposables[uid])) {
+                disposables[uid].push(value);
+
+                return;
+            }
+
+            disposables[uid] = [value];
+        }
+
+        /**
+         * @name __spliceDisposable
+         * @memberof plat.Control
+         * @kind function
+         * @access private
+         * @static
+         *
+         * @description
+         * Removes a {@link plat.IDisposable|IRemoveListener} from a control's listeners.
+         *
+         * @param {string} uid The uid of the control associated with the remove function.
+         * @param {any} value The value to add.
+         *
+         * @returns {void}
+         */
+        private static __spliceDisposable(
+            uid: string,
+            value: IRemoveListener
+        ): void {
+            const disposables = Control.__disposables;
+            const controlDisposables = disposables[uid];
+
+            if (isArray(controlDisposables)) {
+                const index = controlDisposables.indexOf(value);
+                if (index === -1) {
+                    return;
+                }
+
+                controlDisposables.splice(index, 1);
             }
         }
 
@@ -750,6 +862,76 @@ namespace plat {
         }
 
         /**
+         * @name addDisposable
+         * @memberof plat.Control
+         * @kind function
+         * @access public
+         *
+         * @description
+         * Adds an event listener of the specified type to the specified element. Removal of the
+         * event is handled automatically upon disposal.
+         *
+         * @param {EventTarget} element The element to add the event listener to.
+         * @param {string}  type The type of event to listen to.
+         * @param {EventListener} listener The listener to fire when the event occurs.
+         * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
+         * of event propagation.
+         *
+         * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
+         */
+        public addDisposable(
+            value: IRemoveListener | { cancel(): any } | number
+        ): IRemoveListener {
+            let disposable: IRemoveListener;
+
+            if (isFunction(value)) {
+                disposable = () => {
+                    try {
+                        value.call(this);
+                    } catch (e) {
+                        this._log.warn('Error cancelling disposable');
+                        this._log.warn(e);
+                    }
+                };
+            } else if (isNumber(value)) {
+                disposable = () => {
+                    try {
+                        clearInterval(value);
+                        clearTimeout(value);
+                        cancelAnimationFrame(value);
+                    } catch (e) {
+                        this._log.warn('Error cancelling disposable');
+                        this._log.warn(e);
+                    }
+                };
+            } else if (isObject(value) && isFunction(value.cancel)) {
+                disposable = () => {
+                    try {
+                        value.cancel();
+                    } catch (e) {
+                        this._log.warn('Error cancelling disposable');
+                        this._log.warn(e);
+                    }
+                };
+            } else {
+                this._log.warn(
+                    '"Control.addDisposable" requires either a function, number, or an object with a cancel function on it.'
+                );
+
+                return noop;
+            }
+
+            const uid = this.uid;
+
+            Control.__addDisposable(uid, disposable);
+
+            return (): void => {
+                disposable();
+                Control.__spliceDisposable(uid, disposable);
+            };
+        }
+
+        /**
          * @name observe
          * @memberof plat.Control
          * @kind function
@@ -844,12 +1026,14 @@ namespace plat {
 
             const contextManager = _ContextManager.getManager(root);
 
-            return contextManager.observe(absoluteIdentifier, {
-                listener: (newValue: any, oldValue: any): void => {
-                    listener.call(this, newValue, oldValue, identifier);
-                },
-                uid: this.uid,
-            });
+            return this.addDisposable(
+                contextManager.observe(absoluteIdentifier, {
+                    listener: (newValue: any, oldValue: any): void => {
+                        listener.call(this, newValue, oldValue, identifier);
+                    },
+                    uid: this.uid,
+                })
+            );
         }
 
         /**
@@ -994,10 +1178,12 @@ namespace plat {
                 uid: uid,
             });
 
-            return (): void => {
-                removeListener();
-                removeCallback();
-            };
+            return this.addDisposable(
+                (): void => {
+                    removeListener();
+                    removeCallback();
+                }
+            );
         }
 
         /**
@@ -1166,13 +1352,15 @@ namespace plat {
                 );
             }
 
-            return (): void => {
-                const len = listeners.length;
+            return this.addDisposable(
+                (): void => {
+                    const len = listeners.length;
 
-                for (let j = 0; j < len; j += 1) {
-                    listeners[j]();
+                    for (let j = 0; j < len; j += 1) {
+                        listeners[j]();
+                    }
                 }
-            };
+            );
         }
 
         /**
@@ -1323,7 +1511,9 @@ namespace plat {
                 _EventManager = acquire(__EventManagerStatic);
             }
 
-            return _EventManager.on(this.uid, name, listener, this);
+            return this.addDisposable(
+                _EventManager.on(this.uid, name, listener, this)
+            );
         }
 
         /**
@@ -1533,7 +1723,7 @@ namespace plat {
         control: Control;
     }
 
-    export module observable {
+    export namespace observable {
         /**
          * @name IObservableProperty
          * @memberof plat.observable

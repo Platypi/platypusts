@@ -700,6 +700,7 @@ namespace plat.ui {
             }
 
             Control.removeEventListeners(control);
+            Control.callDisposables(control);
             TemplateControl.removeElement(control);
 
             TemplateControl._ResourcesFactory.dispose(control);
@@ -946,15 +947,15 @@ namespace plat.ui {
             } else if (!isNull(control.templateString)) {
                 const controlType = control.type;
 
-                return templateCache
-                    .read(controlType)
-                    .catch((template: any): async.Promise<DocumentFragment> => {
+                return templateCache.read(controlType).catch(
+                    (template: any): async.Promise<DocumentFragment> => {
                         if (isNull(template)) {
                             template = control.templateString;
                         }
 
                         return templateCache.put(controlType, template);
-                    });
+                    }
+                );
             } else {
                 return <any>Promise.reject(null);
             }
@@ -990,6 +991,7 @@ namespace plat.ui {
             }
 
             Control.removeEventListeners(control);
+            Control.callDisposables(control);
             TemplateControl.removeElement(control);
 
             TemplateControl._ResourcesFactory.dispose(control, true);
@@ -1141,7 +1143,9 @@ namespace plat.ui {
         _log?: debug.Log
     ): ITemplateControlFactory {
         (<any>TemplateControl)._ResourcesFactory = _ResourcesFactory;
-        (<any>TemplateControl)._BindableTemplatesFactory = _BindableTemplatesFactory;
+        (<any>(
+            TemplateControl
+        ))._BindableTemplatesFactory = _BindableTemplatesFactory;
         (<any>TemplateControl)._managerCache = _managerCache;
         (<any>TemplateControl)._templateCache = _templateCache;
         (<any>TemplateControl)._parser = _parser;
