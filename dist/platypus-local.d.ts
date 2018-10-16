@@ -3644,9 +3644,9 @@ export declare class Control {
       * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
       * of event propagation.
       */
-    addDisposable(value: IRemoveListener | {
+    addDisposable(...values: (IRemoveListener | {
         cancel(): any;
-    } | number): IRemoveListener;
+    } | number)[]): IRemoveListener;
     /**
       * Allows a Control to observe any property on its context and receive updates when
       * the property is changed.

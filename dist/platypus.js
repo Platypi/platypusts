@@ -8332,53 +8332,73 @@ var plat;
          * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase
          * of event propagation.
          */
-        Control.prototype.addDisposable = function (value) {
+        Control.prototype.addDisposable = function () {
             var _this_1 = this;
-            var disposable;
-            if (isFunction(value)) {
-                disposable = function () {
-                    try {
-                        value.call(_this_1);
-                    }
-                    catch (e) {
-                        _this_1._log.warn('Error cancelling disposable');
-                        _this_1._log.warn(e);
-                    }
-                };
+            var values = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                values[_i] = arguments[_i];
             }
-            else if (isNumber(value)) {
-                disposable = function () {
-                    try {
-                        clearInterval(value);
-                        clearTimeout(value);
-                        cancelAnimationFrame(value);
-                    }
-                    catch (e) {
-                        _this_1._log.warn('Error cancelling disposable');
-                        _this_1._log.warn(e);
-                    }
-                };
+            var listeners = [];
+            var _loop_2 = function (value) {
+                var disposable;
+                if (isFunction(value)) {
+                    disposable = function () {
+                        try {
+                            value.call(_this_1);
+                        }
+                        catch (e) {
+                            _this_1._log.warn('Error cancelling disposable');
+                            _this_1._log.warn(e);
+                        }
+                    };
+                }
+                else if (isNumber(value)) {
+                    disposable = function () {
+                        try {
+                            clearInterval(value);
+                            clearTimeout(value);
+                            cancelAnimationFrame(value);
+                        }
+                        catch (e) {
+                            _this_1._log.warn('Error cancelling disposable');
+                            _this_1._log.warn(e);
+                        }
+                    };
+                }
+                else if (isObject(value) && isFunction(value.cancel)) {
+                    disposable = function () {
+                        try {
+                            value.cancel();
+                        }
+                        catch (e) {
+                            _this_1._log.warn('Error cancelling disposable');
+                            _this_1._log.warn(e);
+                        }
+                    };
+                }
+                else {
+                    this_2._log.warn('"Control.addDisposable" requires either a function, number, or an object with a cancel function on it.');
+                    return { value: noop };
+                }
+                var uid = this_2.uid;
+                Control.__addDisposable(uid, disposable);
+                listeners.push(function () {
+                    disposable();
+                    Control.__spliceDisposable(uid, disposable);
+                });
+            };
+            var this_2 = this;
+            for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+                var value = values_1[_a];
+                var state_1 = _loop_2(value);
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
-            else if (isObject(value) && isFunction(value.cancel)) {
-                disposable = function () {
-                    try {
-                        value.cancel();
-                    }
-                    catch (e) {
-                        _this_1._log.warn('Error cancelling disposable');
-                        _this_1._log.warn(e);
-                    }
-                };
-            }
-            else {
-                this._log.warn('"Control.addDisposable" requires either a function, number, or an object with a cancel function on it.');
-                return noop;
-            }
-            var uid = this.uid;
-            Control.__addDisposable(uid, disposable);
             return function () {
-                disposable();
-                Control.__spliceDisposable(uid, disposable);
+                for (var _i = 0, listeners_1 = listeners; _i < listeners_1.length; _i++) {
+                    var listener = listeners_1[_i];
+                    listener();
+                }
             };
         };
         /**
@@ -16594,7 +16614,7 @@ var plat;
                         manager.observe(observationDetails.absoluteIdentifier, observableCallback);
                     }
                 }
-                var _loop_2 = function () {
+                var _loop_3 = function () {
                     oneTimeIdentifier = oneTimeIdentifiers.pop();
                     observationDetails = NodeManager.__getObservationDetails(oneTimeIdentifier, control);
                     manager = observationDetails.manager;
@@ -16611,7 +16631,7 @@ var plat;
                     }
                 };
                 while (oneTimeIdentifiers.length > 0) {
-                    _loop_2();
+                    _loop_3();
                 }
             };
             /**

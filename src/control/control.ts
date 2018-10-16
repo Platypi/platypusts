@@ -880,54 +880,65 @@ namespace plat {
          * @returns {plat.IRemoveListener} A function to call in order to stop listening to the event.
          */
         public addDisposable(
-            value: IRemoveListener | { cancel(): any } | number
+            ...values: (IRemoveListener | { cancel(): any } | number)[]
         ): IRemoveListener {
-            let disposable: IRemoveListener;
+            const listeners: IRemoveListener[] = [];
 
-            if (isFunction(value)) {
-                disposable = () => {
-                    try {
-                        value.call(this);
-                    } catch (e) {
-                        this._log.warn('Error cancelling disposable');
-                        this._log.warn(e);
+            for (const value of values) {
+                let disposable: IRemoveListener;
+
+                if (isFunction(value)) {
+                    disposable = () => {
+                        try {
+                            value.call(this);
+                        } catch (e) {
+                            this._log.warn('Error cancelling disposable');
+                            this._log.warn(e);
+                        }
+                    };
+                } else if (isNumber(value)) {
+                    disposable = () => {
+                        try {
+                            clearInterval(value);
+                            clearTimeout(value);
+                            cancelAnimationFrame(value);
+                        } catch (e) {
+                            this._log.warn('Error cancelling disposable');
+                            this._log.warn(e);
+                        }
+                    };
+                } else if (isObject(value) && isFunction(value.cancel)) {
+                    disposable = () => {
+                        try {
+                            value.cancel();
+                        } catch (e) {
+                            this._log.warn('Error cancelling disposable');
+                            this._log.warn(e);
+                        }
+                    };
+                } else {
+                    this._log.warn(
+                        '"Control.addDisposable" requires either a function, number, or an object with a cancel function on it.'
+                    );
+
+                    return noop;
+                }
+
+                const uid = this.uid;
+
+                Control.__addDisposable(uid, disposable);
+                listeners.push(
+                    (): void => {
+                        disposable();
+                        Control.__spliceDisposable(uid, disposable);
                     }
-                };
-            } else if (isNumber(value)) {
-                disposable = () => {
-                    try {
-                        clearInterval(value);
-                        clearTimeout(value);
-                        cancelAnimationFrame(value);
-                    } catch (e) {
-                        this._log.warn('Error cancelling disposable');
-                        this._log.warn(e);
-                    }
-                };
-            } else if (isObject(value) && isFunction(value.cancel)) {
-                disposable = () => {
-                    try {
-                        value.cancel();
-                    } catch (e) {
-                        this._log.warn('Error cancelling disposable');
-                        this._log.warn(e);
-                    }
-                };
-            } else {
-                this._log.warn(
-                    '"Control.addDisposable" requires either a function, number, or an object with a cancel function on it.'
                 );
-
-                return noop;
             }
 
-            const uid = this.uid;
-
-            Control.__addDisposable(uid, disposable);
-
             return (): void => {
-                disposable();
-                Control.__spliceDisposable(uid, disposable);
+                for (const listener of listeners) {
+                    listener();
+                }
             };
         }
 
